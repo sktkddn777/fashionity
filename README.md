@@ -1,3 +1,14 @@
+# 2023-07-17
+
+### 태현
+1. 팀 회의 진행
+    - ERD 설계 마무리
+    - API 기능 명세
+2. ERD 설계 마무리
+    - ![인피니티](https://github.com/SeungWook0502/Algorithm/assets/83438780/dd25b16a-d3f8-4145-a238-72d62acb082c)
+3. API 기능 명세(노션 링크)
+    - https://www.notion.so/API-d41cb070f3e14dfd935a144ef888a65d?pvs=4
+
 ## 상우
 
 
