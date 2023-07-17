@@ -65,5 +65,11 @@ Team Notion Link : https://www.notion.so/Infinity-1ffdc59b4bde4804a4f8bbc569c1e9
 - API명세서 작성
     - 게시판 관련 API 명세서 작성
 
+### 2023. 07. 17.
+
+- ERD 수정 및 컨펌
+- 파트 분배
+  - 게시판 담당
+- API 명세서 작성
 
 
