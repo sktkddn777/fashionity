@@ -1,3 +1,17 @@
+## 상우
+
+
+### 23.07.17 
+- ERD 최종 설계 후 컨설턴트님과 피드백 진행
+    - ENUM 타입을 VARCHAR로 변경
+    - 라이브 시스템 로그 관련 파일 추가
+    - 모든 컬럼에 대한 제약조건과 데이터타입을 설정한 이유가 있어야 함
+
+- API 명세서 설계
+    - 유저, 관리자, 인증 담당
+
+    ![image](https://github.com/NeverEndingJava/Effective-Java/assets/37575974/31f361d8-04cc-41bd-ab54-c015b8814f5f)
+
 # 7월 17일 월요일
 Team Notion Link : https://www.notion.so/Infinity-1ffdc59b4bde4804a4f8bbc569c1e9d2
 
@@ -24,4 +38,5 @@ Team Notion Link : https://www.notion.so/Infinity-1ffdc59b4bde4804a4f8bbc569c1e9
     - 게시판 도메인 담당
 - API명세서 작성
     - 게시판 관련 API 명세서 작성
+
 
