@@ -1,4 +1,24 @@
 package com.infinity.fashionity.posts.entity;
 
-public class PostEntity {
+import com.infinity.fashionity.global.entity.CUDEntity;
+import org.hibernate.annotations.SQLDelete;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "posts")
+@SQLDelete(sql = "UPDATE Posts SET deleted_at = now() WHERE seq = ?")
+public class PostEntity extends CUDEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_seq")
+    private Long seq;
+
+    @Column(name = "post_content", unique = false, nullable = true, columnDefinition = "TEXT")
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_seq", nullable = false)
+    private PostEntity post;
 }
