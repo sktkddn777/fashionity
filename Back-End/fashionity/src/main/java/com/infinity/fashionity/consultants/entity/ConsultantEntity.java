@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "consultant_infos")
-@SQLDelete(sql = "UPDATE Consultant SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql = "UPDATE consultant_infos SET deleted_at = now() WHERE consultant_info_seq = ?")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,6 +28,6 @@ public class ConsultantEntity extends CUDEntity {
     @Id
     @JoinColumn(name = "member_seq", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
-    private MemberEntity seq;
+    private MemberEntity member;
 }
 

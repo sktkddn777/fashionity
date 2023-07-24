@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "consultant_schedule")
-@SQLDelete(sql="UPDATE Schedule SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql="UPDATE consultant_schedule SET deleted_at = now() WHERE consultant_schedule_seq = ?")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -26,7 +26,7 @@ public class ScheduleEntity extends CUDEntity {
     @JoinColumn(name="consultant_info_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name="consultant_info_seq", nullable = false)
-    private ConsultantEntity seq;
+    private ConsultantEntity consultant;
 
     @Column(name = "availabe_datetime", unique = false, nullable = false)
     private LocalDateTime available_datetime;
