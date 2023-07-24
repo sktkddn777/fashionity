@@ -1,4 +1,4 @@
-package com.infinity.fashionity.posts.comments.entity;
+package com.infinity.fashionity.comments.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

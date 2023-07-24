@@ -1,4 +1,4 @@
-package com.infinity.fashionity.posts.comments.entity;
+package com.infinity.fashionity.comments.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
