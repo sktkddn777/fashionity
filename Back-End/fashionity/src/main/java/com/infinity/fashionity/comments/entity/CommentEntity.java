@@ -14,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "comments")
-@SQLDelete(sql = "UPDATE Comments SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql = "UPDATE Comments SET deleted_at = now() WHERE comment_seq = ?")
 @Getter
 @Builder
 @AllArgsConstructor

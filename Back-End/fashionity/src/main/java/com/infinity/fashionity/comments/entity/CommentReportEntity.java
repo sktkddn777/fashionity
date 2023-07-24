@@ -11,6 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "comment_reports")
+@IdClass(value=CommentReportKey.class)
 @Getter
 @Builder
 @AllArgsConstructor

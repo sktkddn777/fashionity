@@ -11,6 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "comment_likes")
+@IdClass(value=CommentLikeKey.class)
 @Getter
 @Builder
 @AllArgsConstructor

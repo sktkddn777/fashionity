@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "posts")
-@SQLDelete(sql = "UPDATE Posts SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql = "UPDATE Posts SET deleted_at = now() WHERE post_seq = ?")
 @Getter
 @Builder
 @AllArgsConstructor
