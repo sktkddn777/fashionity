@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class XssRequestWrapper extends HttpServletRequestWrapper {
@@ -23,7 +25,16 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
 
                 InputStream is = request.getInputStream();
 
-                this.raw = StringUtils.xssFilter(new String(is.readAllBytes())).getBytes();
+                StringBuffer sb = new StringBuffer();
+                try (Reader reader = new BufferedReader(new InputStreamReader
+                        (is, Charset.forName(StandardCharsets.UTF_8.name())))) {
+                    int c = 0;
+                    while ((c = reader.read()) != -1) {
+                        sb.append((char) c);
+                    }
+                }
+                this.raw = StringUtils.xssFilter(sb.toString()).getBytes();
+//                this.raw = StringUtils.xssFilter(new String(is.readAllBytes())).getBytes();
             }
         } catch (IOException e) {
             e.printStackTrace();
