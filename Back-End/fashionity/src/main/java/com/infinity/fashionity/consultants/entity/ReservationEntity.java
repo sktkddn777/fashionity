@@ -22,7 +22,7 @@ public class ReservationEntity extends CUDEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_seq")
-    private long seq;
+    private Long seq;
 
     @JoinColumn(name = "schedule_seq", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
@@ -32,10 +32,10 @@ public class ReservationEntity extends CUDEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberEntity member;
 
-    @Column(name = "reservation_detail")
+    @Column(name = "reservation_detail", unique = false, nullable = true, length = 200)
     private String detail;
 
-    @Column(name = "reservation_date")
+    @Column(name = "reservation_date", unique = false, nullable = false)
     private LocalDateTime date;
 
 

@@ -10,5 +10,5 @@ import javax.persistence.Table;
 public class ConsultantEntity {
     @Id
     @Column(name = "consultant_info_seq")
-    private long seq;
+    private Long seq;
 }

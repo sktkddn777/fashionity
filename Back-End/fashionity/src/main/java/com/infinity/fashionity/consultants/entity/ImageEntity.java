@@ -17,7 +17,7 @@ public class ImageEntity extends CEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_seq")
-    private long seq;
+    private Long seq;
 
     @Column(name = "image_url", unique = true, nullable = false, columnDefinition = "TEXT")
     private String url;

@@ -10,5 +10,5 @@ import javax.persistence.Table;
 public class ScheduleEntity {
     @Id
     @Column(name = "schedule_seq")
-    private long seq;
+    private Long seq;
 }
