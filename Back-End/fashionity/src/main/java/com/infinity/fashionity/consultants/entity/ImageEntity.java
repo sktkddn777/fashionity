@@ -26,4 +26,9 @@ public class ImageEntity extends CEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ReservationEntity reservation;
 
+    @JoinColumn(name = "schedule_seq", nullable = false)
+    @OneToOne
+    private ScheduleEntity entity;
+
+
 }

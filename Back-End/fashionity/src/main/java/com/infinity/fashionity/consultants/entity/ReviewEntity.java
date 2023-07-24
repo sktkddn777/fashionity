@@ -28,6 +28,7 @@ public class ReviewEntity extends CUDEntity {
     @Column(name = "review_grade")
     private float grade;
 
+    @JoinColumn(name = "reservation_seq")
     @OneToOne
     private ReservationEntity reservation;
 
