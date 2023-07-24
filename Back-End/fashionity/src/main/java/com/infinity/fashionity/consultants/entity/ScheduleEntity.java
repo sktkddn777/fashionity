@@ -29,13 +29,13 @@ public class ScheduleEntity extends CUDEntity {
     private ConsultantEntity consultant;
 
     @Column(name = "availabe_datetime", unique = false, nullable = false)
-    private LocalDateTime available_datetime;
+    private LocalDateTime availableDatetime;
 
     @Column(name="is_available", unique = false, nullable = false)
-    private Boolean is_available;
+    private Boolean isAvailable;
 
     @Column(name="cancel_reason", length=200, unique = false, nullable = true)
-    private String cancel_reason;
+    private String cancelReason;
 
 
 
