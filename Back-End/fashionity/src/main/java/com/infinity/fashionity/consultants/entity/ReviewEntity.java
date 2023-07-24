@@ -10,8 +10,8 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 
 @Entity
-@Table(name="reservation_images")
-@SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE seq = ?")
+@Table(name="reviews")
+@SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE review_seq = ?")
 @Getter
 @Builder
 @AllArgsConstructor
