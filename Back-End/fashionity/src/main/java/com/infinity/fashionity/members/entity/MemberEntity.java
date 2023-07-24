@@ -3,6 +3,10 @@ package com.infinity.fashionity.members.entity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -14,7 +18,11 @@ import static javax.persistence.GenerationType.*;
 
 @Entity
 @Table(name = "members")
-@SQLDelete(sql = "UPDATE Member SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE seq = ?")
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberEntity extends CUDEntity {
 
     @Id

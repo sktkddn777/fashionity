@@ -1,6 +1,10 @@
 package com.infinity.fashionity.members.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,6 +12,10 @@ import javax.persistence.*;
 @IdClass(FollowKey.class)
 @Entity
 @Table(name = "follows")
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FollowEntity extends CEntity {
 
     @Id
