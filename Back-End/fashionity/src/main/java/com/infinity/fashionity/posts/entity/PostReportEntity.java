@@ -2,15 +2,21 @@ package com.infinity.fashionity.posts.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
-@IdClass(ReportKey.class)
+@IdClass(PostReportKey.class)
 @Entity
 @Table(name = "post_reports")
-public class ReportEntity extends CEntity {
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PostReportEntity extends CEntity {
 
     @Id
     @JoinColumn(name = "member_seq", nullable = false)

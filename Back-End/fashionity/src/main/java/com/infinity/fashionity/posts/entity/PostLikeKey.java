@@ -1,14 +1,17 @@
 package com.infinity.fashionity.posts.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportKey implements Serializable {
+@EqualsAndHashCode
+public class PostLikeKey implements Serializable {
 
     private Long member;
     private Long post;
+
 }

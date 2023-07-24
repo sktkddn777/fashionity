@@ -1,6 +1,10 @@
 package com.infinity.fashionity.posts.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,7 +12,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "images")
-public class ImageEntity extends CEntity {
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PostImageEntity extends CEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -17,8 +25,7 @@ public class ImageEntity extends CEntity {
     @Column(name = "image_url", unique = true, nullable = false, columnDefinition = "TEXT")
     private String url;
 
-    @JoinColumn(name = "post_seq")
+    @JoinColumn(name = "post_seq",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PostEntity post;
-
 }

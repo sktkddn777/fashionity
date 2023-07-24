@@ -1,6 +1,10 @@
 package com.infinity.fashionity.posts.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,6 +12,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "post_hashtags")
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostHashtagEntity extends CEntity {
 
     @Id
@@ -21,9 +29,4 @@ public class PostHashtagEntity extends CEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_seq", nullable = false)
     private HashtagEntity hashtag;
-    /**
-     * 밍 이거 어케함
-     * */
-
-
 }
