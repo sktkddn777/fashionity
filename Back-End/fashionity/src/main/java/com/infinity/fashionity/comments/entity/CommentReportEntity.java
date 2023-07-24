@@ -1,4 +1,4 @@
-package com.infinity.fashionity.posts.comments.entity;
+package com.infinity.fashionity.comments.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "comment_likes")
+@Table(name = "comment_reports")
+@IdClass(value=CommentReportKey.class)
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentLikeEntity extends CEntity {
+public class CommentReportEntity extends CEntity {
 
     @Id
     @JoinColumn(name = "comment_seq")
