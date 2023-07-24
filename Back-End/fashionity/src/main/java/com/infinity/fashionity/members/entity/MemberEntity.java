@@ -18,7 +18,7 @@ import static javax.persistence.GenerationType.*;
 
 @Entity
 @Table(name = "members")
-@SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE member_seq = ?")
 @Getter
 @Builder
 @AllArgsConstructor
