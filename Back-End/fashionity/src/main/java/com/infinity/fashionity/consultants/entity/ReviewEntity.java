@@ -10,8 +10,8 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 
 @Entity
-@Table(name="reservation_images")
-@SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE seq = ?")
+@Table(name="reviews")
+@SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE review_seq = ?")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -20,14 +20,15 @@ public class ReviewEntity extends CUDEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_seq")
-    private long seq;
+    private Long seq;
 
-    @Column(name = "review_content")
+    @Column(name = "review_content", unique = false, nullable = true, length = 200)
     private String content;
 
-    @Column(name = "review_grade")
+    @Column(name = "review_grade", unique = false, nullable = true)
     private float grade;
 
+    @JoinColumn(name = "reservation_seq")
     @OneToOne
     private ReservationEntity reservation;
 
