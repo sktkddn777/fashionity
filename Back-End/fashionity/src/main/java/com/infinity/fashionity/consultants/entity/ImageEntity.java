@@ -26,5 +26,4 @@ public class ImageEntity extends CEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ReservationEntity reservation;
 
-
 }

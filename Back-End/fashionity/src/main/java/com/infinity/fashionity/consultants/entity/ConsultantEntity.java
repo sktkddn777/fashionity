@@ -25,7 +25,6 @@ public class ConsultantEntity extends CUDEntity {
     @Column(name = "consultant_info_level", length = 20, unique = false, nullable = false)
     private String level;
 
-    @Id
     @JoinColumn(name = "member_seq", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private MemberEntity member;
