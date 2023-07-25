@@ -1,6 +1,5 @@
 package com.infinity.fashionity.security.service;
 
-import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
 import com.infinity.fashionity.security.dto.JwtAuthenticationToken;
 import com.infinity.fashionity.security.dto.Tokens;
@@ -8,6 +7,7 @@ import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +23,10 @@ public class TokenService {
 
     private final JwtProvider jwtProvider;
 
+    @Value("${refresh-token-expire}")
+    private long refreshTokenExpire;
+
     public JwtAuthenticationToken getAuthentication(String accessToken) {
-        // authentication 반환
         jwtProvider.validateToken(accessToken);
 
         Claims claims = jwtProvider.getClaims(accessToken);
@@ -45,7 +47,7 @@ public class TokenService {
 
         String accessToken = jwtProvider.createAccessToken(authUserInfo.getId(), authUserInfo.getRoles());
 
-        // refreshToken 발급
+        // TODO: refreshToken 발급 + redis를 통해 관리
         String refreshToken = "test_refresh_token";
 
         return Tokens.builder()
@@ -53,7 +55,5 @@ public class TokenService {
                 .refreshToken(refreshToken)
                 .build();
     }
-    // refreshToken 관련된 내용 추가
-
 
 }

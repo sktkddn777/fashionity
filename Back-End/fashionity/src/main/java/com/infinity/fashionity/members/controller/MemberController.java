@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/members")
@@ -27,9 +29,9 @@ public class MemberController {
 
     @PostMapping("/register")
     public ResponseEntity<SaveDTO.Response> register(
-            @RequestBody SaveDTO.Request dto
+            @RequestBody @Valid SaveDTO.Request dto
     ) {
-        SaveDTO.Response response = memberService.save(dto);
+        SaveDTO.Response response = memberService.register(dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

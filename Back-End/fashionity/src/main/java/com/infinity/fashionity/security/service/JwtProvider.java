@@ -1,8 +1,8 @@
 package com.infinity.fashionity.security.service;
 
-import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.security.exception.ExpiredTokenException;
+import com.infinity.fashionity.security.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -46,7 +46,6 @@ public class JwtProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", userId);
 
-        // roleEntity -> role String list
         List<String> roles = memberRoles.stream().map(
                 role -> role.getMemberRole().getRole()
         ).collect(Collectors.toList());
@@ -77,9 +76,19 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
-            throw new ExpiredTokenException("토큰 기간 만료ㅠㅠ");
+            throw new ExpiredTokenException();
         } catch (JwtException | IllegalArgumentException e) {
-            log.error("jwt 에러 났어요");
+            throw new InvalidTokenException();
         }
+    }
+
+    // TODO: refreshToken 생성 함수
+    public String createRefreshToken(Long userId, List<MemberRoleEntity> memberRoles) {
+        return null;
+    }
+
+    // TODO: accessToken으로 refreshToken 재발급 받는 함수
+    public String getAccessTokenByRefreshToken(String refreshToken) {
+        return null;
     }
 }

@@ -1,31 +1,40 @@
 package com.infinity.fashionity.members.dto;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+
 public class SaveDTO {//세이브 할 떄 필요한 request, response
     @Builder
     @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {
-        private String id;//아이디값 (5~20)
-        private String password;//비밀번호값
+
+        @Length(min = 5, max = 20)
+        @NotBlank
+        private String id; //아이디값 (5~20)
+
+        @Length(max = 60)
+        @NotBlank
+        private String password; //비밀번호값
+
+        @Length(max = 13)
+        @NotBlank
         private String nickname;
+
+        @Email
+        @NotBlank
         private String email;
+
         private Boolean sns = false; // sns 여부
-
-
-        //입력시 좌우 공백을 제거해주기 위함
-        public void setId(String id) {
-            if(id != null) {
-                this.id = id.trim();
-            }
-        }
     }
 
     @Builder
     @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response{

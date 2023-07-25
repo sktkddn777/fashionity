@@ -10,5 +10,5 @@ public interface MemberService {
     LoginDTO.Response login(LoginDTO.Request dto);
     AuthUserInfo getOrRegisterUser(OAuthUserInfo oauthUserInfo);
 
-    SaveDTO.Response save(SaveDTO.Request dto);
+    SaveDTO.Response register(SaveDTO.Request dto);
 }
