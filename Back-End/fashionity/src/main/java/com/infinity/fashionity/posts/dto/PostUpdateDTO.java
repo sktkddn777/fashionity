@@ -1,13 +1,13 @@
 package com.infinity.fashionity.posts.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import javax.validation.constraints.Size;
 
-public class PostSaveDTO {
+public class PostUpdateDTO {
     @Getter
     @Setter
     @AllArgsConstructor
@@ -15,12 +15,11 @@ public class PostSaveDTO {
     @Builder
     public static class Request{
         @NotBlank
-        @Builder.Default
-        private ArrayList<MultipartFile> images = new ArrayList<>();
-        @NotBlank
+        @JsonIgnore
+        @JsonAlias(value = "post_seq")
+        private long postSeq;
+        @Size(max = 500, message = "500자까지만 입력 가능합니다.")
         private String content;
-        @Builder.Default
-        private ArrayList<String> hashtag = new ArrayList<>();
     }
 
     @Getter

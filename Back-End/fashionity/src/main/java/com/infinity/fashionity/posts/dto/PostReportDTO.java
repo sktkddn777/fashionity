@@ -1,13 +1,14 @@
 package com.infinity.fashionity.posts.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import javax.validation.constraints.Size;
 
-public class PostSaveDTO {
+public class PostReportDTO {
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -15,12 +16,12 @@ public class PostSaveDTO {
     @Builder
     public static class Request{
         @NotBlank
-        @Builder.Default
-        private ArrayList<MultipartFile> images = new ArrayList<>();
+        @JsonIgnore
+        @JsonAlias(value = "post_seq")
+        private long postSeq;
         @NotBlank
+        private String type;
         private String content;
-        @Builder.Default
-        private ArrayList<String> hashtag = new ArrayList<>();
     }
 
     @Getter
