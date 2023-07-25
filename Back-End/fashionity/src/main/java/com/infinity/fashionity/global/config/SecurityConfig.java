@@ -1,5 +1,6 @@
 package com.infinity.fashionity.global.config;
 
+import com.infinity.fashionity.security.filter.JwtAuthenticationEntryPoint;
 import com.infinity.fashionity.security.filter.JwtAuthenticationFilter;
 import com.infinity.fashionity.security.handler.CustomAccessDeniedHandler;
 import com.infinity.fashionity.security.handler.CustomAuthenticationEntryPoint;
@@ -32,6 +33,8 @@ public class SecurityConfig {
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     private final String[] allowedUrls = {"/api/v1/members/test", "/", "/api/v1/members/login", "/api/v1/members/register"};
 
     @Bean
@@ -61,6 +64,9 @@ public class SecurityConfig {
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .build();
 
