@@ -25,7 +25,6 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
         String targetUrl = "/";
         // error message 를 파라미터로 같이 프론트로 보내기
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }
