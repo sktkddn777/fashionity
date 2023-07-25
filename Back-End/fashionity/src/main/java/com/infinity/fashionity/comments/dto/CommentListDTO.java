@@ -16,7 +16,9 @@ public class CommentListDTO {
     @Setter
     public static class Request {
         private Long postSeq;//pathVariable
+        @Builder.Default
         private int page = 0;//param
+        @Builder.Default
         private int size = 50;//param
     }
 

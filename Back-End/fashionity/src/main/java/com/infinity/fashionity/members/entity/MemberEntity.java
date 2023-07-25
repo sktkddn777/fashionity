@@ -62,5 +62,6 @@ public class MemberEntity extends CUDEntity {
     private String personalcolor;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @Builder.Default
     private List<MemberRoleEntity> memberRoles = new ArrayList<>();
 }
