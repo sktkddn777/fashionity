@@ -14,6 +14,7 @@ public class CommentListDTO {
     @NoArgsConstructor
     @Getter
     @Setter
+    @ToString
     public static class Request {
         private Long postSeq;//pathVariable
         @Builder.Default

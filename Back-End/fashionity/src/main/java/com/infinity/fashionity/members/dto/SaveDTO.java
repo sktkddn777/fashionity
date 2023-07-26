@@ -30,6 +30,7 @@ public class SaveDTO {//세이브 할 떄 필요한 request, response
         @NotBlank
         private String email;
 
+        @Builder.Default
         private Boolean sns = false; // sns 여부
     }
 

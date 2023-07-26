@@ -34,5 +34,6 @@ public class CommentSaveDTO {
     @Setter
     public static class Response{
         private boolean success;
+        private Long seq;
     }
 }

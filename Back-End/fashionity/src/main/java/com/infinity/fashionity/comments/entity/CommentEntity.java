@@ -2,6 +2,7 @@ package com.infinity.fashionity.comments.entity;
 
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.posts.entity.PostEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,8 +30,12 @@ public class CommentEntity extends CUDEntity {
     @Column(name = "comment_content", length = 200, unique = false, nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "member_seq", nullable = false)
     private MemberEntity member;
+
+    @ManyToOne(fetch=FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @JoinColumn(name="post_seq")
+    private PostEntity post;
 
 }

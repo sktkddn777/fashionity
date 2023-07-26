@@ -1,19 +1,145 @@
 package com.infinity.fashionity.comments.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.infinity.fashionity.comments.dto.CommentSaveDTO;
+import com.infinity.fashionity.comments.entity.CommentEntity;
+import com.infinity.fashionity.comments.repository.CommentRepository;
+import com.infinity.fashionity.members.data.Gender;
+import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.dto.LoginDTO;
+import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.entity.MemberRoleEntity;
+import com.infinity.fashionity.members.repository.MemberRepository;
+import com.infinity.fashionity.posts.entity.PostEntity;
+import com.infinity.fashionity.posts.repository.PostRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.stream.events.Comment;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.controller;
+import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 class CommentIntegrationTest {
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    public final String BASE_URL = "/api/v1";
+    public List<MemberEntity> memberList = new ArrayList<>();
+    public Map<Long, List<PostEntity>> memberPosts = new HashMap<>();
+    public Map<Long, List<CommentEntity>> postComments = new HashMap<>();
+
+    @BeforeEach
+    public void dummyInsert() {
+        //member등록
+        IntStream.rangeClosed(1, 10).forEach(i -> {
+            MemberEntity member = MemberEntity.builder()
+                    .id("tester".concat(Integer.toString(i)))
+                    .password(passwordEncoder.encode("Abcdefg123!"))
+                    .nickname("tester".concat(Integer.toString(i)))
+                    .email("tester".concat(Integer.toString(i)).concat("@gmail.com"))
+                    .sns(false)
+                    .profileUrl("profileUrl".concat(Integer.toString(i)))
+                    .profileIntro("profileIntro".concat(Integer.toString(i)))
+                    .gender(i % 2 == 0 ? Gender.MALE : Gender.FEMALE)
+                    .height(150.0f)
+                    .weight(55.0f)
+                    .build();
+            member.getMemberRoles().add(MemberRoleEntity.builder()
+                    .member(member)
+                    .memberRole(MemberRole.USER)
+                    .build());
+
+            memberList.add(member);
+        });
+        memberRepository.saveAll(memberList);
+
+        //각 멤버마다 post등록
+        for (MemberEntity member : memberList) {
+            List<PostEntity> postList = new ArrayList<>();
+            IntStream.rangeClosed(1, 5).forEach(i -> {
+                PostEntity post = PostEntity.builder()
+                        .member(member)
+                        .content(member.getNickname().concat("\'s post").concat(Integer.toString(i)))
+                        .build();
+                postList.add(post);
+            });
+            postRepository.saveAll(postList);
+            memberPosts.put(member.getSeq(), postList);
+
+            for (PostEntity post : postList) {
+                //각 포스트마다 댓글 등록
+                List<CommentEntity> commentList = new ArrayList<>();
+                IntStream.rangeClosed(0, memberList.size() - 1).forEach(i -> {
+                    CommentEntity comment = CommentEntity.builder()
+                            .member(memberList.get(i))
+                            .post(post)
+                            .content(Long.toString(post.getSeq()).concat("포스트의 댓글").concat(Integer.toString(i)))
+                            .build();
+                    commentList.add(comment);
+                });
+                commentRepository.saveAll(commentList);
+                postComments.put(post.getSeq(), commentList);
+            }
+        }
+    }
+
+    public LoginDTO.Response memberLogin(Long seq) throws Exception {
+        String id = memberList.get(seq.intValue()).getId();
+        String pw = memberList.get(seq.intValue()).getPassword();
+        LoginDTO.Request request = LoginDTO.Request.builder()
+                .id(id)
+                .password(pw)
+                .build();
+
+        MvcResult result = mvc.perform(post(BASE_URL + "/members/login")
+                        .contentType("application/json")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(mapper.writeValueAsString(request))
+                        .accept("*/*"))
+                .andDo(print())
+                .andReturn();
+
+        return mapper.readValue(result.getResponse().getContentAsString(), LoginDTO.Response.class);
+    }
 
     /**
      * - 댓글 정상 등록
@@ -23,95 +149,133 @@ class CommentIntegrationTest {
      * - content가 blank로 들어왔을 때 오류
      * - content가 200자를 넘겼을 때 오류
      * - 존재하지 않는 사용자가 댓글을 달려했을 때 오류
-     * */
+     */
     @Nested
     @DisplayName("Comment Save Test")
-    public class CommentSaveTest{
+    public class CommentSaveTest {
+        Long randomMemberSeq;//댓글을 다는 사람의 seq
+        Long randomTargetMemberSeq;//댓글이 달리는 post의 주인 seq
+        Long randomTargetPostSeq;//댓글이 달리는 포스트의 seq
+
+
         @Test
         @DisplayName("- 댓글 정상 등록")
-        public void commentsSaveSuccessTest(){
+        public void commentsSaveSuccessTest() throws Exception {
+            Random random = new Random();
+            //댓글을 다는 사람
+            randomMemberSeq = Math.abs(random.nextLong())%memberList.size();
 
+            //댓글이 달리는 게시글의 주인
+            randomTargetMemberSeq = Math.abs(random.nextLong())%memberList.size();
+
+            //댓글을 달 게시판
+            randomTargetPostSeq = Math.abs(random.nextLong())%memberPosts.get(randomTargetMemberSeq).size();
+
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(randomMemberSeq);
+
+            //등록할 comment
+            CommentSaveDTO.Request request = CommentSaveDTO.Request.builder()
+                            .content("댓글 등록!")
+                            .build();
+
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}"), randomTargetPostSeq)
+                            .header("Authorization", "Bearer " + token.getAccessToken()))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(CommentController.class))
+                    .andExpect(handler().methodName("saveComment"))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.success", is(true)));
+
+            List<CommentEntity> allByPost = commentRepository.findAllByPost(PostEntity.builder()
+                    .seq(randomTargetPostSeq)
+                    .build());
+            Optional<CommentEntity> newComment = allByPost.stream()
+                    .filter(c -> !memberPosts.get(randomTargetMemberSeq.intValue()).contains(c))
+                    .findFirst();
+            assertThat(newComment).isNotEmpty();
+            resultActions.andExpect(jsonPath("$.seq",is(newComment.get().getSeq())));
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자가 댓글을 달려했을 때 오류")
-        public void unAuthenticatedUserSavesCommentsTest(){
-
+        public void unAuthenticatedUserSavesCommentsTest() {
         }
 
         @Test
         @DisplayName("- 존재하지 않는 Post Seq로 접근했을 때 오류")
-        public void commentsSaveWithUnknownPostSeqTest(){
+        public void commentsSaveWithUnknownPostSeqTest() {
 
         }
 
         @Test
         @DisplayName("- content가 null일 경우 오류")
-        public void commentsSaveWithNullContentTest(){
+        public void commentsSaveWithNullContentTest() {
 
         }
 
         @Test
         @DisplayName("- content가 blank로 들어왔을 때 오류")
-        public void commentsSaveWithBlankContentTest(){
+        public void commentsSaveWithBlankContentTest() {
 
         }
 
         @Test
         @DisplayName("- content가 200자를 넘겼을 때 오류")
-        public void commentsSaveWithContentOverlengthTest(){
+        public void commentsSaveWithContentOverlengthTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 사용자가 댓글을 달려했을 때 오류")
-        public void commentsSaveWithUnsavedUserTest(){
+        public void commentsSaveWithUnsavedUserTest() {
 
         }
     }
 
     /**
      * - 댓글 정상 조회
-     *      - 삭제된 댓글은 조회하지 않기
-     *      - 삭제된 유저들의 댓글은 조회하지 않기
+     * - 삭제된 댓글은 조회하지 않기
+     * - 삭제된 유저들의 댓글은 조회하지 않기
      * - 없는 페이지 조회 - 빈 list return
-     * */
+     */
     @Nested
     @DisplayName("Comment List Test")
-    public class CommentListTest{
+    public class CommentListTest {
         @Test
         @DisplayName("- 댓글 정상 조회")
-        public void getCommentsListSuccessTest(){
+        public void getCommentsListSuccessTest() {
 
         }
 
         @Test
         @DisplayName("- 없는 페이지 조회 - 빈 list return")
-        public void getCommentsListWithEmptyTest(){
+        public void getCommentsListWithEmptyTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 Post Seq로 접근했을 때 오류")
-        public void commentsSaveWithUnknownPostSeqTest(){
+        public void commentsSaveWithUnknownPostSeqTest() {
 
         }
 
         @Test
         @DisplayName("- content가 null일 경우 오류")
-        public void commentsSaveWithNullContentTest(){
+        public void commentsSaveWithNullContentTest() {
 
         }
 
         @Test
         @DisplayName("- content가 blank로 들어왔을 때 오류")
-        public void commentsSaveWithBlankContentTest(){
+        public void commentsSaveWithBlankContentTest() {
 
         }
 
         @Test
         @DisplayName("- content가 200자를 넘겼을 때 오류")
-        public void commentsSaveWithContentOverlengthTest(){
+        public void commentsSaveWithContentOverlengthTest() {
 
         }
     }
@@ -127,67 +291,67 @@ class CommentIntegrationTest {
      * - content가 blank일 경우 오류
      * - content가 200자를 넘겼을 경우 오류
      * - 삭제된 유저 or 존재하지 않는 사용자의 댓글 수정 오류
-     * */
+     */
     @Nested
     @DisplayName("Comment Update Test")
-    public class CommentUpdateTest{
+    public class CommentUpdateTest {
         @Test
         @DisplayName("- 댓글 정상 수정")
-        public void commentsUpdateSuccessTest(){
+        public void commentsUpdateSuccessTest() {
 
         }
 
         @Test
         @DisplayName("- 타인의 댓글 수정 오류")
-        public void updateOthersCommentTest(){
+        public void updateOthersCommentTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 포스트의 댓글 수정 오류")
-        public void commentsUpdateWithNonexistentPostTest(){
+        public void commentsUpdateWithNonexistentPostTest() {
 
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자의 댓글 수정 오류")
-        public void commentUpdateWithUnauthenticatedUserTest(){
+        public void commentUpdateWithUnauthenticatedUserTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글 수정 오류")
-        public void commentsUpdateWithNonexistentTest(){
+        public void commentsUpdateWithNonexistentTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 댓글 수정 오류")
-        public void commentsUpdateWithDeletedTest(){
+        public void commentsUpdateWithDeletedTest() {
 
         }
 
         @Test
         @DisplayName("- content가 null일 경우 오류")
-        public void commentsUpdateWithNullContentTest(){
+        public void commentsUpdateWithNullContentTest() {
 
         }
 
         @Test
         @DisplayName("- content가 blank일 경우 오류")
-        public void commentsUpdateWithBlankContentTest(){
+        public void commentsUpdateWithBlankContentTest() {
 
         }
 
         @Test
         @DisplayName("- content가 200자를 넘겼을 경우 오류")
-        public void commentsUpdateWithOverlengthContentTest(){
+        public void commentsUpdateWithOverlengthContentTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 사용자의 댓글 수정 오류")
-        public void commentsUpdateWithDeletedUserTest(){
+        public void commentsUpdateWithDeletedUserTest() {
 
         }
     }
@@ -200,49 +364,49 @@ class CommentIntegrationTest {
      * - 삭제된 포스트의 댓글 삭제 오류
      * - 존재하지 않는 댓글 삭제 오류
      * - 삭제된 댓글 삭제 오류
-     * */
+     */
     @Nested
     @DisplayName("Comment Delete Test")
-    public class CommentDeleteTest{
+    public class CommentDeleteTest {
         @Test
         @DisplayName("- 댓글 정상 삭제")
-        public void commentsDeleteSuccessTest(){
+        public void commentsDeleteSuccessTest() {
 
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자의 댓글 삭제 오류")
-        public void commentsDeletedByUnauthenticatedUserTest(){
+        public void commentsDeletedByUnauthenticatedUserTest() {
 
         }
 
         @Test
         @DisplayName("- 타인의 댓글을 삭제 오류")
-        public void commentsDeletedByOtherUserTest(){
+        public void commentsDeletedByOtherUserTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 포스트의 댓글 삭제 오류")
-        public void commentsDeleteWithNonexistentPostSeqTest(){
+        public void commentsDeleteWithNonexistentPostSeqTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 포스트의 댓글 삭제 오류")
-        public void commentsDeleteWithDeletedPostSeqTest(){
+        public void commentsDeleteWithDeletedPostSeqTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글 삭제 오류")
-        public void nonexistentCommentDeleteTest(){
+        public void nonexistentCommentDeleteTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 댓글 삭제 오류")
-        public void commentsDeleteWithDeletedCommentTest(){
+        public void commentsDeleteWithDeletedCommentTest() {
 
         }
     }
@@ -253,87 +417,87 @@ class CommentIntegrationTest {
      * - 삭제된 게시글의 댓글에 좋아요 오류
      * - 존재하지 않는 댓글에 좋아요 오류
      * - 인증되지 않은 사용자 좋아요 요청 오류
-     * */
+     */
     @Nested
     @DisplayName("Comment Like Test")
-    public class CommentLikeTest{
+    public class CommentLikeTest {
         @Test
         @DisplayName("- 좋아요")
-        public void commentLikeTest(){
+        public void commentLikeTest() {
 
         }
 
         @Test
         @DisplayName("- 좋아요 취소")
-        public void commentUnlikeTest(){
+        public void commentUnlikeTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 게시글의 댓글에 좋아요 오류")
-        public void commentLikeWithDeletedCommentTest(){
+        public void commentLikeWithDeletedCommentTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글에 좋아요 오류")
-        public void commentLikeWithNonexistentCommentTest(){
+        public void commentLikeWithNonexistentCommentTest() {
 
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자 좋아요 요청 오류")
-        public void commentLikeWithUnauthenticatedUserTest(){
+        public void commentLikeWithUnauthenticatedUserTest() {
 
         }
     }
 
     /**
      * - 신고 성공
-     *  - 신고 내용은 null가능
+     * - 신고 내용은 null가능
      * - 중복 신고 오류
      * - 존재하지 않는 게시글의 댓글 신고 오류
      * - 삭제된 게시글의 댓글 신고 오류
      * - 존재하지 않는 댓글 신고 오류
      * - 삭제된 댓글 신고 오류
      * - 카테고리 미설정 오류
-     * */
+     */
     @Nested
     @DisplayName("Comment Report Test")
-    public class CommentReportTest{
+    public class CommentReportTest {
         @Test
         @DisplayName("- 신고 성공")
-        public void commentReportSuccessTest(){
+        public void commentReportSuccessTest() {
 
         }
 
         @Test
         @DisplayName("- 중복 신고 오류")
-        public void commentReportDuplicatedTest(){
+        public void commentReportDuplicatedTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 게시글의 댓글 신고 오류")
-        public void commentReportWithNonexistentPostTest(){
+        public void commentReportWithNonexistentPostTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 게시글의 댓글 신고 오류")
-        public void commentReportWithDeletedPostTest(){
+        public void commentReportWithDeletedPostTest() {
 
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글 신고 오류")
-        public void commentReportWithDeletedCommentTest(){
+        public void commentReportWithDeletedCommentTest() {
 
         }
 
         @Test
         @DisplayName("- 삭제된 댓글 신고 오류")
-        public void commentReportWith(){
+        public void commentReportWith() {
 
         }
     }
