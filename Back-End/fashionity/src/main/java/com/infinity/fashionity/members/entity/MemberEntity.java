@@ -3,6 +3,10 @@ package com.infinity.fashionity.members.entity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -14,7 +18,11 @@ import static javax.persistence.GenerationType.*;
 
 @Entity
 @Table(name = "members")
-@SQLDelete(sql = "UPDATE Member SET deleted_at = now() WHERE seq = ?")
+@SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE member_seq = ?")
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberEntity extends CUDEntity {
 
     @Id
@@ -26,7 +34,7 @@ public class MemberEntity extends CUDEntity {
     private String id;
 
     @Column(name = "member_pw", length = 60, unique = false, nullable = false)
-    private String pw;
+    private String password;
 
     @Column(name = "member_nickname", length = 13, unique = true, nullable = false)
     private String nickname;
@@ -42,8 +50,6 @@ public class MemberEntity extends CUDEntity {
     private String profileUrl;
     @Column(name = "member_profile_intro", length = 50, unique = false, nullable = true)
     private String profileIntro;
-    @Column(name = "member_age", unique = false, nullable = false)
-    private Integer age;
     @Column(name = "member_gender", length = 20, unique = false, nullable = true)
     private Gender gender;
     @Column(name = "member_height", unique = false, nullable = true)
@@ -53,6 +59,12 @@ public class MemberEntity extends CUDEntity {
     @Column(name = "member_personalcolor", length = 20, unique = false, nullable = true)
     private String personalcolor;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member",cascade = CascadeType.ALL)
     private List<MemberRoleEntity> memberRoles = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "member : " + id + " email = " + email;
+    }
 }
