@@ -1,10 +1,36 @@
 <template lang="">
   <div>
-    <the-nav-bar></the-nav-bar>
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
-        <div class="col-1" id="logo">Fashionity</div>
+        <div class="col-3" id="logo">Fashionity</div>
+        <div class="col">
+          <div class="row justify-content-end">
+            <div class="col-8"></div>
+            <div class="col">
+              <div class="row justify-content-end">
+                <div class="col-6"></div>
+                <div class="col">22</div>
+                <div class="col">22</div>
+                <div class="col">22</div>
+                <div class="col box">
+                  <img class="profile" src="@/assets/img/unknown.png" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="col-1">
+              <font-awesome-icon icon="circle-plus" style="color: #0f0f0f" />
+            </div>
+            <div class="col-1">Flex item 2</div>
+            <div class="col-1">Flex item 3</div>
+            <div class="col-1 box">
+              <img class="profile" src="@/assets/img/unknown.png" />
+            </div>
+          </div> -->
+        </div>
       </div>
+
       <div class="row justify-content-center">
         <div class="col col-lg-2 header-tab">HOME</div>
         <div class="col col-lg-2 header-tab">CONSULTING</div>
@@ -15,13 +41,7 @@
   </div>
 </template>
 <script>
-import TheNavBar from "./TheNavBar.vue";
-
-export default {
-  components: {
-    TheNavBar,
-  },
-};
+export default {};
 </script>
 <style>
 .header-tab {
@@ -32,8 +52,19 @@ export default {
   text-align: center;
 }
 #logo {
-  margin-left: 3%;
   font-style: normal;
   font-size: 50px;
+}
+
+.box {
+  width: 30px;
+  height: 30px;
+  border-radius: 70%;
+  overflow: hidden;
+}
+.profile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
