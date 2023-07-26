@@ -19,7 +19,11 @@ public enum ErrorCode {
     CREDENTIAL_NOT_MATCHED(HttpStatus.UNAUTHORIZED, "A001", "아이디 또는 비밀번호가 일치하지 않습니다."),
 
     // Member
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다.");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다."),
+    EXIST_MEMBER_ID(HttpStatus.BAD_REQUEST, "M002", "이미 존재하는 아이디입니다."),
+    EXIST_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M003", "이미 존재하는 이메일입니다."),
+    EXIST_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "M004", "이미 존재하는 닉네임입니다.");
+
 
 
     private final HttpStatus status;

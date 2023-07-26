@@ -1,5 +1,6 @@
 package com.infinity.fashionity.members.service;
 
+import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.utils.HashUtil;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.data.SNSType;
@@ -7,6 +8,7 @@ import com.infinity.fashionity.members.dto.LoginDTO;
 import com.infinity.fashionity.members.dto.SaveDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
+import com.infinity.fashionity.members.exception.AlreadyExistException;
 import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
@@ -21,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import sun.security.util.Password;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -31,6 +36,8 @@ public class MemberServiceImpl implements MemberService{
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
+    // TODO: 정규식 넣어서 아이디, 비번, 닉네임, 패스워드 유효성 검사 진행
+    // 그에 맞는 테스트 코드 작성
     /**
      * 일반 로그인 전용
      * 아이디가 없으면 MemberNotFoundException
@@ -41,10 +48,10 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public LoginDTO.Response login(LoginDTO.Request dto) {
         MemberEntity member = memberRepository.findById(dto.getId())
-                .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
 
         if (!member.getId().equals(dto.getId()) || !passwordEncoder.matches(dto.getPassword(),member.getPassword()))
-            throw new IdOrPasswordNotMatchedException();
+            throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
         return LoginDTO.Response.builder()
                 .accessToken(jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles()))
@@ -98,6 +105,19 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public SaveDTO.Response register(SaveDTO.Request dto) {
+
+        // 이메일, 아이디, 닉네임 중복검사
+        Optional<MemberEntity> byId = memberRepository.findById(dto.getId());
+        if (byId.isPresent())
+            throw new AlreadyExistException(EXIST_MEMBER_ID);
+
+        Optional<MemberEntity> byEmail = memberRepository.findByEmail(dto.getEmail());
+        if (byEmail.isPresent())
+            throw new AlreadyExistException(EXIST_MEMBER_EMAIL);
+
+        Optional<MemberEntity> byNickname = memberRepository.findByNickname(dto.getNickname());
+        if (byNickname.isPresent())
+            throw new AlreadyExistException(EXIST_MEMBER_NICKNAME);
 
         MemberEntity member = MemberEntity.builder()
                 .id(dto.getId())
