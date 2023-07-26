@@ -16,7 +16,9 @@ public class CommentListDTO {
     @Setter
     public static class Request {
         private Long postSeq;//pathVariable
+        @Builder.Default
         private int page = 0;//param
+        @Builder.Default
         private int size = 50;//param
     }
 
@@ -38,12 +40,13 @@ public class CommentListDTO {
         @AllArgsConstructor
         @Builder
         static class Comment {
-            private Long id;
+            @JsonAlias(value = "member_seq")
+            private Long memberSeq;
 
             @JsonAlias(value = "profile_img")
             private String profileImg;
 
-            private String name;
+            private String nickname;
 
             @JsonAlias(value = "created_at")
             @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -52,7 +55,12 @@ public class CommentListDTO {
             @JsonAlias(value = "updated_at")
             @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
             private LocalDateTime updatedAt;
+
             private String content;
+
+            @JsonAlias(value = "like_cnt")
+            private int likeCnt;
+
             private boolean liked;
         }
     }

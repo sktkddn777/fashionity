@@ -10,15 +10,18 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class PostListDTO {
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Request{
+        @Builder.Default
         private int page = 0;
+        @Builder.Default
         private int size = 12;
+        @Builder.Default
         private String s = "popular";
     }
 

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="38dec0ab-df9b-402a-8c5a-d609c3416d8d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Back-End/fashionity/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Back-End/fashionity/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Back-End/fashionity/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Back-End/fashionity/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Back-End/fashionity/src/main/java/com/infinity/fashionity/consultants/entity/ConsultantEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Back-End/fashionity/src/main/java/com/infinity/fashionity/consultants/entity/ConsultantEntity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,10 +27,16 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/PJT/S09P12A108/Back-End/fashionity/build.gradle",
+    "last_opened_file_path": "C:/Users/SSAFY/Desktop/S09P12A108/Back-End/fashionity",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -39,6 +49,7 @@
       <option name="presentableId" value="Default" />
       <updated>1689923092179</updated>
       <workItem from="1689923093196" duration="26000" />
+      <workItem from="1690185785916" duration="415000" />
     </task>
     <servers />
   </component>
