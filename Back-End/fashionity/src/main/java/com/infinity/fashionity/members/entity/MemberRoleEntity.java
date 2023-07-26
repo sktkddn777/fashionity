@@ -22,7 +22,7 @@ public class MemberRoleEntity {
     private Long seq;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "member_type_role", unique = true, nullable = false, length = 20)
+    @Column(name = "member_type_role", unique = false, nullable = false, length = 20)
     private MemberRole memberRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
