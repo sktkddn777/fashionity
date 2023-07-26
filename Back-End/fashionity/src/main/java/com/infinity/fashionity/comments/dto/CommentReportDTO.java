@@ -17,7 +17,7 @@ public class CommentReportDTO {
     public static class Request{
         //header
         @JsonIgnore
-        private Long userSeq;
+        private Long memberSeq;
 
         //pathVariable
         @JsonIgnore

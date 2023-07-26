@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import TheFooter from "./components/TheFooter.vue";
-import TheHeader from "./components/TheHeader.vue";
+import TheFooter from "./components/layout/TheFooter.vue";
+import TheHeader from "./components/layout/TheHeader.vue";
 
 export default {
   name: "App",

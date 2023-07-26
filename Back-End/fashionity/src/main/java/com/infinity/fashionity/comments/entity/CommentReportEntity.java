@@ -27,4 +27,10 @@ public class CommentReportEntity extends CEntity {
     @JoinColumn(name = "member_seq")
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberEntity member;
+
+    @Column(name="comment_report_content",nullable = true,unique = false)
+    private String content;
+
+    @Column(name="comment_report_category",nullable = false,unique = false)
+    private String category;
 }

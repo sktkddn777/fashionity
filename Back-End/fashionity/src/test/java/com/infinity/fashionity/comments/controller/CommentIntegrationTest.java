@@ -176,12 +176,15 @@ class CommentIntegrationTest {
 
             //등록할 comment
             CommentSaveDTO.Request request = CommentSaveDTO.Request.builder()
-                            .content("댓글 등록!")
+                            .content("comment!!!!!")
                             .build();
 
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}"), randomTargetPostSeq)
-                            .header("Authorization", "Bearer " + token.getAccessToken()))
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
+                            .header("Authorization", "Bearer " + token.getAccessToken())
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(handler().handlerType(CommentController.class))
                     .andExpect(handler().methodName("saveComment"))

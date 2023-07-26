@@ -1,12 +1,13 @@
 package com.infinity.fashionity.members.exception;
 
-public class MemberNotFoundException extends RuntimeException{
+import com.infinity.fashionity.global.exception.CustomException;
+import com.infinity.fashionity.global.exception.ErrorCode;
 
-    public MemberNotFoundException(String message) {
-        super(message);
-    }
+public class MemberNotFoundException extends CustomException {
+
+    private static final ErrorCode ERROR_CODE = ErrorCode.MEMBER_NOT_FOUND;
 
     public MemberNotFoundException() {
-        super("해당 멤버를 찾을 수 없습니다.");
+        super(ERROR_CODE);
     }
 }

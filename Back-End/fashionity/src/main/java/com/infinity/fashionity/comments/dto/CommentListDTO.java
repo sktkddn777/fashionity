@@ -40,7 +40,7 @@ public class CommentListDTO {
         @NoArgsConstructor
         @AllArgsConstructor
         @Builder
-        static class Comment {
+        public static class Comment {
             @JsonAlias(value = "member_seq")
             private Long memberSeq;
 

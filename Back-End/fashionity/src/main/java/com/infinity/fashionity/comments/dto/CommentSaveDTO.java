@@ -12,6 +12,7 @@ public class CommentSaveDTO {
     @NoArgsConstructor
     @Getter
     @Setter
+    @ToString
     public static class Request{
         //Header로 받아온 인증정보
         @JsonIgnore

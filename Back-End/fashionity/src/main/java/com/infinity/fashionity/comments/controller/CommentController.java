@@ -4,6 +4,7 @@ import com.infinity.fashionity.comments.dto.CommentListDTO;
 import com.infinity.fashionity.comments.dto.CommentSaveDTO;
 import com.infinity.fashionity.comments.service.CommentService;
 import com.infinity.fashionity.posts.dto.PostDetailDTO;
+import com.infinity.fashionity.security.dto.JwtAuthentication;
 import com.infinity.fashionity.security.dto.JwtAuthenticationToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,12 +43,11 @@ public class CommentController {
 
     @PostMapping("/{postSeq}/comments")
     public ResponseEntity<CommentSaveDTO.Response> saveComment(
-            @AuthenticationPrincipal JwtAuthenticationToken auth,
+            @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
             @RequestBody CommentSaveDTO.Request dto){
-        log.info("auth = {}",auth);
+        dto.setMemberSeq(auth.getSeq());
         dto.setPostSeq(postSeq);
-
         return new ResponseEntity<>(commentService.save(dto),HttpStatus.CREATED);
     }
 }

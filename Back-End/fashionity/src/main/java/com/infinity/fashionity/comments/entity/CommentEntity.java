@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -16,6 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "comments")
 @SQLDelete(sql = "UPDATE Comments SET deleted_at = now() WHERE comment_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor
