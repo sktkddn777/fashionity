@@ -19,7 +19,7 @@ public class PostDetailDTO {
     @NoArgsConstructor
     @Builder
     public static class Request{
-        @NotBlank
+
         @JsonIgnore
         @JsonAlias(value = "post_seq")
         private long postSeq;
@@ -35,6 +35,11 @@ public class PostDetailDTO {
         private List<Post> post = new ArrayList<>();
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class Post{
         @JsonAlias(value = "post_seq")
         private long postSeq;

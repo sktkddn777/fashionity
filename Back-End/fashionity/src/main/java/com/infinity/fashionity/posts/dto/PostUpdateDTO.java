@@ -14,7 +14,7 @@ public class PostUpdateDTO {
     @NoArgsConstructor
     @Builder
     public static class Request{
-        @NotBlank
+
         @JsonIgnore
         @JsonAlias(value = "post_seq")
         private long postSeq;

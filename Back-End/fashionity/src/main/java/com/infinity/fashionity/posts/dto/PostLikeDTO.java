@@ -14,7 +14,7 @@ public class PostLikeDTO {
     @NoArgsConstructor
     @Builder
     public static class Request{
-        @NotBlank
+
         @JsonIgnore
         @JsonAlias(value = "post_seq")
         private long postSeq;
