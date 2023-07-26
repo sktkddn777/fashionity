@@ -1,7 +1,6 @@
 package com.infinity.fashionity.consultants.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
-import jdk.vm.ci.meta.Local;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
