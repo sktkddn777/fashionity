@@ -1,24 +1,18 @@
 package com.infinity.fashionity.comments.service;
 
 import com.infinity.fashionity.comments.dto.*;
-import com.infinity.fashionity.comments.entity.CommentEntity;
-import com.infinity.fashionity.comments.entity.CommentLikeKey;
-import com.infinity.fashionity.comments.entity.CommentReportEntity;
-import com.infinity.fashionity.comments.entity.CommentReportKey;
-import com.infinity.fashionity.comments.exception.AlreadyExistException;
-import com.infinity.fashionity.comments.exception.NotFoundException;
+import com.infinity.fashionity.comments.entity.*;
+import com.infinity.fashionity.global.exception.AlreadyExistException;
+import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.comments.repository.CommentLikeRepository;
 import com.infinity.fashionity.comments.repository.CommentReportRepository;
 import com.infinity.fashionity.comments.repository.CommentRepository;
+import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.members.entity.MemberEntity;
-import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +27,7 @@ public class CommentServiceImpl implements CommentService{
     private final CommentReportRepository reportRepository;
     private final CommentLikeRepository likeRepository;
     @Override
+    @Transactional(readOnly = true)
     public CommentListDTO.Response getList(CommentListDTO.Request dto) {
         return null;
     }
@@ -41,10 +36,10 @@ public class CommentServiceImpl implements CommentService{
     @Transactional
     public CommentSaveDTO.Response save(CommentSaveDTO.Request dto) {
         MemberEntity member = memberRepository.findById(dto.getMemberSeq())
-                .orElseThrow(() -> new NotFoundException("해당 멤버를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         PostEntity post = postRepository.findById(dto.getPostSeq())
-                .orElseThrow(() -> new NotFoundException("해당 포스트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         CommentEntity comment = CommentEntity.builder()
                 .content(dto.getContent())
@@ -61,45 +56,62 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
+    @Transactional
     public CommentReportDTO.Response report(CommentReportDTO.Request dto) {
+
+        MemberEntity member = memberRepository.findById(dto.getMemberSeq()).orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        CommentEntity comment = commentRepository.findById(dto.getCommentSeq()).orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
         CommentReportKey key = CommentReportKey.builder()
-                .member(dto.getMemberSeq())
-                .comment(dto.getCommentSeq())
+                .member(member.getSeq())
+                .comment(comment.getSeq())
                 .build();
 
-        Optional<CommentReportEntity> exist = reportRepository.findById(key);
-        if(exist.isPresent()){
-            throw new AlreadyExistException("이미 신고하신 댓글입니다.");
-        }
-        else{
-            MemberEntity member = memberRepository.findById(dto.getMemberSeq()).orElseThrow(() -> new NotFoundException("해당 유저를 찾을 수 없습니다."));
-            CommentEntity comment = commentRepository.findById(dto.getCommentSeq()).orElseThrow(() -> new NotFoundException("해당 댓글을 찾을 수 없습니다."));
+        reportRepository.findById(key).ifPresent(e->{
+            throw new AlreadyExistException(ErrorCode.COMMENT_REPORT_ALREADY_EXIST);
+        });
 
-            CommentReportEntity report = CommentReportEntity.builder()
-                    .comment(comment)
-                    .member(member)
-                    .category(dto.getReportCategory())
-                    .content(dto.getReportContent())
-                    .build();
+        CommentReportEntity report = CommentReportEntity.builder()
+                .comment(comment)
+                .member(member)
+                .category(dto.getReportCategory())
+                .content(dto.getReportContent())
+                .build();
 
-            reportRepository.save(report);
-            return CommentReportDTO.Response.builder()
-                    .success(true)
-                    .build();
-        }
+        reportRepository.save(report);
+        return CommentReportDTO.Response.builder()
+                .success(true)
+                .build();
 
     }
 
     @Override
+    @Transactional
     public CommentLikeDTO.Response like(CommentLikeDTO.Request dto) {
+
+        MemberEntity member = memberRepository.findById(dto.getMemberSeq()).orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        CommentEntity comment = commentRepository.findById(dto.getCommentSeq()).orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+
         CommentLikeKey key = CommentLikeKey.builder()
-                .comment(dto.getCommentSeq())
-                .member(dto.getMemberSeq())
+                .comment(comment.getSeq())
+                .member(member.getSeq())
                 .build();
 
-        memberRepository.findById(dto.getMemberSeq()).orElseThrow(()->new NotFoundException("해당 유저를 찾을 수 없습니다."));
-
-        return null;
+        Optional<CommentLikeEntity> exist = likeRepository.findById(key);
+        boolean like = false;
+        if(exist.isPresent()){
+            likeRepository.delete(exist.get());
+            like = false;
+        }
+        else{
+            likeRepository.save(CommentLikeEntity.builder()
+                    .comment(comment)
+                    .member(member)
+                    .build());
+            like = true;
+        }
+        return CommentLikeDTO.Response.builder()
+                .like(like)
+                .build();
     }
 
     @Override

@@ -19,7 +19,14 @@ public enum ErrorCode {
     CREDENTIAL_NOT_MATCHED(HttpStatus.UNAUTHORIZED, "A001", "아이디 또는 비밀번호가 일치하지 않습니다."),
 
     // Member
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다.");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다."),
+
+    // Post
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND,"P001","존재하지 않는 포스트입니다."),
+
+    // Comment
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"CM001","존재하지 않는 댓글입니다."),
+    COMMENT_REPORT_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"CM002","이미 신고한 댓글입니다.");
 
 
     private final HttpStatus status;

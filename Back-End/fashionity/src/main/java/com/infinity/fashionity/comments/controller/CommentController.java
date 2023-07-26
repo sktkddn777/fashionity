@@ -26,12 +26,9 @@ public class CommentController {
     private final CommentService commentService;
     @GetMapping("/{postSeq}/comments")
     public ResponseEntity<CommentListDTO.Response> getCommentList(
-            @AuthenticationPrincipal JwtAuthenticationToken auth,
             @PathVariable Long postSeq, CommentListDTO.Request dto
     ){
         dto.setPostSeq(postSeq);
-        System.out.println(dto);
-
         CommentListDTO.Response response = CommentListDTO.Response.builder()
                 .prev(false)
                 .next(false)
