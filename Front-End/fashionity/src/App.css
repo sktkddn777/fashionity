@@ -1,12 +1,15 @@
 @font-face {
-    font-family: 'IBMPlexSansKR-Regular';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "IBMPlexSansKR-Regular";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
 }
 
 #app {
-  font-family: 'IBMPlexSansKR-Regular';
+  margin: 0;
+  padding: 0;
+  font-family: "IBMPlexSansKR-Regular";
   text-align: center;
   color: #424242;
 }

@@ -1,67 +1,16 @@
 <template lang="">
-    <div>
-        <!-- Image and text -->
-        <b-navbar variant="faded" type="light">
-          <b-navbar-brand href="#">
-            <!-- <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="icon">
-                            <img src="https://placekitten.com/g/30/30" class="d-inline-block align-top" alt="Kitten">
-            
-                        </div>
-                        
-                    </div>
-                    <div class="col">
-                        <div class="icon">
-                            <img src="https://placekitten.com/g/30/30" class="d-inline-block align-top" alt="Kitten">
-            
-                        </div>
-                        
-                    </div>
-                    <div class="col">
-                        <div class="icon">
-                            <img src="https://placekitten.com/g/30/30" class="d-inline-block align-top" alt="Kitten">
-            
-                        </div>
-                        
-                    </div>
-    
-                </div>
-
-
-            </div> -->
-            <div class="container">
-                <div class="row">
-                  <div class="col-sm">
-                    One of three columns
-                  </div>
-                  <div class="col-sm">
-                    One of three columns
-                  </div>
-                  <div class="col-sm">
-                    One of three columns
-                  </div>
-                </div>
-              </div>
-                           
-           
-          </b-navbar-brand>
-        </b-navbar>
-      </div>
-      
+  <div class="d-flex flex-row-reverse" id="navbar">
+    <div class="p-2">Flex item 1</div>
+    <div class="p-2">Flex item 2</div>
+    <div class="p-2">Flex item 3</div>
+  </div>
 </template>
 <script>
-export default {
-    
-}
+export default {};
 </script>
 <style>
-
-#icon {
-    margin-right: 10px;
-    display : inline-block;
-    
-
+#navbar {
+  margin: 0;
+  padding: 0;
 }
 </style>
