@@ -15,8 +15,10 @@ import com.infinity.fashionity.security.oauth.dto.OAuthUserInfo;
 import com.infinity.fashionity.security.service.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.security.util.Password;
 
 import java.util.List;
 
@@ -25,9 +27,9 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
-
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 일반 로그인 전용
@@ -41,7 +43,7 @@ public class MemberServiceImpl implements MemberService{
         MemberEntity member = memberRepository.findById(dto.getId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (!member.getId().equals(dto.getId()) || !member.getPassword().equals(dto.getPassword()))
+        if (!member.getId().equals(dto.getId()) || !passwordEncoder.matches(dto.getPassword(),member.getPassword()))
             throw new IdOrPasswordNotMatchedException();
 
         return LoginDTO.Response.builder()
@@ -66,7 +68,7 @@ public class MemberServiceImpl implements MemberService{
             // TODO: 회원가입 로직
             MemberEntity newMember = MemberEntity.builder()
                     .id(HashUtil.makeHashId())
-                    .password("password12345")
+                    .password(passwordEncoder.encode("password12345"))
                     .nickname(oAuthNameConstraints(oauthUserInfo.getNickname()))
                     .email(oauthUserInfo.getEmail())
                     .profileUrl(oauthUserInfo.getProfileImgUrl())
@@ -99,7 +101,7 @@ public class MemberServiceImpl implements MemberService{
 
         MemberEntity member = MemberEntity.builder()
                 .id(dto.getId())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
                 .sns(dto.getSns())

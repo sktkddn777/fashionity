@@ -16,20 +16,20 @@ public class ConsultantController {
     // [유저] 전체 컨설턴트 목록 조회
     @GetMapping("")
     public List<ConsultantEntity> getAllConsultants(){
-        return
+        return null;
     }
 
     // [유저] 컨설턴트 상세 정보 조회
-    @GetMapping
+//    @GetMapping
 
     // [컨설턴트] 전체 예약 조회
-    @GetMapping
+//    @GetMapping
 
     // [컨설턴트] 단일 예약 조회
-    @GetMapping
+//    @GetMapping
 
     // [컨설턴트] 전체 후기/평점 조회
-    @GetMapping
+//    @GetMapping
 
     // [컨설턴트] 예약별 후기/평점 조회
 }
