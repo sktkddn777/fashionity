@@ -1,14 +1,16 @@
 <template>
-  <div>
-    <!-- <img alt="Test Image" src="./assets/img/testImage.jpeg"> -->
-    <the-header></the-header>
+  <v-app class="first">
+    <div>
+      <!-- <img alt="Test Image" src="./assets/img/testImage.jpeg"> -->
+      <the-header></the-header>
 
-    <section id="wrapper">
+      <!-- <section id="wrapper">
       <div id="content">content</div>
-    </section>
-
-    <the-footer></the-footer>
-  </div>
+    </section> -->
+      <router-view></router-view>
+      <the-footer></the-footer>
+    </div>
+  </v-app>
 </template>
 
 <script>

@@ -1,5 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import router from "./router";
+import vuetify from "./plugins/vuetify";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
@@ -16,4 +18,8 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 /* add icons to the library */
 library.add(faUserSecret);
 
-createApp(App).component("font-awesome-icon", FontAwesomeIcon).mount("#app");
+createApp(App)
+  .use(router)
+  .use(vuetify)
+  .component("font-awesome-icon", FontAwesomeIcon)
+  .mount("#app");
