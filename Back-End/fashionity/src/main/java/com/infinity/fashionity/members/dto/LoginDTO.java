@@ -8,6 +8,7 @@ public class LoginDTO {
     @NoArgsConstructor
     @Getter
     @Setter
+    @ToString
     public static class Request{
         private String id;
         private String password;

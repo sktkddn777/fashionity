@@ -38,12 +38,11 @@ public class MemberServiceImpl implements MemberService{
      */
     @Override
     public LoginDTO.Response login(LoginDTO.Request dto) {
-
         MemberEntity member = memberRepository.findById(dto.getId())
-                .orElseThrow(() -> new MemberNotFoundException("해당 아이디를 가진 맴버를 찾을 수 없습니다."));
+                .orElseThrow(MemberNotFoundException::new);
 
         if (!member.getId().equals(dto.getId()) || !member.getPassword().equals(dto.getPassword()))
-            throw new IdOrPasswordNotMatchedException("아이디 혹은 비밀번호가 잘못됐습니다.");
+            throw new IdOrPasswordNotMatchedException();
 
         return LoginDTO.Response.builder()
                 .accessToken(jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles()))
