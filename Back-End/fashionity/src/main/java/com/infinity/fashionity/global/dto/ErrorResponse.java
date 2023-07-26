@@ -2,7 +2,9 @@ package com.infinity.fashionity.global.dto;
 
 import com.infinity.fashionity.global.exception.ErrorCode;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class ErrorResponse {
 
