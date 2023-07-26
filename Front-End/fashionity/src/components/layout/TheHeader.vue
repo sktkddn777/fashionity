@@ -18,16 +18,6 @@
               </div>
             </div>
           </div>
-          <!-- <div class="row">
-            <div class="col-1">
-              <font-awesome-icon icon="circle-plus" style="color: #0f0f0f" />
-            </div>
-            <div class="col-1">Flex item 2</div>
-            <div class="col-1">Flex item 3</div>
-            <div class="col-1 box">
-              <img class="profile" src="@/assets/img/unknown.png" />
-            </div>
-          </div> -->
         </div>
       </div>
 
