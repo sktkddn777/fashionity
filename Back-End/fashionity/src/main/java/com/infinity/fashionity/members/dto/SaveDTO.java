@@ -14,11 +14,11 @@ public class SaveDTO {//세이브 할 떄 필요한 request, response
     @NoArgsConstructor
     public static class Request {
 
-        @Length(min = 5, max = 20)
+        @Length(min = 6, max = 20)
         @NotBlank
-        private String id; //아이디값 (5~20)
+        private String id; //아이디값 (6~20)
 
-        @Length(max = 60)
+        @Length(min = 5, max = 60)
         @NotBlank
         private String password; //비밀번호값
 
