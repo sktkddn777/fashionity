@@ -56,6 +56,11 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
+    public CommentUpdateDTO.Response update(CommentUpdateDTO.Request dto) {
+        return null;
+    }
+
+    @Override
     @Transactional
     public CommentReportDTO.Response report(CommentReportDTO.Request dto) {
 
