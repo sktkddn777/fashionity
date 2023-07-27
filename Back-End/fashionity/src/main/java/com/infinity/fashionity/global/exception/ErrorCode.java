@@ -22,8 +22,11 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다."),
     EXIST_MEMBER_ID(HttpStatus.BAD_REQUEST, "M002", "이미 존재하는 아이디입니다."),
     EXIST_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M003", "이미 존재하는 이메일입니다."),
-    EXIST_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "M004", "이미 존재하는 닉네임입니다.");
-
+    EXIST_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "M004", "이미 존재하는 닉네임입니다."),
+    INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "M005", "아이디 제약조건에 맞지 않습니다."),
+    INVALID_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "M006", "닉네임 제약조건에 맞지 않습니다."),
+    INVALID_MEMBER_PASSWORD(HttpStatus.BAD_REQUEST, "M007", "비밀번호 제약조건에 맞지 않습니다."),
+    INVALID_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M008", "이메일 제약조건에 맞지 않습니다.");
 
 
     private final HttpStatus status;

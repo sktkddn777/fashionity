@@ -1,11 +1,6 @@
 package com.infinity.fashionity.members.dto;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
 
 public class SaveDTO {//세이브 할 떄 필요한 request, response
     @Builder
@@ -14,22 +9,15 @@ public class SaveDTO {//세이브 할 떄 필요한 request, response
     @NoArgsConstructor
     public static class Request {
 
-        @Length(min = 6, max = 20)
-        @NotBlank
         private String id; //아이디값 (6~20)
 
-        @Length(min = 5, max = 60)
-        @NotBlank
         private String password; //비밀번호값
 
-        @Length(max = 13)
-        @NotBlank
         private String nickname;
 
-        @Email
-        @NotBlank
         private String email;
 
+        @Builder.Default
         private Boolean sns = false; // sns 여부
     }
 
@@ -39,6 +27,6 @@ public class SaveDTO {//세이브 할 떄 필요한 request, response
     @NoArgsConstructor
     public static class Response{
         private String id;
-        private String nickname;
+        private String email;
     }
 }

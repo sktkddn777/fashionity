@@ -1,8 +1,6 @@
 package com.infinity.fashionity.members.service;
 
 import com.infinity.fashionity.global.utils.HashUtil;
-import com.infinity.fashionity.global.utils.StringUtils;
-import com.infinity.fashionity.members.data.MemberMaxLength;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.dto.LoginDTO;
@@ -10,6 +8,7 @@ import com.infinity.fashionity.members.dto.SaveDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.exception.AlreadyExistException;
+import com.infinity.fashionity.members.exception.CustomValidationException;
 import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
@@ -37,12 +36,12 @@ public class MemberServiceImpl implements MemberService{
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
-    private final String ID_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{5," + MemberMaxLength.ID + "}$";
 
+    private final String ID_REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{6,20}$";
+    private final String NICKNAME_REGEX = "^[a-zA-Z가-힣0-9]{4,12}$";
     private final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-    private final String PW_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{8,16}$";
+    private final String PW_REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$";
 
-    // TODO: 정규식 넣어서 아이디, 비번, 닉네임, 패스워드 유효성 검사 진행
     // 그에 맞는 테스트 코드 작성
     /**
      * 일반 로그인 전용
@@ -105,7 +104,13 @@ public class MemberServiceImpl implements MemberService{
 
     private void registerDtoValidation(SaveDTO.Request dto) {
         if (!Pattern.matches(ID_REGEX, dto.getId()))
-            throw new
+            throw new CustomValidationException(INVALID_MEMBER_ID);
+        if (!Pattern.matches(NICKNAME_REGEX, dto.getNickname()))
+            throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
+        if (!Pattern.matches(EMAIL_REGEX, dto.getEmail()))
+            throw new CustomValidationException(INVALID_MEMBER_EMAIL);
+        if (!Pattern.matches(PW_REGEX, dto.getPassword()))
+            throw new CustomValidationException(INVALID_MEMBER_PASSWORD);
     }
 
     /**
@@ -130,6 +135,9 @@ public class MemberServiceImpl implements MemberService{
         if (byNickname.isPresent())
             throw new AlreadyExistException(EXIST_MEMBER_NICKNAME);
 
+        // 정규식을 통해 유효성 검사
+        registerDtoValidation(dto);
+
         MemberEntity member = MemberEntity.builder()
                 .id(dto.getId())
                 .password(passwordEncoder.encode(dto.getPassword()))
@@ -149,7 +157,7 @@ public class MemberServiceImpl implements MemberService{
 
         return SaveDTO.Response.builder()
                 .id(savedMember.getId())
-                .nickname(savedMember.getNickname())
+                .email(savedMember.getEmail())
                 .build();
     }
 
