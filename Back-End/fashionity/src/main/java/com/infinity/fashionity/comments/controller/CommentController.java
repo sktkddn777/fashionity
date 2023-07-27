@@ -19,6 +19,10 @@ import java.util.ArrayList;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * TODO
+ * Validation을 ErrorCode를 이용하여 진행
+ * */
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
@@ -28,7 +32,8 @@ public class CommentController {
 
     @GetMapping(value = "/{postSeq}/comments", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentListDTO.Response> getCommentList(
-            @PathVariable Long postSeq, CommentListDTO.Request dto
+            @PathVariable Long postSeq,
+            CommentListDTO.Request dto
     ) {
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.getList(dto), HttpStatus.OK);

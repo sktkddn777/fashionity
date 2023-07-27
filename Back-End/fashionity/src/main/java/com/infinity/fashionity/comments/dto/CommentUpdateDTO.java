@@ -1,5 +1,6 @@
 package com.infinity.fashionity.comments.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

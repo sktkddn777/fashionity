@@ -34,35 +34,5 @@ public class CommentListDTO {
         private int page;//현재 페이지가 몇페이지인지
         @Builder.Default
         private List<Comment> comments = new ArrayList<>();//댓글들
-
-        @Getter
-        @Setter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @Builder
-        public static class Comment {
-            @JsonAlias(value = "member_seq")
-            private Long memberSeq;
-
-            @JsonAlias(value = "profile_img")
-            private String profileImg;
-
-            private String nickname;
-
-            @JsonAlias(value = "created_at")
-            @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-            private LocalDateTime createdAt;
-
-            @JsonAlias(value = "updated_at")
-            @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
-            private LocalDateTime updatedAt;
-
-            private String content;
-
-            @JsonAlias(value = "like_cnt")
-            private int likeCnt;
-
-            private boolean liked;
-        }
     }
 }
