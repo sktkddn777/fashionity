@@ -1,7 +1,8 @@
 package com.infinity.fashionity.members.service;
 
-import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.utils.HashUtil;
+import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.members.data.MemberMaxLength;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.dto.LoginDTO;
@@ -20,10 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.security.util.Password;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
@@ -35,6 +36,11 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+
+    private final String ID_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{5," + MemberMaxLength.ID + "}$";
+
+    private final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    private final String PW_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{8,16}$";
 
     // TODO: 정규식 넣어서 아이디, 비번, 닉네임, 패스워드 유효성 검사 진행
     // 그에 맞는 테스트 코드 작성
@@ -95,6 +101,11 @@ public class MemberServiceImpl implements MemberService{
 
         List<MemberRoleEntity> memberRoles = member.getMemberRoles();
         return new AuthUserInfo(member.getSeq(), member.getEmail(), memberRoles);
+    }
+
+    private void registerDtoValidation(SaveDTO.Request dto) {
+        if (!Pattern.matches(ID_REGEX, dto.getId()))
+            throw new
     }
 
     /**
