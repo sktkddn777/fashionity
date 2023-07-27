@@ -1,5 +1,6 @@
 package com.infinity.fashionity.posts.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,9 +15,11 @@ public class PostSaveDTO {
     @NoArgsConstructor
     @Builder
     public static class Request{
+        @JsonIgnore
+        private Long memberSeq;
         @NotBlank
         @Builder.Default
-        private ArrayList<MultipartFile> images = new ArrayList<>();
+        private ArrayList<String> images = new ArrayList<>();
         @NotBlank
         private String content;
         @Builder.Default

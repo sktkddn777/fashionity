@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     // Post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND,"P001","존재하지 않는 포스트입니다."),
+    POST_REPORT_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "P002", "이미 신고한 게시글입니다."),
 
     // Comment
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"CM001","존재하지 않는 댓글입니다."),

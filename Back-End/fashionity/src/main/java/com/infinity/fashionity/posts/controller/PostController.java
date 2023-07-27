@@ -2,9 +2,11 @@ package com.infinity.fashionity.posts.controller;
 
 import com.infinity.fashionity.posts.dto.*;
 import com.infinity.fashionity.posts.service.PostService;
+import com.infinity.fashionity.security.dto.JwtAuthentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,9 +36,12 @@ public class PostController {
 
     //게시글 등록
     @PostMapping
-    public ResponseEntity<PostSaveDTO.Response> savePost(@RequestBody PostSaveDTO.Request dto){
+    public ResponseEntity<PostSaveDTO.Response> savePost(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody PostSaveDTO.Request dto){
+        dto.setMemberSeq(auth.getSeq());
         PostSaveDTO.Response success = postService.savePost(dto);
-        return new ResponseEntity<>(success, HttpStatus.OK);
+        return new ResponseEntity<>(success, HttpStatus.CREATED);
     }
 
     //게시글 수정

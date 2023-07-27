@@ -12,6 +12,8 @@ public class PostDeleteDTO {
     @Builder
     public static class Request{
         @JsonIgnore
+        private Long memberSeq;
+        @JsonIgnore
         @JsonAlias(value = "post_seq")
         private long postSeq;
     }

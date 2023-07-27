@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
+import java.awt.*;
 
 @Entity
 @Table(name = "posts")
@@ -30,4 +31,6 @@ public class PostEntity extends CUDEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_seq", nullable = false)
     private MemberEntity member;
+
+
 }

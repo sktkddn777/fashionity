@@ -15,11 +15,11 @@ public class PostReportDTO {
     @NoArgsConstructor
     @Builder
     public static class Request{
-
         @JsonIgnore
-        @JsonAlias(value = "post_seq")
+        private Long memberSeq;
+        @JsonIgnore
         private long postSeq;
-        @NotBlank
+        @NotBlank(message="신고유형을 입력해주세요.")
         private String type;
         private String content;
     }
