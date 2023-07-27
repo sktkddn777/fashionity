@@ -1,5 +1,6 @@
 package com.infinity.fashionity.consultants.entity;
 
+import com.infinity.fashionity.consultants.data.Level;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.AllArgsConstructor;
@@ -22,8 +23,9 @@ public class ConsultantEntity extends CUDEntity {
     @Column(name = "consultant_info_seq")
     private Long seq;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "consultant_info_level", length = 20, unique = false, nullable = false)
-    private String level;
+    private Level level;
 
     @JoinColumn(name = "member_seq", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)

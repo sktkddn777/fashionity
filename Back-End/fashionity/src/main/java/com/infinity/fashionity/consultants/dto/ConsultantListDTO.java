@@ -2,8 +2,9 @@ package com.infinity.fashionity.consultants.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
+import org.springframework.data.jpa.repository.Query;
 
-public class ConsultantDTO {
+public class ConsultantListDTO {
 
     @Builder
     @Getter
@@ -27,6 +28,11 @@ public class ConsultantDTO {
         @JsonAlias(value = "consultant_level")
         private String level;
 
+        // 평균 별점
+        private Float avgRating;
+
+        // 전체 컨설팅 횟수
+        private Integer totalCnt;
 
     }
 }

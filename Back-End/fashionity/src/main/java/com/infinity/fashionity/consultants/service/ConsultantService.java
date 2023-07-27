@@ -1,10 +1,13 @@
 package com.infinity.fashionity.consultants.service;
 
 
-import com.infinity.fashionity.consultants.dto.ConsultantDTO;
+import com.infinity.fashionity.consultants.dto.ConsultantDetailDTO;
+import com.infinity.fashionity.consultants.dto.ConsultantListDTO;
 
 import java.util.List;
 
 public interface ConsultantService {
-    List<ConsultantDTO.Response> allConsultants();
+    List<ConsultantListDTO.Response> getAllConsultants();
+    ConsultantDetailDTO.Response getConsultant();
 }
+

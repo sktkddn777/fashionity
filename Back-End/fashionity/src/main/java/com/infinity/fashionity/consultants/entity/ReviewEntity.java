@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name="reviews")
@@ -25,6 +27,8 @@ public class ReviewEntity extends CUDEntity {
     @Column(name = "review_content", unique = false, nullable = true, length = 200)
     private String content;
 
+    @Max(value=5)
+    @Min(value=0)
     @Column(name = "review_grade", unique = false, nullable = true)
     private float grade;
 
