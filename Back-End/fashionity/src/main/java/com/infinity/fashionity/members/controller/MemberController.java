@@ -32,6 +32,6 @@ public class MemberController {
             @RequestBody @Valid SaveDTO.Request dto
     ) {
         SaveDTO.Response response = memberService.register(dto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
