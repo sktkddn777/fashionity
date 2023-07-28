@@ -1,28 +1,34 @@
 package com.infinity.fashionity.members.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.dto.LoginDTO;
 import com.infinity.fashionity.members.dto.SaveDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
-import com.infinity.fashionity.members.service.MemberService;
+
+import com.infinity.fashionity.security.service.JwtProvider;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,13 +48,13 @@ class MemberControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private MemberService memberService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtProvider jwtProvider;
 
     private final String BASE_URL = "/api/v1/members";
     private List<MemberEntity> memberList = new ArrayList<>();
@@ -56,7 +62,7 @@ class MemberControllerTest {
 
     @BeforeEach
     public void dummyInsert() {
-        IntStream.rangeClosed(1, 10).forEach(i -> {
+        IntStream.rangeClosed(0, 10).forEach(i -> {
             MemberEntity member = MemberEntity.builder()
                     .id("testId".concat(Integer.toString(i)))
                     .password(passwordEncoder.encode("testPassword123@"))
@@ -97,7 +103,7 @@ class MemberControllerTest {
         private final String REGISTER_REQUEST_URL = "/register";
 
         @Test
-        @DisplayName("회원가입 성공")
+        @DisplayName("register success")
         public void memberRegisterSuccessTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -129,7 +135,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("아이디가 제약 조건에 맞지 않는 오류")
+        @DisplayName("invalid id exception")
         public void invalidIdTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -161,7 +167,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("비밀번호가 제약조건에 맞지 않는 오류")
+        @DisplayName("invalid password exception")
         public void invalidPasswordTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -193,7 +199,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("닉네임이 제약조건에 맞지 않는 오류")
+        @DisplayName("invalid nickname exception")
         public void invalidNicknameTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -225,7 +231,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("이메일이 제약조건에 맞지 않는 오류")
+        @DisplayName("invalid email exception")
         public void invalidEmailTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -257,7 +263,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("아이디가 중복되는 오류")
+        @DisplayName("id duplicate exception")
         public void duplicatedIdTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -289,7 +295,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("닉네임이 중복되는 오류")
+        @DisplayName("nickname duplicate exception")
         public void duplicatedNicknameTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -321,7 +327,7 @@ class MemberControllerTest {
         }
 
         @Test
-        @DisplayName("이메일이 중복되는 오류")
+        @DisplayName("email duplicate exception")
         public void duplicatedEmailTest() throws Exception {
             // given
             int totalMemberSize = memberRepository.findAll().size();
@@ -353,4 +359,109 @@ class MemberControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("Member Login Test")
+    public class MemberLoginTest {
+
+        private final String LOGIN_REQUEST_URL = "/login";
+        Long randomMemberId;
+
+        @Test
+        @DisplayName("login success")
+        public void memberLoginSuccessTest() throws Exception {
+            // given
+            Random random = new Random();
+            int totalMemberSize = memberRepository.findAll().size();
+            randomMemberId = Math.abs(random.nextLong())%totalMemberSize;
+
+            LoginDTO.Request request = LoginDTO.Request.builder()
+                    .id("testId".concat(Long.toString(randomMemberId)))
+                    .password("testPassword123@")
+                    .build();
+
+
+
+            // when & then
+            MvcResult result = mvc.perform(post(BASE_URL.concat(LOGIN_REQUEST_URL))
+                            .contentType("application/json")
+                            .characterEncoding(UTF_8)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(MemberController.class))
+                    .andExpect(handler().methodName("login"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.accessToken", notNullValue()))
+                    .andReturn();
+
+            String content = result.getResponse().getContentAsString(UTF_8);
+            LoginDTO.Response response = objectMapper.readValue(content, LoginDTO.Response.class);
+
+            Optional<MemberEntity> byId = memberRepository.findById(request.getId());
+
+            int idGetByClaims = (int) jwtProvider.getClaims(response.getAccessToken()).get("id");
+            int idGetByEntity = byId.get().getSeq().intValue();
+            assertThat(idGetByClaims).isEqualTo(idGetByEntity);
+        }
+
+        @Test
+        @DisplayName("idNotFoundException")
+        public void idNotFoundException() throws Exception{
+            // given
+            Random random = new Random();
+            int totalMemberSize = memberRepository.findAll().size();
+            randomMemberId = Math.abs(random.nextLong())%totalMemberSize;
+
+            LoginDTO.Request request = LoginDTO.Request.builder()
+                    .id("testId")
+                    .password("testPassword123@")
+                    .build();
+
+            // when & then
+            MvcResult result = mvc.perform(post(BASE_URL.concat(LOGIN_REQUEST_URL))
+                            .contentType("application/json")
+                            .characterEncoding(UTF_8)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(MemberController.class))
+                    .andExpect(handler().methodName("login"))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.code", is(MEMBER_NOT_FOUND.getCode())))
+                    .andExpect(jsonPath("$.message", is(MEMBER_NOT_FOUND.getMessage())))
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("idOrPasswordNotMatchException")
+        public void idOrPasswordNotMatchException() throws Exception{
+            // given
+            Random random = new Random();
+            int totalMemberSize = memberRepository.findAll().size();
+            randomMemberId = Math.abs(random.nextLong())%totalMemberSize;
+
+            LoginDTO.Request request = LoginDTO.Request.builder()
+                    .id("testId".concat(Long.toString(randomMemberId)))
+                    .password("notTestPassword123@")
+                    .build();
+
+            // when & then
+            MvcResult result = mvc.perform(post(BASE_URL.concat(LOGIN_REQUEST_URL))
+                            .contentType("application/json")
+                            .characterEncoding(UTF_8)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(MemberController.class))
+                    .andExpect(handler().methodName("login"))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code", is(CREDENTIAL_NOT_MATCHED.getCode())))
+                    .andExpect(jsonPath("$.message", is(CREDENTIAL_NOT_MATCHED.getMessage())))
+                    .andReturn();
+        }
+    }
+
+    @Nested
+    @DisplayName("oauth login test")
+    public class OauthLoginTest {
+
+
+    }
 }
