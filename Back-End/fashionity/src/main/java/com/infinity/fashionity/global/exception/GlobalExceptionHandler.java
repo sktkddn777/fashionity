@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
@@ -18,22 +19,21 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @Getter
 public class GlobalExceptionHandler {
 
-    // 런타임시 발생하는 에러 잡기
+    // CustomException을 상속받은 모든 에러를 처리하는 Handler
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
-
-        return ResponseEntity
-                .status(errorCode.getStatus())
+        return ResponseEntity.status(errorCode.getStatus())
                 .body(ErrorResponse.of(errorCode));
     }
 
+    // CustomException을 상속받지 않은 에러를 처리하는 Handler들 작성
     // @Valid 예외 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(BindException e) {
         log.error("[EXCEPTION] {}",e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse("no", "way"));
+                .body(new ErrorResponse(ErrorCode.INVALID_INPUT_VALUE.getCode(), e.getFieldError().getDefaultMessage()));
 //        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 //                        .body(ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE));
     }
@@ -44,6 +44,14 @@ public class GlobalExceptionHandler {
         log.error("[EXCEPTION] {}",e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.MISSING_INPUT_VALUE));
+    }
+
+    // PathVariable 타입이 MissMatch
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        log.error("[EXCEPTION {}",e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of(ErrorCode.INVALID_PATH_VALUE));
     }
 
     // 잘못된 HttpMethod로 요청
