@@ -2,6 +2,8 @@ package com.infinity.fashionity.comments.controller;
 
 import com.infinity.fashionity.comments.dto.*;
 import com.infinity.fashionity.comments.service.CommentService;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.exception.ValidationException;
 import com.infinity.fashionity.posts.dto.PostDetailDTO;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
 import com.infinity.fashionity.security.dto.JwtAuthenticationToken;
@@ -13,16 +15,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * TODO
- * Validation을 ErrorCode를 이용하여 진행
- * */
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class CommentController {
     public ResponseEntity<CommentSaveDTO.Response> saveComment(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            @RequestBody CommentSaveDTO.Request dto) {
+            @Validated @RequestBody CommentSaveDTO.Request dto) {
         dto.setMemberSeq(auth.getSeq());
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.save(dto), HttpStatus.CREATED);

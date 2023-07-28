@@ -13,13 +13,16 @@ import com.infinity.fashionity.members.repository.MemberRepository;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentListDTO.Response getList(CommentListDTO.Request dto) {
         int page = dto.getPage();
         int size = dto.getSize();
+        Long memberSeq = dto.getMemberSeq();
         Long postSeq = dto.getPostSeq();
 
         if (postSeq == null) {
@@ -48,7 +52,34 @@ public class CommentServiceImpl implements CommentService {
         //댓글을 최신순으로 paging처리하기 위함
         Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
 
-        return null;
+        //size와 page에 맞게, 최신순으로 댓글을 가져옴
+        Page<CommentEntity> result = commentRepository.findAllByPost(post, pageable);
+
+        List<Comment> comments = result.getContent().stream()
+                .map(entity -> {
+                    boolean isLike = entity.getLikes().stream()
+                            .filter(e -> e.getMember().getSeq() == memberSeq)
+                            .findAny()
+                            .isPresent();
+                    return Comment.builder()
+                            .nickname(entity.getMember().getNickname())
+                            .content(entity.getContent())
+                            .memberSeq(entity.getMember().getSeq())
+                            .profileImg(entity.getMember().getProfileUrl())
+                            .createdAt(entity.getCreatedAt())
+                            .updatedAt(entity.getUpdatedAt())
+                            .likeCnt(entity.getLikes().size())
+                            .liked(isLike)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return CommentListDTO.Response.builder()
+                .prev(result.hasPrevious())
+                .next(result.hasNext())
+                .comments(comments)
+                .page(result.getNumber())
+                .build();
     }
 
     @Override

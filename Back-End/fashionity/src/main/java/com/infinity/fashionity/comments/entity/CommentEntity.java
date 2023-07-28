@@ -1,5 +1,6 @@
 package com.infinity.fashionity.comments.entity;
 
+import com.infinity.fashionity.comments.dto.Comment;
 import com.infinity.fashionity.comments.dto.CommentUpdateDTO;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.global.exception.ErrorCode;
@@ -17,6 +18,8 @@ import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -46,6 +49,9 @@ public class CommentEntity extends CUDEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "post_seq", nullable = false, updatable = false)
     private PostEntity post;
+
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment")
+    private List<CommentLikeEntity> likes;
 
     //custom method
     public void updateContent(String content){

@@ -16,6 +16,9 @@ public class CommentListDTO {
     @Setter
     @ToString
     public static class Request {
+        //header
+        private Long memberSeq;//댓글을 좋아요 한 지 확인하기 위해
+
         private Long postSeq;//pathVariable
         @Builder.Default
         private int page = 0;//param
