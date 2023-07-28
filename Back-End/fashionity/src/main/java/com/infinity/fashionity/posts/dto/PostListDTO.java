@@ -38,7 +38,7 @@ public class PostListDTO {
     public static class Post{
         @JsonAlias(value = "post_seq")
         private long postSeq;
-        private String[] images;
+        private List<String> images;
         private String content;
         private String name;
         @JsonAlias(value = "profile_img")
