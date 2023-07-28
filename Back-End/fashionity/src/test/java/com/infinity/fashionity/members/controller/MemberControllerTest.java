@@ -457,11 +457,4 @@ class MemberControllerTest {
                     .andReturn();
         }
     }
-
-    @Nested
-    @DisplayName("oauth login test")
-    public class OauthLoginTest {
-
-
-    }
 }
