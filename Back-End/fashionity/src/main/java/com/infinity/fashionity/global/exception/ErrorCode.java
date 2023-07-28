@@ -18,6 +18,7 @@ public enum ErrorCode {
 
     // Auth
     CREDENTIAL_NOT_MATCHED(HttpStatus.UNAUTHORIZED, "A001", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    UNAUTHENTICATED_MEMBER(HttpStatus.UNAUTHORIZED,"A002","인증되지 않은 사용자입니다."),
 
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다."),

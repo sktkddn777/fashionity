@@ -1,9 +1,12 @@
 package com.infinity.fashionity.comments.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infinity.fashionity.comments.dto.CommentSaveDTO;
 import com.infinity.fashionity.comments.entity.CommentEntity;
 import com.infinity.fashionity.comments.repository.CommentRepository;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.dto.LoginDTO;
@@ -12,14 +15,15 @@ import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.event.annotation.BeforeTestExecution;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -157,10 +161,10 @@ class CommentIntegrationTest {
         Long randomTargetMemberSeq;//댓글이 달리는 post의 주인 seq
         Long randomTargetPostSeq;//댓글이 달리는 포스트의 seq
 
+        CommentSaveDTO.Request request;
 
-        @Test
-        @DisplayName("- 댓글 정상 등록")
-        public void commentsSaveSuccessTest() throws Exception {
+        @BeforeEach
+        public void saveInit(){
             Random random = new Random();
             //댓글을 다는 사람
             randomMemberSeq = Math.abs(random.nextLong())%memberList.size();
@@ -169,15 +173,19 @@ class CommentIntegrationTest {
             randomTargetMemberSeq = Math.abs(random.nextLong())%memberList.size();
 
             //댓글을 달 게시판
-            randomTargetPostSeq = Math.abs(random.nextLong())%memberPosts.get(randomTargetMemberSeq).size();
-
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(randomMemberSeq);
+            randomTargetPostSeq = Math.abs(random.nextLong())%(memberPosts.get(randomTargetMemberSeq).size());
 
             //등록할 comment
-            CommentSaveDTO.Request request = CommentSaveDTO.Request.builder()
-                            .content("comment!!!!!")
-                            .build();
+            request = CommentSaveDTO.Request.builder()
+                    .content("comment!!!!!")
+                    .build();
+        }
+
+        @Test
+        @DisplayName("- 댓글 정상 등록")
+        public void commentsSaveSuccessTest() throws Exception {
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(randomMemberSeq);
 
             //검증
             ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
@@ -203,31 +211,100 @@ class CommentIntegrationTest {
 
         @Test
         @DisplayName("- 인증되지 않은 사용자가 댓글을 달려했을 때 오류")
-        public void unAuthenticatedUserSavesCommentsTest() {
+        public void unAuthenticatedUserSavesCommentsTest() throws Exception {
+            ErrorCode code = ErrorCode.UNAUTHENTICATED_MEMBER;
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 Post Seq로 접근했을 때 오류")
-        public void commentsSaveWithUnknownPostSeqTest() {
+        public void commentsSaveWithUnknownPostSeqTest() throws Exception {
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(randomMemberSeq);
 
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
+            Long unknownPostSeq = Long.MAX_VALUE;
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), unknownPostSeq)
+                            .header("Authorization", "Bearer " + token.getAccessToken())
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- content가 null일 경우 오류")
-        public void commentsSaveWithNullContentTest() {
+        public void commentsSaveWithNullContentTest() throws Exception{
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(randomMemberSeq);
+            ErrorCode code = ErrorCode.INVALID_INPUT_VALUE;
 
+
+            request.setContent(null);
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
+                            .header("Authorization","Bearer "+token.getAccessToken())
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is("content를 입력해주세요")));
         }
 
         @Test
         @DisplayName("- content가 blank로 들어왔을 때 오류")
-        public void commentsSaveWithBlankContentTest() {
+        public void commentsSaveWithBlankContentTest() throws Exception {
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(randomMemberSeq);
+            ErrorCode code = ErrorCode.INVALID_INPUT_VALUE;
 
+
+            request.setContent(" ");
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
+                            .header("Authorization","Bearer "+token.getAccessToken())
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is("content를 입력해주세요")));
         }
 
         @Test
         @DisplayName("- content가 200자를 넘겼을 때 오류")
-        public void commentsSaveWithContentOverlengthTest() {
+        public void commentsSaveWithContentOverlengthTest() throws Exception {
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(randomMemberSeq);
+            ErrorCode code = ErrorCode.INVALID_INPUT_VALUE;
 
+
+            request.setContent(StringUtils.randomSting(205));
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
+                            .header("Authorization","Bearer "+token.getAccessToken())
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is("최대 200자까지 입력할 수 있습니다.")));
         }
 
         @Test

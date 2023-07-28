@@ -26,12 +26,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info("[ERROR] {} : {}", authException.getClass().getSimpleName(), authException.getMessage());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(ErrorCode.UNAUTHENTICATED_MEMBER.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
         response.getWriter()
                 .write(objectMapper.writeValueAsString(
-                        ErrorResponse.of(ErrorCode.HANDLE_ACCESS_DENIED)
+                        ErrorResponse.of(ErrorCode.UNAUTHENTICATED_MEMBER)
                 ));
 
     }
