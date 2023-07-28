@@ -10,6 +10,7 @@ import com.infinity.fashionity.security.oauth.repository.HttpCookieOAuth2Authori
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +25,8 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+// 권한이 필요한 controller 위에 @PreAuthorize("hasAuthority('USER')") 이런거 붙이면 됩니다.
 @RequiredArgsConstructor
 public class SecurityConfig {
 
