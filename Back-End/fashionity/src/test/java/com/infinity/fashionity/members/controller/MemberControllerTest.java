@@ -269,7 +269,7 @@ class MemberControllerTest {
             int totalMemberSize = memberRepository.findAll().size();
 
             SaveDTO.Request request = SaveDTO.Request.builder()
-                    .id("testId".concat(Integer.toString(totalMemberSize)))
+                    .id("testId".concat(Integer.toString(totalMemberSize-1)))
                     .nickname("sangwoo123")
                     .email("sktkddn777@gmail.com")
                     .password("myPassword123@")
@@ -302,7 +302,7 @@ class MemberControllerTest {
 
             SaveDTO.Request request = SaveDTO.Request.builder()
                     .id("testId".concat(Integer.toString(totalMemberSize + 1)))
-                    .nickname("tester".concat(Integer.toString(totalMemberSize)))
+                    .nickname("tester".concat(Integer.toString(totalMemberSize-1)))
                     .email("sktkddn777@gmail.com")
                     .password("myPassword123@")
                     .sns(false)
@@ -335,7 +335,7 @@ class MemberControllerTest {
             SaveDTO.Request request = SaveDTO.Request.builder()
                     .id("testId".concat(Integer.toString(totalMemberSize + 1)))
                     .nickname("sangwoo123")
-                    .email("tester".concat(Integer.toString(totalMemberSize)).concat("@gmail.com"))
+                    .email("tester".concat(Integer.toString(totalMemberSize-1)).concat("@gmail.com"))
                     .password("myPassword123@")
                     .sns(false)
                     .build();
