@@ -10,6 +10,8 @@ import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -32,5 +34,12 @@ public class PostEntity extends CUDEntity {
     @JoinColumn(name = "member_seq", nullable = false)
     private MemberEntity member;
 
+    @OneToMany(mappedBy = "postImages", fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_seq", nullable = false)
+    private List<PostImageEntity> postImages;
+
+    @OneToMany(mappedBy = "hashtags", fetch = FetchType.LAZY)
+    @JoinColumn(name = "hashtag_seq", nullable = false)
+    private List<HashtagEntity> hashtags;
 
 }

@@ -29,8 +29,7 @@ public class PostDetailDTO {
     @NoArgsConstructor
     @Builder
     public static class Response{
-        @Builder.Default
-        private List<Post> post = new ArrayList<>();
+        private Post post;
     }
 
     @Getter
@@ -41,16 +40,16 @@ public class PostDetailDTO {
     public static class Post{
         @JsonAlias(value = "post_seq")
         private long postSeq;
-        private String[] images;
+        private List<String> images;
         private String content;
         private String name;
         @JsonAlias(value = "profile_img")
         private String profileImg;
         private boolean liked;
         @JsonAlias(value = "like_count")
-        private int likeCount;
+        private long likeCount;
         @JsonAlias(value = "comment_count")
-        private int commentCount;
+        private long commentCount;
         @JsonAlias(value = "created_at")
         @JsonFormat(pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
