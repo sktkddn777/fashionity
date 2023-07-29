@@ -84,7 +84,7 @@ public class MemberServiceImpl implements MemberService{
                     .email(oauthUserInfo.getEmail())
                     .profileUrl(oauthUserInfo.getProfileImgUrl())
                     .sns(true)
-                    .snsType(SNSType.GOOGLE)
+                    .snsType(SNSType.valueOf(oauthUserInfo.getProvider().toUpperCase()))
                     .build();
 
             MemberRoleEntity memberRole = MemberRoleEntity.builder()
