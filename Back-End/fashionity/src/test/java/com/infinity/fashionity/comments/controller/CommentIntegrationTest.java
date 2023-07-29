@@ -39,10 +39,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.stream.events.Comment;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,7 +151,7 @@ class CommentIntegrationTest {
                     CommentEntity comment = CommentEntity.builder()
                             .member(memberList.get(i % memberList.size()))
                             .post(post)
-                            .content(Long.toString(post.getSeq()).concat("포스트의 댓글").concat(Integer.toString(i)))
+                            .content(Long.toString(post.getSeq()).concat("post\'s comment").concat(Integer.toString(i)))
                             .build();
                     commentList.add(comment);
                 }
@@ -337,45 +340,162 @@ class CommentIntegrationTest {
      * - 삭제된 댓글은 조회하지 않기
      * - 삭제된 유저들의 댓글은 조회하지 않기
      * - 없는 페이지 조회 - 빈 list return
+     * - 존재하지 않는 Post Seq로 접근했을 때 오류
      */
     @Nested
     @DisplayName("Comment List Test")
-    @Disabled
     public class CommentListTest {
+        //댓글을 조회하는 사람의 seq
+        Long randomMemberSeq;
+        //accessToken
+        String token;
+
+        //댓글을 조회할 post의 주인 seq
+        Long randomTargetMemberSeq;
+        //댓글을 조회할 포스트의 seq
+        Long randomTargetPostSeq;
+
+        //해당 게시글의 댓글들
+        List<CommentEntity> comments;
+
+        final int DEFAULT_SIZE = 50;
+        final int DEFAULT_PAGE = 0;
+
+        /**
+         * 인자를 받아 조회 요청을 보내주는 메서드
+         */
+        public ResultActions sendRequest(Long postSeq, String token, int page, int size) throws Exception {
+            MockHttpServletRequestBuilder authorization = get(BASE_URL.concat("/posts/{postSeq}/comments"), postSeq)
+                    .param("page", Integer.toString(page))
+                    .param("size", Integer.toString(size))
+                    .contentType(CONTENT_TYPE)
+                    .characterEncoding(CHARSET);
+            if (!StringUtils.isBlank(token)) {
+                authorization.header("Authorization", "Bearer ".concat(token));
+            }
+            return mvc.perform(authorization);
+        }
+
+        @BeforeEach
+        public void listInit() throws Exception {
+            Random random = new Random();
+            //댓글을 조회하는 사람
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+            //accessToken
+            token = memberLogin(randomMemberSeq).getAccessToken();
+            //댓글을 조회할 게시글의 주인
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+
+            //댓글을 조회할 게시글
+            List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt()) % posts.size()).getSeq();
+
+            //해당 게시글에 조금 더 댓글을 추가
+            for (int i = 0; i < 100; i++) {
+                CommentEntity comment = CommentEntity.builder()
+                        .member(memberList.get(i % memberList.size()))
+                        .post(PostEntity.builder()
+                                .seq(randomTargetPostSeq)
+                                .build())
+                        .content("additional comment".concat(Integer.toString(i)))
+                        .build();
+                Thread.sleep(10);
+                commentRepository.save(comment);//약간의 시간차를 주기위해 따로 저장
+            }
+
+            comments = commentRepository.findAllByPost(PostEntity.builder()
+                    .seq(randomTargetPostSeq)
+                    .build());
+        }
+
+        //최신순으로 조회
         @Test
         @DisplayName("- 댓글 정상 조회")
-        public void getCommentsListSuccessTest() {
+        public void getCommentsListSuccessTest() throws Exception {
+            //검증용 comments를 생성날짜 기준 내림차순(최신순)으로 정렬
+            Collections.sort(comments, new Comparator<CommentEntity>() {
+                @Override
+                public int compare(CommentEntity o1, CommentEntity o2) {
+                    LocalDateTime createdAt1 = o1.getCreatedAt();
+                    LocalDateTime createdAt2 = o2.getCreatedAt();
+                    return createdAt2.compareTo(createdAt1);
+                }
+            });
+            //기댓값 구해오기
+            List<Comment> expectedComments = comments.stream()
+                    .map(entity -> {
+                        boolean isLike = entity.getLikes().stream()
+                                .filter(e -> e.getMember().getSeq() == randomMemberSeq)
+                                .findAny()
+                                .isPresent();
+                        return Comment.builder()
+                                .nickname(entity.getMember().getNickname())
+                                .content(entity.getContent())
+                                .memberSeq(entity.getMember().getSeq())
+                                .profileImg(entity.getMember().getProfileUrl())
+                                .createdAt(entity.getCreatedAt().withNano(0))
+                                .updatedAt(entity.getUpdatedAt().withNano(0))
+                                .likeCnt(entity.getLikes().size())
+                                .liked(isLike)
+                                .build();
+                    })
+                    .collect(Collectors.toList());
 
+            for (int page = 0; page < comments.size() / DEFAULT_SIZE; page++) {
+                MvcResult result = sendRequest(randomTargetPostSeq, token, page, DEFAULT_SIZE)
+                        .andExpect(status().isOk())
+                        .andDo(print())
+                        .andReturn();
+
+                String response = result.getResponse().getContentAsString();
+                CommentListDTO.Response list = mapper.readValue(response, CommentListDTO.Response.class);
+
+                boolean expectedPrev = page != 0;//첫번째 페이지가 아니면 prev는 true, 아니면 false
+                boolean expectedNext = page != (comments.size() / DEFAULT_SIZE);//마지막 페이지가 아니면 next는 true, 아니면 false
+                int expectedPage = page;//조회한 페이지
+
+                List<Comment> expects = expectedComments
+                        .subList(page*DEFAULT_SIZE, Math.min(page*DEFAULT_SIZE + DEFAULT_SIZE, comments.size()));
+
+                assertAll("comment list",
+                        () -> assertThat(list.isPrev()).isEqualTo(expectedPrev),
+                        () -> assertThat(list.isNext()).isEqualTo(expectedNext),
+                        () -> assertThat(list.getPage()).isEqualTo(expectedPage),
+                        () -> {
+                            for(int i=0;i<expects.size();i++){
+                                Comment comment = list.getComments().get(i);
+                                Comment expected = expects.get(i);
+                                assertThat(comment.getContent()).isEqualTo(expected.getContent());
+                            }
+                        }
+                );
+            }
         }
 
         @Test
         @DisplayName("- 없는 페이지 조회 - 빈 list return")
-        public void getCommentsListWithEmptyTest() {
+        public void getCommentsListWithEmptyTest() throws Exception {
+            int page = 987654321;
 
+            sendRequest(randomTargetPostSeq,token,page,DEFAULT_SIZE)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.prev",is(true)))
+                    .andExpect(jsonPath("$.next",is(false)))
+                    .andExpect(jsonPath("$.page",is(page)))
+                    .andExpect(jsonPath("$.comments.length()",is(0)));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 Post Seq로 접근했을 때 오류")
-        public void commentsSaveWithUnknownPostSeqTest() {
+        public void commentsSaveWithUnknownPostSeqTest() throws Exception {
+            int page = 0;
+            randomTargetPostSeq = Long.MAX_VALUE;
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
 
-        }
-
-        @Test
-        @DisplayName("- content가 null일 경우 오류")
-        public void commentsSaveWithNullContentTest() {
-
-        }
-
-        @Test
-        @DisplayName("- content가 blank로 들어왔을 때 오류")
-        public void commentsSaveWithBlankContentTest() {
-
-        }
-
-        @Test
-        @DisplayName("- content가 200자를 넘겼을 때 오류")
-        public void commentsSaveWithContentOverlengthTest() {
-
+            sendRequest(randomTargetPostSeq,token,page,DEFAULT_SIZE)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
     }
 
@@ -1043,9 +1163,9 @@ class CommentIntegrationTest {
         @DisplayName("- 신고 성공")
         public void commentReportSuccessTest() throws Exception {
             //검증
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success",is(true)));
+                    .andExpect(jsonPath("$.success", is(true)));
 
             //db검증
             assertThat(commentReportRepository.findById(CommentReportKey.builder()
@@ -1062,9 +1182,9 @@ class CommentIntegrationTest {
             request.setReportContent(null);
 
             //검증
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success",is(true)));
+                    .andExpect(jsonPath("$.success", is(true)));
 
             //db검증
             assertThat(commentReportRepository.findById(CommentReportKey.builder()
@@ -1081,9 +1201,9 @@ class CommentIntegrationTest {
             request.setReportContent("                    ");
 
             //검증
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success",is(true)));
+                    .andExpect(jsonPath("$.success", is(true)));
 
             //db검증
             assertThat(commentReportRepository.findById(CommentReportKey.builder()
@@ -1097,16 +1217,16 @@ class CommentIntegrationTest {
         @DisplayName("- 중복 신고 오류")
         public void commentReportDuplicatedTest() throws Exception {
             //검증, 첫번째 신고는 성공
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.success",is(true)));
+                    .andExpect(jsonPath("$.success", is(true)));
 
             //두번째 신고는 실패
             ErrorCode code = ErrorCode.COMMENT_REPORT_ALREADY_EXIST;
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -1117,10 +1237,10 @@ class CommentIntegrationTest {
 
             //검증
             ErrorCode code = ErrorCode.POST_NOT_FOUND;
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -1131,10 +1251,10 @@ class CommentIntegrationTest {
 
             //검증
             ErrorCode code = ErrorCode.POST_NOT_FOUND;
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -1145,10 +1265,10 @@ class CommentIntegrationTest {
 
             //검증
             ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -1159,24 +1279,24 @@ class CommentIntegrationTest {
 
             //검증
             ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 카테고리 미설정 오류")
-        public void commentReportWithoutCategory() throws Exception{
+        public void commentReportWithoutCategory() throws Exception {
             //카테고리 null설정
             request.setReportCategory(null);
 
             //검증
             ErrorCode code = ErrorCode.MISSING_INPUT_VALUE;
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
     }
 }
