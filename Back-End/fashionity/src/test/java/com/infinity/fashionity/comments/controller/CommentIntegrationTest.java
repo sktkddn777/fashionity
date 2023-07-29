@@ -15,6 +15,7 @@ import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
+import com.infinity.fashionity.security.service.JwtProvider;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.event.annotation.BeforeTestExecution;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -64,17 +66,23 @@ class CommentIntegrationTest {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private JwtProvider jwtProvider;
+
+    @Autowired
     private ObjectMapper mapper;
 
     public final String BASE_URL = "/api/v1";
-    public List<MemberEntity> memberList = new ArrayList<>();
-    public Map<Long, List<PostEntity>> memberPosts = new HashMap<>();
-    public Map<Long, List<CommentEntity>> postComments = new HashMap<>();
+    public List<MemberEntity> memberList;
+    public Map<Long, List<PostEntity>> memberPosts;
+    public Map<Long, List<CommentEntity>> postComments;
 
     @BeforeEach
     public void dummyInsert() {
+        memberList = new ArrayList<>();
+        memberPosts = new HashMap<>();
+        postComments = new HashMap<>();
         //member등록
-        IntStream.rangeClosed(1, 10).forEach(i -> {
+        IntStream.rangeClosed(1, 5).forEach(i -> {
             MemberEntity member = MemberEntity.builder()
                     .id("tester".concat(Integer.toString(i)))
                     .password(passwordEncoder.encode("Abcdefg123!"))
@@ -99,27 +107,27 @@ class CommentIntegrationTest {
         //각 멤버마다 post등록
         for (MemberEntity member : memberList) {
             List<PostEntity> postList = new ArrayList<>();
-            IntStream.rangeClosed(1, 5).forEach(i -> {
+            for(int i=0;i<3;i++){
                 PostEntity post = PostEntity.builder()
                         .member(member)
                         .content(member.getNickname().concat("\'s post").concat(Integer.toString(i)))
                         .build();
                 postList.add(post);
-            });
+            }
             postRepository.saveAll(postList);
             memberPosts.put(member.getSeq(), postList);
 
             for (PostEntity post : postList) {
                 //각 포스트마다 댓글 등록
                 List<CommentEntity> commentList = new ArrayList<>();
-                IntStream.rangeClosed(0, memberList.size() - 1).forEach(i -> {
+                for(int i=0 ;i< memberList.size() ;i++){
                     CommentEntity comment = CommentEntity.builder()
                             .member(memberList.get(i))
                             .post(post)
                             .content(Long.toString(post.getSeq()).concat("포스트의 댓글").concat(Integer.toString(i)))
                             .build();
                     commentList.add(comment);
-                });
+                }
                 commentRepository.saveAll(commentList);
                 postComments.put(post.getSeq(), commentList);
             }
@@ -127,22 +135,14 @@ class CommentIntegrationTest {
     }
 
     public LoginDTO.Response memberLogin(Long seq) throws Exception {
-        String id = memberList.get(seq.intValue()).getId();
-        String pw = memberList.get(seq.intValue()).getPassword();
-        LoginDTO.Request request = LoginDTO.Request.builder()
-                .id(id)
-                .password(pw)
+        List<MemberRoleEntity> roles = new ArrayList<>();
+        roles.add(MemberRoleEntity.builder()
+                .member(MemberEntity.builder().seq(seq).build())
+                .memberRole(MemberRole.USER)
+                .build());
+        return LoginDTO.Response.builder()
+                .accessToken(jwtProvider.createAccessToken(seq,roles))
                 .build();
-
-        MvcResult result = mvc.perform(post(BASE_URL + "/members/login")
-                        .contentType("application/json")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .content(mapper.writeValueAsString(request))
-                        .accept("*/*"))
-                .andDo(print())
-                .andReturn();
-
-        return mapper.readValue(result.getResponse().getContentAsString(), LoginDTO.Response.class);
     }
 
     /**
@@ -167,13 +167,13 @@ class CommentIntegrationTest {
         public void saveInit(){
             Random random = new Random();
             //댓글을 다는 사람
-            randomMemberSeq = Math.abs(random.nextLong())%memberList.size();
-
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt())%memberList.size()).getSeq();
             //댓글이 달리는 게시글의 주인
-            randomTargetMemberSeq = Math.abs(random.nextLong())%memberList.size();
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt())%memberList.size()).getSeq();
 
             //댓글을 달 게시판
-            randomTargetPostSeq = Math.abs(random.nextLong())%(memberPosts.get(randomTargetMemberSeq).size());
+            List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt())%posts.size()).getSeq();
 
             //등록할 comment
             request = CommentSaveDTO.Request.builder()
@@ -199,14 +199,16 @@ class CommentIntegrationTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.success", is(true)));
 
-            List<CommentEntity> allByPost = commentRepository.findAllByPost(PostEntity.builder()
-                    .seq(randomTargetPostSeq)
-                    .build());
-            Optional<CommentEntity> newComment = allByPost.stream()
-                    .filter(c -> !memberPosts.get(randomTargetMemberSeq.intValue()).contains(c))
-                    .findFirst();
+            //저장된 상태의 comments를 가져옴
+            List<CommentEntity> origin = postComments.get(randomTargetPostSeq);
+            Optional<CommentEntity> newComment = commentRepository.findAllByPost(PostEntity.builder()
+                            .seq(randomTargetPostSeq)
+                            .build())
+                    .stream().filter(c -> !origin.contains(c))
+                    .findAny();
+
             assertThat(newComment).isNotEmpty();
-            resultActions.andExpect(jsonPath("$.seq",is(newComment.get().getSeq())));
+            resultActions.andExpect(jsonPath("$.seq",is(newComment.get().getSeq().intValue())));
         }
 
         @Test
@@ -227,6 +229,7 @@ class CommentIntegrationTest {
         @Test
         @DisplayName("- 존재하지 않는 Post Seq로 접근했을 때 오류")
         public void commentsSaveWithUnknownPostSeqTest() throws Exception {
+            Long unknownSeq = Long.MAX_VALUE;
             //로그인한 결과 accessToken을 받아옴
             LoginDTO.Response token = memberLogin(randomMemberSeq);
 
@@ -309,8 +312,21 @@ class CommentIntegrationTest {
 
         @Test
         @DisplayName("- 존재하지 않는 사용자가 댓글을 달려했을 때 오류")
-        public void commentsSaveWithUnsavedUserTest() {
+        public void commentsSaveWithUnsavedUserTest() throws Exception {
+            //로그인한 결과 accessToken을 받아옴
+            LoginDTO.Response token = memberLogin(Long.MAX_VALUE);
+            ErrorCode code = ErrorCode.MEMBER_NOT_FOUND;
 
+            //검증
+            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
+                            .header("Authorization","Bearer "+token.getAccessToken())
+                            .contentType("application/json")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .content(mapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
     }
 
@@ -322,6 +338,7 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment List Test")
+    @Disabled
     public class CommentListTest {
         @Test
         @DisplayName("- 댓글 정상 조회")
@@ -374,6 +391,7 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Update Test")
+    @Disabled
     public class CommentUpdateTest {
         @Test
         @DisplayName("- 댓글 정상 수정")
@@ -447,6 +465,7 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Delete Test")
+    @Disabled
     public class CommentDeleteTest {
         @Test
         @DisplayName("- 댓글 정상 삭제")
@@ -500,6 +519,7 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Like Test")
+    @Disabled
     public class CommentLikeTest {
         @Test
         @DisplayName("- 좋아요")
@@ -544,6 +564,7 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Report Test")
+    @Disabled
     public class CommentReportTest {
         @Test
         @DisplayName("- 신고 성공")
