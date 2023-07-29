@@ -2,10 +2,11 @@ package com.infinity.fashionity.comments.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.infinity.fashionity.comments.dto.CommentDeleteDTO;
-import com.infinity.fashionity.comments.dto.CommentSaveDTO;
-import com.infinity.fashionity.comments.dto.CommentUpdateDTO;
+import com.infinity.fashionity.comments.dto.*;
 import com.infinity.fashionity.comments.entity.CommentEntity;
+import com.infinity.fashionity.comments.entity.CommentLikeEntity;
+import com.infinity.fashionity.comments.entity.CommentLikeKey;
+import com.infinity.fashionity.comments.repository.CommentLikeRepository;
 import com.infinity.fashionity.comments.repository.CommentRepository;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.utils.StringUtils;
@@ -56,14 +57,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * TODO
  * post_seq 와 comment가 포함된 post_seq가 다른경우도 추가
- *
- * */
+ */
 @AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
 class CommentIntegrationTest {
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private CommentLikeRepository commentLikeRepository;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -195,7 +198,7 @@ class CommentIntegrationTest {
             if (!StringUtils.isBlank(token)) {
                 authorization.header("Authorization", "Bearer ".concat(token));
             }
-            if(content!=null){
+            if (content != null) {
                 authorization.content(mapper.writeValueAsString(content));
             }
             return mvc.perform(authorization);
@@ -411,7 +414,7 @@ class CommentIntegrationTest {
             if (!StringUtils.isBlank(token)) {
                 authorization.header("Authorization", "Bearer ".concat(token));
             }
-            if(content!=null){
+            if (content != null) {
                 authorization.content(mapper.writeValueAsString(content));
             }
             return mvc.perform(authorization);
@@ -652,7 +655,7 @@ class CommentIntegrationTest {
             if (!StringUtils.isBlank(token)) {
                 authorization.header("Authorization", "Bearer ".concat(token));
             }
-            if(content!=null){
+            if (content != null) {
                 authorization.content(mapper.writeValueAsString(content));
             }
             return mvc.perform(authorization);
@@ -703,10 +706,10 @@ class CommentIntegrationTest {
             //error code
             ErrorCode code = ErrorCode.UNAUTHENTICATED_MEMBER;
 
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,null,null)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, null, null)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -714,7 +717,7 @@ class CommentIntegrationTest {
         public void commentsDeletedByOtherUserTest() throws Exception {
             //다른 사람의 comment로 변경
             randomTargetCommentSeq = postComments.get(randomTargetPostSeq).stream()
-                    .filter(comment-> comment.getMember().getSeq() != randomMemberSeq)
+                    .filter(comment -> comment.getMember().getSeq() != randomMemberSeq)
                     .findAny()
                     .get()
                     .getSeq();
@@ -722,10 +725,10 @@ class CommentIntegrationTest {
             //error code
             ErrorCode code = ErrorCode.HANDLE_ACCESS_DENIED;
 
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, null)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -737,10 +740,10 @@ class CommentIntegrationTest {
             //error code
             ErrorCode code = ErrorCode.POST_NOT_FOUND;
 
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, null)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -752,10 +755,10 @@ class CommentIntegrationTest {
             //error code
             ErrorCode code = ErrorCode.POST_NOT_FOUND;
 
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, null)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -767,10 +770,10 @@ class CommentIntegrationTest {
             //error code
             ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
 
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, null)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
@@ -782,10 +785,10 @@ class CommentIntegrationTest {
             //error code
             ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
 
-            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, null)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
     }
 
@@ -798,36 +801,166 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Like Test")
-    @Disabled
     public class CommentLikeTest {
+        //댓글을 조회하는 사람의 seq
+        Long randomMemberSeq;
+        //accessToken
+        String token;
+
+        //댓글이 달리는 post의 주인 seq
+        Long randomTargetMemberSeq;
+        //댓글이 달리는 포스트의 seq
+        Long randomTargetPostSeq;
+
+        //좋아요 한 댓글들
+        List<CommentEntity> likes;
+        //좋아요 하지않은 댓글들
+        List<CommentEntity> unlikes;
+
+        /**
+         * 인자를 받아 등록 요청을 보내주는 메서드
+         */
+        public ResultActions sendRequest(Long postSeq, Long commentSeq, String token, CommentLikeDTO.Request content) throws Exception {
+            MockHttpServletRequestBuilder authorization = post(BASE_URL.concat("/posts/{postSeq}/comments/{commentSeq}/like"), postSeq, commentSeq)
+                    .contentType(CONTENT_TYPE)
+                    .characterEncoding(CHARSET);
+            if (!StringUtils.isBlank(token)) {
+                authorization.header("Authorization", "Bearer ".concat(token));
+            }
+            if (content != null) {
+                authorization.content(mapper.writeValueAsString(content));
+            }
+            return mvc.perform(authorization);
+        }
+
+        @BeforeEach
+        public void saveInit() throws Exception {
+            Random random = new Random();
+            //댓글을 다는 사람
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+            //accessToken
+            token = memberLogin(randomMemberSeq).getAccessToken();
+            //댓글이 달리는 게시글의 주인
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+
+            //댓글을 조회할 게시글
+            List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt()) % posts.size()).getSeq();
+
+            //좋아요 셋팅
+            likes = new ArrayList<>();
+            unlikes = new ArrayList<>();
+
+            Collections.shuffle(postComments.get(randomTargetPostSeq));
+            List<CommentEntity> comments = postComments.get(randomTargetPostSeq);
+            for (int i = 0; i < comments.size(); i++) {
+                CommentEntity comment = comments.get(i);
+                if (i < comments.size() / 2) {
+                    CommentLikeEntity like = CommentLikeEntity.builder()
+                            .comment(comment)
+                            .member(MemberEntity.builder()
+                                    .seq(randomMemberSeq)
+                                    .build())
+                            .build();
+
+                    commentLikeRepository.save(like);
+                    likes.add(comment);
+                } else {
+                    unlikes.add(comment);
+                }
+            }
+            ;
+        }
+
         @Test
         @DisplayName("- 좋아요")
-        public void commentLikeTest() {
+        public void commentLikeTest() throws Exception {
+            //좋아요 할 좋아요 상태가 아닌 댓글의 seq
+            Long targetCommentSeq = unlikes.get(0)
+                    .getSeq();
 
+            //검증
+            sendRequest(randomTargetPostSeq, targetCommentSeq, token, null)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.like", is(true)));
+
+            //db에 저장됐는지 확인
+            assertThat(commentLikeRepository.findById(CommentLikeKey.builder()
+                    .comment(targetCommentSeq)
+                    .member(randomMemberSeq)
+                    .build())).isNotEmpty();
         }
 
         @Test
         @DisplayName("- 좋아요 취소")
-        public void commentUnlikeTest() {
+        public void commentUnlikeTest() throws Exception {
+            //좋아요 취소 할 좋아요 상태인 댓글의 seq
+            Long targetCommentSeq = likes.get(0)
+                    .getSeq();
 
+            //검증
+            sendRequest(randomTargetPostSeq, targetCommentSeq, token, null)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.like", is(false)));
+
+            //db에 삭제됐는지 확인
+            assertThat(commentLikeRepository.findById(CommentLikeKey.builder()
+                    .comment(targetCommentSeq)
+                    .member(randomMemberSeq)
+                    .build())).isEmpty();
         }
 
         @Test
         @DisplayName("- 삭제된 게시글의 댓글에 좋아요 오류")
-        public void commentLikeWithDeletedCommentTest() {
+        public void commentLikeWithDeletedCommentTest() throws Exception {
+            //해당 게시글 삭제
+            postRepository.deleteById(randomTargetPostSeq);
 
+            //좋아요 할 좋아요 상태가 아닌 댓글의 seq
+            Long targetCommentSeq = unlikes.get(0)
+                    .getSeq();
+
+            //Error Code
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
+
+            //검증
+            sendRequest(randomTargetPostSeq, targetCommentSeq, token, null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글에 좋아요 오류")
-        public void commentLikeWithNonexistentCommentTest() {
+        public void commentLikeWithNonexistentCommentTest() throws Exception {
+            //없는 댓글의 seq
+            Long targetCommentSeq = Long.MAX_VALUE;
 
+            //Error Code
+            ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
+
+            //검증
+            sendRequest(randomTargetPostSeq, targetCommentSeq, token, null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자 좋아요 요청 오류")
-        public void commentLikeWithUnauthenticatedUserTest() {
+        public void commentLikeWithUnauthenticatedUserTest() throws Exception {
+            //좋아요 할 좋아요 상태가 아닌 댓글의 seq
+            Long targetCommentSeq = unlikes.get(0)
+                    .getSeq();
 
+            //Error Code
+            ErrorCode code = ErrorCode.UNAUTHENTICATED_MEMBER;
+
+            //검증
+            sendRequest(randomTargetPostSeq, targetCommentSeq, null, null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
     }
 
