@@ -161,17 +161,23 @@ public class CommentServiceImpl implements CommentService {
     public CommentReportDTO.Response report(CommentReportDTO.Request dto) {
         Long memberSeq = dto.getMemberSeq();
         Long commentSeq = dto.getCommentSeq();
+        Long postSeq = dto.getPostSeq();
         String reportCategory = dto.getReportCategory();
         String reportContent = dto.getReportContent();
 
         //입력값 검증
-        if (memberSeq == null || commentSeq == null || StringUtils.isBlank(reportCategory)) {
+        if (memberSeq == null || commentSeq == null || postSeq == null
+                || StringUtils.isBlank(reportCategory)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
         //멤버 존재하는지 확인
         MemberEntity member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        //post가 존재하는지 확인
+        PostEntity post = postRepository.findById(postSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         //comment가 존재하는지 확인
         CommentEntity comment = commentRepository.findById(commentSeq)
