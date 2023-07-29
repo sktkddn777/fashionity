@@ -65,11 +65,12 @@ public class CommentController {
     public ResponseEntity<CommentLikeDTO.Response> likeComment(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            @PathVariable Long commentSeq,
-            @RequestBody CommentLikeDTO.Request dto) {
-        dto.setCommentSeq(commentSeq);
-        dto.setPostSeq(postSeq);
-        dto.setMemberSeq(auth.getSeq());
+            @PathVariable Long commentSeq) {
+        CommentLikeDTO.Request dto = CommentLikeDTO.Request.builder()
+                .memberSeq(auth.getSeq())
+                .commentSeq(commentSeq)
+                .postSeq(postSeq)
+                .build();
         return new ResponseEntity<>(commentService.like(dto), HttpStatus.OK);
     }
 
