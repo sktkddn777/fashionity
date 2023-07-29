@@ -78,22 +78,23 @@ public class CommentController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
             @PathVariable Long commentSeq,
-            @RequestBody CommentUpdateDTO.Request dto) {
+            @Validated @RequestBody CommentUpdateDTO.Request dto) {
         dto.setMemberSeq(auth.getSeq());
         dto.setCommentSeq(commentSeq);
         dto.setPostSeq(postSeq);
-        return new ResponseEntity<>(commentService.update(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(commentService.update(dto), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{postSeq}/comments/{commentSeq}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentDeleteDTO.Response> deleteComment(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            @PathVariable Long commentSeq,
-            @RequestBody CommentDeleteDTO.Request dto) {
-        dto.setCommentSeq(commentSeq);
-        dto.setPostSeq(postSeq);
-        dto.setMemberSeq(auth.getSeq());
+            @PathVariable Long commentSeq) {
+        CommentDeleteDTO.Request dto = CommentDeleteDTO.Request.builder()
+                .commentSeq(commentSeq)
+                .postSeq(postSeq)
+                .memberSeq(auth.getSeq())
+                .build();
 
         return new ResponseEntity<>(commentService.delete(dto), HttpStatus.OK);
     }

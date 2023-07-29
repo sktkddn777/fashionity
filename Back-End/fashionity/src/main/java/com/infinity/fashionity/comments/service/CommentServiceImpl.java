@@ -151,7 +151,6 @@ public class CommentServiceImpl implements CommentService {
 
         //comment를 update해줌
         comment.updateContent(content);
-
         return CommentUpdateDTO.Response.builder()
                 .success(true)
                 .build();
@@ -279,7 +278,7 @@ public class CommentServiceImpl implements CommentService {
 
         //자신의 댓글이 아니거나 권한이 존재하지 않으면 삭제 불가
         if (member.getSeq() != comment.getMember().getSeq()
-                || !member.getMemberRoles().contains(MemberRole.ADMIN)) {
+                && !member.getMemberRoles().contains(MemberRole.ADMIN)) {
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
         }
 

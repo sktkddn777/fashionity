@@ -18,6 +18,7 @@ import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 import java.util.List;
 
@@ -42,11 +43,11 @@ public class CommentEntity extends CUDEntity {
     @Column(name = "comment_content", length = 200, unique = false, nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_seq", nullable = false, updatable = false)
     private MemberEntity member;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_seq", nullable = false, updatable = false)
     private PostEntity post;
 
