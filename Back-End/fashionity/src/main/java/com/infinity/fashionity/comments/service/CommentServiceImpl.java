@@ -50,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         //댓글을 최신순으로 paging처리하기 위함
-        Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         //size와 page에 맞게, 최신순으로 댓글을 가져옴
         Page<CommentEntity> result = commentRepository.findAllByPost(post, pageable);

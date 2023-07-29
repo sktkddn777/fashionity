@@ -32,9 +32,13 @@ public class CommentController {
 
     @GetMapping(value = "/{postSeq}/comments", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentListDTO.Response> getCommentList(
+            @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
             CommentListDTO.Request dto
     ) {
+        if(auth != null){
+            dto.setMemberSeq(auth.getSeq());
+        }
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.getList(dto), HttpStatus.OK);
     }

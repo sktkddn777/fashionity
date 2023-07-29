@@ -8,10 +8,7 @@ import com.infinity.fashionity.global.exception.ValidationException;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.posts.entity.PostEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -20,6 +17,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -52,7 +50,8 @@ public class CommentEntity extends CUDEntity {
     private PostEntity post;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment")
-    private List<CommentLikeEntity> likes;
+    @Builder.Default
+    private List<CommentLikeEntity> likes = new ArrayList<>();
 
     //custom method
     public void updateContent(String content){
