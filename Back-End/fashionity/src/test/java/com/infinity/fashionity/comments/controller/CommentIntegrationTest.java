@@ -6,7 +6,9 @@ import com.infinity.fashionity.comments.dto.*;
 import com.infinity.fashionity.comments.entity.CommentEntity;
 import com.infinity.fashionity.comments.entity.CommentLikeEntity;
 import com.infinity.fashionity.comments.entity.CommentLikeKey;
+import com.infinity.fashionity.comments.entity.CommentReportKey;
 import com.infinity.fashionity.comments.repository.CommentLikeRepository;
+import com.infinity.fashionity.comments.repository.CommentReportRepository;
 import com.infinity.fashionity.comments.repository.CommentRepository;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.utils.StringUtils;
@@ -64,6 +66,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CommentIntegrationTest {
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private CommentReportRepository commentReportRepository;
 
     @Autowired
     private CommentLikeRepository commentLikeRepository;
@@ -834,7 +839,7 @@ class CommentIntegrationTest {
         }
 
         @BeforeEach
-        public void saveInit() throws Exception {
+        public void likeInit() throws Exception {
             Random random = new Random();
             //댓글을 다는 사람
             randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
@@ -869,7 +874,6 @@ class CommentIntegrationTest {
                     unlikes.add(comment);
                 }
             }
-            ;
         }
 
         @Test
@@ -967,6 +971,7 @@ class CommentIntegrationTest {
     /**
      * - 신고 성공
      * - 신고 내용은 null가능
+     * - 신고 내용은 blank가능
      * - 중복 신고 오류
      * - 존재하지 않는 게시글의 댓글 신고 오류
      * - 삭제된 게시글의 댓글 신고 오류
@@ -976,42 +981,202 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Report Test")
-    @Disabled
     public class CommentReportTest {
+        //댓글을 신고할 사람의 seq
+        Long randomMemberSeq;
+        //accessToken
+        String token;
+
+        //댓글이 달리는 post의 주인 seq
+        Long randomTargetMemberSeq;
+        //댓글이 달리는 포스트의 seq
+        Long randomTargetPostSeq;
+        //신고할 댓글의 seq
+        Long randomTargetCommentSeq;
+
+        //request
+        CommentReportDTO.Request request;
+
+        /**
+         * 인자를 받아 등록 요청을 보내주는 메서드
+         */
+        public ResultActions sendRequest(Long postSeq, Long commentSeq, String token, CommentReportDTO.Request content) throws Exception {
+            MockHttpServletRequestBuilder authorization = post(BASE_URL.concat("/posts/{postSeq}/comments/{commentSeq}/report"), postSeq, commentSeq)
+                    .contentType(CONTENT_TYPE)
+                    .characterEncoding(CHARSET);
+            if (!StringUtils.isBlank(token)) {
+                authorization.header("Authorization", "Bearer ".concat(token));
+            }
+            if (content != null) {
+                authorization.content(mapper.writeValueAsString(content));
+            }
+            return mvc.perform(authorization);
+        }
+
+        @BeforeEach
+        public void reportInit() throws Exception {
+            Random random = new Random();
+            //댓글을 다는 사람
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+            //accessToken
+            token = memberLogin(randomMemberSeq).getAccessToken();
+            //댓글이 달리는 게시글의 주인
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+
+            //댓글을 조회할 게시글
+            List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt()) % posts.size()).getSeq();
+
+            //신고할 댓글 하나를 고름
+            randomTargetCommentSeq = postComments.get(randomTargetPostSeq).stream()
+                    .findAny()
+                    .get()
+                    .getSeq();
+
+            request = CommentReportDTO.Request.builder()
+                    .reportCategory("report category")
+                    .reportContent("report content")
+                    .build();
+        }
+
         @Test
         @DisplayName("- 신고 성공")
-        public void commentReportSuccessTest() {
+        public void commentReportSuccessTest() throws Exception {
+            //검증
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success",is(true)));
 
+            //db검증
+            assertThat(commentReportRepository.findById(CommentReportKey.builder()
+                    .comment(randomTargetCommentSeq)
+                    .member(randomMemberSeq)
+                    .build()))
+                    .isNotEmpty();
+        }
+
+        @Test
+        @DisplayName("- 신고 내용은 null가능")
+        public void commentReportWithNullContentSuccessTest() throws Exception {
+            //신고 내용 null셋팅
+            request.setReportContent(null);
+
+            //검증
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success",is(true)));
+
+            //db검증
+            assertThat(commentReportRepository.findById(CommentReportKey.builder()
+                    .comment(randomTargetCommentSeq)
+                    .member(randomMemberSeq)
+                    .build()))
+                    .isNotEmpty();
+        }
+
+        @Test
+        @DisplayName("- 신고 내용은 blank가능")
+        public void commentReportWithBlankContentSuccessTest() throws Exception {
+            //신고 내용 null셋팅
+            request.setReportContent("                    ");
+
+            //검증
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success",is(true)));
+
+            //db검증
+            assertThat(commentReportRepository.findById(CommentReportKey.builder()
+                    .comment(randomTargetCommentSeq)
+                    .member(randomMemberSeq)
+                    .build()))
+                    .isNotEmpty();
         }
 
         @Test
         @DisplayName("- 중복 신고 오류")
-        public void commentReportDuplicatedTest() {
+        public void commentReportDuplicatedTest() throws Exception {
+            //검증, 첫번째 신고는 성공
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success",is(true)));
 
+            //두번째 신고는 실패
+            ErrorCode code = ErrorCode.COMMENT_REPORT_ALREADY_EXIST;
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 게시글의 댓글 신고 오류")
-        public void commentReportWithNonexistentPostTest() {
+        public void commentReportWithNonexistentPostTest() throws Exception {
+            //존재하지 않는 게시글의 seq
+            randomTargetPostSeq = Long.MAX_VALUE;
 
+            //검증
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 삭제된 게시글의 댓글 신고 오류")
-        public void commentReportWithDeletedPostTest() {
+        public void commentReportWithDeletedPostTest() throws Exception {
+            //삭제된 게시글의 seq
+            postRepository.deleteById(randomTargetPostSeq);
 
+            //검증
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글 신고 오류")
-        public void commentReportWithDeletedCommentTest() {
+        public void commentReportWithDeletedCommentTest() throws Exception {
+            //존재하지 않는 댓글의 seq
+            randomTargetCommentSeq = Long.MAX_VALUE;
 
+            //검증
+            ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 삭제된 댓글 신고 오류")
-        public void commentReportWith() {
+        public void commentReportWith() throws Exception {
+            //삭제된 게시글의 seq
+            commentRepository.deleteById(randomTargetCommentSeq);
 
+            //검증
+            ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+        }
+
+        @Test
+        @DisplayName("- 카테고리 미설정 오류")
+        public void commentReportWithoutCategory() throws Exception{
+            //카테고리 null설정
+            request.setReportCategory(null);
+
+            //검증
+            ErrorCode code = ErrorCode.MISSING_INPUT_VALUE;
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,request)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
     }
 }
