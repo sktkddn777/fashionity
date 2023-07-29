@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Comment {
+    @JsonAlias(value = "comment_seq")
+    private Long commentSeq;
+
     @JsonAlias(value = "member_seq")
     private Long memberSeq;
 

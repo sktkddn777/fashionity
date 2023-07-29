@@ -62,6 +62,7 @@ public class CommentServiceImpl implements CommentService {
                             .findAny()
                             .isPresent();
                     return Comment.builder()
+                            .commentSeq(entity.getSeq())
                             .nickname(entity.getMember().getNickname())
                             .content(entity.getContent())
                             .memberSeq(entity.getMember().getSeq())
