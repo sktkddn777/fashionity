@@ -50,13 +50,15 @@ public enum OAuthProvider {
             Map<String, Object> attributes = oauth2User.getAttributes();
             Map<String, Object> properties = oauth2User.getAttribute("properties");
             Map<String, Object> account = oauth2User.getAttribute("kakao_account");
-
+            log.info(attributes.toString());
+            log.info(properties.toString());
+            log.info(account.toString());
             return OAuthUserInfo.builder()
                     .provider(KAKAO.name)
-                    .email(String.valueOf(attributes.get("email")))
-                    .nickname(String.valueOf(attributes.get("nickname")))
+                    .email(String.valueOf(account.get("email")))
+                    .nickname(String.valueOf(properties.get("nickname")))
                     .oauthId(String.valueOf(attributes.get("id")))
-                    .profileImgUrl(String.valueOf(attributes.get("profile_image")))
+                    .profileImgUrl(String.valueOf(properties.get("profile_image")))
                     .build();
         }
     };
