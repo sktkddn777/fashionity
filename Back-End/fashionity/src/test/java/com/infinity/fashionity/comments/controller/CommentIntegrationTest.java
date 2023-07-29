@@ -2,7 +2,9 @@ package com.infinity.fashionity.comments.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.infinity.fashionity.comments.dto.CommentDeleteDTO;
 import com.infinity.fashionity.comments.dto.CommentSaveDTO;
+import com.infinity.fashionity.comments.dto.CommentUpdateDTO;
 import com.infinity.fashionity.comments.entity.CommentEntity;
 import com.infinity.fashionity.comments.repository.CommentRepository;
 import com.infinity.fashionity.global.exception.ErrorCode;
@@ -21,24 +23,28 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.event.annotation.BeforeTestExecution;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.stream.events.Comment;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +52,12 @@ import static org.springframework.web.servlet.mvc.method.annotation.MvcUriCompon
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+/**
+ * TODO
+ * post_seq 와 comment가 포함된 post_seq가 다른경우도 추가
+ *
+ * */
 @AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
@@ -72,6 +84,10 @@ class CommentIntegrationTest {
     private ObjectMapper mapper;
 
     public final String BASE_URL = "/api/v1";
+    private final String CONTENT_TYPE = "application/json";
+
+    private final Charset CHARSET = StandardCharsets.UTF_8;
+
     public List<MemberEntity> memberList;
     public Map<Long, List<PostEntity>> memberPosts;
     public Map<Long, List<CommentEntity>> postComments;
@@ -107,7 +123,7 @@ class CommentIntegrationTest {
         //각 멤버마다 post등록
         for (MemberEntity member : memberList) {
             List<PostEntity> postList = new ArrayList<>();
-            for(int i=0;i<3;i++){
+            for (int i = 0; i < 3; i++) {
                 PostEntity post = PostEntity.builder()
                         .member(member)
                         .content(member.getNickname().concat("\'s post").concat(Integer.toString(i)))
@@ -120,9 +136,9 @@ class CommentIntegrationTest {
             for (PostEntity post : postList) {
                 //각 포스트마다 댓글 등록
                 List<CommentEntity> commentList = new ArrayList<>();
-                for(int i=0 ;i< memberList.size() ;i++){
+                for (int i = 0; i < memberList.size() * 2; i++) {
                     CommentEntity comment = CommentEntity.builder()
-                            .member(memberList.get(i))
+                            .member(memberList.get(i % memberList.size()))
                             .post(post)
                             .content(Long.toString(post.getSeq()).concat("포스트의 댓글").concat(Integer.toString(i)))
                             .build();
@@ -141,7 +157,7 @@ class CommentIntegrationTest {
                 .memberRole(MemberRole.USER)
                 .build());
         return LoginDTO.Response.builder()
-                .accessToken(jwtProvider.createAccessToken(seq,roles))
+                .accessToken(jwtProvider.createAccessToken(seq, roles))
                 .build();
     }
 
@@ -157,23 +173,47 @@ class CommentIntegrationTest {
     @Nested
     @DisplayName("Comment Save Test")
     public class CommentSaveTest {
-        Long randomMemberSeq;//댓글을 다는 사람의 seq
-        Long randomTargetMemberSeq;//댓글이 달리는 post의 주인 seq
-        Long randomTargetPostSeq;//댓글이 달리는 포스트의 seq
+        //댓글을 다는 사람의 seq
+        Long randomMemberSeq;
+        //accessToken
+        String token;
+
+        //댓글이 달리는 post의 주인 seq
+        Long randomTargetMemberSeq;
+        //댓글이 달리는 포스트의 seq
+        Long randomTargetPostSeq;
 
         CommentSaveDTO.Request request;
 
+        /**
+         * 인자를 받아 등록 요청을 보내주는 메서드
+         */
+        public ResultActions sendRequest(Long postSeq, String token, CommentSaveDTO.Request content) throws Exception {
+            MockHttpServletRequestBuilder authorization = post(BASE_URL.concat("/posts/{postSeq}/comments"), postSeq)
+                    .contentType(CONTENT_TYPE)
+                    .characterEncoding(CHARSET);
+            if (!StringUtils.isBlank(token)) {
+                authorization.header("Authorization", "Bearer ".concat(token));
+            }
+            if(content!=null){
+                authorization.content(mapper.writeValueAsString(content));
+            }
+            return mvc.perform(authorization);
+        }
+
         @BeforeEach
-        public void saveInit(){
+        public void saveInit() throws Exception {
             Random random = new Random();
             //댓글을 다는 사람
-            randomMemberSeq = memberList.get(Math.abs(random.nextInt())%memberList.size()).getSeq();
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+            //accessToken
+            token = memberLogin(randomMemberSeq).getAccessToken();
             //댓글이 달리는 게시글의 주인
-            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt())%memberList.size()).getSeq();
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
 
             //댓글을 달 게시판
             List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
-            randomTargetPostSeq = posts.get(Math.abs(random.nextInt())%posts.size()).getSeq();
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt()) % posts.size()).getSeq();
 
             //등록할 comment
             request = CommentSaveDTO.Request.builder()
@@ -184,16 +224,8 @@ class CommentIntegrationTest {
         @Test
         @DisplayName("- 댓글 정상 등록")
         public void commentsSaveSuccessTest() throws Exception {
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(randomMemberSeq);
-
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
-                            .header("Authorization", "Bearer " + token.getAccessToken())
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            ResultActions resultActions = sendRequest(randomTargetPostSeq, token, request)
                     .andExpect(handler().handlerType(CommentController.class))
                     .andExpect(handler().methodName("saveComment"))
                     .andExpect(status().isCreated())
@@ -208,7 +240,7 @@ class CommentIntegrationTest {
                     .findAny();
 
             assertThat(newComment).isNotEmpty();
-            resultActions.andExpect(jsonPath("$.seq",is(newComment.get().getSeq().intValue())));
+            resultActions.andExpect(jsonPath("$.seq", is(newComment.get().getSeq().intValue())));
         }
 
         @Test
@@ -216,117 +248,79 @@ class CommentIntegrationTest {
         public void unAuthenticatedUserSavesCommentsTest() throws Exception {
             ErrorCode code = ErrorCode.UNAUTHENTICATED_MEMBER;
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            sendRequest(randomTargetPostSeq, null, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 Post Seq로 접근했을 때 오류")
         public void commentsSaveWithUnknownPostSeqTest() throws Exception {
             Long unknownSeq = Long.MAX_VALUE;
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(randomMemberSeq);
 
             ErrorCode code = ErrorCode.POST_NOT_FOUND;
             Long unknownPostSeq = Long.MAX_VALUE;
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), unknownPostSeq)
-                            .header("Authorization", "Bearer " + token.getAccessToken())
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            sendRequest(unknownPostSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- content가 null일 경우 오류")
-        public void commentsSaveWithNullContentTest() throws Exception{
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(randomMemberSeq);
+        public void commentsSaveWithNullContentTest() throws Exception {
             ErrorCode code = ErrorCode.INVALID_INPUT_VALUE;
-
 
             request.setContent(null);
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
-                            .header("Authorization","Bearer "+token.getAccessToken())
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            sendRequest(randomTargetPostSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is("content를 입력해주세요")));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is("content를 입력해주세요")));
         }
 
         @Test
         @DisplayName("- content가 blank로 들어왔을 때 오류")
         public void commentsSaveWithBlankContentTest() throws Exception {
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(randomMemberSeq);
             ErrorCode code = ErrorCode.INVALID_INPUT_VALUE;
 
 
             request.setContent(" ");
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
-                            .header("Authorization","Bearer "+token.getAccessToken())
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            sendRequest(randomTargetPostSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is("content를 입력해주세요")));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is("content를 입력해주세요")));
         }
 
         @Test
         @DisplayName("- content가 200자를 넘겼을 때 오류")
         public void commentsSaveWithContentOverlengthTest() throws Exception {
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(randomMemberSeq);
             ErrorCode code = ErrorCode.INVALID_INPUT_VALUE;
 
 
             request.setContent(StringUtils.randomSting(205));
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
-                            .header("Authorization","Bearer "+token.getAccessToken())
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            sendRequest(randomTargetPostSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is("최대 200자까지 입력할 수 있습니다.")));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is("최대 200자까지 입력할 수 있습니다.")));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 사용자가 댓글을 달려했을 때 오류")
         public void commentsSaveWithUnsavedUserTest() throws Exception {
-            //로그인한 결과 accessToken을 받아옴
-            LoginDTO.Response token = memberLogin(Long.MAX_VALUE);
+            //존재하지 않는 사용자로 로그인
+            token = memberLogin(Long.MAX_VALUE).getAccessToken();
             ErrorCode code = ErrorCode.MEMBER_NOT_FOUND;
 
             //검증
-            ResultActions resultActions = mvc.perform(post(BASE_URL.concat("/posts/{postSeq}/comments"), randomTargetPostSeq)
-                            .header("Authorization","Bearer "+token.getAccessToken())
-                            .contentType("application/json")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .content(mapper.writeValueAsString(request)))
-                    .andDo(print())
+            sendRequest(randomTargetPostSeq, token, request)
                     .andExpect(status().is(code.getStatus().value()))
-                    .andExpect(jsonPath("$.code",is(code.getCode())))
-                    .andExpect(jsonPath("$.message",is(code.getMessage())));
+                    .andExpect(jsonPath("$.code", is(code.getCode())))
+                    .andExpect(jsonPath("$.message", is(code.getMessage())));
         }
     }
 
@@ -381,6 +375,7 @@ class CommentIntegrationTest {
      * - 댓글 정상 수정
      * - 타인의 댓글 수정 오류
      * - 인증되지 않은 사용자의 댓글 수정 오류
+     * - 존재하지 않는 포스트의 댓글 수정 오류
      * - 삭제된 포스트의 댓글 수정 오류
      * - 존재하지 않는 댓글 수정 오류
      * - 삭제된 댓글 수정 오류
@@ -391,66 +386,233 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Update Test")
-    @Disabled
     public class CommentUpdateTest {
+        //댓글을 단 사람의 seq
+        Long randomMemberSeq;
+        //댓글이 달리는 post의 주인 seq
+        Long randomTargetMemberSeq;
+        //댓글이 달리는 포스트의 seq
+        Long randomTargetPostSeq;
+        //수정할 comment의 seq
+        Long randomTargetCommentSeq;
+        //유저의 accessToken
+        String token;
+
+        CommentUpdateDTO.Request request;
+
+        /**
+         * 인자를 받아 수정 요청을 보내주는 메서드
+         */
+        public ResultActions sendRequest(Long postSeq, Long commentSeq, String token, CommentUpdateDTO.Request content) throws Exception {
+            MockHttpServletRequestBuilder authorization = put(BASE_URL.concat("/posts/{postSeq}/comments/{commentSeq}"), postSeq, commentSeq)
+                    .contentType(CONTENT_TYPE)
+                    .characterEncoding(CHARSET);
+
+            if (!StringUtils.isBlank(token)) {
+                authorization.header("Authorization", "Bearer ".concat(token));
+            }
+            if(content!=null){
+                authorization.content(mapper.writeValueAsString(content));
+            }
+            return mvc.perform(authorization);
+        }
+
+        @BeforeEach
+        public void updateInit() throws Exception {
+            Random random = new Random();
+            //댓글을 다는 사람
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+            //accessToken
+            token = memberLogin(randomMemberSeq).getAccessToken();
+            //댓글이 달리는 게시글의 주인
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+
+            //댓글을 달 게시판
+            List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt()) % posts.size()).getSeq();
+
+            //수정할 댓글의 seq
+            randomTargetCommentSeq = postComments.get(randomTargetPostSeq).stream()
+                    .filter(comment -> comment.getMember().getSeq() == randomMemberSeq)
+                    .findAny()
+                    .get()
+                    .getSeq();
+
+            //등록할 comment
+            request = CommentUpdateDTO.Request.builder()
+                    .content("forUpdate!!!!!")
+                    .build();
+        }
+
         @Test
         @DisplayName("- 댓글 정상 수정")
-        public void commentsUpdateSuccessTest() {
+        public void commentsUpdateSuccessTest() throws Exception {
+            //댓글 수정 요청 및 결과
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success", is(true)));
 
+            commentRepository.flush();
+            Optional<CommentEntity> result = commentRepository.findById(randomTargetCommentSeq);
+            assertThat(result).isNotEmpty();
+            CommentEntity updated = result.get();
+            assertAll("assert update",
+                    () -> assertThat(updated.getSeq()).isEqualTo(randomTargetCommentSeq),
+                    () -> assertThat(updated.getContent()).isEqualTo(request.getContent()),
+                    () -> assertThat(updated.getUpdatedAt()).isNotEqualTo(updated.getCreatedAt()));
         }
 
         @Test
         @DisplayName("- 타인의 댓글 수정 오류")
-        public void updateOthersCommentTest() {
+        public void updateOthersCommentTest() throws Exception {
+            //타인의 comment seq
+            Long otherCommentSeq = postComments.get(randomTargetPostSeq).stream()
+                    .filter(comment -> comment.getMember().getSeq() != randomMemberSeq)
+                    .findAny()
+                    .get()
+                    .getSeq();
 
+            //기대되는 error code
+            ErrorCode errorCode = ErrorCode.HANDLE_ACCESS_DENIED;
+
+            //send
+            sendRequest(randomTargetPostSeq, otherCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
+        }
+
+        @Test
+        @DisplayName("- 존재하지 않는 포스트의 댓글 수정 오류")
+        public void commentsUpdateWithNonexistentPostTest() throws Exception {
+            //없는 post번호
+            Long unknownPostSeq = Long.MAX_VALUE;
+
+            //기대되는 error code
+            ErrorCode errorCode = ErrorCode.POST_NOT_FOUND;
+
+            //send
+            sendRequest(unknownPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
         }
 
         @Test
         @DisplayName("- 삭제된 포스트의 댓글 수정 오류")
-        public void commentsUpdateWithNonexistentPostTest() {
+        public void commentsUpdateWithDeletedPostTest() throws Exception {
+            //포스트를 미리 삭제
+            postRepository.deleteById(randomTargetPostSeq);
 
+            //기대되는 error code
+            ErrorCode errorCode = ErrorCode.POST_NOT_FOUND;
+
+            //send
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자의 댓글 수정 오류")
-        public void commentUpdateWithUnauthenticatedUserTest() {
+        public void commentUpdateWithUnauthenticatedUserTest() throws Exception {
+            //error code
+            ErrorCode errorCode = ErrorCode.UNAUTHENTICATED_MEMBER;
 
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, null, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글 수정 오류")
-        public void commentsUpdateWithNonexistentTest() {
+        public void commentsUpdateWithNonexistentTest() throws Exception {
+            //존재하지 않는 댓글 seq
+            Long nonexistCommentSeq = Long.MAX_VALUE;
+            //error code
+            ErrorCode errorCode = ErrorCode.COMMENT_NOT_FOUND;
 
+            sendRequest(randomTargetPostSeq, nonexistCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
         }
 
         @Test
         @DisplayName("- 삭제된 댓글 수정 오류")
-        public void commentsUpdateWithDeletedTest() {
+        public void commentsUpdateWithDeletedTest() throws Exception {
+            //댓글 삭제
+            commentRepository.deleteById(randomTargetCommentSeq);
 
+            //error code
+            ErrorCode errorCode = ErrorCode.COMMENT_NOT_FOUND;
+
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
         }
 
         @Test
         @DisplayName("- content가 null일 경우 오류")
-        public void commentsUpdateWithNullContentTest() {
+        public void commentsUpdateWithNullContentTest() throws Exception {
+            //content를 null
+            request.setContent(null);
 
+            //error code
+            ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
+
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is("content를 입력해주세요")));
         }
 
         @Test
         @DisplayName("- content가 blank일 경우 오류")
-        public void commentsUpdateWithBlankContentTest() {
+        public void commentsUpdateWithBlankContentTest() throws Exception {
+            //content를 blank로
+            request.setContent("     ");
 
+            //error code
+            ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
+
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is("content를 입력해주세요")));
         }
 
         @Test
         @DisplayName("- content가 200자를 넘겼을 경우 오류")
-        public void commentsUpdateWithOverlengthContentTest() {
+        public void commentsUpdateWithOverlengthContentTest() throws Exception {
+            //content를 200자 초과로
+            request.setContent(StringUtils.randomSting(1000));
 
+            //error code
+            ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
+
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is("최대 200자까지 입력할 수 있습니다.")));
         }
 
         @Test
         @DisplayName("- 삭제된 사용자의 댓글 수정 오류")
-        public void commentsUpdateWithDeletedUserTest() {
+        public void commentsUpdateWithDeletedUserTest() throws Exception {
+            //member를 삭제
+            memberRepository.deleteById(randomMemberSeq);
 
+            //error code
+            ErrorCode errorCode = ErrorCode.MEMBER_NOT_FOUND;
+
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, request)
+                    .andExpect(status().is(errorCode.getStatus().value()))
+                    .andExpect(jsonPath("$.code", is(errorCode.getCode())))
+                    .andExpect(jsonPath("$.message", is(errorCode.getMessage())));
         }
     }
 
@@ -465,48 +627,165 @@ class CommentIntegrationTest {
      */
     @Nested
     @DisplayName("Comment Delete Test")
-    @Disabled
     public class CommentDeleteTest {
+        //댓글을 단 사람의 seq
+        Long randomMemberSeq;
+        //댓글이 달리는 post의 주인 seq
+        Long randomTargetMemberSeq;
+        //댓글이 달리는 포스트의 seq
+        Long randomTargetPostSeq;
+        //삭제할 comment의 seq
+        Long randomTargetCommentSeq;
+        //유저의 accessToken
+        String token;
+
+        CommentDeleteDTO.Request request;
+
+        /**
+         * 인자를 받아 삭제 요청을 보내주는 메서드
+         */
+        public ResultActions sendRequest(Long postSeq, Long commentSeq, String token, CommentDeleteDTO.Request content) throws Exception {
+            MockHttpServletRequestBuilder authorization = delete(BASE_URL.concat("/posts/{postSeq}/comments/{commentSeq}"), postSeq, commentSeq)
+                    .contentType(CONTENT_TYPE)
+                    .characterEncoding(CHARSET);
+
+            if (!StringUtils.isBlank(token)) {
+                authorization.header("Authorization", "Bearer ".concat(token));
+            }
+            if(content!=null){
+                authorization.content(mapper.writeValueAsString(content));
+            }
+            return mvc.perform(authorization);
+        }
+
+        @BeforeEach
+        public void deleteInit() throws Exception {
+            Random random = new Random();
+            //댓글을 단 사람
+            randomMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+            //accessToken
+            token = memberLogin(randomMemberSeq).getAccessToken();
+            //댓글이 달리는 게시글의 주인
+            randomTargetMemberSeq = memberList.get(Math.abs(random.nextInt()) % memberList.size()).getSeq();
+
+            //댓글을 삭제할 게시판
+            List<PostEntity> posts = memberPosts.get(randomTargetMemberSeq);
+            randomTargetPostSeq = posts.get(Math.abs(random.nextInt()) % posts.size()).getSeq();
+
+            //삭제할 댓글의 seq
+            randomTargetCommentSeq = postComments.get(randomTargetPostSeq).stream()
+                    .filter(comment -> comment.getMember().getSeq() == randomMemberSeq)
+                    .findAny()
+                    .get()
+                    .getSeq();
+        }
+
         @Test
         @DisplayName("- 댓글 정상 삭제")
-        public void commentsDeleteSuccessTest() {
+        public void commentsDeleteSuccessTest() throws Exception {
+            //삭제
+            sendRequest(randomTargetPostSeq, randomTargetCommentSeq, token, null)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success", is(true)));
 
+            //db에 잘 삭제됐는지 확인
+            assertThat(commentRepository.findById(randomTargetCommentSeq)).isEmpty();
+            //다른 post의 댓글들은 잘 살아있는지 확인
+            List<CommentEntity> allByPost = commentRepository.findAllByPost(PostEntity.builder()
+                    .seq(randomTargetPostSeq)
+                    .build());
+            assertThat(allByPost.size()).isEqualTo(postComments.get(randomTargetPostSeq).size() - 1);
         }
 
         @Test
         @DisplayName("- 인증되지 않은 사용자의 댓글 삭제 오류")
-        public void commentsDeletedByUnauthenticatedUserTest() {
+        public void commentsDeletedByUnauthenticatedUserTest() throws Exception {
+            //error code
+            ErrorCode code = ErrorCode.UNAUTHENTICATED_MEMBER;
 
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,null,null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 타인의 댓글을 삭제 오류")
-        public void commentsDeletedByOtherUserTest() {
+        public void commentsDeletedByOtherUserTest() throws Exception {
+            //다른 사람의 comment로 변경
+            randomTargetCommentSeq = postComments.get(randomTargetPostSeq).stream()
+                    .filter(comment-> comment.getMember().getSeq() != randomMemberSeq)
+                    .findAny()
+                    .get()
+                    .getSeq();
 
+            //error code
+            ErrorCode code = ErrorCode.HANDLE_ACCESS_DENIED;
+
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 포스트의 댓글 삭제 오류")
-        public void commentsDeleteWithNonexistentPostSeqTest() {
+        public void commentsDeleteWithNonexistentPostSeqTest() throws Exception {
+            //존재하지 않는 post의 seq로 셋팅
+            randomTargetPostSeq = Long.MAX_VALUE;
 
+            //error code
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
+
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 삭제된 포스트의 댓글 삭제 오류")
-        public void commentsDeleteWithDeletedPostSeqTest() {
+        public void commentsDeleteWithDeletedPostSeqTest() throws Exception {
+            //일단 post 삭제
+            postRepository.deleteById(randomTargetPostSeq);
 
+            //error code
+            ErrorCode code = ErrorCode.POST_NOT_FOUND;
+
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 존재하지 않는 댓글 삭제 오류")
-        public void nonexistentCommentDeleteTest() {
+        public void nonexistentCommentDeleteTest() throws Exception {
+            //없는 comment로 변경
+            randomTargetCommentSeq = Long.MAX_VALUE;
 
+            //error code
+            ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
+
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
 
         @Test
         @DisplayName("- 삭제된 댓글 삭제 오류")
-        public void commentsDeleteWithDeletedCommentTest() {
+        public void commentsDeleteWithDeletedCommentTest() throws Exception {
+            //삭제시킴
+            commentRepository.deleteById(randomTargetCommentSeq);
 
+            //error code
+            ErrorCode code = ErrorCode.COMMENT_NOT_FOUND;
+
+            sendRequest(randomTargetPostSeq,randomTargetCommentSeq,token,null)
+                    .andExpect(status().is(code.getStatus().value()))
+                    .andExpect(jsonPath("$.code",is(code.getCode())))
+                    .andExpect(jsonPath("$.message",is(code.getMessage())));
         }
     }
 
