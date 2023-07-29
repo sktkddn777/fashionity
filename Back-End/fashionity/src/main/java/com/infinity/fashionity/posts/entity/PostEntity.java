@@ -34,12 +34,10 @@ public class PostEntity extends CUDEntity {
     @JoinColumn(name = "member_seq", nullable = false)
     private MemberEntity member;
 
-    @OneToMany(mappedBy = "postImages", fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_seq", nullable = false)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostImageEntity> postImages;
 
-    @OneToMany(mappedBy = "hashtags", fetch = FetchType.LAZY)
-    @JoinColumn(name = "hashtag_seq", nullable = false)
-    private List<HashtagEntity> hashtags;
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<PostHashtagEntity> postHashtags;
 
 }

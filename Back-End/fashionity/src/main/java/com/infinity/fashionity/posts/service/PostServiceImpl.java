@@ -56,10 +56,10 @@ public class PostServiceImpl implements PostService{
         }
 
         // 좋아요 수
-        long likeCount = postLikeRepository.countBy(postSeq);
+        long likeCount = postLikeRepository.countBySeq(postSeq);
 
         // 댓글 수
-        long commentCount = commentRepository.countBy(postSeq);
+        long commentCount = commentRepository.countBySeq(postSeq);
 
         // 좋아요 여부
 
