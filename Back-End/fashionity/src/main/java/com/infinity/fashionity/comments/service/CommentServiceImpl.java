@@ -50,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         //댓글을 최신순으로 paging처리하기 위함
-        Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         //size와 page에 맞게, 최신순으로 댓글을 가져옴
         Page<CommentEntity> result = commentRepository.findAllByPost(post, pageable);
@@ -62,6 +62,7 @@ public class CommentServiceImpl implements CommentService {
                             .findAny()
                             .isPresent();
                     return Comment.builder()
+                            .commentSeq(entity.getSeq())
                             .nickname(entity.getMember().getNickname())
                             .content(entity.getContent())
                             .memberSeq(entity.getMember().getSeq())
@@ -151,7 +152,6 @@ public class CommentServiceImpl implements CommentService {
 
         //comment를 update해줌
         comment.updateContent(content);
-
         return CommentUpdateDTO.Response.builder()
                 .success(true)
                 .build();
@@ -162,17 +162,23 @@ public class CommentServiceImpl implements CommentService {
     public CommentReportDTO.Response report(CommentReportDTO.Request dto) {
         Long memberSeq = dto.getMemberSeq();
         Long commentSeq = dto.getCommentSeq();
+        Long postSeq = dto.getPostSeq();
         String reportCategory = dto.getReportCategory();
         String reportContent = dto.getReportContent();
 
         //입력값 검증
-        if (memberSeq == null || commentSeq == null || StringUtils.isBlank(reportCategory)) {
+        if (memberSeq == null || commentSeq == null || postSeq == null
+                || StringUtils.isBlank(reportCategory)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
         //멤버 존재하는지 확인
         MemberEntity member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        //post가 존재하는지 확인
+        PostEntity post = postRepository.findById(postSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         //comment가 존재하는지 확인
         CommentEntity comment = commentRepository.findById(commentSeq)
@@ -279,7 +285,7 @@ public class CommentServiceImpl implements CommentService {
 
         //자신의 댓글이 아니거나 권한이 존재하지 않으면 삭제 불가
         if (member.getSeq() != comment.getMember().getSeq()
-                || !member.getMemberRoles().contains(MemberRole.ADMIN)) {
+                && !member.getMemberRoles().contains(MemberRole.ADMIN)) {
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
         }
 

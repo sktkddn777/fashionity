@@ -38,8 +38,7 @@ public class PostEntity extends CUDEntity {
     @JoinColumn(name = "member_seq", nullable = false)
     private MemberEntity member;
 
-    @OneToMany(mappedBy = "postImages", fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_seq", nullable = false)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostImageEntity> postImages;
 
     @OneToMany(mappedBy = "postHashtags", fetch = FetchType.LAZY)
