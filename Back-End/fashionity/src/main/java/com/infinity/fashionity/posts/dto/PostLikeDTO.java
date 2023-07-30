@@ -18,7 +18,7 @@ public class PostLikeDTO {
         private Long memberSeq;
         @JsonIgnore
         @JsonAlias(value = "post_seq")
-        private long postSeq;
+        private Long postSeq;
         @JsonAlias(value = "is_like")
         private boolean isLike;
     }

@@ -19,8 +19,12 @@ public class PostDetailDTO {
     public static class Request{
 
         @JsonIgnore
+        @JsonAlias(value = "member_seq")
+        private Long memberSeq;
+
+        @JsonIgnore
         @JsonAlias(value = "post_seq")
-        private long postSeq;
+        private Long postSeq;
     }
 
     @Getter
@@ -39,7 +43,7 @@ public class PostDetailDTO {
     @Builder
     public static class Post{
         @JsonAlias(value = "post_seq")
-        private long postSeq;
+        private Long postSeq;
         private List<String> images;
         private String content;
         private String name;
@@ -47,9 +51,9 @@ public class PostDetailDTO {
         private String profileImg;
         private boolean liked;
         @JsonAlias(value = "like_count")
-        private long likeCount;
+        private int likeCount;
         @JsonAlias(value = "comment_count")
-        private long commentCount;
+        private int commentCount;
         @JsonAlias(value = "created_at")
         @JsonFormat(pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;

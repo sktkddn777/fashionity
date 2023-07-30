@@ -15,7 +15,7 @@ public class PostDeleteDTO {
         private Long memberSeq;
         @JsonIgnore
         @JsonAlias(value = "post_seq")
-        private long postSeq;
+        private Long postSeq;
     }
 
     @Getter

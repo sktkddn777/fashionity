@@ -18,7 +18,7 @@ public class PostReportDTO {
         @JsonIgnore
         private Long memberSeq;
         @JsonIgnore
-        private long postSeq;
+        private Long postSeq;
         @NotBlank(message="신고유형을 입력해주세요.")
         private String type;
         private String content;

@@ -14,8 +14,13 @@ public class PostUpdateDTO {
     @NoArgsConstructor
     @Builder
     public static class Request{
+
+        @JsonIgnore
+        private long memberSeq;
+
         @JsonIgnore
         private long postSeq;
+
         @Size(max = 500, message = "500자까지만 입력 가능합니다.")
         private String content;
     }

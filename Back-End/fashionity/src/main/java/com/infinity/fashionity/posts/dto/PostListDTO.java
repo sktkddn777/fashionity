@@ -1,6 +1,7 @@
 package com.infinity.fashionity.posts.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.Max;
@@ -17,6 +18,8 @@ public class PostListDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{
+        @JsonIgnore
+        private Long memberSeq;
         @Builder.Default
         private int page = 0;
         @Builder.Default
@@ -35,9 +38,14 @@ public class PostListDTO {
         private List<Post> posts = new ArrayList<>();
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class Post{
         @JsonAlias(value = "post_seq")
-        private long postSeq;
+        private Long postSeq;
         private List<String> images;
         private String content;
         private String name;
