@@ -1,11 +1,15 @@
 package com.infinity.fashionity.posts.entity;
 
 import com.infinity.fashionity.global.entity.CUDEntity;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -38,8 +42,22 @@ public class PostEntity extends CUDEntity {
     @JoinColumn(name = "image_seq", nullable = false)
     private List<PostImageEntity> postImages;
 
-    @OneToMany(mappedBy = "hashtags", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "postHashtags", fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_seq", nullable = false)
-    private List<HashtagEntity> hashtags;
+    private List<PostHashtagEntity> postHashtags;
+
+    //댓글 개수
+    @Formula("(SELECT count(1) FROM comments c WHERE c.post_seq = post_seq)")
+    private int commentCount;
+
+    //좋아요 개수
+    @Formula("(SELECT count(1) FROM post_likes pl WHERE pl.post_seq = post_seq")
+    private int likeCount;
+
+    //게시글 수정
+    public void updateContent(String content){
+        if(StringUtils.isBlank(content)) throw new ValidationException(ErrorCode.INVALID_INPUT_VALUE);
+        this.content = content;
+    }
 
 }
