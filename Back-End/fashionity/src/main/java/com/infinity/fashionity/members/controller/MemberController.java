@@ -34,4 +34,12 @@ public class MemberController {
         SaveDTO.Response response = memberService.register(dto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/validate")
+    public ResponseEntity<Boolean> isValidate(
+            @RequestParam String id
+    ) {
+        boolean response = memberService.isEmailValidate(id);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 }

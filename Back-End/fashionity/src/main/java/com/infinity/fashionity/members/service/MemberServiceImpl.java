@@ -159,6 +159,14 @@ public class MemberServiceImpl implements MemberService{
                 .build();
     }
 
+    @Override
+    public boolean isEmailValidate(String id) {
+        Optional<MemberEntity> byEmail = memberRepository.findById(id);
+        if (byEmail.isPresent())
+            return false;
+        return true;
+    }
+
     /**
      * 소셜로그인으로 받아온 닉네임 길이 13자 이상일 때 13자로 제한
      * @param nickname 소셜 로그인으로 받아온 이름
