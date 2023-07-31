@@ -1,6 +1,7 @@
-package com.infinity.fashionity.members.entity;
+package com.infinity.fashionity.follows.entity;
 
 import com.infinity.fashionity.global.entity.CEntity;
+import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package com.infinity.fashionity.members.service;
 
+import com.infinity.fashionity.members.dto.FollowDTO;
 import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.repository.MemberRepository;
@@ -44,6 +45,16 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public ProfileDTO.Response editMyPassword(Long seq, ProfileDTO.PwRequest data) {
+        return null;
+    }
+
+    @Override
+    public FollowDTO.FollowingResponse getFollowings(Long seq, String nickname) {
+        return null;
+    }
+
+    @Override
+    public FollowDTO.FollowerResponse getFollowers(Long seq, String nickname) {
         return null;
     }
 }

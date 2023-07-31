@@ -26,9 +26,11 @@ public enum ErrorCode {
     INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "M005", "아이디 제약조건에 맞지 않습니다."),
     INVALID_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "M006", "닉네임 제약조건에 맞지 않습니다."),
     INVALID_MEMBER_PASSWORD(HttpStatus.BAD_REQUEST, "M007", "비밀번호 제약조건에 맞지 않습니다."),
-    INVALID_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M008", "이메일 제약조건에 맞지 않습니다.");
+    INVALID_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M008", "이메일 제약조건에 맞지 않습니다."),
 
-
+    // Follow
+    ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "F001", "이미 팔로우 했습니다."),
+    NOT_FOLLOW(HttpStatus.BAD_REQUEST, "F002", "팔로우 하지 않았습니다.");
     private final HttpStatus status;
     private final String code;
     private final String message;
