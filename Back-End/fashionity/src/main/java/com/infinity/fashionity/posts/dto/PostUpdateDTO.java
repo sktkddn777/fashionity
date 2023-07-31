@@ -6,6 +6,8 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostUpdateDTO {
     @Getter
@@ -23,6 +25,13 @@ public class PostUpdateDTO {
 
         @Size(max = 500, message = "500자까지만 입력 가능합니다.")
         private String content;
+
+        @NotBlank
+        @Builder.Default
+        private ArrayList<String> images = new ArrayList<>();
+
+        @Builder.Default
+        private ArrayList<String> hashtag = new ArrayList<>();
     }
 
     @Getter
