@@ -182,6 +182,7 @@ public class PostServiceImpl implements PostService{
             HashtagEntity hashtag = HashtagEntity.builder()
                 .name(hashtags.get(i))
                 .build();
+
             PostHashtagEntity postHashtag = PostHashtagEntity.builder()
                     .hashtag(hashtag)
                     .post(post)
@@ -211,6 +212,8 @@ public class PostServiceImpl implements PostService{
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
         String content = dto.getContent();
+        ArrayList<String> images = dto.getImages();
+        ArrayList<String> hashtags = dto.getHashtag();
 
         // 입력값 검증
         if(memberSeq == null || postSeq == null || StringUtils.isBlank(content)){
@@ -228,6 +231,34 @@ public class PostServiceImpl implements PostService{
         // 작성자와 일치하는지 확인
         if(!post.getMember().getSeq().equals(memberSeq)){
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        // 이미지
+        postImageRepository.deleteByPostSeq(postSeq);
+        for(int i = 0; i < images.size(); i++){
+            PostImageEntity image = PostImageEntity.builder()
+                    .url(images.get(i))
+                    .post(post)
+                    .build();
+            postImageRepository.save(image);
+        }
+
+        // 해시태그
+        postHashtagRepository.deleteByPostSeq(postSeq);
+        for(int i = 0; i < hashtags.size(); i++){
+            HashtagEntity hashtag = HashtagEntity.builder()
+                    .name(hashtags.get(i))
+                    .build();
+
+            if(!postHashtagRepository.findAll().contains(hashtags.get(i))){
+                hashtagRepository.save(hashtag);
+            }
+
+            PostHashtagEntity postHashtag = PostHashtagEntity.builder()
+                    .hashtag(hashtag)
+                    .post(post)
+                    .build();
+            postHashtagRepository.save(postHashtag);
         }
 
         // 게시글 업데이트
