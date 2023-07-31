@@ -38,7 +38,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    private final String[] allowedUrls = {"/api/v1/members/validate/**", "/", "/api/v1/members/login", "/api/v1/members/register"};
+    private final String[] allowedUrls = {"/api/v1/auth/**", "/"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
