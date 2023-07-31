@@ -4,6 +4,8 @@ import com.infinity.fashionity.global.utils.HashUtil;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.dto.LoginDTO;
+import com.infinity.fashionity.members.dto.ProfileDTO;
+import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.dto.SaveDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
@@ -182,6 +184,36 @@ public class MemberServiceImpl implements MemberService{
         if (byEmail.isPresent())
             return false;
         return true;
+    }
+
+    @Override
+    public ProfileDTO.Response getMemberProfile(Long seq, String nickname) {
+        return null;
+    }
+
+    @Override
+    public ProfilePostDTO.Response getMemberProfilePost(Long seq, String nickname) {
+        return null;
+    }
+
+    @Override
+    public ProfilePostDTO.Response getMemberProfileLikedPost(Long seq, String nickname) {
+        return null;
+    }
+
+    @Override
+    public ProfilePostDTO.Response getMemberProfileHiddenPost(Long seq, String nickname) {
+        return null;
+    }
+
+    @Override
+    public ProfileDTO.Response editMemberProfile(Long seq, ProfileDTO.Request profile) {
+        return null;
+    }
+
+    @Override
+    public ProfileDTO.Response editMyPassword(Long seq, ProfileDTO.PwRequest data) {
+        return null;
     }
 
     /**
