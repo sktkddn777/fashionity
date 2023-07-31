@@ -49,7 +49,7 @@ public class PostEntity extends CUDEntity {
     private int commentCount;
 
     //좋아요 개수
-    @Formula("(SELECT count(1) FROM post_likes pl WHERE pl.post_seq = post_seq")
+    @Formula("(SELECT count(1) FROM post_likes pl WHERE pl.post_seq = post_seq)")
     private int likeCount;
 
     //게시글 수정
