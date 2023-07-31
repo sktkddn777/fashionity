@@ -1,5 +1,6 @@
 package com.infinity.fashionity.security.oauth.service;
 
+import com.infinity.fashionity.auth.service.AuthService;
 import com.infinity.fashionity.members.service.MemberService;
 import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
 import com.infinity.fashionity.security.oauth.dto.CustomOAuth2User;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final MemberService memberService;
+    private final AuthService authService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -27,7 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("CustomOAuth2UserService = providerName: " + providerName);
 
         OAuthUserInfo oAuthUserInfo = OAuthProvider.getOAuthProviderByName(providerName).toUserInfo(oAuth2User);
-        AuthUserInfo user = memberService.getOrRegisterUser(oAuthUserInfo);
+        AuthUserInfo user = authService.getOrRegisterUser(oAuthUserInfo);
 
         return new CustomOAuth2User(user, oAuth2User.getAttributes());
     }
