@@ -160,6 +160,10 @@ class CommentIntegrationTest {
             }
         }
     }
+//
+//    @Test
+//    @Commit
+//    public void a(){}
 
     public LoginDTO.Response memberLogin(Long seq) throws Exception {
         List<MemberRoleEntity> roles = new ArrayList<>();
