@@ -10,5 +10,7 @@ public interface MemberService {
     LoginDTO.Response login(LoginDTO.Request dto);
     AuthUserInfo getOrRegisterUser(OAuthUserInfo oauthUserInfo);
     SaveDTO.Response register(SaveDTO.Request dto);
+    boolean isIdValidate(String id);
+    boolean isNicknameValidate(String nickname);
     boolean isEmailValidate(String email);
 }

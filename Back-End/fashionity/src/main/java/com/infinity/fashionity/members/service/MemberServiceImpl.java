@@ -159,9 +159,26 @@ public class MemberServiceImpl implements MemberService{
                 .build();
     }
 
+    // TODO: validate 여부 중복이 많아서 개선할 수 있을거 같음
     @Override
-    public boolean isEmailValidate(String id) {
-        Optional<MemberEntity> byEmail = memberRepository.findById(id);
+    public boolean isIdValidate(String id) {
+        Optional<MemberEntity> byId = memberRepository.findById(id);
+        if (byId.isPresent())
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean isNicknameValidate(String nickname) {
+        Optional<MemberEntity> byNickname = memberRepository.findByNickname(nickname);
+        if (byNickname.isPresent())
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean isEmailValidate(String email) {
+        Optional<MemberEntity> byEmail = memberRepository.findByEmail(email);
         if (byEmail.isPresent())
             return false;
         return true;

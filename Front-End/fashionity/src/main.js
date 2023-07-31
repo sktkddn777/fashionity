@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
+import Toast from 'vue-toastification'
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
@@ -15,11 +16,15 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 /* import specific icons */
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 
+/* import toast css */
+import "vue-toastification/dist/index.css";
+
 /* add icons to the library */
 library.add(faUserSecret);
 
 createApp(App)
   .use(router)
   .use(vuetify)
+  .use(Toast)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");
