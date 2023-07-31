@@ -47,13 +47,19 @@ public class PostServiceImpl implements PostService{
         Long memberSeq = dto.getMemberSeq();
 
         // s 기준으로 paging처리 (s 기본값 popular)
-        Pageable pageable = PageRequest.of(page, size, Sort.by(s).descending());
-
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> result = null;
+        if(s.equals("popular")){
+            result = postLikeRepository.findPostsOrderByLikesDesc(pageable);
+        }
+        else{
+            result = postLikeRepository.findPostsOrderByCreatedAt(pageable);
+        }
         // page, size에 맞게 게시물 목록 가져오기
-        Page<PostEntity> result = postRepository.findAll(pageable);
-
         List<PostListDTO.Post> posts = result.getContent().stream()
-                .map(entity -> {
+                .map(obj -> {
+                    PostEntity entity = (PostEntity)obj[0];
+                    int likeCount = (int)obj[1];
                     List<String> imageUrls = entity.getPostImages().stream()
                             .map(imageEntity -> imageEntity.getUrl())
                             .collect(Collectors.toList());
@@ -73,7 +79,7 @@ public class PostServiceImpl implements PostService{
                             .profileImg(entity.getMember().getProfileUrl())
                             .content(entity.getContent())
                             .commentCount(entity.getCommentCount())
-                            .likeCount(entity.getLikeCount())
+                            .likeCount(likeCount)
                             .images(imageUrls)
                             .liked(isLike)
                             .build();
@@ -157,7 +163,7 @@ public class PostServiceImpl implements PostService{
         if(memberSeq == null || images.isEmpty() || StringUtils.isBlank(content)){
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
-        
+
         // member가 있는지 확인
         MemberEntity member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));

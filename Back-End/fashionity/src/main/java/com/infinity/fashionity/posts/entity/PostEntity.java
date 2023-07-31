@@ -41,8 +41,7 @@ public class PostEntity extends CUDEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostImageEntity> postImages;
 
-    @OneToMany(mappedBy = "postHashtags", fetch = FetchType.LAZY)
-    @JoinColumn(name = "hashtag_seq", nullable = false)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostHashtagEntity> postHashtags;
 
     //댓글 개수
