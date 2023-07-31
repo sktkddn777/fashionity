@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostHashtagRepository extends JpaRepository<PostHashtagEntity, Long> {
 
+    void deleteByPostSeq(Long postSeq);
 }
