@@ -159,6 +159,31 @@ public class MemberServiceImpl implements MemberService{
                 .build();
     }
 
+    // TODO: validate 여부 중복이 많아서 개선할 수 있을거 같음
+    @Override
+    public boolean isIdValidate(String id) {
+        Optional<MemberEntity> byId = memberRepository.findById(id);
+        if (byId.isPresent())
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean isNicknameValidate(String nickname) {
+        Optional<MemberEntity> byNickname = memberRepository.findByNickname(nickname);
+        if (byNickname.isPresent())
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean isEmailValidate(String email) {
+        Optional<MemberEntity> byEmail = memberRepository.findByEmail(email);
+        if (byEmail.isPresent())
+            return false;
+        return true;
+    }
+
     /**
      * 소셜로그인으로 받아온 닉네임 길이 13자 이상일 때 13자로 제한
      * @param nickname 소셜 로그인으로 받아온 이름

@@ -34,4 +34,28 @@ public class MemberController {
         SaveDTO.Response response = memberService.register(dto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/validate/id")
+    public ResponseEntity<Boolean> isIdValidate(
+            @RequestParam String id
+    ) {
+        boolean response = memberService.isIdValidate(id);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/validate/nickname")
+    public ResponseEntity<Boolean> isNicknameValidate(
+            @RequestParam String nickname
+    ) {
+        boolean response = memberService.isNicknameValidate(nickname);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/validate/email")
+    public ResponseEntity<Boolean> isEmailValidate(
+            @RequestParam String email
+    ) {
+        boolean response = memberService.isEmailValidate(email);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 }
