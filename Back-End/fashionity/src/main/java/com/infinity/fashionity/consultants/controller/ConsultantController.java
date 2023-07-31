@@ -1,6 +1,6 @@
 package com.infinity.fashionity.consultants.controller;
 
-import com.infinity.fashionity.consultants.dto.ConsultantDetailDTO;
+import com.infinity.fashionity.consultants.dto.Consultant;
 import com.infinity.fashionity.consultants.dto.ConsultantListDTO;
 import com.infinity.fashionity.consultants.service.ConsultantService;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +23,17 @@ public class ConsultantController {
     // 유저는 이따가 유저쪽으로 넘기기
     // [유저] 전체 컨설턴트 목록 조회
     @GetMapping("")
-    public ResponseEntity<List<ConsultantListDTO.Response>> getAllConsultants() {
-        List<ConsultantListDTO.Response> response = consultantService.getAllConsultants();
+    public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(ConsultantListDTO.Request dto) {
+        ConsultantListDTO.Response response = consultantService.getAllConsultants(dto);
         log.info("response = {}", response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     // [유저] 컨설턴트 상세 조회
-    @GetMapping("/{consultantNickname}")
-    public ResponseEntity<ConsultantDetailDTO.Response> getConsultant(@PathVariable long consultantNickname){
-        ConsultantDetailDTO.Response consultant = consultantService.getConsultant();
-        return new ResponseEntity<>(consultant, HttpStatus.OK);
-    }
+//    @GetMapping("/{consultantNickname}")
+//    public ResponseEntity<Consultant> getConsultant(@PathVariable long consultantNickname){
+//        Consultant consultant = consultantService.getConsultant();
+//        return new ResponseEntity<>(consultant, HttpStatus.OK);
+//    }
 
     /*
     // [유저] 전체 예약 조회

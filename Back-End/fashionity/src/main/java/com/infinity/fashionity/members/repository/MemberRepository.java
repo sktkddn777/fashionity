@@ -12,7 +12,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     @Query("select m from MemberEntity m join fetch m.memberRoles where m.email = :email")
     MemberEntity findByEmailWithRole(String email);
-}+
+}
 
 
 

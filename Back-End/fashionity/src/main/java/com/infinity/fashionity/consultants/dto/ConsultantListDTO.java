@@ -2,7 +2,9 @@ package com.infinity.fashionity.consultants.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
-import org.springframework.data.jpa.repository.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConsultantListDTO {
 
@@ -11,28 +13,29 @@ public class ConsultantListDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Response {
+    public static class Request {
 
-        // 컨설턴트 아이디
-        @JsonAlias(value = "consultant_seq")
-        private Long seq;
+        @Builder.Default
+        private int page = 0;
 
-        @JsonAlias(value = "member_nickname")
-        private String nickname;
-
-        // 컨설턴트 프로필 사진 url
-        @JsonAlias(value = "member_profile_url")
-        private String profileUrl;
-
-        // 컨설턴트 레벨
-        @JsonAlias(value = "consultant_level")
-        private String level;
-
-        // 평균 별점
-        private Float avgRating;
-
-        // 전체 컨설팅 횟수
-        private Integer totalCnt;
+        @Builder.Default
+        private int size = 12;
 
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Response {
+
+        private Boolean prev;
+        private Boolean next;
+        private Integer page;
+
+        @Builder.Default
+        private List<Consultant> consultants = new ArrayList<>();
+    }
+
 }

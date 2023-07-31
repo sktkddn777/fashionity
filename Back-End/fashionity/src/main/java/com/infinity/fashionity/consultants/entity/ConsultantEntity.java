@@ -4,10 +4,13 @@ import com.infinity.fashionity.consultants.data.Level;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -16,7 +19,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class ConsultantEntity extends CUDEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +33,9 @@ public class ConsultantEntity extends CUDEntity {
     @JoinColumn(name = "member_seq", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private MemberEntity member;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "consultant")
+    @Builder.Default
+    private List<ScheduleEntity> schedules = new ArrayList<>();
 }
 
