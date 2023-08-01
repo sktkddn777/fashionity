@@ -16,7 +16,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity,Long> {
     List<CommentEntity> findAllByPost(PostEntity post);
     Page<CommentEntity> findAllByPost(PostEntity post, Pageable pageable);
 
-    @Query("select c,count(cl),case when m is not null then true else false end as liked from CommentEntity c " +
+    @Query("select c,count(cl),case when count(m) >= 1 then true else false end as liked from CommentEntity c " +
             "left join PostEntity p on c.post = p " +
             "left join CommentLikeEntity cl on cl.comment = c " +
             "left join MemberEntity m on cl.member = m and m = :member " +
