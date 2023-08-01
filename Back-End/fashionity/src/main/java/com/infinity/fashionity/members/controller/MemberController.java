@@ -1,6 +1,6 @@
 package com.infinity.fashionity.members.controller;
 
-import com.infinity.fashionity.members.dto.FollowDTO;
+import com.infinity.fashionity.members.dto.MemberFollowDTO;
 import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.service.MemberService;
@@ -76,20 +76,20 @@ public class MemberController {
     }
 
     @GetMapping("/{nickname}/followings")
-    public ResponseEntity<FollowDTO.FollowingResponse> getFollowings(
+    public ResponseEntity<MemberFollowDTO.FollowingResponse> getFollowings(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable String nickname
     ) {
-        FollowDTO.FollowingResponse response = memberService.getFollowings(auth.getSeq(), nickname);
+        MemberFollowDTO.FollowingResponse response = memberService.getFollowings(auth.getSeq(), nickname);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{nickname}/followers")
-    public ResponseEntity<FollowDTO.FollowerResponse> getFollowers(
+    public ResponseEntity<MemberFollowDTO.FollowerResponse> getFollowers(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable String nickname
     ) {
-        FollowDTO.FollowerResponse response = memberService.getFollowers(auth.getSeq(), nickname);
+        MemberFollowDTO.FollowerResponse response = memberService.getFollowers(auth.getSeq(), nickname);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

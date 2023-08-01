@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
 @Slf4j
@@ -38,7 +40,9 @@ public class FollowServiceImpl implements FollowService{
                 .followedMember(followedMember.getSeq())
                 .build();
 
-        followRepository.findById(followKey).ifPresent((e) -> new AlreadyFollowException(ALREADY_FOLLOW));
+        Optional<FollowEntity> byFollowKey = followRepository.findById(followKey);
+        if (byFollowKey.isPresent())
+            throw new AlreadyFollowException(ALREADY_FOLLOW);
 
         FollowEntity followEntity = FollowEntity.builder()
                 .member(member)
