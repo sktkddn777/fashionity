@@ -26,8 +26,12 @@ public enum ErrorCode {
     INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "M005", "아이디 제약조건에 맞지 않습니다."),
     INVALID_MEMBER_NICKNAME(HttpStatus.BAD_REQUEST, "M006", "닉네임 제약조건에 맞지 않습니다."),
     INVALID_MEMBER_PASSWORD(HttpStatus.BAD_REQUEST, "M007", "비밀번호 제약조건에 맞지 않습니다."),
-    INVALID_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M008", "이메일 제약조건에 맞지 않습니다.");
+    INVALID_MEMBER_EMAIL(HttpStatus.BAD_REQUEST, "M008", "이메일 제약조건에 맞지 않습니다."),
 
+
+    //image
+    IMAGE_SAVE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"I001","이미지를 저장 중 오류가 발생했습니다."),
+    INVALID_IMAGE_TYPE(HttpStatus.BAD_REQUEST,"I002","이미지만 저장할 수 있습니다.");
 
     private final HttpStatus status;
     private final String code;
