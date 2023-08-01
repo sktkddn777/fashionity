@@ -1,5 +1,6 @@
 package com.infinity.fashionity.members.controller;
 
+import com.infinity.fashionity.members.dto.MemberFollowDTO;
 import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.service.MemberService;
@@ -21,7 +22,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<ProfileDTO.Response> getProfile(
+    public ResponseEntity<ProfileDTO.Response> getMemberProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable String nickname
     ) {
@@ -71,6 +72,24 @@ public class MemberController {
             @RequestBody ProfileDTO.PwRequest data
     ) {
         ProfileDTO.Response response = memberService.editMyPassword(auth.getSeq(), data);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{nickname}/followings")
+    public ResponseEntity<MemberFollowDTO.FollowingResponse> getFollowings(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable String nickname
+    ) {
+        MemberFollowDTO.FollowingResponse response = memberService.getFollowings(auth.getSeq(), nickname);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{nickname}/followers")
+    public ResponseEntity<MemberFollowDTO.FollowerResponse> getFollowers(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable String nickname
+    ) {
+        MemberFollowDTO.FollowerResponse response = memberService.getFollowers(auth.getSeq(), nickname);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
