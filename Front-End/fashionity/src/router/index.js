@@ -5,6 +5,7 @@ import UserView from "../views/UserView.vue";
 import UserRegister from "../components/pages/user/UserRegister.vue";
 import UserLogin from "../components/pages/user/UserLogin.vue";
 
+import PostView from "../components/pages/post/PostList.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -20,6 +21,7 @@ const router = createRouter({
         },
       ],
     },
+
     {
       path: "/user",
       name: "userView",
@@ -34,6 +36,19 @@ const router = createRouter({
           path: "login",
           name: "UserLogin",
           component: UserLogin,
+        },
+      ],
+    },
+
+    {
+      path: "/post",
+      name: "postView",
+      component: PostView,
+      children: [
+        {
+          path: "",
+          name: "home",
+          component: PostView,
         },
       ],
     },
