@@ -2,7 +2,7 @@
   <div
     class="container-fluid"
     style="
-      padding-top: 20px;
+      padding-top: 30px;
       border-style: solid;
       border-width: 1px;
       border-color: #bdbdbd white white white;
@@ -26,8 +26,10 @@
       </div>
     </div>
 
+    <div class="row" style="height: 30px"></div>
+
     <div class="container">
-      <div class="row">
+      <div class="row" style="justify-content: center">
         <div class="col">
           <the-post></the-post>
         </div>
@@ -41,6 +43,8 @@
           <the-post></the-post>
         </div>
       </div>
+
+      <div class="row" style="height: 30px"></div>
 
       <div class="row">
         <div class="col">
@@ -56,6 +60,8 @@
           <the-post></the-post>
         </div>
       </div>
+
+      <div class="row" style="height: 40px"></div>
     </div>
   </div>
 </template>
