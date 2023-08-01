@@ -1,5 +1,6 @@
 package com.infinity.fashionity.consultants.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.infinity.fashionity.global.entity.CEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

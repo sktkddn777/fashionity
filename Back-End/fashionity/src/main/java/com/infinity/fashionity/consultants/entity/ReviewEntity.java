@@ -1,10 +1,8 @@
 package com.infinity.fashionity.consultants.entity;
 
 import com.infinity.fashionity.global.entity.CUDEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -18,6 +16,7 @@ import javax.validation.constraints.Min;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ReviewEntity extends CUDEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +29,10 @@ public class ReviewEntity extends CUDEntity {
     @Max(value=5)
     @Min(value=0)
     @Column(name = "review_grade", unique = false, nullable = true)
-    private float grade;
+    private Float grade;
 
     @JoinColumn(name = "reservation_seq")
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private ReservationEntity reservation;
 
 

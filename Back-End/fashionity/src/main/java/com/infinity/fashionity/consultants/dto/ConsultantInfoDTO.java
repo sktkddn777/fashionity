@@ -5,10 +5,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controller 에서 컨설턴트 목로 조회시 받고 줄거
- */
-public class ConsultantListDTO {
+public class ConsultantInfoDTO {
 
     @Builder
     @Getter
@@ -17,11 +14,7 @@ public class ConsultantListDTO {
     @NoArgsConstructor
     public static class Request {
 
-        @Builder.Default
-        private int page = 0;
-
-        @Builder.Default
-        private int size = 12;
+        private String consultantNickname;
 
     }
 
@@ -31,13 +24,9 @@ public class ConsultantListDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
-
-        private Boolean prev;
-        private Boolean next;
-        private Integer page;
+        private Long consultantNickname;
 
         @Builder.Default
-        private List<ConsultantSummary> consultants = new ArrayList<>();
+        private List<ConsultantDetail> consultant = new ArrayList<>();
     }
-
 }

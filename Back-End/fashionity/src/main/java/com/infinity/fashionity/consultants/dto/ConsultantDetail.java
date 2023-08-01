@@ -1,7 +1,9 @@
 package com.infinity.fashionity.consultants.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.infinity.fashionity.consultants.data.Level;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;
+import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Consultant {
+public class ConsultantDetail {
 
     // 컨설턴트 아이디
     @JsonAlias(value = "consultant_seq")
@@ -29,10 +31,10 @@ public class Consultant {
 
     // 컨설턴트 레벨
     @JsonAlias(value = "consultant_level")
-    private String level;
+    private Level level;
 
     // 평균 별점
-    private Float avgRating;
+    private Float avgGrade;
 
     // 전체 컨설팅 횟수
     private Integer totalCnt;
@@ -43,7 +45,7 @@ public class Consultant {
 
     // 예약 가능한 일시
     @Builder.Default
-    private List<Schedule> schedules = new ArrayList<>();
+    private List<ScheduleEntity> schedules = new ArrayList<>();
 
 
 }
