@@ -183,11 +183,14 @@ public class PostServiceImpl implements PostService{
                 .name(hashtags.get(i))
                 .build();
 
+            if(!postHashtagRepository.findAll().contains(hashtags.get(i))){
+                hashtagRepository.save(hashtag);
+            }
+
             PostHashtagEntity postHashtag = PostHashtagEntity.builder()
                     .hashtag(hashtag)
                     .post(post)
                     .build();
-            hashtagRepository.save(hashtag);
             postHashtagRepository.save(postHashtag);
         }
 
@@ -202,9 +205,9 @@ public class PostServiceImpl implements PostService{
 
         return PostSaveDTO.Response.builder()
                 .success(true)
+                .postSeq(post.getSeq())
                 .build();
     }
-
     // 게시글 수정 (이미지, 해시태그 수정!!!!!)
     @Override
     @Transactional
