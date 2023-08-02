@@ -1,5 +1,14 @@
 package com.infinity.fashionity.members.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Follower {
 
     private String profileUrl;
