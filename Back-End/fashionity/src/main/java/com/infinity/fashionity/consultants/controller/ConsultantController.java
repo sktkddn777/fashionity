@@ -32,3 +32,4 @@ public class ConsultantController {
         return new ResponseEntity<>(consultantInfoResponse, HttpStatus.OK);
         }
     }
+

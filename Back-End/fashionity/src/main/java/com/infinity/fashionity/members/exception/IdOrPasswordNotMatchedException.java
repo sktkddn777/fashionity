@@ -1,12 +1,11 @@
 package com.infinity.fashionity.members.exception;
 
-public class IdOrPasswordNotMatchedException extends RuntimeException{
+import com.infinity.fashionity.global.exception.CustomException;
+import com.infinity.fashionity.global.exception.ErrorCode;
 
-    public IdOrPasswordNotMatchedException(String message) {
-        super(message);
-    }
+public class IdOrPasswordNotMatchedException extends CustomException {
 
-    public IdOrPasswordNotMatchedException() {
-        super("아이디 혹은 비밀번호가 잘못됐습니다.");
+    public IdOrPasswordNotMatchedException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

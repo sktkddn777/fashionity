@@ -1,5 +1,10 @@
 package com.infinity.fashionity.consultants.repository;
 
+
+
+import org.springframework.stereotype.Repository;
+
+
 import com.infinity.fashionity.consultants.dto.Review;
 import com.infinity.fashionity.consultants.entity.ConsultantEntity;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;

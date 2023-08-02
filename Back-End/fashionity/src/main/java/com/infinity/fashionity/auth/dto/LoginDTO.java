@@ -1,4 +1,4 @@
-package com.infinity.fashionity.members.dto;
+package com.infinity.fashionity.auth.dto;
 
 
 import lombok.*;
@@ -8,6 +8,7 @@ public class LoginDTO {
     @NoArgsConstructor
     @Getter
     @Setter
+    @ToString
     public static class Request{
         private String id;
         private String password;
