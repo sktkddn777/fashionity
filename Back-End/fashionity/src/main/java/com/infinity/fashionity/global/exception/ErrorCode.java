@@ -32,9 +32,14 @@ public enum ErrorCode {
     ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "F001", "이미 팔로우 했습니다."),
     NOT_FOLLOW(HttpStatus.BAD_REQUEST, "F002", "팔로우 하지 않았습니다."),
 
+
+    // Email
+    EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "이메일 에러입니다.");
+
     //image
     IMAGE_SAVE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"I001","이미지를 저장 중 오류가 발생했습니다."),
     INVALID_IMAGE_TYPE(HttpStatus.BAD_REQUEST,"I002","이미지만 저장할 수 있습니다.");
+
 
     private final HttpStatus status;
     private final String code;
