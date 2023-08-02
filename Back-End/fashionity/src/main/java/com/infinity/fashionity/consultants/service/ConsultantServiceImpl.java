@@ -124,7 +124,6 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
-
     // 유저 예약 내역 조회
     @Override
     @Transactional(readOnly = true)
@@ -134,6 +133,23 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         return UserReservationListDTO.Response.builder()
                 .userReservationSummaries(result)
+                .build();
+    }
+
+    // 컨설턴트 예약 목록 조회
+    @Override
+    @Transactional(readOnly = true)
+    public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname) {
+
+        List<ConsultantReservationSummary> result = reservationRepository.findConsultantReservations(consultantNickname);
+        log.info("=====으앙=====");
+        log.info("=====으앙=====");
+
+        log.info("result {}", result);
+        log.info("=====으앙=====");
+        log.info("=====으앙=====");
+        return ConsultantReservationListDTO.Response.builder()
+                .consultantReservationSummaries(result)
                 .build();
     }
 

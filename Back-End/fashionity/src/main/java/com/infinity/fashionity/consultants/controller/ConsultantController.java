@@ -2,6 +2,7 @@ package com.infinity.fashionity.consultants.controller;
 
 import com.infinity.fashionity.consultants.dto.ConsultantInfoDTO;
 import com.infinity.fashionity.consultants.dto.ConsultantListDTO;
+import com.infinity.fashionity.consultants.dto.ConsultantReservationListDTO;
 import com.infinity.fashionity.consultants.dto.UserReservationListDTO;
 import com.infinity.fashionity.consultants.service.ConsultantService;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
@@ -41,6 +42,18 @@ public class ConsultantController {
         UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(auth.getSeq());
 //        UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(1l);
         return new ResponseEntity<>(userReservationListResponse, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{consultantNickname}/reservations")
+    public ResponseEntity<ConsultantReservationListDTO.Response> getConsultantReservationsList(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("consultantNickname") String consultantNickname) {
+//                ConsultantReservationListDTO.Request dto = ConsultantReservationListDTO.Request.builder()
+//                        .consultantNickname(consultantNickname)
+//                        .build();
+        ConsultantReservationListDTO.Response consultantReservationsListResponse = consultantService.getConsultantReservationsList(auth.getSeq(), consultantNickname);
+//        UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(1l);
+        return new ResponseEntity<>(consultantReservationsListResponse, HttpStatus.OK);
     }
     }
 

@@ -11,6 +11,8 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "consultant_schedule")
@@ -37,6 +39,10 @@ public class ScheduleEntity extends CEntity {
 
     @Column(name="cancel_reason", length=200, unique = false, nullable = true)
     private String cancelReason;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "schedule")
+    @Builder.Default
+    private ReservationEntity reservations = new ReservationEntity();
 
     @JoinColumn(name="consultant_info_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
