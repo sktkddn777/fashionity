@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -458,6 +459,88 @@ class AuthControllerTest {
                     .andExpect(jsonPath("$.code", is(CREDENTIAL_NOT_MATCHED.getCode())))
                     .andExpect(jsonPath("$.message", is(CREDENTIAL_NOT_MATCHED.getMessage())))
                     .andReturn();
+        }
+    }
+
+    @Nested
+    @DisplayName("Member Property Check Test")
+    public class MemberPropertyCheckTest {
+
+        private final String CHECK_ID_REQUEST_URL = "/check/id";
+        private final String CHECK_NICKNAME_REQUEST_URL = "/check/nickname";
+        private final String CHECK_EMAIL_REQUEST_URL = "/check/email";
+        Long randomMemberId;
+
+        @Test
+        @DisplayName("check id duplicate")
+        public void checkIdDuplicateTest() throws Exception {
+            // given
+            Random random = new Random();
+            int totalMemberSize = memberRepository.findAll().size();
+            randomMemberId = Math.abs(random.nextLong())%totalMemberSize;
+            String duplicateId = "testId".concat(Long.toString(randomMemberId));
+
+            // when & then
+            MvcResult mvcResult = mvc.perform(get(BASE_URL.concat(CHECK_ID_REQUEST_URL))
+                            .contentType("application/json")
+                            .characterEncoding(UTF_8)
+                            .param("id", duplicateId))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(AuthController.class))
+                    .andExpect(handler().methodName("isIdValidate"))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String content = mvcResult.getResponse().getContentAsString();
+            assertThat(content).isEqualTo("false");
+        }
+
+        @Test
+        @DisplayName("check nickname duplicate")
+        public void checkNicknameDuplicateTest() throws Exception {
+            // given
+            Random random = new Random();
+            int totalMemberSize = memberRepository.findAll().size();
+            randomMemberId = Math.abs(random.nextLong())%totalMemberSize;
+            String duplicateNickname = "tester".concat(Long.toString(randomMemberId));
+
+            // when & then
+            MvcResult mvcResult = mvc.perform(get(BASE_URL.concat(CHECK_NICKNAME_REQUEST_URL))
+                            .contentType("application/json")
+                            .characterEncoding(UTF_8)
+                            .param("nickname", duplicateNickname))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(AuthController.class))
+                    .andExpect(handler().methodName("isNicknameValidate"))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String content = mvcResult.getResponse().getContentAsString();
+            assertThat(content).isEqualTo("false");
+        }
+
+        @Test
+        @DisplayName("check email duplicate")
+        public void checkEmailDuplicateTest() throws Exception {
+            // given
+            Random random = new Random();
+            int totalMemberSize = memberRepository.findAll().size();
+            randomMemberId = Math.abs(random.nextLong())%totalMemberSize;
+            String duplicateEmail = "tester".concat(Long.toString(randomMemberId)).concat("@gmail.com");
+
+            // when & then
+            MvcResult mvcResult = mvc.perform(get(BASE_URL.concat(CHECK_EMAIL_REQUEST_URL))
+                            .contentType("application/json")
+                            .characterEncoding(UTF_8)
+                            .param("email", duplicateEmail))
+                    .andDo(print())
+                    .andExpect(handler().handlerType(AuthController.class))
+                    .andExpect(handler().methodName("isEmailValidate"))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String content = mvcResult.getResponse().getContentAsString();
+            assertThat(content).isEqualTo("false");
         }
     }
 }
