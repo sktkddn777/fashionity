@@ -34,7 +34,7 @@ public enum ErrorCode {
 
 
     // Email
-    EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "이메일 에러입니다.");
+    EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "이메일 에러입니다."),
 
     //image
     IMAGE_SAVE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"I001","이미지를 저장 중 오류가 발생했습니다."),
