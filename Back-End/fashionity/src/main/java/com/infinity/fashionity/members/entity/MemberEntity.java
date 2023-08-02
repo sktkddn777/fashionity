@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ import static javax.persistence.GenerationType.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
 public class MemberEntity extends CUDEntity {
 
     @Id
@@ -66,5 +68,9 @@ public class MemberEntity extends CUDEntity {
     @Override
     public String toString() {
         return "member : " + id + " email = " + email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -1,5 +1,6 @@
 package com.infinity.fashionity.auth.service;
 
+import com.infinity.fashionity.auth.dto.FindByEmailDTO;
 import com.infinity.fashionity.auth.dto.LoginDTO;
 import com.infinity.fashionity.auth.dto.SaveDTO;
 import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
@@ -13,4 +14,6 @@ public interface AuthService {
     boolean isIdValidate(String id);
     boolean isNicknameValidate(String nickname);
     boolean isEmailValidate(String email);
+    FindByEmailDTO.IDResponse findIdByEmail(FindByEmailDTO.IDRequest dto);
+    FindByEmailDTO.PasswordResponse reissuePasswordByEmail(FindByEmailDTO.PasswordRequest dto);
 }

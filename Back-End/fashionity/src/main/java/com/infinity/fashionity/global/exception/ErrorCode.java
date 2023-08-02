@@ -30,7 +30,11 @@ public enum ErrorCode {
 
     // Follow
     ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "F001", "이미 팔로우 했습니다."),
-    NOT_FOLLOW(HttpStatus.BAD_REQUEST, "F002", "팔로우 하지 않았습니다.");
+    NOT_FOLLOW(HttpStatus.BAD_REQUEST, "F002", "팔로우 하지 않았습니다."),
+
+    // Email
+    EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "이메일 에러입니다.");
+
     private final HttpStatus status;
     private final String code;
     private final String message;
