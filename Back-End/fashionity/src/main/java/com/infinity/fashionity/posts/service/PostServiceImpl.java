@@ -4,6 +4,7 @@ import com.infinity.fashionity.comments.repository.CommentRepository;
 import com.infinity.fashionity.global.exception.*;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
+import com.infinity.fashionity.image.dto.ImageDeleteDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
 import com.infinity.fashionity.image.service.ImageService;
 import com.infinity.fashionity.members.data.MemberRole;
@@ -29,9 +30,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * TODO :
+ * 게시글 전체 조회, 게시글 단일 조회, like, report 리팩토링
+ * */
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
@@ -54,17 +59,16 @@ public class PostServiceImpl implements PostService{
         // s 기준으로 paging처리 (s 기본값 popular)
         Pageable pageable = PageRequest.of(page, size);
         Page<Object[]> result = null;
-        if(s.equals("popular")){
+        if (s.equals("popular")) {
             result = postLikeRepository.findPostsOrderByLikesDesc(pageable);
-        }
-        else{
+        } else {
             result = postLikeRepository.findPostsOrderByCreatedAt(pageable);
         }
         // page, size에 맞게 게시물 목록 가져오기
         List<PostListDTO.Post> posts = result.getContent().stream()
                 .map(obj -> {
-                    PostEntity entity = (PostEntity)obj[0];
-                    int likeCount = (int)obj[1];
+                    PostEntity entity = (PostEntity) obj[0];
+                    int likeCount = (int) obj[1];
                     List<String> imageUrls = entity.getPostImages().stream()
                             .map(imageEntity -> imageEntity.getUrl())
                             .collect(Collectors.toList());
@@ -75,7 +79,7 @@ public class PostServiceImpl implements PostService{
                             .build();
                     Optional<PostLikeEntity> postLike = postLikeRepository.findById(likeKey);
                     boolean isLike = false;
-                    if(postLike.isPresent()){
+                    if (postLike.isPresent()) {
                         isLike = true;
                     }
                     return PostListDTO.Post.builder()
@@ -119,7 +123,7 @@ public class PostServiceImpl implements PostService{
         // 복합키 있는지 확인
         Optional<PostLikeEntity> postLike = postLikeRepository.findById(likeKey);
         boolean isLike = false;
-        if(postLike.isPresent()){
+        if (postLike.isPresent()) {
             isLike = true;
         }
 
@@ -132,7 +136,7 @@ public class PostServiceImpl implements PostService{
         // 복합키 있는지 확인
         Optional<FollowEntity> follow = followRepository.findById(followKey);
         boolean isFollow = false;
-        if(follow.isPresent()){
+        if (follow.isPresent()) {
             isFollow = true;
         }
 
@@ -165,7 +169,7 @@ public class PostServiceImpl implements PostService{
         String content = dto.getContent();
         List<MultipartFile> images = dto.getImages();
         List<String> hashtags = dto.getHashtags();
-        if(memberSeq == null || images.size() > 4 || StringUtils.isBlank(content)){
+        if (memberSeq == null || images.size() > 4 || images.isEmpty() || StringUtils.isBlank(content)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -184,7 +188,7 @@ public class PostServiceImpl implements PostService{
 
         // 해시태그 등록
         List<PostHashtagEntity> hashtagEntities = new ArrayList<>();
-        for(int i = 0; i < hashtags.size(); i++){
+        for (int i = 0; i < hashtags.size(); i++) {
             HashtagEntity hashtag = hashtagRepository.findByName(hashtags.get(i))
                     .orElse(HashtagEntity.builder()
                             .name(hashtags.get(i))
@@ -206,7 +210,7 @@ public class PostServiceImpl implements PostService{
 
         // 이미지 정보를 DB에 저장
         List<ImageDTO> imageDTOList = savedImage.getImageInfos();
-        for(int i = 0; i < imageDTOList.size(); i++){
+        for (int i = 0; i < imageDTOList.size(); i++) {
             PostImageEntity image = PostImageEntity.builder()
                     .url(imageDTOList.get(i).getFileUrl())
                     .name(imageDTOList.get(i).getFileName())
@@ -220,6 +224,7 @@ public class PostServiceImpl implements PostService{
                 .postSeq(post.getSeq())
                 .build();
     }
+
     // 게시글 수정 (이미지, 해시태그 수정!!!!!)
     @Override
     @Transactional
@@ -227,11 +232,12 @@ public class PostServiceImpl implements PostService{
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
         String content = dto.getContent();
-        ArrayList<String> images = dto.getImages();
-        ArrayList<String> hashtags = dto.getHashtag();
+        List<MultipartFile> images = dto.getImages();
+        List<String> hashtags = dto.getHashtag();
 
         // 입력값 검증
-        if(memberSeq == null || postSeq == null || StringUtils.isBlank(content)){
+        if (memberSeq == null || postSeq == null || StringUtils.isBlank(content)
+                || images.isEmpty() || images.size() > 4) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -244,37 +250,62 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         // 작성자와 일치하는지 확인
-        if(!post.getMember().getSeq().equals(memberSeq)){
+        if (!post.getMember().getSeq().equals(memberSeq)) {
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
         }
 
-        // 이미지
+        //기존 image, hashtags를 삭제
+
+        // 이미지들을 물리 저장소에서 삭제
+        List<ImageDTO> imageInfos = post.getPostImages().stream()
+                .map(image -> ImageDTO.builder()
+                        .fileName(image.getName())
+                        .fileUrl(image.getUrl())
+                        .build())
+                .collect(Collectors.toList());
+        ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
+                .images(imageInfos)
+                .build());
+
+        //이미지 정보들을 삭제
         postImageRepository.deleteByPostSeq(postSeq);
-        for(int i = 0; i < images.size(); i++){
-            PostImageEntity image = PostImageEntity.builder()
-                    .url(images.get(i))
-                    .post(post)
-                    .build();
-            postImageRepository.save(image);
-        }
 
-        // 해시태그
+        //물리저장소에서 삭제가 성공했으면 db에서도 지움
+        postImageRepository.deleteByPostSeq(postSeq);
+
+        //해시태그들 삭제
         postHashtagRepository.deleteByPostSeq(postSeq);
-        for(int i = 0; i < hashtags.size(); i++){
-            HashtagEntity hashtag = HashtagEntity.builder()
-                    .name(hashtags.get(i))
-                    .build();
 
-            if(!postHashtagRepository.findAll().contains(hashtags.get(i))){
-                hashtagRepository.save(hashtag);
-            }
+        //이미지를 물리저장소에 저장
+        ImageSaveDTO.Response savedImages = imageService.save(ImageSaveDTO.Request.builder()
+                .images(images)
+                .build());
+
+        //저장된 정보를 db에 저장
+        List<PostImageEntity> collect = savedImages.getImageInfos().stream()
+                .map(imageInfo -> PostImageEntity.builder()
+                        .name(imageInfo.getFileName())
+                        .url(imageInfo.getFileUrl())
+                        .post(post)
+                        .build())
+                .collect(Collectors.toList());
+        postImageRepository.saveAll(collect);
+
+        //해시태그 저장
+        List<PostHashtagEntity> hashtagEntities = new ArrayList<>();
+        for (int i = 0; i < hashtags.size(); i++) {
+            HashtagEntity hashtag = hashtagRepository.findByName(hashtags.get(i))
+                    .orElse(HashtagEntity.builder()
+                            .name(hashtags.get(i))
+                            .build());
 
             PostHashtagEntity postHashtag = PostHashtagEntity.builder()
                     .hashtag(hashtag)
                     .post(post)
                     .build();
-            postHashtagRepository.save(postHashtag);
+            hashtagEntities.add(postHashtag);
         }
+        postHashtagRepository.saveAll(hashtagEntities);
 
         // 게시글 업데이트
         post.updateContent(content);
@@ -292,7 +323,7 @@ public class PostServiceImpl implements PostService{
         Long memberSeq = dto.getMemberSeq();
 
         // 입력값 검증
-        if(postSeq == null || memberSeq == null){
+        if (postSeq == null || memberSeq == null) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -305,12 +336,30 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         // 작성자, 권한자만 삭제 가능
-        if(memberSeq.equals(post.getMember().getSeq())
-                || !member.getMemberRoles().contains(MemberRole.ADMIN)){
+        if (!memberSeq.equals(post.getMember().getSeq())
+                && !member.getMemberRoles().contains(MemberRole.ADMIN)) {
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
         }
 
-        // 영속화
+        //물리 저장소에 저장된 이미지들 삭제
+        List<PostImageEntity> postImages = post.getPostImages();
+        List<ImageDTO> imageInfos = postImages.stream()
+                .map(postImage -> ImageDTO.builder()
+                        .fileName(postImage.getName())
+                        .fileUrl(postImage.getUrl())
+                        .build())
+                .collect(Collectors.toList());
+        imageService.delete(ImageDeleteDTO.Request.builder()
+                .images(imageInfos)
+                .build());
+
+        //db에서 정보들을 삭제
+        postImageRepository.deleteByPostSeq(postSeq);
+
+        //db에서 연결된 해시태그를 삭제
+        postHashtagRepository.deleteByPostSeq(postSeq);
+
+        //db에서 post관련 정보 삭제
         postRepository.delete(post);
 
         return PostDeleteDTO.Response.builder()
@@ -326,7 +375,7 @@ public class PostServiceImpl implements PostService{
         Long memberSeq = dto.getMemberSeq();
 
         // 입력값 검증
-        if(postSeq == null || memberSeq == null){
+        if (postSeq == null || memberSeq == null) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -347,10 +396,10 @@ public class PostServiceImpl implements PostService{
         // 게시글 좋아요 눌렀는지 확인
         Optional<PostLikeEntity> postLike = postLikeRepository.findById(key);
         boolean like = false;
-        if(postLike.isPresent()){
+        if (postLike.isPresent()) {
             postLikeRepository.delete(postLike.get());
             like = false;
-        }else{
+        } else {
             postLikeRepository.save(PostLikeEntity.builder()
                     .post(post)
                     .member(member)
@@ -372,7 +421,7 @@ public class PostServiceImpl implements PostService{
         String content = dto.getContent();
 
         // 입력값 검증
-        if(postSeq == null || memberSeq == null || StringUtils.isBlank(type)){
+        if (postSeq == null || memberSeq == null || StringUtils.isBlank(type)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -391,7 +440,7 @@ public class PostServiceImpl implements PostService{
                 .build();
 
         // 게시글 신고 했는지 확인
-        postReportRepository.findById(key).ifPresent(e->{
+        postReportRepository.findById(key).ifPresent(e -> {
             throw new AlreadyExistException(ErrorCode.POST_REPORT_ALREADY_EXIST);
         });
 

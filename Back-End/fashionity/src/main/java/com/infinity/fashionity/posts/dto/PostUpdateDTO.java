@@ -3,6 +3,7 @@ package com.infinity.fashionity.posts.dto;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -28,10 +29,10 @@ public class PostUpdateDTO {
 
         @NotBlank
         @Builder.Default
-        private ArrayList<String> images = new ArrayList<>();
+        private List<MultipartFile> images = new ArrayList<>();
 
         @Builder.Default
-        private ArrayList<String> hashtag = new ArrayList<>();
+        private List<String> hashtag = new ArrayList<>();
     }
 
     @Getter
