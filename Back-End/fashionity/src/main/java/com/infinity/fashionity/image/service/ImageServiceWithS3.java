@@ -36,13 +36,12 @@ public class ImageServiceWithS3 implements ImageService{
     /**
      * 랜덤한 이름을 발급해주는 메서드
      * */
-    public String generateRandomName(File file){
+    public String generateRandomName(){
         LocalDateTime now = LocalDateTime.now();
         int year = now.getYear();
         int month = now.getMonthValue();
         int day = now.getDayOfMonth();
 
-        String randomName = UUID.randomUUID().toString().concat(StringUtils.getFilenameExtension(file.getName()));
         StringBuffer sb = new StringBuffer();
         String fullName = sb.append(year)
                 .append('/')
@@ -50,7 +49,7 @@ public class ImageServiceWithS3 implements ImageService{
                 .append('/')
                 .append(day)
                 .append('/')
-                .append(randomName)
+                .append(UUID.randomUUID().toString())
                 .toString();
 
         return fullName;
@@ -83,7 +82,7 @@ public class ImageServiceWithS3 implements ImageService{
     }
 
     private ImageDTO uploadFile(File file){
-        String fileName = generateRandomName(file);
+        String fileName = generateRandomName();
         return imageRepository.imageSave(file, fileName);
     }
 
