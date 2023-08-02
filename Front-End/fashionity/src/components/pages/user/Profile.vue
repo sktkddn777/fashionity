@@ -1,35 +1,38 @@
 <template>
-  <div class="profile-container">
-    <div class="profile-title">프로필</div>
-    <div class="profile-main">
-      <!-- 사용자 프로필 사진 -->
-      <div class="profile-main-photo">
-        <img class="image-box" width="200" height="200" />
-      </div>
-      <div class="profile-main-form">
-        <v-form disabled>
-          <div class="profile-main-form-text">
-            <!-- 프로필 정보 -->
-            <div class="profile-main-form-text-nickname">
-              <div>닉네임</div>
-              <v-text-field
-                v-model="state.nickname"
-                density="compact"
-              ></v-text-field>
+  <div class="container-fluid">
+    <the-nav-bar-mypage></the-nav-bar-mypage>
+    <div class="profile-container">
+      <div class="profile-title">프로필</div>
+      <div class="profile-main">
+        <!-- 사용자 프로필 사진 -->
+        <div class="profile-main-photo">
+          <img class="image-box" width="200" height="200" />
+        </div>
+        <div class="profile-main-form">
+          <v-form disabled>
+            <div class="profile-main-form-text">
+              <!-- 프로필 정보 -->
+              <div class="profile-main-form-text-nickname">
+                <div>닉네임</div>
+                <v-text-field
+                  v-model="state.nickname"
+                  density="compact"
+                ></v-text-field>
+              </div>
+              <div class="m-top-d">
+                <div>한줄 소개</div>
+                <v-text-field
+                  v-model="state.profileIntro"
+                  density="compact"
+                ></v-text-field>
+              </div>
+              <div class="m-top-d">
+                <div>손민수</div>
+                <v-text-field density="compact">손민수</v-text-field>
+              </div>
             </div>
-            <div class="m-top-d">
-              <div>한줄 소개</div>
-              <v-text-field
-                v-model="state.profileIntro"
-                density="compact"
-              ></v-text-field>
-            </div>
-            <div class="m-top-d">
-              <div>손민수</div>
-              <v-text-field density="compact">손민수</v-text-field>
-            </div>
-          </div>
-        </v-form>
+          </v-form>
+        </div>
       </div>
     </div>
   </div>
@@ -39,9 +42,13 @@
 import { onMounted } from "vue";
 import { reactive } from "vue";
 // import { useRouter } from "vue-router";
+import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 
 export default {
   name: "ProfilePage",
+  components: {
+    TheNavBarMypage,
+  },
   setup() {
     // const router = useRouter();
     const state = reactive({

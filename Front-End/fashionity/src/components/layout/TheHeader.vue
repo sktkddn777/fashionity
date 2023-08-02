@@ -12,8 +12,14 @@
                 <div class="col">22</div>
                 <div class="col">22</div>
                 <div class="col">22</div>
-                <div class="col box">
-                  <img class="profile" src="@/assets/img/unknown.png" />
+                <div class="col">
+                  <div class="row">
+                    <router-link
+                      to="/user/login"
+                      style="text-decoration: none; color: #424242"
+                      ><img class="profile" src="@/assets/img/unknown.png"
+                    /></router-link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -21,16 +27,22 @@
         </div>
       </div>
 
-      <div class="row justify-content-center">
+      <!-- <div class="row justify-content-center">
         <div class="col col-lg-2 header-tab">HOME</div>
         <div class="col col-lg-2 header-tab">CONSULTING</div>
         <div class="col col-lg-2 header-tab">MY PAGE</div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      keyword: "",
+    };
+  },
+};
 </script>
 <style>
 .header-tab {
@@ -45,15 +57,11 @@ export default {};
   font-size: 50px;
 }
 
-.box {
-  width: 30px;
-  height: 30px;
-  border-radius: 70%;
-  overflow: hidden;
-}
 .profile {
+  padding-top: 1px;
   width: 100%;
   height: 100%;
+  border-radius: 70%;
   object-fit: cover;
 }
 </style>
