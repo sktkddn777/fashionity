@@ -24,7 +24,6 @@
       <div class="row justify-content-center">
         <div class="col col-lg-2 header-tab">HOME</div>
         <div class="col col-lg-2 header-tab">CONSULTING</div>
-        <div class="col col-lg-2 header-tab">LIVE</div>
         <div class="col col-lg-2 header-tab">MY PAGE</div>
       </div>
     </div>

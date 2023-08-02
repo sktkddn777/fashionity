@@ -3,9 +3,8 @@ package com.infinity.fashionity.members.exception;
 import com.infinity.fashionity.global.exception.CustomException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 
-public class MemberNotFoundException extends CustomException {
-
-    public MemberNotFoundException(ErrorCode errorCode) {
+public class CustomValidationException extends CustomException {
+    public CustomValidationException(ErrorCode errorCode) {
         super(errorCode);
     }
 }
