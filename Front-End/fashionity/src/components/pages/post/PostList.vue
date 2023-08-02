@@ -1,13 +1,7 @@
 <template lang="">
-  <div
-    class="container-fluid"
-    style="
-      padding-top: 30px;
-      border-style: solid;
-      border-width: 1px;
-      border-color: #bdbdbd white white white;
-    "
-  >
+  <div class="container-fluid">
+    <the-nav-bar-post></the-nav-bar-post>
+
     <div class="row justify-content-space-around">
       <div class="col-3">
         <input
@@ -67,6 +61,7 @@
 </template>
 <script>
 import thePost from "@/components/shared/ThePost";
+import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
 
 export default {
   data() {
@@ -76,6 +71,7 @@ export default {
   },
   components: {
     thePost,
+    TheNavBarPost,
   },
 };
 </script>
