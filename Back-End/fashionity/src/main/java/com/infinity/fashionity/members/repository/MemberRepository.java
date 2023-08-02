@@ -20,3 +20,16 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     MemberEntity findByEmailWithRole(String email);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+

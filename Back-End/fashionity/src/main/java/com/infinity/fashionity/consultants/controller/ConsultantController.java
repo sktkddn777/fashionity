@@ -1,35 +1,35 @@
-package com.infinity.fashionity;
+package com.infinity.fashionity.consultants.controller;
 
-import com.infinity.fashionity.consultants.entity.ConsultantEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.infinity.fashionity.consultants.dto.ConsultantInfoDTO;
+import com.infinity.fashionity.consultants.dto.ConsultantListDTO;
+import com.infinity.fashionity.consultants.service.ConsultantService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/consultants")
 public class ConsultantController {
 
+    private final ConsultantService consultantService;
+
     // 유저는 이따가 유저쪽으로 넘기기
     // [유저] 전체 컨설턴트 목록 조회
-    @GetMapping("")
-    public List<ConsultantEntity> getAllConsultants(){
-        return null;
+    @GetMapping
+    public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(ConsultantListDTO.Request dto) {
+        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(dto);
+        return new ResponseEntity<>(consultantListResponse, HttpStatus.OK);}
+
+    @GetMapping(value="/{consultantNickname}")
+    public ResponseEntity<ConsultantInfoDTO.Response> getConsultantDetail(ConsultantInfoDTO.Request dto){
+        ConsultantInfoDTO.Response consultantInfoResponse = consultantService.getConsultantDetail(dto);
+        return new ResponseEntity<>(consultantInfoResponse, HttpStatus.OK);
+        }
     }
 
-    // [유저] 컨설턴트 상세 정보 조회
-//    @GetMapping
-
-    // [컨설턴트] 전체 예약 조회
-//    @GetMapping
-
-    // [컨설턴트] 단일 예약 조회
-//    @GetMapping
-
-    // [컨설턴트] 전체 후기/평점 조회
-//    @GetMapping
-
-    // [컨설턴트] 예약별 후기/평점 조회
-}

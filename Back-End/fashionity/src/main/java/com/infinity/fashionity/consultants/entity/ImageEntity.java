@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class ImageEntity extends CEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_seq")
+    @Column(name = "image_seq")
     private Long seq;
 
     @Column(name = "image_url", unique = true, nullable = false, columnDefinition = "TEXT")

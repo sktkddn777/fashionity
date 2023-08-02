@@ -69,7 +69,7 @@ public class SecurityConfig {
                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .build();
 
