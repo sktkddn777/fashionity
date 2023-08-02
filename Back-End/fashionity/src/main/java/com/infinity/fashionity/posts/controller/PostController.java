@@ -9,8 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("api/v1/posts")
@@ -38,13 +42,17 @@ public class PostController {
     }
 
     //게시글 등록
-    @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostSaveDTO.Response> savePost(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @Validated @RequestBody PostSaveDTO.Request dto){
-        dto.setMemberSeq(auth.getSeq());
-        PostSaveDTO.Response success = postService.savePost(dto);
-        return new ResponseEntity<>(success, HttpStatus.CREATED);
+            @RequestPart("images") List<MultipartFile> images,
+            @RequestPart("content") String content){
+        PostSaveDTO.Request dto = PostSaveDTO.Request.builder()
+                .images(images)
+                .content(content)
+                .build();
+
+        return new ResponseEntity<>(postService.savePost(dto),HttpStatus.OK);
     }
 
     //게시글 수정

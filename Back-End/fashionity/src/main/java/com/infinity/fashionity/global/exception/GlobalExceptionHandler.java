@@ -42,6 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingRequestValueException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestValueException(MissingRequestValueException e) {
         log.error("[EXCEPTION] {}",e.getMessage());
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of(ErrorCode.MISSING_INPUT_VALUE));
     }

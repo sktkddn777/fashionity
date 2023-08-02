@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PostSaveDTO {
     @Getter
@@ -20,9 +21,10 @@ public class PostSaveDTO {
         private Long memberSeq;
         @NotEmpty
         @Builder.Default
-        private ArrayList<String> images = new ArrayList<>();
+        private List<MultipartFile> images = new ArrayList<>();
         @NotBlank
         private String content;
+        @JsonIgnore
         @Builder.Default
         private ArrayList<String> hashtag = new ArrayList<>();
     }

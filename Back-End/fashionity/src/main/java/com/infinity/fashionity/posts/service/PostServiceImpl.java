@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,9 +159,9 @@ public class PostServiceImpl implements PostService{
         // 입력값 검증
         Long memberSeq = dto.getMemberSeq();
         String content = dto.getContent();
-        List<String> images = dto.getImages();
+        List<MultipartFile> images = dto.getImages();
         List<String> hashtags = dto.getHashtag();
-        if(memberSeq == null || images.isEmpty() || StringUtils.isBlank(content)){
+        if(memberSeq == null || images.size() > 4 || StringUtils.isBlank(content)){
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -197,7 +198,7 @@ public class PostServiceImpl implements PostService{
         // 이미지 등록 및 DB 저장
         for(int i = 0; i < images.size(); i++){
             PostImageEntity image = PostImageEntity.builder()
-                    .url(images.get(i))
+//                    .url(images.get(i))
                     .post(post)
                     .build();
             postImageRepository.save(image);

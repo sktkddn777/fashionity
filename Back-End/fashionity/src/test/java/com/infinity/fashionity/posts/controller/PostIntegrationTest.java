@@ -233,7 +233,7 @@ public class PostIntegrationTest {
             request = PostSaveDTO.Request.builder()
                     .content("posts content!!!!!")
                     .memberSeq(randomMemberSeq)
-                    .images(images)
+//                    .images(images)
                     .hashtag(hashtags)
                     .build();
         }
