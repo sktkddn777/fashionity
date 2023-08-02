@@ -28,17 +28,28 @@
           </div>
           <div>회원가입 | 아이디찾기 | 비밀번호찾기</div>
           <div class="flex-column">
-            <v-btn color="#00BF18" block>
+            <v-btn
+              color="#00BF18"
+              block
+              style="margin-bottom: 10px; margin-top: 20px"
+            >
               <img src="@/assets/img/naver.png" style="height: 30px" />
-              <a>네이버로 로그인</a>
+              <a style="padding-left: 53px; padding-right: 73px"
+                >네이버로 로그인</a
+              >
             </v-btn>
-            <v-btn color="#FFE812" block>
+
+            <v-btn color="#FFE812" block style="margin-bottom: 10px">
               <img src="@/assets/img/kakao.png" style="height: 30px" />
-              <a>카카오로 로그인</a>
+              <a style="padding-left: 53px; padding-right: 73px"
+                >카카오로 로그인</a
+              >
             </v-btn>
             <v-btn color="#FFFFFF" block>
-              <img src="@/assets/img/google.png" style="height: 30px" />
-              <a>구글로 로그인</a>
+              <img src="@/assets/img/google.png" style="height: 25px" />
+              <a style="padding-left: 65px; padding-right: 75px"
+                >구글로 로그인</a
+              >
             </v-btn>
           </div>
         </v-form>
