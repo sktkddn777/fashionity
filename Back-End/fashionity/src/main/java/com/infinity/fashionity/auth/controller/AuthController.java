@@ -1,5 +1,6 @@
 package com.infinity.fashionity.auth.controller;
 
+import com.infinity.fashionity.auth.dto.FindByEmailDTO;
 import com.infinity.fashionity.auth.dto.LoginDTO;
 import com.infinity.fashionity.auth.dto.SaveDTO;
 import com.infinity.fashionity.auth.service.AuthService;
@@ -57,5 +58,21 @@ public class AuthController {
     ) {
         boolean response = authService.isEmailValidate(email);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/find/id")
+    public ResponseEntity<FindByEmailDTO.IDResponse> findIdByEmail(
+            @RequestBody FindByEmailDTO.IDRequest dto
+    ) {
+        FindByEmailDTO.IDResponse response = authService.findIdByEmail(dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/find/password")
+    public ResponseEntity<FindByEmailDTO.PasswordResponse> findPasswordByEmail(
+            @RequestBody FindByEmailDTO.PasswordRequest dto
+    ) {
+        FindByEmailDTO.PasswordResponse response = authService.reissuePasswordByEmail(dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

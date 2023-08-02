@@ -1,5 +1,6 @@
 package com.infinity.fashionity.consultants.entity;
 
+import com.infinity.fashionity.consultants.dto.Image;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
+import java.awt.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="reservations")
@@ -32,11 +36,18 @@ public class ReservationEntity extends CUDEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberEntity member;
 
+    // 예약 일시
+    @Column(name = "reservation_date", unique = false, nullable = false)
+    private LocalDateTime date;
+
+    // 예약 상세
     @Column(name = "reservation_detail", unique = false, nullable = true, length = 200)
     private String detail;
 
-    @Column(name = "reservation_date", unique = false, nullable = false)
-    private LocalDateTime date;
+    // 예약 사진
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation")
+    @Builder.Default
+    private List<ImageEntity> images = new ArrayList<>();
 
 
 }
