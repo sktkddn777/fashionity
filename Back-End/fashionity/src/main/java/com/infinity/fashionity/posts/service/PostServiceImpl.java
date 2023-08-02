@@ -3,6 +3,9 @@ package com.infinity.fashionity.posts.service;
 import com.infinity.fashionity.comments.repository.CommentRepository;
 import com.infinity.fashionity.global.exception.*;
 import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.image.dto.ImageDTO;
+import com.infinity.fashionity.image.dto.ImageSaveDTO;
+import com.infinity.fashionity.image.service.ImageService;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.entity.FollowEntity;
 import com.infinity.fashionity.members.entity.FollowKey;
@@ -38,6 +41,7 @@ public class PostServiceImpl implements PostService{
     private final PostHashtagRepository postHashtagRepository;
     private final PostImageRepository postImageRepository;
     private final FollowRepository followRepository;
+    private final ImageService imageService;
 
     // 게시글 전체 조회
     @Override
@@ -195,10 +199,17 @@ public class PostServiceImpl implements PostService{
             postHashtagRepository.save(postHashtag);
         }
 
-        // 이미지 등록 및 DB 저장
-        for(int i = 0; i < images.size(); i++){
+        //먼저 이미지를 저장소에 저장
+        ImageSaveDTO.Response savedImage = imageService.save(ImageSaveDTO.Request.builder()
+                .images(images)
+                .build());
+
+        // 이미지 정보를 DB에 저장
+        List<ImageDTO> imageDTOList = savedImage.getImageInfos();
+        for(int i = 0; i < imageDTOList.size(); i++){
             PostImageEntity image = PostImageEntity.builder()
-//                    .url(images.get(i))
+                    .url(imageDTOList.get(i).getFileUrl())
+                    .name(imageDTOList.get(i).getFileName())
                     .post(post)
                     .build();
             postImageRepository.save(image);

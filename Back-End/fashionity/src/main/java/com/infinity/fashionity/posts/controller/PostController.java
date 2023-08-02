@@ -31,7 +31,7 @@ public class PostController {
     }
 
     //게시글 상세 조회
-    @GetMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostDetailDTO.Response> getPost(@PathVariable long postSeq){
         PostDetailDTO.Request dto = PostDetailDTO.Request
                 .builder()
@@ -48,6 +48,7 @@ public class PostController {
             @RequestPart("images") List<MultipartFile> images,
             @RequestPart("content") String content){
         PostSaveDTO.Request dto = PostSaveDTO.Request.builder()
+                .memberSeq(auth == null ? null : auth.getSeq())
                 .images(images)
                 .content(content)
                 .build();

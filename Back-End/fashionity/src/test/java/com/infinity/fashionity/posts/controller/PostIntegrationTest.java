@@ -8,7 +8,7 @@ import com.infinity.fashionity.comments.repository.CommentRepository;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.MemberRole;
-import com.infinity.fashionity.members.dto.LoginDTO;
+import com.infinity.fashionity.auth.dto.LoginDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
