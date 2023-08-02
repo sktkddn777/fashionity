@@ -3,8 +3,10 @@ package com.infinity.fashionity.members.service;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
+import com.infinity.fashionity.global.utils.RegexUtil;
 import com.infinity.fashionity.members.dto.*;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.exception.CustomValidationException;
 import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
@@ -15,12 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.auth.login.CredentialException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.infinity.fashionity.global.exception.ErrorCode.CREDENTIAL_NOT_MATCHED;
-import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -70,7 +70,8 @@ public class MemberServiceImpl implements MemberService{
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
         member.updateProfile(profile);
 
-        //TODO: 정규식으로 프로필 유효성 검사
+        if (RegexUtil.checkNicknameRegex(profile.getNickname()))
+            throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
 
         return ProfileDTO.Response.builder()
                 .profileUrl(member.getProfileUrl())
@@ -89,7 +90,8 @@ public class MemberServiceImpl implements MemberService{
         if (!passwordEncoder.matches(data.getPassword(),member.getPassword()))
             throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
-        //TODO: 정규식으로 패스워드 유효성 검사
+        if (RegexUtil.checkPasswordRegex(data.getPassword()))
+            throw new CustomValidationException(INVALID_MEMBER_PASSWORD);
 
         member.setPassword(passwordEncoder.encode(data.getNewPassword()));
         return ProfileDTO.PwResponse.builder()
