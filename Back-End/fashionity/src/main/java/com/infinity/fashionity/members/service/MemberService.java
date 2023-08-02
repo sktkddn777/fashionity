@@ -10,7 +10,7 @@ public interface MemberService {
     ProfilePostDTO.Response getMemberProfileLikedPost(Long seq, String nickname);
     ProfilePostDTO.Response getMemberProfileHiddenPost(Long seq, String nickname);
     ProfileDTO.Response editMemberProfile(Long seq, ProfileDTO.Request profile);
-    ProfileDTO.Response editMyPassword(Long seq, ProfileDTO.PwRequest data);
+    ProfileDTO.PwResponse editMyPassword(Long seq, ProfileDTO.PwRequest data);
     MemberFollowDTO.FollowingResponse getFollowings(Long seq, String nickname);
     MemberFollowDTO.FollowerResponse getFollowers(Long seq, String nickname);
 

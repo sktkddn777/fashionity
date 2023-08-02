@@ -3,34 +3,48 @@ package com.infinity.fashionity.members.service;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
-import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.members.dto.*;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.auth.login.CredentialException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.infinity.fashionity.global.exception.ErrorCode.CREDENTIAL_NOT_MATCHED;
 import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ProfileDTO.Response getMemberProfile(Long seq, String nickname) {
-        return null;
+        MemberEntity memberByNickname = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        List<FollowEntity> followingList = followRepository.findByMember(memberByNickname);
+        List<FollowEntity> followedList = followRepository.findByFollowedMember(memberByNickname);
+
+        return ProfileDTO.Response.builder()
+                .profileUrl(memberByNickname.getProfileUrl())
+                .profileIntro(memberByNickname.getProfileIntro())
+                .followerCnt(followedList.size())
+                .followingCnt(followingList.size())
+                .myProfile(memberByNickname.getSeq() == seq)
+                .build();
     }
 
     @Override
@@ -49,13 +63,38 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional
     public ProfileDTO.Response editMemberProfile(Long seq, ProfileDTO.Request profile) {
-        return null;
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        List<FollowEntity> followingList = followRepository.findByMember(member);
+        List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
+        member.updateProfile(profile);
+
+        //TODO: 정규식으로 프로필 유효성 검사
+
+        return ProfileDTO.Response.builder()
+                .profileUrl(member.getProfileUrl())
+                .profileIntro(member.getProfileIntro())
+                .followerCnt(followedList.size())
+                .followingCnt(followingList.size())
+                .myProfile(member.getSeq() == seq)
+                .build();
     }
 
     @Override
-    public ProfileDTO.Response editMyPassword(Long seq, ProfileDTO.PwRequest data) {
-        return null;
+    @Transactional
+    public ProfileDTO.PwResponse editMyPassword(Long seq, ProfileDTO.PwRequest data) {
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(data.getPassword(),member.getPassword()))
+            throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
+
+        //TODO: 정규식으로 패스워드 유효성 검사
+
+        member.setPassword(passwordEncoder.encode(data.getNewPassword()));
+        return ProfileDTO.PwResponse.builder()
+                .success(true)
+                .build();
     }
 
     @Override

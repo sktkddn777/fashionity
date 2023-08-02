@@ -236,7 +236,7 @@ public class AuthServiceImpl implements AuthService{
             mimeMessageHelper.setFrom("bsrg@fashionity.com");
             mimeMessageHelper.setText(createMailForm("임시 비밀번호 재발급", newPassword), true);
 
-            member.setPassword(newPassword);
+            member.setPassword(passwordEncoder.encode(newPassword));
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.error("[ERROR] MessagingException = {}, {}", e.getClass().getSimpleName(), e.getMessage());
