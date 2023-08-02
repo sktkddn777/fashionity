@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +37,23 @@ public class ImageServiceWithS3 implements ImageService{
      * 랜덤한 이름을 발급해주는 메서드
      * */
     public String generateRandomName(File file){
-        return UUID.randomUUID().toString().concat(file.getName());
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        int day = now.getDayOfMonth();
+
+        String randomName = UUID.randomUUID().toString().concat(StringUtils.getFilenameExtension(file.getName()));
+        StringBuffer sb = new StringBuffer();
+        String fullName = sb.append(year)
+                .append('/')
+                .append(month)
+                .append('/')
+                .append(day)
+                .append('/')
+                .append(randomName)
+                .toString();
+
+        return fullName;
     }
 
     /**
