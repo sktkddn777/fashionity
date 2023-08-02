@@ -2,6 +2,7 @@ package com.infinity.fashionity.members.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.infinity.fashionity.consultants.entity.ReservationEntity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
@@ -79,6 +80,10 @@ public class MemberEntity extends CUDEntity {
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member",cascade = CascadeType.ALL)
     private List<MemberRoleEntity> memberRoles = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @Builder.Default
+    private List<ReservationEntity> reservations = new ArrayList<>();
 
     @Override
     public String toString() {

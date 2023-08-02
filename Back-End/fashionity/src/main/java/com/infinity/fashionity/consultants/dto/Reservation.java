@@ -29,4 +29,6 @@ public class Reservation {
     // 어떤 컨설턴트의 스케줄인지
     @JsonAlias(value = "schedule_seq")
     private Long scheduleSeq;
+
+
 }

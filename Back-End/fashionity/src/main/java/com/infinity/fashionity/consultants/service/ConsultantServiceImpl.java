@@ -5,6 +5,7 @@ import com.infinity.fashionity.consultants.entity.ConsultantEntity;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;
 import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
+import com.infinity.fashionity.consultants.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
+    private final ReservationRepository reservationRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -121,6 +123,20 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .consultant(consultantDetails)
                 .build();
     }
+
+
+    // 유저 예약 내역 조회
+    @Override
+    @Transactional(readOnly = true)
+    public UserReservationListDTO.Response getUserReservationsList(Long memberSeq) {
+
+        List<UserReservationSummary> result = reservationRepository.findUserReservations(memberSeq);
+
+        return UserReservationListDTO.Response.builder()
+                .userReservationSummaries(result)
+                .build();
+    }
+
 }
 
 

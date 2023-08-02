@@ -3,10 +3,7 @@ package com.infinity.fashionity.consultants.entity;
 import com.infinity.fashionity.consultants.dto.Image;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import java.awt.*;
@@ -21,6 +18,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ReservationEntity extends CUDEntity {
 
     @Id
