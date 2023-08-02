@@ -45,6 +45,18 @@ public class CommentServiceImpl implements CommentService {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
+        MemberEntity member = null;
+        //인증정보가 들어오면 찾음
+        if(memberSeq != null){
+            member = memberRepository.findById(memberSeq).orElseThrow(()->new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        }
+        //아니라면 미인증 사용자기 떄문에 liked 상태를 false로 만들기 위해 존재하지 않는 값으로 만듬
+        else{
+            member = MemberEntity.builder()
+                    .seq(-1l)
+                    .build();
+        }
+
         //post가 존재하는지 확인
         PostEntity post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
@@ -53,14 +65,13 @@ public class CommentServiceImpl implements CommentService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         //size와 page에 맞게, 최신순으로 댓글을 가져옴
-        Page<CommentEntity> result = commentRepository.findAllByPost(post, pageable);
+        Page<Object[]> result = commentRepository.findAllByPostWithCommentsAndLikeCount(post,member, pageable);
 
         List<Comment> comments = result.getContent().stream()
-                .map(entity -> {
-                    boolean isLike = entity.getLikes().stream()
-                            .filter(e -> e.getMember().getSeq() == memberSeq)
-                            .findAny()
-                            .isPresent();
+                .map(obj -> {
+                    CommentEntity entity = (CommentEntity) obj[0];
+                    int likesCount = ((Long)obj[1]).intValue();
+                    boolean liked = ((Boolean)obj[2]).booleanValue();
                     return Comment.builder()
                             .commentSeq(entity.getSeq())
                             .nickname(entity.getMember().getNickname())
@@ -69,8 +80,8 @@ public class CommentServiceImpl implements CommentService {
                             .profileImg(entity.getMember().getProfileUrl())
                             .createdAt(entity.getCreatedAt())
                             .updatedAt(entity.getUpdatedAt())
-                            .likeCnt(entity.getLikes().size())
-                            .liked(isLike)
+                            .likeCnt(likesCount)
+                            .liked(liked)
                             .build();
                 })
                 .collect(Collectors.toList());

@@ -27,5 +27,5 @@ public class HashtagEntity extends CEntity {
     private String name;
 
     @OneToMany(mappedBy = "hashtag",fetch = FetchType.LAZY)
-    private List<PostHashtagEntity> hashtagePost;
+    private List<PostHashtagEntity> hashtagPost;
 }

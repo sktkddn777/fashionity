@@ -19,14 +19,15 @@ public class PostSaveDTO {
     public static class Request{
         @JsonIgnore
         private Long memberSeq;
+
         @NotEmpty
         @Builder.Default
         private List<MultipartFile> images = new ArrayList<>();
         @NotBlank
         private String content;
-        @JsonIgnore
+
         @Builder.Default
-        private ArrayList<String> hashtag = new ArrayList<>();
+        private List<String> hashtags = new ArrayList<>();
     }
 
     @Getter

@@ -234,7 +234,7 @@ public class PostIntegrationTest {
                     .content("posts content!!!!!")
                     .memberSeq(randomMemberSeq)
 //                    .images(images)
-                    .hashtag(hashtags)
+//                    .hashtag(hashtags)
                     .build();
         }
 

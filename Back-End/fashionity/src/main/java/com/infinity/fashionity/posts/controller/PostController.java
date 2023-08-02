@@ -42,14 +42,16 @@ public class PostController {
     }
 
     //게시글 등록
-    @PostMapping(produces = APPLICATION_JSON_VALUE)
+    @PostMapping(produces = APPLICATION_JSON_VALUE,consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PostSaveDTO.Response> savePost(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @RequestPart("images") List<MultipartFile> images,
-            @RequestPart("content") String content){
+            @RequestParam("images") List<MultipartFile> images,
+            @RequestParam("hashtags") List<String> hashtags,
+            @RequestParam("content") String content){
         PostSaveDTO.Request dto = PostSaveDTO.Request.builder()
                 .memberSeq(auth == null ? null : auth.getSeq())
                 .images(images)
+                .hashtags(hashtags)
                 .content(content)
                 .build();
 

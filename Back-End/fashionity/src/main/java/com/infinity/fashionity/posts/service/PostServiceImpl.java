@@ -164,7 +164,7 @@ public class PostServiceImpl implements PostService{
         Long memberSeq = dto.getMemberSeq();
         String content = dto.getContent();
         List<MultipartFile> images = dto.getImages();
-        List<String> hashtags = dto.getHashtag();
+        List<String> hashtags = dto.getHashtags();
         if(memberSeq == null || images.size() > 4 || StringUtils.isBlank(content)){
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
@@ -182,22 +182,22 @@ public class PostServiceImpl implements PostService{
         // 영속화
         postRepository.save(post);
 
-        // 해시태그 등록 및 영속화
+        // 해시태그 등록
+        List<PostHashtagEntity> hashtagEntities = new ArrayList<>();
         for(int i = 0; i < hashtags.size(); i++){
-            HashtagEntity hashtag = HashtagEntity.builder()
-                .name(hashtags.get(i))
-                .build();
-
-            if(!postHashtagRepository.findAll().contains(hashtags.get(i))){
-                hashtagRepository.save(hashtag);
-            }
+            HashtagEntity hashtag = hashtagRepository.findByName(hashtags.get(i))
+                    .orElse(HashtagEntity.builder()
+                            .name(hashtags.get(i))
+                            .build());
 
             PostHashtagEntity postHashtag = PostHashtagEntity.builder()
                     .hashtag(hashtag)
                     .post(post)
                     .build();
-            postHashtagRepository.save(postHashtag);
+            hashtagEntities.add(postHashtag);
         }
+        //모두 영속화
+        postHashtagRepository.saveAll(hashtagEntities);
 
         //먼저 이미지를 저장소에 저장
         ImageSaveDTO.Response savedImage = imageService.save(ImageSaveDTO.Request.builder()
