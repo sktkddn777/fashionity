@@ -1,6 +1,8 @@
 package com.infinity.fashionity.posts.service;
 
-import com.infinity.fashionity.comments.repository.CommentRepository;
+import com.infinity.fashionity.follows.entity.FollowEntity;
+import com.infinity.fashionity.follows.entity.FollowKey;
+import com.infinity.fashionity.follows.repository.FollowRepository;
 import com.infinity.fashionity.global.exception.*;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
@@ -8,10 +10,7 @@ import com.infinity.fashionity.image.dto.ImageDeleteDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
 import com.infinity.fashionity.image.service.ImageService;
 import com.infinity.fashionity.members.data.MemberRole;
-import com.infinity.fashionity.members.entity.FollowEntity;
-import com.infinity.fashionity.members.entity.FollowKey;
 import com.infinity.fashionity.members.entity.MemberEntity;
-import com.infinity.fashionity.members.repository.FollowRepository;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import com.infinity.fashionity.posts.dto.*;
 import com.infinity.fashionity.posts.entity.*;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
