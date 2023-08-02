@@ -3,6 +3,7 @@ package com.infinity.fashionity.members.entity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
+import com.infinity.fashionity.members.dto.ProfileDTO;
 import lombok.*;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -83,5 +84,11 @@ public class MemberEntity extends CUDEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void updateProfile(ProfileDTO.Request profile) {
+        this.profileUrl = profile.getProfileUrl();
+        this.profileIntro = profile.getProfileIntro();
+        this.nickname = profile.getNickname();
     }
 }
