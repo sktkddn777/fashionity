@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @SQLDelete(sql = "UPDATE Posts SET deleted_at = now() WHERE post_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor
