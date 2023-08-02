@@ -2,6 +2,7 @@ package com.infinity.fashionity.consultants.service;
 
 import com.infinity.fashionity.consultants.dto.*;
 import com.infinity.fashionity.consultants.entity.ConsultantEntity;
+import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;
 import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
@@ -29,6 +30,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final ReservationRepository reservationRepository;
 
+    // [공통] 컨설턴트 목록 조회
     @Override
     @Transactional(readOnly = true)
     public ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto) {
@@ -65,6 +67,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
 
+    // [공통] 컨설턴트 상세 정보 조회
     @Override
     @Transactional(readOnly = true)
     public ConsultantInfoDTO.Response getConsultantDetail(ConsultantInfoDTO.Request dto){
@@ -124,7 +127,7 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
-    // 유저 예약 내역 조회
+    // [공통] 예약 내역 조회
     @Override
     @Transactional(readOnly = true)
     public UserReservationListDTO.Response getUserReservationsList(Long memberSeq) {
@@ -136,22 +139,56 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
-    // 컨설턴트 예약 목록 조회
+    // [컨설턴트] 예약 목록 조회
     @Override
     @Transactional(readOnly = true)
     public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname) {
 
         List<ConsultantReservationSummary> result = reservationRepository.findConsultantReservations(consultantNickname);
-        log.info("=====으앙=====");
-        log.info("=====으앙=====");
-
-        log.info("result {}", result);
-        log.info("=====으앙=====");
-        log.info("=====으앙=====");
         return ConsultantReservationListDTO.Response.builder()
                 .consultantReservationSummaries(result)
                 .build();
     }
+
+    // [컨설턴트] 예약 상세 조회
+    @Override
+    @Transactional(readOnly = true)
+    public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq){
+        List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
+
+        result.forEach(entity -> {
+            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
+            List<Image> images = imageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+            ConsultantReservationDetail consultantReservationDetail = ConsultantReservationDetail.builder()
+                    .reservationSeq(entity.getReservationSeq())
+                    .memberNickname(entity.getMemberNickname())
+                    .reservationDateTime(entity.getReservationDateTime())
+                    .reservationDetail(entity.getReservationDetail())
+                    .images(images)
+                    .build();
+            result.add(consultantReservationDetail);
+        });
+        log.info("=======으앙=======");
+        log.info("=======으앙=======");
+        log.info("=======으앙=======");
+        log.info("                 ");
+        log.info("result {}", result);
+        log.info("                 ");
+        log.info("=======으앙=======");
+        log.info("=======으앙=======");
+        log.info("=======으앙=======");
+        return ConsultantReservationInfoDTO.Response.builder()
+                .consultantReservationDetails(result)
+                .build();
+    }
+
 
 }
 
