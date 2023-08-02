@@ -41,11 +41,11 @@ public class ConsultantDetail {
 
     // 전체 리뷰 + 내용
     @Builder.Default
-    private List<ReviewEntity> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     // 예약 가능한 일시
     @Builder.Default
-    private List<ScheduleEntity> schedules = new ArrayList<>();
+    private List<Schedule> schedules = new ArrayList<>();
 
 
 }

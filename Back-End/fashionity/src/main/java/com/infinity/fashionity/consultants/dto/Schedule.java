@@ -16,10 +16,6 @@ public class Schedule {
     @JsonAlias(value = "schedule_seq")
     private Long scheduleSeq;
 
-    // 컨설턴트
-    @JsonAlias(value = "consultant_info_seq")
-    private Long consultantSeq;
-
     @JsonAlias(value = "available_datetime")
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime availableDateTime;

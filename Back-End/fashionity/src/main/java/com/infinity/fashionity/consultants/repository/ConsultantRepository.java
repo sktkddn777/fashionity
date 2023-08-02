@@ -3,12 +3,14 @@ package com.infinity.fashionity.consultants.repository;
 import com.infinity.fashionity.consultants.dto.Review;
 import com.infinity.fashionity.consultants.entity.ConsultantEntity;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;
+import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import org.springframework.data.domain.Pageable;
 
+import javax.persistence.Id;
 import java.util.List;
 
 public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Long> {
@@ -48,7 +50,11 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join res.schedule s " +
             "left join s.consultant c " +
             "where c.seq = :consultantSeq")
-    List<ReviewEntity> consultantReviews(Long consultantSeq);
+    List<ReviewEntity> findConsultantReviews(Long consultantSeq);
 
-
+    @Query("select s " +
+            "from ScheduleEntity s " +
+            "left join s.consultant c " +
+            "where c.seq = :consultantSeq")
+    List<ScheduleEntity> findConsultantSchedules(Long consultantSeq);
 }
