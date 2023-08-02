@@ -24,16 +24,16 @@
     <div class="container">
       <div class="row" style="justify-content: center">
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
       </div>
 
@@ -41,16 +41,16 @@
 
       <div class="row">
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
         <div class="col">
-          <the-post></the-post>
+          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
         </div>
       </div>
 
@@ -59,8 +59,8 @@
   </div>
 </template>
 <script>
-import thePost from "@/components/shared/ThePost";
 import TheNavBarConsultant from "@/components/layout/TheNavBarConsultant.vue";
+import ConsultantBlockVue from "./ConsultantBlock.vue";
 
 export default {
   data() {
@@ -69,7 +69,7 @@ export default {
     };
   },
   components: {
-    thePost,
+    ConsultantBlockVue,
     TheNavBarConsultant,
   },
 };

@@ -7,10 +7,16 @@ import UserLogin from "../components/pages/user/UserLogin.vue";
 
 import PostView from "../components/pages/post/PostList.vue";
 import ConsultantView from "../components/pages/consultant/ConsultantList";
+import ConsultantDetailDate from "../components/pages/consultant/ConsultantDetailDate";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    {
+      path: "/",
+      name: "main",
+      component: PostView,
+    },
     {
       path: "/profile",
       name: "profileView",
@@ -65,6 +71,28 @@ const router = createRouter({
           name: "home",
           component: ConsultantView,
         },
+        // {
+        //   path: "detail",
+        //   name: "detail",
+        //   component: ConsultantDetailDate,
+        // }
+      ],
+    },
+    {
+      path: "/reservation",
+      name: "reservationView",
+      component: ConsultantDetailDate,
+      children: [
+        {
+          path: "",
+          name: "date",
+          component: ConsultantDetailDate,
+        },
+        // {
+        //   path: "detail",
+        //   name: "detail",
+        //   component: ConsultantDetailDate,
+        // }
       ],
     },
   ],
