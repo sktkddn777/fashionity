@@ -6,6 +6,7 @@ import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,6 +42,11 @@ public class ReservationEntity extends CUDEntity {
     // 예약 상세
     @Column(name = "reservation_detail", unique = false, nullable = true, length = 200)
     private String detail;
+
+    // 컨설팅 가격
+    @Min(value = 0)
+    @Column(name = "reservation_price", unique = false, nullable = false)
+    private Integer price;
 
     // 예약 사진
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation")

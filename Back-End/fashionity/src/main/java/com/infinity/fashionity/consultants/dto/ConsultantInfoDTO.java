@@ -12,19 +12,7 @@ public class ConsultantInfoDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Request {
-
-        private String consultantNickname;
-
-    }
-
-    @Builder
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class Response {
-        private Long consultantNickname;
 
         @Builder.Default
         private List<ConsultantDetail> consultant = new ArrayList<>();
