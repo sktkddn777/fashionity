@@ -36,9 +36,7 @@ public class CommentController {
             @PathVariable Long postSeq,
             CommentListDTO.Request dto
     ) {
-        if(auth != null){
-            dto.setMemberSeq(auth.getSeq());
-        }
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.getList(dto), HttpStatus.OK);
     }
@@ -48,7 +46,7 @@ public class CommentController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
             @Validated @RequestBody CommentSaveDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.save(dto), HttpStatus.CREATED);
     }
@@ -59,7 +57,7 @@ public class CommentController {
             @PathVariable Long postSeq,
             @PathVariable Long commentSeq,
             @RequestBody CommentReportDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
         dto.setCommentSeq(commentSeq);
         return new ResponseEntity<>(commentService.report(dto), HttpStatus.OK);
@@ -71,7 +69,7 @@ public class CommentController {
             @PathVariable Long postSeq,
             @PathVariable Long commentSeq) {
         CommentLikeDTO.Request dto = CommentLikeDTO.Request.builder()
-                .memberSeq(auth.getSeq())
+                .memberSeq(auth == null ? null : auth.getSeq())
                 .commentSeq(commentSeq)
                 .postSeq(postSeq)
                 .build();
@@ -84,7 +82,7 @@ public class CommentController {
             @PathVariable Long postSeq,
             @PathVariable Long commentSeq,
             @Validated @RequestBody CommentUpdateDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setCommentSeq(commentSeq);
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.update(dto), HttpStatus.OK);
@@ -98,7 +96,7 @@ public class CommentController {
         CommentDeleteDTO.Request dto = CommentDeleteDTO.Request.builder()
                 .commentSeq(commentSeq)
                 .postSeq(postSeq)
-                .memberSeq(auth.getSeq())
+                .memberSeq(auth == null ? null : auth.getSeq())
                 .build();
 
         return new ResponseEntity<>(commentService.delete(dto), HttpStatus.OK);
