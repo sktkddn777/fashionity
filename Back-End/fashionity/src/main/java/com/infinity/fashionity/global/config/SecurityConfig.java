@@ -10,6 +10,7 @@ import com.infinity.fashionity.security.oauth.repository.HttpCookieOAuth2Authori
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,7 +36,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    private final String[] allowedUrls = {"/api/v1/auth/**", "/api/v1/posts/"};
+    private final String[] allowedUrls = {"/api/v1/auth/**", "/api/v1/posts/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -50,6 +51,12 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers(allowedUrls).permitAll()
+                .antMatchers(HttpMethod.DELETE,"/api/v1/posts/**")
+                .authenticated()
+                .antMatchers(HttpMethod.POST,"/api/v1/posts/**")
+                .authenticated()
+                .antMatchers(HttpMethod.PUT,"/api/v1/posts/**")
+                .authenticated()
                 .anyRequest()
                 .authenticated()
                 .and()
