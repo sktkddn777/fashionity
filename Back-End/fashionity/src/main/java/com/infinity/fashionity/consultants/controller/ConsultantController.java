@@ -67,6 +67,7 @@ public class ConsultantController {
             return new ResponseEntity<>(consultantReservationInfoResponse, HttpStatus.OK);
     }
 
+    // [컨설턴트] 전체 리뷰 목록 조회
     @GetMapping(value = "/{consultantNickname}/reviews")
     public ResponseEntity<ConsultantReviewListDTO.Response>getConsultantReviewsList(
             @AuthenticationPrincipal JwtAuthentication auth,
