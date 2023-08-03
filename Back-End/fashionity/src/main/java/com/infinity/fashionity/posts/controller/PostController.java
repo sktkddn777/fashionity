@@ -25,16 +25,22 @@ public class PostController {
 
     //전체 게시글 조회
     @GetMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<PostListDTO.Response> getAllPosts(@RequestBody PostListDTO.Request dto) {
+    public ResponseEntity<PostListDTO.Response> getAllPosts(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            PostListDTO.Request dto) {
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
         PostListDTO.Response list = postService.getAllPosts(dto);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     //게시글 상세 조회
     @GetMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<PostDetailDTO.Response> getPost(@PathVariable long postSeq) {
+    public ResponseEntity<PostDetailDTO.Response> getPost(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable long postSeq) {
         PostDetailDTO.Request dto = PostDetailDTO.Request
                 .builder()
+                .memberSeq(auth == null ? null : auth.getSeq())
                 .postSeq(postSeq)
                 .build();
         PostDetailDTO.Response post = postService.getPost(dto);
@@ -78,21 +84,25 @@ public class PostController {
     }
 
     // 게시글 좋아요
-    @PostMapping(value = "/like", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{postSeq}/like", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostLikeDTO.Response> likePost(
             @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable Long postSeq,
             @RequestBody PostLikeDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        dto.setPostSeq(postSeq);
         PostLikeDTO.Response success = postService.likePost(dto);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
     // 게시글 신고
-    @PostMapping(value = "/report", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{postSeq}/report", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostReportDTO.Response> reportPost(
             @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable Long postSeq,
             @RequestBody PostReportDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        dto.setPostSeq(postSeq);
         PostReportDTO.Response success = postService.reportPost(dto);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }

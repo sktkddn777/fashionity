@@ -66,7 +66,7 @@ public class PostServiceImpl implements PostService {
         List<PostListDTO.Post> posts = result.getContent().stream()
                 .map(obj -> {
                     PostEntity entity = (PostEntity) obj[0];
-                    int likeCount = (int) obj[1];
+                    int likeCount = ((Long) obj[1]).intValue();
                     List<String> imageUrls = entity.getPostImages().stream()
                             .map(imageEntity -> imageEntity.getUrl())
                             .collect(Collectors.toList());
