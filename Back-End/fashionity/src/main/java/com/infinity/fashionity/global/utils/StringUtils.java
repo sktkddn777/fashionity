@@ -1,6 +1,9 @@
 package com.infinity.fashionity.global.utils;
 
+import java.util.Random;
+
 public class StringUtils {
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     /**
      * xssFilter링을 하기 위해 < , > , ( , )를 HTML문자 엔티티로 변환해주는 메서드
      * @Param input : xssFiltering을 하기 위한 문자열데이터
@@ -33,4 +36,17 @@ public class StringUtils {
     public static boolean isBlank(String input){
         return isNull(input) || "".equals(input.trim());
     }
+
+    public static String randomSting(int length){
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+
+        for(int i=0;i<length;i++){
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return sb.toString();
+    }
+
 }

@@ -67,11 +67,11 @@ public class MemberController {
     }
 
     @PatchMapping("/edit/pw")
-    public ResponseEntity<ProfileDTO.Response> editMyPassword(
+    public ResponseEntity<ProfileDTO.PwResponse> editMyPassword(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody ProfileDTO.PwRequest data
     ) {
-        ProfileDTO.Response response = memberService.editMyPassword(auth.getSeq(), data);
+        ProfileDTO.PwResponse response = memberService.editMyPassword(auth.getSeq(), data);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

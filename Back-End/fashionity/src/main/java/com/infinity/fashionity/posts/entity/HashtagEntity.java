@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -23,4 +25,7 @@ public class HashtagEntity extends CEntity {
 
     @Column(name = "hashtag_name", length = 50, unique = false, nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "hashtag",fetch = FetchType.LAZY)
+    private List<PostHashtagEntity> hashtagPost;
 }

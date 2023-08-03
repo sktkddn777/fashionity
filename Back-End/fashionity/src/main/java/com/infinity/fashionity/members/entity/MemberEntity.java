@@ -3,13 +3,12 @@ package com.infinity.fashionity.members.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
+
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.infinity.fashionity.members.dto.ProfileDTO;
+import lombok.*;
 
 import org.hibernate.annotations.ColumnDefault;
 
@@ -32,6 +31,7 @@ import static javax.persistence.GenerationType.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
+@ToString
 public class MemberEntity extends CUDEntity {
 
     @Id
@@ -92,5 +92,11 @@ public class MemberEntity extends CUDEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void updateProfile(ProfileDTO.Request profile) {
+        this.profileUrl = profile.getProfileUrl();
+        this.profileIntro = profile.getProfileIntro();
+        this.nickname = profile.getNickname();
     }
 }

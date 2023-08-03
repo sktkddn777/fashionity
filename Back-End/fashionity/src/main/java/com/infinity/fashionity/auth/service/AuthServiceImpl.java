@@ -4,8 +4,8 @@ import com.infinity.fashionity.auth.dto.FindByEmailDTO;
 import com.infinity.fashionity.auth.dto.LoginDTO;
 import com.infinity.fashionity.auth.dto.SaveDTO;
 import com.infinity.fashionity.auth.exception.MailSendException;
-import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.utils.HashUtil;
+import com.infinity.fashionity.global.utils.RegexUtil;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.entity.MemberEntity;
@@ -28,9 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
@@ -45,13 +43,6 @@ public class AuthServiceImpl implements AuthService{
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
 
-
-    private final String ID_REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{6,20}$";
-    private final String NICKNAME_REGEX = "^[a-zA-Z가-힣0-9]{4,12}$";
-    private final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-    private final String PW_REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$";
-
-    // 그에 맞는 테스트 코드 작성
     /**
      * 일반 로그인 전용
      * 아이디가 없으면 MemberNotFoundException
@@ -112,13 +103,13 @@ public class AuthServiceImpl implements AuthService{
     }
 
     private void registerDtoValidation(SaveDTO.Request dto) {
-        if (!Pattern.matches(ID_REGEX, dto.getId()))
+        if (!RegexUtil.checkIdRegex(dto.getId()))
             throw new CustomValidationException(INVALID_MEMBER_ID);
-        if (!Pattern.matches(NICKNAME_REGEX, dto.getNickname()))
+        if (!RegexUtil.checkNicknameRegex(dto.getNickname()))
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
-        if (!Pattern.matches(EMAIL_REGEX, dto.getEmail()))
+        if (!RegexUtil.checkEmailRegex(dto.getEmail()))
             throw new CustomValidationException(INVALID_MEMBER_EMAIL);
-        if (!Pattern.matches(PW_REGEX, dto.getPassword()))
+        if (!RegexUtil.checkPasswordRegex(dto.getPassword()))
             throw new CustomValidationException(INVALID_MEMBER_PASSWORD);
     }
 
@@ -236,7 +227,7 @@ public class AuthServiceImpl implements AuthService{
             mimeMessageHelper.setFrom("bsrg@fashionity.com");
             mimeMessageHelper.setText(createMailForm("임시 비밀번호 재발급", newPassword), true);
 
-            member.setPassword(newPassword);
+            member.setPassword(passwordEncoder.encode(newPassword));
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.error("[ERROR] MessagingException = {}, {}", e.getClass().getSimpleName(), e.getMessage());

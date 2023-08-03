@@ -1,43 +1,61 @@
 <template>
-  <v-sheet width="300" class="mx-auto">
-    <v-form ref="form">
-      <v-text-field
-        v-model="id"
-        :counter="20"
-        label="아이디를 입력하시오"
-        required
-      ></v-text-field>
-      <span class="register-id-check"></span>
-      <v-text-field
-        v-model="password"
-        :counter="20"
-        label="비밀번호를 입력하시오"
-        required
-        :type="'password'"
-        density="compact"
-      ></v-text-field>
-      <div class="d-flex flex-column">
-        <v-btn color="blue" class="login-button" block @click="login">
-          로그인
-        </v-btn>
-      </div>
-      <div>회원가입 | 아이디찾기 | 비밀번호찾기</div>
-      <div class="flex-column">
-        <v-btn color="#00BF18" block>
-          <img src="@/assets/img/naver.png" style="height: 30px" />
-          <a>네이버로 로그인</a>
-        </v-btn>
-        <v-btn color="#FFE812" block>
-          <img src="@/assets/img/kakao.png" style="height: 30px" />
-          <a>카카오로 로그인</a>
-        </v-btn>
-        <v-btn color="#FFFFFF" block>
-          <img src="@/assets/img/google.png" style="height: 30px" />
-          <a>구글로 로그인</a>
-        </v-btn>
-      </div>
-    </v-form>
-  </v-sheet>
+  <div
+    class="container-fluid d-flex align-items-center justify-content-center"
+    style="height: 65vh"
+  >
+    <div class="row d-flex d-flex align-items-center justify-content-center">
+      <v-sheet width="300" class="mx-auto">
+        <v-form ref="form">
+          <v-text-field
+            v-model="id"
+            :counter="20"
+            label="아이디를 입력하시오"
+            required
+          ></v-text-field>
+          <span class="register-id-check"></span>
+          <v-text-field
+            v-model="password"
+            :counter="20"
+            label="비밀번호를 입력하시오"
+            required
+            :type="'password'"
+            density="compact"
+          ></v-text-field>
+          <div class="d-flex flex-column">
+            <v-btn color="blue" class="login-button" block @click="login">
+              로그인
+            </v-btn>
+          </div>
+          <div>회원가입 | 아이디찾기 | 비밀번호찾기</div>
+          <div class="flex-column">
+            <v-btn
+              color="#00BF18"
+              block
+              style="margin-bottom: 10px; margin-top: 20px"
+            >
+              <img src="@/assets/img/naver.png" style="height: 30px" />
+              <a style="padding-left: 53px; padding-right: 73px"
+                >네이버로 로그인</a
+              >
+            </v-btn>
+
+            <v-btn color="#FFE812" block style="margin-bottom: 10px">
+              <img src="@/assets/img/kakao.png" style="height: 30px" />
+              <a style="padding-left: 53px; padding-right: 73px"
+                >카카오로 로그인</a
+              >
+            </v-btn>
+            <v-btn color="#FFFFFF" block>
+              <img src="@/assets/img/google.png" style="height: 25px" />
+              <a style="padding-left: 65px; padding-right: 75px"
+                >구글로 로그인</a
+              >
+            </v-btn>
+          </div>
+        </v-form>
+      </v-sheet>
+    </div>
+  </div>
 </template>
 
 <script>
