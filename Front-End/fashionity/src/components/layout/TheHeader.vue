@@ -16,7 +16,7 @@
                   <div class="row">
                     <router-link
                       to="/user/login"
-                      style="text-decoration: none; color: #424242"
+                      class="link"
                       ><img class="profile" src="@/assets/img/unknown.png"
                     /></router-link>
                   </div>
