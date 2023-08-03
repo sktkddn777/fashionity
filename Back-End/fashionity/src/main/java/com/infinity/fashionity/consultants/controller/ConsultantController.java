@@ -76,5 +76,7 @@ public class ConsultantController {
         return new ResponseEntity<>(consultantReviewsListResponse, HttpStatus.OK);
     }
 
+    // [컨설턴트] 예약 리뷰 조회 --/api/v1/consultants/{user_nickname}/reservations/{reservaiton_id}/review
+
     }
 
