@@ -105,9 +105,9 @@ public class AuthServiceImpl implements AuthService{
     private void registerDtoValidation(SaveDTO.Request dto) {
         if (!RegexUtil.checkIdRegex(dto.getId()))
             throw new CustomValidationException(INVALID_MEMBER_ID);
-        if (!RegexUtil.checkIdRegex(dto.getNickname()))
+        if (!RegexUtil.checkNicknameRegex(dto.getNickname()))
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
-        if (!RegexUtil.checkIdRegex(dto.getEmail()))
+        if (!RegexUtil.checkEmailRegex(dto.getEmail()))
             throw new CustomValidationException(INVALID_MEMBER_EMAIL);
         if (!RegexUtil.checkPasswordRegex(dto.getPassword()))
             throw new CustomValidationException(INVALID_MEMBER_PASSWORD);
