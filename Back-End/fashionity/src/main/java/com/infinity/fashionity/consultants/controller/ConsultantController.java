@@ -67,5 +67,13 @@ public class ConsultantController {
             return new ResponseEntity<>(consultantReservationInfoResponse, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{consultantNickname}/reviews")
+    public ResponseEntity<ConsultantReviewListDTO.Response>getConsultantReviewsList(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("consultantNickname") String consultantNickname){
+        ConsultantReviewListDTO.Response consultantReviewsListResponse = consultantService.getConsultantReviewsList(auth.getSeq(), consultantNickname);
+        return new ResponseEntity<>(consultantReviewsListResponse, HttpStatus.OK);
+    }
+
     }
 

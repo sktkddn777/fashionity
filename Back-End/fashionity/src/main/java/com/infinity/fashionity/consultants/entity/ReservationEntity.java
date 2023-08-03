@@ -47,5 +47,7 @@ public class ReservationEntity extends CUDEntity {
     @Builder.Default
     private List<ImageEntity> images = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "reservation")
+    private ReviewEntity review;
 
 }

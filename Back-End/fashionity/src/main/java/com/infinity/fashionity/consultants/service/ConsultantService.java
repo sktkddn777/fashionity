@@ -18,5 +18,8 @@ public interface ConsultantService {
 
     @Transactional(readOnly = true)
     ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq);
+
+    @Transactional(readOnly = true)
+    ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
 }
 

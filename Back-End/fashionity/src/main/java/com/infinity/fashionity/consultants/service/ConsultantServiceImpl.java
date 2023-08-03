@@ -78,7 +78,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         List<ConsultantEntity> result = consultantRepository.findConsultantDetail(consultantNickname);
 
         result.forEach(entity -> {
-            List<ReviewEntity> reviewEntities = consultantRepository.findConsultantReviews(entity.getSeq());
+            List<ReviewEntity> reviewEntities = consultantRepository.findConsultantReviewsById(entity.getSeq());
             List<Review> reviews = reviewEntities.stream().map(e -> {
                 LocalDateTime createdAt = e.getCreatedAt();
                 LocalDateTime updatedAt = e.getUpdatedAt();
@@ -181,6 +181,18 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
 
     }
+
+    // [컨설턴트] 전체 후기, 평점 조회
+    @Override
+    @Transactional
+    public ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname){
+        List<ConsultantReviewSummary> result = consultantRepository.findConsultantReviewsByNickname(consultantNickname);
+        log.info("CRS {}", result);
+        return ConsultantReviewListDTO.Response.builder()
+                .consultantReviewSummaries(result)
+                .build();
+    };
+
 
 
 
