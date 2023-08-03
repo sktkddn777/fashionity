@@ -6,8 +6,10 @@ import UserRegister from "../components/pages/user/UserRegister.vue";
 import UserLogin from "../components/pages/user/UserLogin.vue";
 
 import PostView from "../components/pages/post/PostList.vue";
-import ConsultantView from "../components/pages/consultant/ConsultantList";
-import ConsultantDetailDate from "../components/pages/consultant/ConsultantDetailDate";
+import ConsultantList from "@/components/pages/consultant/ConsultantList";
+import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
+import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
+import ConsultantView from "@/components/pages/consultant/ConsultantView";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -69,24 +71,19 @@ const router = createRouter({
         {
           path: "",
           name: "home",
-          component: ConsultantView,
+          component: ConsultantList,
         },
-        // {
-        //   path: "detail",
-        //   name: "detail",
-        //   component: ConsultantDetailDate,
-        // }
-      ],
-    },
-    {
-      path: "/reservation",
-      name: "reservationView",
-      component: ConsultantDetailDate,
-      children: [
         {
-          path: "",
-          name: "date",
-          component: ConsultantDetailDate,
+          path: "reservation",
+          name: "reservation",
+          component: ConsultantReservation,
+          children: [
+            {
+              path: "date",
+              name: "date",
+              component: ConsultantReservationDate,
+            },
+          ],
         },
         // {
         //   path: "detail",

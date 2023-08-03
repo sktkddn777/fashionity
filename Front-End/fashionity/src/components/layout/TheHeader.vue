@@ -2,7 +2,14 @@
   <div>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-3" id="logo">Fashionity</div>
+        <div class="col-3" id="logo">
+          <router-link
+            to="post"
+            class="link"
+            style="font-style: normal; font-size: 50px; padding-top: 20px"
+            >fashionity</router-link
+          >
+        </div>
         <div class="col">
           <div class="row justify-content-end">
             <div class="col-8"></div>
@@ -14,9 +21,7 @@
                 <div class="col">22</div>
                 <div class="col">
                   <div class="row">
-                    <router-link
-                      to="/user/login"
-                      class="link"
+                    <router-link to="/user/login" class="link"
                       ><img class="profile" src="@/assets/img/unknown.png"
                     /></router-link>
                   </div>
