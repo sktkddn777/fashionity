@@ -33,7 +33,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [공통] 컨설턴트 목록 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto) {
+    public ConsultantListDTO.Response getAllConsultants(Long memberSeq, ConsultantListDTO.Request dto) {
 
         int page = dto.getPage();
         int size = dto.getSize();
@@ -49,11 +49,11 @@ public class ConsultantServiceImpl implements ConsultantService {
         result.stream().forEach(entity -> {
             ConsultantSummary consultantSummary = ConsultantSummary.builder()
                     .seq(entity.getSeq())
-                    .nickname(entity.getMember().getNickname())
+                    .nickname(entity.getNickname())
                     .profileUrl(entity.getMember().getProfileUrl())
                     .level(entity.getLevel())
-                    .avgGrade(consultantRepository.avgGrade(entity.getSeq()))
-                    .totalCnt(consultantRepository.totalCnt(entity.getSeq()))
+                    .avgGrade(consultantRepository.avgGrade(entity.getNickname()))
+                    .totalCnt(consultantRepository.totalCnt(entity.getNickname()))
                     .build();
             consultantSummaries.add(consultantSummary);
         });
@@ -70,9 +70,8 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [공통] 컨설턴트 상세 정보 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantInfoDTO.Response getConsultantDetail(ConsultantInfoDTO.Request dto){
+    public ConsultantInfoDTO.Response getConsultantDetail(Long memberSeq, String consultantNickname){
 
-        String consultantNickname = dto.getConsultantNickname();
         List<ConsultantDetail> consultantDetails = new ArrayList<>();
 
         List<ConsultantEntity> result = consultantRepository.findConsultantDetail(consultantNickname);
@@ -115,8 +114,8 @@ public class ConsultantServiceImpl implements ConsultantService {
                     .nickname(entity.getMember().getNickname())
                     .profileUrl(entity.getMember().getProfileUrl())
                     .level(entity.getLevel())
-                    .avgGrade(consultantRepository.avgGrade(entity.getSeq()))
-                    .totalCnt(consultantRepository.totalCnt(entity.getSeq()))
+                    .avgGrade(consultantRepository.avgGrade(entity.getNickname()))
+                    .totalCnt(consultantRepository.totalCnt(entity.getNickname()))
                     .reviews(reviews)
                     .schedules(schedules)
                     .build();
@@ -187,13 +186,23 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Transactional
     public ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname){
         List<ConsultantReviewSummary> result = consultantRepository.findConsultantReviewsByNickname(consultantNickname);
-        log.info("CRS {}", result);
         return ConsultantReviewListDTO.Response.builder()
                 .consultantReviewSummaries(result)
                 .build();
     };
 
-    // [컨설턴트] 단일 예약 후기 조회
+     //[컨설턴트] 평점 통계, 수익 조회
+    @Override
+    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname){
+        return ConsultantStatisticsDTO.Response.builder()
+                .avgGrade(consultantRepository.avgGrade(consultantNickname))
+                .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
+                .totalUndeletedReviewCnt(consultantRepository.totalUndeletedReviewCnt(consultantNickname))
+                .totalDeletedReviewCnt(consultantRepository.totalDeletedReviewCnt(consultantNickname))
+                .totalSalary(consultantRepository.totalSalary(consultantNickname))
+                .build();
+
+    }
 
 
 

@@ -23,14 +23,18 @@ public class ConsultantController {
     // 유저는 이따가 유저쪽으로 넘기기
     // [공통] 전체 컨설턴트 목록 조회
     @GetMapping
-    public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(ConsultantListDTO.Request dto) {
-        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(dto);
+    public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantListDTO.Request dto){
+        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(auth.getSeq(), dto);
         return new ResponseEntity<>(consultantListResponse, HttpStatus.OK);}
 
     // [공통] 컨설턴트 상세 정보 조회
     @GetMapping(value="/{consultantNickname}")
-    public ResponseEntity<ConsultantInfoDTO.Response> getConsultantDetail(ConsultantInfoDTO.Request dto){
-        ConsultantInfoDTO.Response consultantInfoResponse = consultantService.getConsultantDetail(dto);
+    public ResponseEntity<ConsultantInfoDTO.Response> getConsultantDetail(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("consultantNickname") String consultantNickname) {
+        ConsultantInfoDTO.Response consultantInfoResponse = consultantService.getConsultantDetail(auth.getSeq(), consultantNickname);
         return new ResponseEntity<>(consultantInfoResponse, HttpStatus.OK);
     }
 
@@ -40,7 +44,6 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth
     ){
         UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(auth.getSeq());
-//        UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(1l);
         return new ResponseEntity<>(userReservationListResponse, HttpStatus.OK);
     }
 
@@ -76,5 +79,15 @@ public class ConsultantController {
         return new ResponseEntity<>(consultantReviewsListResponse, HttpStatus.OK);
     }
 
+
+    // [컨설턴트] 평점 통계, 수익 조회
+    @GetMapping(value = "/{consultantNickname}/statistics")
+    public ResponseEntity<ConsultantStatisticsDTO.Response>getConsultantStatistics(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("consultantNickname") String consultantNickname){
+        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname);
+        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
     }
+
+}
 
