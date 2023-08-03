@@ -1,6 +1,5 @@
 <template lang="">
   <div class="container-fluid">
-    <the-nav-bar-consultant></the-nav-bar-consultant>
     <div class="row justify-content-space-around">
       <div class="col-3">
         <input
@@ -12,11 +11,6 @@
         />
       </div>
       <div class="col"></div>
-      <!-- <div class="col-3">
-        <span>최신순</span>
-        <span> | </span>
-        <span>인기순</span>
-      </div> -->
     </div>
 
     <div class="row" style="height: 30px"></div>
@@ -24,16 +18,24 @@
     <div class="container">
       <div class="row" style="justify-content: center">
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/consultant/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
       </div>
 
@@ -41,16 +43,24 @@
 
       <div class="row">
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation" ><consultant-block-vue></consultant-block-vue></router-link>
+          <router-link class="link" to="/reservation"
+            ><consultant-block-vue></consultant-block-vue
+          ></router-link>
         </div>
       </div>
 
@@ -59,7 +69,6 @@
   </div>
 </template>
 <script>
-import TheNavBarConsultant from "@/components/layout/TheNavBarConsultant.vue";
 import ConsultantBlockVue from "./ConsultantBlock.vue";
 
 export default {
@@ -70,7 +79,6 @@ export default {
   },
   components: {
     ConsultantBlockVue,
-    TheNavBarConsultant,
   },
 };
 </script>
