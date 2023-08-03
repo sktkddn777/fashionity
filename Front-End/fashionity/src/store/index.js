@@ -5,7 +5,7 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 
-const baseUrl = "http://localhost/api/v1";
+const baseUrl = "http://localhost:8080/api/v1";
 
 export default createStore({
   state: {
