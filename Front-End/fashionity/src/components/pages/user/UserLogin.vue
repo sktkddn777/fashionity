@@ -59,11 +59,6 @@
 </template>
 
 <script>
-import axios from "axios";
-import { useToast } from "vue-toastification";
-
-const toast = useToast();
-
 export default {
   data: () => ({
     id: "",
@@ -71,46 +66,12 @@ export default {
   }),
 
   methods: {
-    async login() {
-      if (!this.id) {
-        toast.error("아이디가 비었따!!", {
-          position: "bottom-right",
-          timeout: 2000,
-        });
-        return;
-      }
-
-      if (!this.password) {
-        toast.error("비밀번호가 비었따!!", {
-          position: "bottom-right",
-          timeout: 2000,
-        });
-        return;
-      }
-      axios({
-        url: "http://localhost/api/v1/auth/login",
-        method: "POST",
-        data: {
-          id: this.id,
-          password: this.password,
-        },
-      })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((data) => {
-          if (data.response.data.code === "M001")
-            toast.error("아이디가 없따!!", {
-              position: "bottom-right",
-              timeout: 2000,
-            });
-          else if (data.response.data.code === "A001") {
-            toast.error("비밀번호가 틀렸따!!", {
-              position: "bottom-right",
-              timeout: 2000,
-            });
-          }
-        });
+    login() {
+      const user = {
+        id: this.id,
+        pw: this.password,
+      };
+      this.$store.dispatch("login", user);
     },
   },
 };
