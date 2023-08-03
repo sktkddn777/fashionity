@@ -75,6 +75,7 @@ public class PostServiceImpl implements PostService {
                             .post(entity.getSeq())
                             .member(memberSeq)
                             .build();
+
                     Optional<PostLikeEntity> postLike = postLikeRepository.findById(likeKey);
                     boolean isLike = false;
                     if (postLike.isPresent()) {
