@@ -154,9 +154,10 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Override
     @Transactional(readOnly = true)
     public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq){
+
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
-        result.forEach(entity -> {
+        List<ConsultantReservationDetail> details = result.stream().map(entity -> {
             List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
             List<Image> images = imageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
@@ -166,28 +167,21 @@ public class ConsultantServiceImpl implements ConsultantService {
                         .imageUrl(imageUrl)
                         .build();
             }).collect(Collectors.toList());
-            ConsultantReservationDetail consultantReservationDetail = ConsultantReservationDetail.builder()
+            return ConsultantReservationDetail.builder()
                     .reservationSeq(entity.getReservationSeq())
                     .memberNickname(entity.getMemberNickname())
                     .reservationDateTime(entity.getReservationDateTime())
                     .reservationDetail(entity.getReservationDetail())
                     .images(images)
                     .build();
-            result.add(consultantReservationDetail);
-        });
-        log.info("=======으앙=======");
-        log.info("=======으앙=======");
-        log.info("=======으앙=======");
-        log.info("                 ");
-        log.info("result {}", result);
-        log.info("                 ");
-        log.info("=======으앙=======");
-        log.info("=======으앙=======");
-        log.info("=======으앙=======");
+        }).collect(Collectors.toList());
+
         return ConsultantReservationInfoDTO.Response.builder()
-                .consultantReservationDetails(result)
+                .consultantReservationDetails(details)
                 .build();
+
     }
+
 
 
 }

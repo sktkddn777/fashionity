@@ -58,7 +58,7 @@ public class ConsultantController {
     }
 
     // [컨설턴트] 상세 예약 정보 조회
-    @GetMapping(value = "/consultants/{consultantNickname}/reservations/{reservationSeq}")
+    @GetMapping(value = "/{consultantNickname}/reservations/{reservationSeq}")
     public ResponseEntity<ConsultantReservationInfoDTO.Response>getConsultantReservationDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("consultantNickname") String consultantNickname,

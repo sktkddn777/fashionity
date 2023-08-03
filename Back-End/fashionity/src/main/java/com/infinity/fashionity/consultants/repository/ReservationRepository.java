@@ -2,6 +2,7 @@ package com.infinity.fashionity.consultants.repository;
 
 import com.infinity.fashionity.consultants.dto.ConsultantReservationDetail;
 import com.infinity.fashionity.consultants.dto.ConsultantReservationSummary;
+import com.infinity.fashionity.consultants.dto.Image;
 import com.infinity.fashionity.consultants.dto.UserReservationSummary;
 import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
@@ -29,7 +30,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             "where c.nickname = :consultantNickname")
     List<ConsultantReservationSummary> findConsultantReservations(String consultantNickname);
 
-    @Query("select res " +
+    @Query("select new com.infinity.fashionity.consultants.dto.ConsultantReservationDetail(res.seq, res.member.nickname, res.date, res.detail ) " +
             "from ReservationEntity res " +
             "left join res.schedule s " +
             "left join s.consultant c " +
@@ -38,7 +39,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     @Query("select i " +
             "from ReservationEntity res " +
-            "left join res.images i " +
+            "join ImageEntity i on i.reservation = res " +
             "where res.seq = :reservationSeq")
     List<ImageEntity> findReservationImages(Long reservationSeq);
 }

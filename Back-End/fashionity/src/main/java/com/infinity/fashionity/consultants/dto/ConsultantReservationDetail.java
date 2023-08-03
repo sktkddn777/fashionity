@@ -1,5 +1,6 @@
 package com.infinity.fashionity.consultants.dto;
 
+import com.infinity.fashionity.consultants.entity.ImageEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ConsultantReservationDetail {
 
     // 예약 아이디
@@ -30,4 +32,10 @@ public class ConsultantReservationDetail {
     @Builder.Default
     private List<Image> images = new ArrayList<>();
 
+    public ConsultantReservationDetail(Long reservationSeq, String memberNickname, LocalDateTime reservationDateTime, String reservationDetail) {
+        this.reservationSeq = reservationSeq;
+        this.memberNickname = memberNickname;
+        this.reservationDateTime = reservationDateTime;
+        this.reservationDetail = reservationDetail;
+    }
 }

@@ -27,7 +27,7 @@ public class ScheduleEntity extends CEntity {
     @Column(name = "schedule_seq")
     private Long seq;
 
-    @Column(name = "availabe_datetime", unique = false, nullable = false)
+    @Column(name = "available_datetime", unique = false, nullable = false)
     private LocalDateTime availableDateTime;
 
     @ColumnDefault("true")
