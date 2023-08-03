@@ -1,12 +1,15 @@
 package com.infinity.fashionity.consultants.service;
 
 import com.infinity.fashionity.consultants.dto.*;
-import com.infinity.fashionity.consultants.entity.ConsultantEntity;
-import com.infinity.fashionity.consultants.entity.ImageEntity;
-import com.infinity.fashionity.consultants.entity.ReviewEntity;
-import com.infinity.fashionity.consultants.entity.ScheduleEntity;
+import com.infinity.fashionity.consultants.entity.*;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
 import com.infinity.fashionity.consultants.repository.ReservationRepository;
+import com.infinity.fashionity.consultants.repository.ReviewRepository;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.exception.NotFoundException;
+import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final ReservationRepository reservationRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewRepository reviewRepository;
 
     // [공통] 컨설턴트 목록 조회
     @Override
@@ -204,11 +209,113 @@ public class ConsultantServiceImpl implements ConsultantService {
 
     }
 
+    // [공통] 리뷰 작성
+    @Override
+    @Transactional
+    public ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto){
 
+        memberSeq = dto.getMemberSeq();
+        reservationSeq = dto.getReservationSeq();
+        Float reviewGrade = dto.getReviewGrade();
+        String reviewContent = dto.getReviewContent();
+
+        if (memberSeq == null ||  reservationSeq == null || reviewGrade == null){
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        ReviewEntity review = ReviewEntity.builder()
+                .grade(reviewGrade)
+                .content(reviewContent)
+                .reservation(reservation)
+                .build();
+
+        ReviewEntity save = reviewRepository.save(review);
+
+        return ReviewSaveDTO.Response.builder()
+                .success(true)
+                .seq(save.getSeq())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ReviewUpdateDTO.Response updateReview(Long memberSeq, Long reviewSeq, ReviewUpdateDTO.Request dto ) {
+
+        memberSeq = dto.getMemberSeq();
+        reviewSeq = dto.getReviewSeq();
+        Float reviewGrade = dto.getReviewGrade();
+        String reviewContent = dto.getReviewContent();
+
+        // 입력값 검증
+        if (memberSeq == null || reviewSeq == null || reviewGrade == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // 회원 검증
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 존재하는 리뷰인지 확인
+        ReviewEntity review = reviewRepository.findById(reviewSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+
+        // 내가 작성한 리뷰가 아닌 리뷰를 수정하면 error
+        if (review.getReservation().getMember().getSeq() != member.getSeq()) {
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        review.updateContent(reviewContent);
+        return ReviewUpdateDTO.Response.builder()
+                .success(true)
+                .build();
+        }
+
+    @Override
+    @Transactional
+    public ReviewDeleteDTO.Response deleteReview(Long memberSeq, Long reviewSeq, ReviewDeleteDTO.Request dto) {
+        memberSeq = dto.getMemberSeq();
+        reviewSeq = dto.getReviewSeq();
+        Float reviewGrade = dto.getReviewGrade();
+        String reviewContent = dto.getReviewContent();
+
+        // 입력값 검증
+        if (memberSeq == null || reviewSeq == null || reviewGrade == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // 회원 검증
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 존재하는 리뷰인지 확인
+        ReviewEntity review = reviewRepository.findById(reviewSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+
+        // 내가 작성한 리뷰가 아닌 리뷰를 수정하면 error
+        if (review.getReservation().getMember().getSeq() != member.getSeq()) {
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        reviewRepository.delete(review);
+        return ReviewDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+
+    }
 
 
 
 }
+
+
+
+
+
+
+
 
 
 

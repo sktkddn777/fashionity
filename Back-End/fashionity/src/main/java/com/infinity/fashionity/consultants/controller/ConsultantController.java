@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,12 +26,13 @@ public class ConsultantController {
     @GetMapping
     public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(
             @AuthenticationPrincipal JwtAuthentication auth,
-            ConsultantListDTO.Request dto){
+            ConsultantListDTO.Request dto) {
         ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(auth.getSeq(), dto);
-        return new ResponseEntity<>(consultantListResponse, HttpStatus.OK);}
+        return new ResponseEntity<>(consultantListResponse, HttpStatus.OK);
+    }
 
     // [공통] 컨설턴트 상세 정보 조회
-    @GetMapping(value="/{consultantNickname}")
+    @GetMapping(value = "/{consultantNickname}")
     public ResponseEntity<ConsultantInfoDTO.Response> getConsultantDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("consultantNickname") String consultantNickname) {
@@ -42,7 +44,7 @@ public class ConsultantController {
     @GetMapping(value = "/reservations")
     public ResponseEntity<UserReservationListDTO.Response> getUserReservationsList(
             @AuthenticationPrincipal JwtAuthentication auth
-    ){
+    ) {
         UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(auth.getSeq());
         return new ResponseEntity<>(userReservationListResponse, HttpStatus.OK);
     }
@@ -62,19 +64,19 @@ public class ConsultantController {
 
     // [컨설턴트] 상세 예약 정보 조회
     @GetMapping(value = "/{consultantNickname}/reservations/{reservationSeq}")
-    public ResponseEntity<ConsultantReservationInfoDTO.Response>getConsultantReservationDetail(
+    public ResponseEntity<ConsultantReservationInfoDTO.Response> getConsultantReservationDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("consultantNickname") String consultantNickname,
             @PathVariable("reservationSeq") Long reservationSeq) {
-            ConsultantReservationInfoDTO.Response consultantReservationInfoResponse = consultantService.getConsultantReservationDetail(auth.getSeq(), consultantNickname, reservationSeq);
-            return new ResponseEntity<>(consultantReservationInfoResponse, HttpStatus.OK);
+        ConsultantReservationInfoDTO.Response consultantReservationInfoResponse = consultantService.getConsultantReservationDetail(auth.getSeq(), consultantNickname, reservationSeq);
+        return new ResponseEntity<>(consultantReservationInfoResponse, HttpStatus.OK);
     }
 
     // [컨설턴트] 전체 리뷰 목록 조회
     @GetMapping(value = "/{consultantNickname}/reviews")
-    public ResponseEntity<ConsultantReviewListDTO.Response>getConsultantReviewsList(
+    public ResponseEntity<ConsultantReviewListDTO.Response> getConsultantReviewsList(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname){
+            @PathVariable("consultantNickname") String consultantNickname) {
         ConsultantReviewListDTO.Response consultantReviewsListResponse = consultantService.getConsultantReviewsList(auth.getSeq(), consultantNickname);
         return new ResponseEntity<>(consultantReviewsListResponse, HttpStatus.OK);
     }
@@ -82,12 +84,46 @@ public class ConsultantController {
 
     // [컨설턴트] 평점 통계, 수익 조회
     @GetMapping(value = "/{consultantNickname}/statistics")
-    public ResponseEntity<ConsultantStatisticsDTO.Response>getConsultantStatistics(
+    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname){
+            @PathVariable("consultantNickname") String consultantNickname) {
         ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname);
         return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
     }
 
+    // [유저] 리뷰 작성
+    @PostMapping(value = "{reservationSeq}/review")
+    public ResponseEntity<ReviewSaveDTO.Response> postReview(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("reservationSeq") Long reservationSeq,
+            ReviewSaveDTO.Request dto) {
+        dto.setMemberSeq(auth.getSeq());
+        ReviewSaveDTO.Response reviewSaveResponse = consultantService.postReview(auth.getSeq(), reservationSeq, dto);
+        return new ResponseEntity<>(reviewSaveResponse, HttpStatus.OK);
+    }
+
+    // [유저] 리뷰 수정
+    @PutMapping(value = "/reviews/{reviewSeq}/edit")
+    public ResponseEntity<ReviewUpdateDTO.Response> updateReview(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("reviewSeq") Long reviewSeq,
+            ReviewUpdateDTO.Request dto) {
+        dto.setMemberSeq(auth.getSeq());
+        dto.setReviewSeq(reviewSeq);
+        ReviewUpdateDTO.Response reviewUpdateResponse = consultantService.updateReview(auth.getSeq(), reviewSeq, dto);
+        return new ResponseEntity<>(reviewUpdateResponse, HttpStatus.OK);
+    }
+
+    // [유저] 리뷰 삭제
+    @DeleteMapping(value = "/reviews/{reviewSeq}")
+    public ResponseEntity<ReviewDeleteDTO.Response> deleteReview(
+        @AuthenticationPrincipal JwtAuthentication auth,
+        @PathVariable("reviewSeq") Long reviewSeq,
+        ReviewDeleteDTO.Request dto){
+        dto.setMemberSeq(auth.getSeq());
+        dto.setReviewSeq(reviewSeq);
+        ReviewDeleteDTO.Response reviewDeleteResponse = consultantService.deleteReview(auth.getSeq(), reviewSeq, dto);
+        return new ResponseEntity<>(reviewDeleteResponse, HttpStatus.OK);
+    }
 }
 

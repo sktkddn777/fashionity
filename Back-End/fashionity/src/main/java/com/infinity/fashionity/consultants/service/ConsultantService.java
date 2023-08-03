@@ -28,5 +28,14 @@ public interface ConsultantService {
 
     @Transactional(readOnly = true)
     ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname);
+
+    @Transactional
+    ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto);
+
+    @Transactional
+    ReviewUpdateDTO.Response updateReview(Long memberSeq, Long reviewSeq, ReviewUpdateDTO.Request dto);
+
+    @Transactional
+    ReviewDeleteDTO.Response deleteReview(Long memberSeq, Long reviewSeq, ReviewDeleteDTO.Request dto);
 }
 
