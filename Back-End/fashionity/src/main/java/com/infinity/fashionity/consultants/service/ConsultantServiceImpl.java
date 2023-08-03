@@ -2,9 +2,11 @@ package com.infinity.fashionity.consultants.service;
 
 import com.infinity.fashionity.consultants.dto.*;
 import com.infinity.fashionity.consultants.entity.ConsultantEntity;
+import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;
 import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
+import com.infinity.fashionity.consultants.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,7 +28,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
+    private final ReservationRepository reservationRepository;
 
+    // [공통] 컨설턴트 목록 조회
     @Override
     @Transactional(readOnly = true)
     public ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto) {
@@ -63,6 +67,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
 
+    // [공통] 컨설턴트 상세 정보 조회
     @Override
     @Transactional(readOnly = true)
     public ConsultantInfoDTO.Response getConsultantDetail(ConsultantInfoDTO.Request dto){
@@ -73,7 +78,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         List<ConsultantEntity> result = consultantRepository.findConsultantDetail(consultantNickname);
 
         result.forEach(entity -> {
-            List<ReviewEntity> reviewEntities = consultantRepository.findConsultantReviews(entity.getSeq());
+            List<ReviewEntity> reviewEntities = consultantRepository.findConsultantReviewsById(entity.getSeq());
             List<Review> reviews = reviewEntities.stream().map(e -> {
                 LocalDateTime createdAt = e.getCreatedAt();
                 LocalDateTime updatedAt = e.getUpdatedAt();
@@ -121,6 +126,79 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .consultant(consultantDetails)
                 .build();
     }
+
+    // [공통] 예약 내역 조회
+    @Override
+    @Transactional(readOnly = true)
+    public UserReservationListDTO.Response getUserReservationsList(Long memberSeq) {
+
+        List<UserReservationSummary> result = reservationRepository.findUserReservations(memberSeq);
+
+        return UserReservationListDTO.Response.builder()
+                .userReservationSummaries(result)
+                .build();
+    }
+
+    // [컨설턴트] 예약 목록 조회
+    @Override
+    @Transactional(readOnly = true)
+    public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname) {
+
+        List<ConsultantReservationSummary> result = reservationRepository.findConsultantReservations(consultantNickname);
+        return ConsultantReservationListDTO.Response.builder()
+                .consultantReservationSummaries(result)
+                .build();
+    }
+
+    // [컨설턴트] 예약 상세 조회
+    @Override
+    @Transactional(readOnly = true)
+    public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq){
+
+        List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
+
+        List<ConsultantReservationDetail> details = result.stream().map(entity -> {
+            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
+            List<Image> images = imageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+            return ConsultantReservationDetail.builder()
+                    .reservationSeq(entity.getReservationSeq())
+                    .memberNickname(entity.getMemberNickname())
+                    .reservationDateTime(entity.getReservationDateTime())
+                    .reservationDetail(entity.getReservationDetail())
+                    .images(images)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return ConsultantReservationInfoDTO.Response.builder()
+                .consultantReservationDetails(details)
+                .build();
+
+    }
+
+    // [컨설턴트] 전체 후기, 평점 조회
+    @Override
+    @Transactional
+    public ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname){
+        List<ConsultantReviewSummary> result = consultantRepository.findConsultantReviewsByNickname(consultantNickname);
+        log.info("CRS {}", result);
+        return ConsultantReviewListDTO.Response.builder()
+                .consultantReviewSummaries(result)
+                .build();
+    };
+
+    // [컨설턴트] 단일 예약 후기 조회
+
+
+
+
+
 }
 
 

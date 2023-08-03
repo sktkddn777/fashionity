@@ -27,6 +27,9 @@ public class ConsultantEntity extends CUDEntity {
     @Column(name = "consultant_info_seq")
     private Long seq;
 
+    @Column(name = "consultant_nickname", length = 13, unique = true, nullable = false)
+    private String nickname;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "consultant_info_level", length = 20, unique = false, nullable = false)
     private Level level;

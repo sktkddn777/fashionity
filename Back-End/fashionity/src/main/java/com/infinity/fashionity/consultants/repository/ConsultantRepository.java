@@ -2,6 +2,7 @@ package com.infinity.fashionity.consultants.repository;
 
 
 
+import com.infinity.fashionity.consultants.dto.ConsultantReviewSummary;
 import org.springframework.stereotype.Repository;
 
 
@@ -55,11 +56,22 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join res.schedule s " +
             "left join s.consultant c " +
             "where c.seq = :consultantSeq")
-    List<ReviewEntity> findConsultantReviews(Long consultantSeq);
+    List<ReviewEntity> findConsultantReviewsById(Long consultantSeq);
 
     @Query("select s " +
             "from ScheduleEntity s " +
             "left join s.consultant c " +
             "where c.seq = :consultantSeq")
     List<ScheduleEntity> findConsultantSchedules(Long consultantSeq);
+
+    // 컨설턴트 전체 후기, 평점 조회
+    @Query("select new com.infinity.fashionity.consultants.dto.ConsultantReviewSummary(res.seq, r.seq, r.createdAt, r.grade, r.content, m.nickname) " +
+            "from ConsultantEntity c " +
+            "left join c.schedules s " +
+            "left join s.reservations res " +
+            "left join res.review r " +
+            "left join r. reservation res2 " +
+            "left join res2.member m " +
+            "where c.nickname = :consultantNickname and r.seq is not null")
+    List<ConsultantReviewSummary> findConsultantReviewsByNickname(String consultantNickname);
 }

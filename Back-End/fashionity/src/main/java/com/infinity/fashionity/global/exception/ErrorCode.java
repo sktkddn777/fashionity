@@ -38,6 +38,7 @@ public enum ErrorCode {
 
     // Email
     EMAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "이메일 에러입니다."),
+
     // Post
     POST_NOT_FOUND(HttpStatus.NOT_FOUND,"P001","존재하지 않는 포스트입니다."),
     POST_REPORT_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "P002", "이미 신고한 게시글입니다."),
@@ -45,7 +46,6 @@ public enum ErrorCode {
     // Comment
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"CM001","존재하지 않는 댓글입니다."),
     COMMENT_REPORT_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"CM002","이미 신고한 댓글입니다."),
-
 
     //image
     IMAGE_SAVE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"I001","이미지를 저장 중 오류가 발생했습니다."),
