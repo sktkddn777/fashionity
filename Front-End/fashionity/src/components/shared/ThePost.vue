@@ -4,13 +4,23 @@
       <img
         src="../../assets/img/postImg.jpg"
         alt=""
-        style="top: 0; left: 0; height: 50%; max-width: 250px"
+        style="
+          top: 0;
+          left: 0;
+          height: 50%;
+          max-width: 250px;
+          border-radius: 20px;
+        "
       />
-      <div class="row">
-        <div class="col box">
+      <div class="row align-self-center align-middle">
+        <div
+          class="col align-self-center align-middle"
+          style="display: flex; justify-content: center; align-items: center"
+        >
           <img class="profile" src="@/assets/img/unknown.png" />
+          <span class="post-font">rlaxogus123</span>
         </div>
-        <div class="col post-font">좋아유</div>
+        <div class="col post-font align-self-center">좋아유</div>
       </div>
       <div class="row post-font justify-content-center">
         게시글이에요오오오오오오오오오오오오
@@ -22,16 +32,10 @@
 export default {};
 </script>
 <style>
-.box {
-  height: 10px;
-  width: 10px;
-  border-radius: 70%;
-  overflow: hidden;
-}
 .profile {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 20px;
+  border-radius: 70%;
+  object-fit: contain;
 }
 
 .outer {
@@ -40,6 +44,6 @@ export default {};
 }
 
 .post-font {
-  font-size: 10px;
+  font-size: 12px;
 }
 </style>

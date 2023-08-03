@@ -26,7 +26,7 @@ public class PostHashtagEntity extends CEntity {
     @JoinColumn(name = "post_seq", nullable = false)
     private PostEntity post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "hashtag_seq", nullable = false)
     private HashtagEntity hashtag;
 }
