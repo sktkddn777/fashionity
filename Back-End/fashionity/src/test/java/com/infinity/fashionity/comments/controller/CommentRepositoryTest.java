@@ -44,7 +44,7 @@ public class CommentRepositoryTest {
     /**
      * 해당 게시물의 댓글들, 댓글들의 좋아요 개수 및 자신이 좋아요한 상태를 출력
      * */
-    void findAllByPostWithCommentsAndLikeCountTest(){
+    void findAllByPostWithCommentsAndLikeCountTest() throws InterruptedException {
         List<MemberEntity> memberList = new ArrayList<>();
         for(int i=0;i<4;i++){
             MemberEntity member = MemberEntity.builder()
@@ -70,8 +70,10 @@ public class CommentRepositoryTest {
                     .content(i+"번째 댓글")
                     .build();
             commentList.add(comment);
+            commentRepository.save(comment);
+            Thread.sleep(500);
         }
-        commentRepository.saveAll(commentList);
+//        commentRepository.saveAll(commentList);
 
         //1번과 2번이 1번댓글을 좋아요, 1,3,4번이 2번 댓글 좋아요, 3번이 3번댓글 좋아요를 누름
         List<CommentLikeEntity> likes = new ArrayList<>();
