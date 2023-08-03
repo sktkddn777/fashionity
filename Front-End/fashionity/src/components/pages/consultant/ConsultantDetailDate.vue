@@ -1,5 +1,5 @@
 <template lang="">
-  <div>
+  <div class="container-fluid">
     <v-date-picker
       v-model="date"
       is-expanded
