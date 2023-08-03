@@ -22,6 +22,9 @@ public class PostImageEntity extends CEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
 
+    @Column(name="image_name",unique=false,nullable = false)
+    private String name;
+
     @Column(name = "image_url", unique = true, nullable = false, columnDefinition = "TEXT")
     private String url;
 

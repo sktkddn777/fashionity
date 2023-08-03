@@ -3,6 +3,7 @@ package com.infinity.fashionity.members.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 public class MemberFollowDTO {
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class FollowerResponse {
@@ -19,6 +21,7 @@ public class MemberFollowDTO {
     }
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class FollowingResponse {

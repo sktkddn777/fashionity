@@ -18,6 +18,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class PostLikeEntity extends CEntity {
 
+
     @Id
     @JoinColumn(name = "post_seq")
     @ManyToOne(fetch = FetchType.LAZY)
