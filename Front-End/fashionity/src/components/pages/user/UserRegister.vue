@@ -153,7 +153,7 @@ export default {
       }
 
       axios({
-        url: "http://localhost/api/v1/auth/register",
+        url: "http://localhost:8080/api/v1/auth/register",
         method: "POST",
         data: {
           id: this.id,
@@ -170,7 +170,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost/api/v1/auth/check/id",
+          url: "http://localhost:8080/api/v1/auth/check/id",
           method: "GET",
           params: {
             id: this.id,
@@ -185,7 +185,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost/api/v1/auth/check/email",
+          url: "http://localhost:8080/api/v1/auth/check/email",
           method: "GET",
           params: {
             email: this.email,
@@ -199,7 +199,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost/api/v1/auth/check/nickname",
+          url: "http://localhost:8080/api/v1/auth/check/nickname",
           method: "GET",
           params: {
             nickname: this.nickname,
