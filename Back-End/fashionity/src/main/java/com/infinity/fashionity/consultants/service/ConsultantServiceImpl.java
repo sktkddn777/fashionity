@@ -193,6 +193,9 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     };
 
+    // [컨설턴트] 단일 예약 후기 조회
+
+
 
 
 
