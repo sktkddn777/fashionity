@@ -27,7 +27,6 @@ public class ConsultantListDTO {
 
     @Builder
     @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {

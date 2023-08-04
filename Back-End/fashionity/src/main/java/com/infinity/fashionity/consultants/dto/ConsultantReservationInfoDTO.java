@@ -27,7 +27,6 @@ public class ConsultantReservationInfoDTO {
 
     @Builder
     @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {

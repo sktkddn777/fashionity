@@ -47,6 +47,9 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"CM001","존재하지 않는 댓글입니다."),
     COMMENT_REPORT_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"CM002","이미 신고한 댓글입니다."),
 
+    // Consultant
+    CONSULTANT_NOT_FOUND(HttpStatus.NOT_FOUND, "CS001", "존재하지 않는 컨설턴트입니다."),
+
     //image
     IMAGE_SAVE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"I001","이미지를 저장 중 오류가 발생했습니다."),
     INVALID_IMAGE_TYPE(HttpStatus.BAD_REQUEST,"I002","이미지만 저장할 수 있습니다."),

@@ -24,7 +24,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             "left join c.schedules s " +
             "left join s.reservations res " +
             "left join res.member m " +
-            "where c.nickname = :consultantNickname")
+            "where c.nickname = :consultantNickname and res.deletedAt is null and res.seq is not null")
     List<ConsultantReservationSummary> findConsultantReservations(String consultantNickname);
 
     @Query("select new com.infinity.fashionity.consultants.dto.ConsultantReservationDetail(res.seq, res.member.nickname, res.date, res.detail ) " +

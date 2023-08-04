@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -76,6 +77,11 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Override
     @Transactional(readOnly = true)
     public ConsultantInfoDTO.Response getConsultantDetail(Long memberSeq, String consultantNickname){
+
+
+        // 존재하지 않는 컨설턴트이면 에러 반환
+        ConsultantEntity consultant = consultantRepository.findByNickname(consultantNickname)
+                .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
 
         List<ConsultantDetail> consultantDetails = new ArrayList<>();
 
@@ -146,10 +152,22 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [컨설턴트] 예약 목록 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname) {
+    public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname, ConsultantReservationListDTO.Request dto) {
+
+        memberSeq = dto.getMemberSeq();
+        consultantNickname = dto.getConsultantNickname();
+
+        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
+
+        if (!Objects.equals(checkSeq, memberSeq)){
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
 
         List<ConsultantReservationSummary> result = reservationRepository.findConsultantReservations(consultantNickname);
+
         return ConsultantReservationListDTO.Response.builder()
+                .memberSeq(memberSeq)
+                .consultantNickname(consultantNickname)
                 .consultantReservationSummaries(result)
                 .build();
     }
@@ -162,6 +180,11 @@ public class ConsultantServiceImpl implements ConsultantService {
         memberSeq = dto.getMemberSeq();
         consultantNickname = dto.getConsultantNickname();
         reservationSeq = dto.getReservationSeq();
+
+
+        // Reservation 이 존재하는지 확인
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
 
 
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
@@ -206,7 +229,17 @@ public class ConsultantServiceImpl implements ConsultantService {
 
      //[컨설턴트] 평점 통계, 수익 조회
     @Override
-    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname){
+    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
+        memberSeq = dto.getMemberSeq();
+        consultantNickname = dto.getConsultantNickname();
+
+        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
+
+        if (!Objects.equals(checkSeq, memberSeq)){
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+
         return ConsultantStatisticsDTO.Response.builder()
                 .avgGrade(consultantRepository.avgGrade(consultantNickname))
                 .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
@@ -320,6 +353,10 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         memberSeq = dto.getMemberSeq();
         reservationSeq = dto.getReservationSeq();
+
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq)
+                .orElseThrow(() -> new ValidationException(ErrorCode.RESERVATION_NOT_FOUND));
+
 
         List<UserReservationDetail> result = reservationRepository.findUserReservation(memberSeq, reservationSeq);
 

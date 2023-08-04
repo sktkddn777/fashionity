@@ -20,7 +20,7 @@ public interface ConsultantService {
     UserReservationListDTO.Response getUserReservationsList(Long memberSeq);
 
     @Transactional(readOnly = true)
-    ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname);
+    ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname, ConsultantReservationListDTO.Request dto);
 
     @Transactional(readOnly = true)
     ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq, ConsultantReservationInfoDTO.Request dto);
@@ -29,7 +29,7 @@ public interface ConsultantService {
     ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
 
     @Transactional(readOnly = true)
-    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname);
+    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto);
 
     @Transactional
     ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto);

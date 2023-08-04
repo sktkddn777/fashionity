@@ -53,11 +53,14 @@ public class ConsultantController {
     @GetMapping(value = "/{consultantNickname}/reservations")
     public ResponseEntity<ConsultantReservationListDTO.Response> getConsultantReservationsList(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname) {
+            @PathVariable("consultantNickname") String consultantNickname,
+            ConsultantReservationListDTO.Request dto) {
 //                ConsultantReservationListDTO.Request dto = ConsultantReservationListDTO.Request.builder()
 //                        .consultantNickname(consultantNickname)
 //                        .build();
-        ConsultantReservationListDTO.Response consultantReservationsListResponse = consultantService.getConsultantReservationsList(auth.getSeq(), consultantNickname);
+            dto.setMemberSeq(auth.getSeq());
+            dto.setConsultantNickname(consultantNickname);
+        ConsultantReservationListDTO.Response consultantReservationsListResponse = consultantService.getConsultantReservationsList(auth.getSeq(), consultantNickname, dto);
 //        UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(1l);
         return new ResponseEntity<>(consultantReservationsListResponse, HttpStatus.OK);
     }
@@ -90,8 +93,11 @@ public class ConsultantController {
     @GetMapping(value = "/{consultantNickname}/statistics")
     public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname) {
-        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname);
+            @PathVariable("consultantNickname") String consultantNickname,
+            ConsultantStatisticsDTO.Request dto) {
+        dto.setMemberSeq(auth.getSeq());
+        dto.setConsultantNickname(consultantNickname);
+        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
         return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
     }
 
