@@ -2,7 +2,7 @@
   <div id="post outer" class="container-fluid" style="background-color: white">
     <div class="row justify-content-center">
       <img
-        src="../../assets/img/postImg.jpg"
+        src="../../../assets/img/postImg.jpg"
         alt=""
         style="
           top: 0;
