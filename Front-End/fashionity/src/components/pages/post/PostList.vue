@@ -1,7 +1,5 @@
 <template lang="">
   <div class="container-fluid">
-    <the-nav-bar-post></the-nav-bar-post>
-
     <div class="row justify-content-space-around">
       <div class="col-3">
         <input
@@ -25,7 +23,9 @@
     <div class="container">
       <div class="row" style="justify-content: center">
         <div class="col">
-          <the-post></the-post>
+          <router-link to="/post/detail" class="link"
+            ><the-post></the-post
+          ></router-link>
         </div>
         <div class="col">
           <the-post></the-post>
@@ -61,7 +61,6 @@
 </template>
 <script>
 import ThePost from "./ThePost.vue";
-import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
 
 export default {
   data() {
@@ -71,7 +70,6 @@ export default {
   },
   components: {
     ThePost,
-    TheNavBarPost,
   },
 };
 </script>
