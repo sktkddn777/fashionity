@@ -18,7 +18,7 @@
     <div class="container">
       <div class="row" style="justify-content: center">
         <div class="col">
-          <router-link class="link" to="/consultant/reservation"
+          <router-link class="link" to="/consultant/reservation/date"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
