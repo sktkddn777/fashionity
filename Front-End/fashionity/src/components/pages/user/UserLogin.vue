@@ -59,19 +59,33 @@
 </template>
 
 <script>
+import { computed } from "vue";
+import { useStore, mapActions } from "vuex";
+const memberStore = "memberStore";
+
 export default {
+  name: "UserLogin",
+  setup() {
+    const store = useStore();
+    const loginUser = computed(() => store.state.loginUser);
+    return {
+      loginUser,
+    };
+  },
+
   data: () => ({
     id: "",
     password: "",
   }),
 
   methods: {
-    login() {
+    ...mapActions(memberStore, ["loginAction"]),
+    async login() {
       const user = {
         id: this.id,
-        pw: this.password,
+        password: this.password,
       };
-      this.$store.dispatch("login", user);
+      await this.loginAction(user);
     },
   },
 };

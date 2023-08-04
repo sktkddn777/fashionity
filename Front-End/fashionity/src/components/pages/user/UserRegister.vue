@@ -152,18 +152,15 @@ export default {
         return;
       }
 
-      axios({
-        url: "http://localhost:8080/api/v1/auth/register",
-        method: "POST",
-        data: {
-          id: this.id,
-          password: this.password,
-          nickname: this.nickname,
-          email: this.email,
-        },
-      });
-
       toast.success("사랑합니다 " + this.nickname + "고객님");
+      const user = {
+        id: this.id,
+        password: this.password,
+        nickname: this.nickname,
+        email: this.email,
+      };
+
+      this.$store.dispatch("register", user);
     },
 
     async checkId() {

@@ -37,9 +37,14 @@
                 </div>
 
                 <div class="col">
-                  <div class="row">
-                    <router-link to="/user/login" class="link"
-                      ><img class="profile" src="@/assets/img/unknown.png"
+                  <div v-if="!isLogin" class="row">
+                    <router-link to="/user/login" class="link">
+                      <img class="profile" src="@/assets/img/unknown.png"
+                    /></router-link>
+                  </div>
+                  <div v-else class="row">
+                    <router-link to="/profile" class="link">
+                      <img class="profile" src="@/assets/img/panda.png"
                     /></router-link>
                   </div>
                 </div>
@@ -52,7 +57,17 @@
   </div>
 </template>
 <script>
+import { useStore } from "vuex";
+
 export default {
+  setup() {
+    const store = useStore();
+    const isLogin = store.state.isLogin;
+
+    return {
+      isLogin,
+    };
+  },
   data() {
     return {
       keyword: "",

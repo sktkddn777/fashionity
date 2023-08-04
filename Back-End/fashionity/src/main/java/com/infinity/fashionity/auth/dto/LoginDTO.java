@@ -31,6 +31,8 @@ public class LoginDTO {
     @Getter
     @Setter
     public static class Response{
+
+        private Long memberSeq;
         private String accessToken;
     }
 }
