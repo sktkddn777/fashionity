@@ -5,7 +5,7 @@
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
-              src="../../../assets/img/panda.png"
+              src="../../../assets/img/imgtemp.jpg"
               alt=""
               class="profile"
               style="width: 50%"
