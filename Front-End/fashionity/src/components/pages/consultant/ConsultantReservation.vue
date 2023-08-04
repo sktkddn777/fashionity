@@ -1,7 +1,7 @@
 <template lang="">
-  <div class="container-fliud" style="height: 50%">
+  <div class="container-fliud" style="height: 75vh">
     <div class="row">
-      <div class="col-3">
+      <div class="col-3" style="height: 75vh">
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
@@ -14,7 +14,7 @@
         </div>
         <div class="row" style="height: 30px"></div>
         <div class="row">
-          <div class="col review">
+          <div class="col review scroll">
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
@@ -25,7 +25,7 @@
           </div>
         </div>
       </div>
-      <div class="col-8">
+      <div class="col-8" style="height: 75vh">
         <router-view></router-view>
       </div>
     </div>
@@ -51,6 +51,16 @@ export default {
 }
 
 .review {
+  overflow: scroll;
+  height: 300px;
+}
+
+/* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll {
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
 }

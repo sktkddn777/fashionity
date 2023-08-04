@@ -70,7 +70,7 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
+          name: "consultantview",
           component: ConsultantList,
         },
         {
@@ -85,11 +85,6 @@ const router = createRouter({
             },
           ],
         },
-        // {
-        //   path: "detail",
-        //   name: "detail",
-        //   component: ConsultantDetailDate,
-        // }
       ],
     },
   ],

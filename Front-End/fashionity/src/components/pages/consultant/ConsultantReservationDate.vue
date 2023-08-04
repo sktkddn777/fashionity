@@ -1,12 +1,13 @@
 <template lang="">
   <div class="container-fluid">
-    <v-date-picker
-      v-model="date"
-      is-expanded
-      is-range
-      color="orange"
-      style=""
-    ></v-date-picker>
+    <div class="align-self-center">
+      <v-date-picker
+        v-model="date"
+        is-expanded
+        is-range
+        color="orange"
+      ></v-date-picker>
+    </div>
   </div>
 </template>
 <script>
