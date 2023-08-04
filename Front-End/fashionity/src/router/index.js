@@ -66,7 +66,7 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
+          name: "postList",
           component: PostList,
         },
         {
