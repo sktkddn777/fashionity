@@ -1,16 +1,27 @@
 <template lang="">
   <div class="container-fluid">
-    <div class="align-self-center">
-      <v-date-picker
+    <v-calendar is-expanded></v-calendar>
+    <!-- <ConsultantCalenerTempVue></ConsultantCalenerTempVue> -->
+    <!-- <v-date-picker
         v-model="date"
         is-expanded
         is-range
         color="orange"
-      ></v-date-picker>
-    </div>
+      ></v-date-picker> -->
   </div>
 </template>
 <script>
-export default {};
+// import ConsultantCalenerTempVue from "./ConsultantCalenerTemp.vue";
+
+export default {
+  data() {
+    return {
+      keyword: "",
+    };
+  },
+  components: {
+    // ConsultantCalenerTempVue,
+  },
+};
 </script>
 <style></style>
