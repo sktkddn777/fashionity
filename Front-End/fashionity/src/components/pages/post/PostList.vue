@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-import thePost from "@/components/shared/ThePost";
+import ThePost from "./ThePost.vue";
 import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
 
 export default {
@@ -70,7 +70,7 @@ export default {
     };
   },
   components: {
-    thePost,
+    ThePost,
     TheNavBarPost,
   },
 };
