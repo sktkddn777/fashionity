@@ -67,8 +67,12 @@ public class ConsultantController {
     public ResponseEntity<ConsultantReservationInfoDTO.Response> getConsultantReservationDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("consultantNickname") String consultantNickname,
-            @PathVariable("reservationSeq") Long reservationSeq) {
-        ConsultantReservationInfoDTO.Response consultantReservationInfoResponse = consultantService.getConsultantReservationDetail(auth.getSeq(), consultantNickname, reservationSeq);
+            @PathVariable("reservationSeq") Long reservationSeq,
+            ConsultantReservationInfoDTO.Request dto) {
+        dto.setMemberSeq(auth.getSeq());
+        dto.setConsultantNickname(consultantNickname);
+        dto.setReservationSeq(reservationSeq);
+        ConsultantReservationInfoDTO.Response consultantReservationInfoResponse = consultantService.getConsultantReservationDetail(auth.getSeq(), consultantNickname, reservationSeq, dto);
         return new ResponseEntity<>(consultantReservationInfoResponse, HttpStatus.OK);
     }
 
@@ -91,7 +95,7 @@ public class ConsultantController {
         return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
     }
 
-    // [유저] 리뷰 작성
+    // [공통] 리뷰 작성
     @PostMapping(value = "{reservationSeq}/review")
     public ResponseEntity<ReviewSaveDTO.Response> postReview(
             @AuthenticationPrincipal JwtAuthentication auth,
@@ -102,7 +106,7 @@ public class ConsultantController {
         return new ResponseEntity<>(reviewSaveResponse, HttpStatus.OK);
     }
 
-    // [유저] 리뷰 수정
+    // [공통] 리뷰 수정
     @PutMapping(value = "/reviews/{reviewSeq}/edit")
     public ResponseEntity<ReviewUpdateDTO.Response> updateReview(
             @AuthenticationPrincipal JwtAuthentication auth,
@@ -114,7 +118,7 @@ public class ConsultantController {
         return new ResponseEntity<>(reviewUpdateResponse, HttpStatus.OK);
     }
 
-    // [유저] 리뷰 삭제
+    // [공통] 리뷰 삭제
     @DeleteMapping(value = "/reviews/{reviewSeq}")
     public ResponseEntity<ReviewDeleteDTO.Response> deleteReview(
         @AuthenticationPrincipal JwtAuthentication auth,
@@ -125,5 +129,19 @@ public class ConsultantController {
         ReviewDeleteDTO.Response reviewDeleteResponse = consultantService.deleteReview(auth.getSeq(), reviewSeq, dto);
         return new ResponseEntity<>(reviewDeleteResponse, HttpStatus.OK);
     }
+
+    // [공통] 에약 상세 저회
+    @GetMapping(value = "/reservations/{reservationSeq}")
+    public ResponseEntity<UserReservationInfoDTO.Response> getUserReservationDetail(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable("reservationSeq") Long reservationSeq,
+            UserReservationInfoDTO.Request dto){
+            dto.setMemberSeq(auth.getSeq());
+            dto.setReservationSeq(reservationSeq);
+        UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
+        return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
+
+    }
+
 }
 

@@ -1,5 +1,6 @@
 package com.infinity.fashionity.consultants.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -13,7 +14,13 @@ public class ConsultantReservationInfoDTO {
     @NoArgsConstructor
     public static class Request {
 
+        @JsonIgnore
+        private Long memberSeq;
+
+        @JsonIgnore // path variable
         private String consultantNickname;
+
+        @JsonIgnore // path variable
         private Long reservationSeq;
 
     }
@@ -25,6 +32,7 @@ public class ConsultantReservationInfoDTO {
     @NoArgsConstructor
     public static class Response {
 
+        private Long memberSeq;
         private String consultantNickname;
         private Long reservationSeq;
 

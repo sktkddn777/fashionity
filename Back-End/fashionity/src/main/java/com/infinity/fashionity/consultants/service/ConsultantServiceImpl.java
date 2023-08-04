@@ -157,7 +157,12 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [컨설턴트] 예약 상세 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq){
+    public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq, ConsultantReservationInfoDTO.Request dto ){
+
+        memberSeq = dto.getMemberSeq();
+        consultantNickname = dto.getConsultantNickname();
+        reservationSeq = dto.getReservationSeq();
+
 
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
@@ -181,6 +186,9 @@ public class ConsultantServiceImpl implements ConsultantService {
         }).collect(Collectors.toList());
 
         return ConsultantReservationInfoDTO.Response.builder()
+                .memberSeq(memberSeq)
+                .consultantNickname(consultantNickname)
+                .reservationSeq(reservationSeq)
                 .consultantReservationDetails(details)
                 .build();
 
@@ -305,6 +313,44 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
 
     }
+
+    // [공통] 에약 상세 조회
+    @Transactional
+    public UserReservationInfoDTO.Response getUserReservationDetail(Long memberSeq, Long reservationSeq, UserReservationInfoDTO.Request dto) {
+
+        memberSeq = dto.getMemberSeq();
+        reservationSeq = dto.getReservationSeq();
+
+        List<UserReservationDetail> result = reservationRepository.findUserReservation(memberSeq, reservationSeq);
+
+        List<UserReservationDetail> details = result.stream().map(entity -> {
+            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
+
+            List<Image> images = imageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+
+            return UserReservationDetail.builder()
+                    .reservationSeq(entity.getReservationSeq())
+                    .consultantNickname(entity.getConsultantNickname())
+                    .reservationDateTime(entity.getReservationDateTime())
+                    .reservationDetail(entity.getReservationDetail())
+                    .images(images)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return UserReservationInfoDTO.Response.builder()
+                .memberSeq(memberSeq)
+                .reservationSeq(reservationSeq)
+                .userReservationDetails(details)
+                .build();
+    }
+
 
 
 

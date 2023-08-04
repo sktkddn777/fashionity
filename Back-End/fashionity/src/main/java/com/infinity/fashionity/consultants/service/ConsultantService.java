@@ -4,6 +4,8 @@ package com.infinity.fashionity.consultants.service;
 import com.infinity.fashionity.consultants.dto.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
+
 public interface ConsultantService {
 
     // [공통] 컨설턴트 목록 조회
@@ -21,7 +23,7 @@ public interface ConsultantService {
     ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname);
 
     @Transactional(readOnly = true)
-    ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq);
+    ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq, ConsultantReservationInfoDTO.Request dto);
 
     @Transactional(readOnly = true)
     ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
@@ -37,5 +39,9 @@ public interface ConsultantService {
 
     @Transactional
     ReviewDeleteDTO.Response deleteReview(Long memberSeq, Long reviewSeq, ReviewDeleteDTO.Request dto);
+
+    @Transactional
+    UserReservationInfoDTO.Response getUserReservationDetail(Long memberSeq, Long reservationSeq, UserReservationInfoDTO.Request dto);
+
 }
 
