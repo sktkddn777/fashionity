@@ -69,6 +69,10 @@ const router = createRouter({
           name: "UserLogin",
           component: UserLogin,
         },
+        {
+          path: "logout",
+          name: "UserLogout",
+        },
       ],
     },
 
