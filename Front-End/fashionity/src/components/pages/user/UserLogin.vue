@@ -26,7 +26,24 @@
               로그인
             </v-btn>
           </div>
-          <div>회원가입 | 아이디찾기 | 비밀번호찾기</div>
+          <div class="d-flex" style="justify-content: space-between">
+            <v-btn variant="text" style="font-size: small" @click="register"
+              >회원가입</v-btn
+            >
+            <v-btn
+              variant="text"
+              style="font-size: small"
+              @click="findIdByEmail"
+              >아이디찾기</v-btn
+            >
+            <v-btn
+              variant="text"
+              style="font-size: small"
+              @click="reissuePasswordByEmail"
+              >비번찾기</v-btn
+            >
+          </div>
+
           <div class="flex-column">
             <v-btn
               color="#00BF18"
@@ -59,20 +76,40 @@
 </template>
 
 <script>
+import router from "@/router";
+import { computed } from "vue";
+import { useStore, mapActions } from "vuex";
+const memberStore = "memberStore";
+
 export default {
+  name: "UserLogin",
+  setup() {
+    const store = useStore();
+    const loginUser = computed(() => store.state.loginUser);
+    return {
+      loginUser,
+    };
+  },
+
   data: () => ({
     id: "",
     password: "",
   }),
 
   methods: {
-    login() {
+    ...mapActions(memberStore, ["loginAction"]),
+    async login() {
       const user = {
         id: this.id,
-        pw: this.password,
+        password: this.password,
       };
-      this.$store.dispatch("login", user);
+      await this.loginAction(user);
     },
+    register() {
+      router.push({ name: "UserRegister" });
+    },
+    findIdByEmail() {},
+    reissuePasswordByEmail() {},
   },
 };
 </script>

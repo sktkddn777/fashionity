@@ -59,6 +59,7 @@ public class AuthServiceImpl implements AuthService{
             throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
         return LoginDTO.Response.builder()
+                .memberSeq(member.getSeq())
                 .accessToken(jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles()))
                 .build();
     }
