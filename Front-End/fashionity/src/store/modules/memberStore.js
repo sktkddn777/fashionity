@@ -1,6 +1,6 @@
 // import jwtDecode from "jwt-decode";
 import router from "@/router";
-import { login } from "@/api/member";
+import { login, logout, register } from "@/api/member";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
@@ -25,11 +25,11 @@ const memberStore = {
       state.loginUser = data;
       state.isLogin = true;
       sessionStorage.setItem("token", data.accessToken);
-      sessionStorage.setItem("id", data.memberSeq);
+      sessionStorage.setItem("memberSeq", data.memberSeq);
     },
     LOGOUT(state) {
       sessionStorage.removeItem("token");
-      sessionStorage.removeItem("id");
+      sessionStorage.removeItem("memberSeq");
       state.loginUser = {};
       state.isLogin = false;
     },
@@ -58,23 +58,63 @@ const memberStore = {
       await login(
         user,
         ({ data }) => {
-          if (data.code === "M001") {
+          console.log("data: " + data);
+
+          commit("LOGIN", data);
+          router.push({ name: "main" });
+        },
+        ({ response }) => {
+          if (response.data.code === "M001") {
             toast.error("존재하지 않는 사용자입니다.", {
               position: "bottom-right",
               timeout: 2000,
             });
-          } else if (data.code === "A001") {
+          } else if (response.data.code === "A001") {
             toast.error("비밀번호가 일치하지 않습니다..", {
               position: "bottom-right",
               timeout: 2000,
             });
           }
+        }
+      );
+    },
+    async registerAction(context, user) {
+      await register(
+        user,
+        ({ data }) => {
+          toast.success("사랑합니다 " + data.id + "고객님");
 
-          commit("LOGIN", data);
-          router.push({ name: "main" });
+          router.push({ name: "UserLogin" });
         },
-        (error) => {
-          console.log(error);
+        ({ response }) => {
+          if (response.data.code === "M002") {
+            toast.error("이미 존재하는 아이디입니다.", {
+              position: "bottom-right",
+              timeout: 2000,
+            });
+          } else if (response.data.code === "M003") {
+            toast.error("이미 존재하는 이메일입니다.", {
+              position: "bottom-right",
+              timeout: 2000,
+            });
+          } else if (response.data.code === "M004") {
+            toast.error("이미 존재하는 닉네임입니다.", {
+              position: "bottom-right",
+              timeout: 2000,
+            });
+          }
+        }
+      );
+    },
+    async logoutAction({ commit }, user) {
+      await logout(
+        user,
+        ({ data }) => {
+          console.log("data: " + data);
+          commit("LOGOUT");
+        },
+        ({ response }) => {
+          console.log(response);
         }
       );
     },

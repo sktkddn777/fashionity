@@ -57,21 +57,30 @@
   </div>
 </template>
 <script>
-import { useStore } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
+const memberStore = "memberStore";
 
 export default {
-  setup() {
-    const store = useStore();
-    const isLogin = store.state.isLogin;
-
-    return {
-      isLogin,
-    };
+  setup() {},
+  computed: {
+    ...mapState(memberStore, ["isLogin", "userInfo"]),
+    ...mapGetters(["checkUserInfo"]),
   },
   data() {
     return {
       keyword: "",
     };
+  },
+  methods: {
+    ...mapActions(memberStore, ["logoutAction"]),
+
+    logout() {
+      const user = {
+        memberSeq: sessionStorage.getItem("memberSeq"),
+      };
+
+      this.logoutAction(user);
+    },
   },
 };
 </script>

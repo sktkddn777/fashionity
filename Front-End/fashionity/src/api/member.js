@@ -2,12 +2,20 @@ import { apiInstance } from ".";
 
 const api = apiInstance();
 
-const baseURL = "http://localhost:8080/api/v1/auth";
+const authURL = "http://localhost:8080/api/v1/auth";
 async function login(data, success, fail) {
-  await api.post(`${baseURL}/login`, data).then(success).catch(fail);
+  await api.post(`${authURL}/login`, data).then(success).catch(fail);
 }
 
-export { login };
+async function register(data, success, fail) {
+  await api.post(`${authURL}/register`, data).then(success).catch(fail);
+}
+
+async function logout(data, success, fail) {
+  await api.post(`${authURL}/logout`, data).then(success).catch(fail);
+}
+
+export { login, register, logout };
 
 // async function login() {
 //   axios({
