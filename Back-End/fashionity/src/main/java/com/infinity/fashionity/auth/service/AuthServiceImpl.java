@@ -2,6 +2,7 @@ package com.infinity.fashionity.auth.service;
 
 import com.infinity.fashionity.auth.dto.FindByEmailDTO;
 import com.infinity.fashionity.auth.dto.LoginDTO;
+import com.infinity.fashionity.auth.dto.LogoutDTO;
 import com.infinity.fashionity.auth.dto.SaveDTO;
 import com.infinity.fashionity.auth.exception.MailSendException;
 import com.infinity.fashionity.global.utils.HashUtil;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -236,6 +238,17 @@ public class AuthServiceImpl implements AuthService{
         }
 
         return FindByEmailDTO.PasswordResponse.builder()
+                .success(true)
+                .build();
+    }
+
+    @Override
+    public LogoutDTO.Response logout() {
+        // TODO: redis 도입해 AT, RT에 대한 blackList 만들기
+
+        // 컨텍스트에 있는 값 제거
+        SecurityContextHolder.clearContext();
+        return LogoutDTO.Response.builder()
                 .success(true)
                 .build();
     }

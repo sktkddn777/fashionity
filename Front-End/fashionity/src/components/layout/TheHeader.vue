@@ -15,8 +15,25 @@
             <div class="col-8"></div>
             <div class="col">
               <div class="row justify-content-end">
-                <div></div>
-                <div class="col-6"></div>
+                <div class="col-2"></div>
+                <div class="col">
+                  <div
+                    v-if="!isLogin"
+                    class="row"
+                    @click="login"
+                    style="cursor: pointer"
+                  >
+                    로그인
+                  </div>
+                  <div
+                    v-else
+                    class="row"
+                    @click="logout"
+                    style="cursor: pointer"
+                  >
+                    로그아웃
+                  </div>
+                </div>
                 <div class="col">
                   <font-awesome-icon
                     :icon="['fas', 'circle-plus']"
@@ -58,6 +75,8 @@
 </template>
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
+import router from "@/router";
+
 const memberStore = "memberStore";
 
 export default {
@@ -80,6 +99,9 @@ export default {
       };
 
       this.logoutAction(user);
+    },
+    login() {
+      router.push({ name: "UserLogin" });
     },
   },
 };

@@ -2,12 +2,15 @@ package com.infinity.fashionity.auth.controller;
 
 import com.infinity.fashionity.auth.dto.FindByEmailDTO;
 import com.infinity.fashionity.auth.dto.LoginDTO;
+import com.infinity.fashionity.auth.dto.LogoutDTO;
 import com.infinity.fashionity.auth.dto.SaveDTO;
 import com.infinity.fashionity.auth.service.AuthService;
+import com.infinity.fashionity.security.dto.JwtAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -73,6 +76,14 @@ public class AuthController {
             @RequestBody FindByEmailDTO.PasswordRequest dto
     ) {
         FindByEmailDTO.PasswordResponse response = authService.reissuePasswordByEmail(dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutDTO.Response> logout (
+            @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        LogoutDTO.Response response = authService.logout();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
