@@ -13,10 +13,7 @@
             />
           </div>
           <div class="post-detail-header-info">
-            <div
-              class="post-detail-header-info-nickname fw-bold"
-              style="font: bold"
-            >
+            <div class="post-detail-header-info-nickname fw-bold">
               hyeonwook_12
             </div>
             <div
@@ -115,16 +112,41 @@
             </button>
           </div>
         </div>
-        <div class="row post-detail-like">
-          <svg-icon type="mdi" :path="path"></svg-icon>
-          <span style="text-align: left">좋아요 183개</span>
+        <div class="post-detail-like">
+          <div class="post-detail-like-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-heart-fill"
+              viewBox="0 0 16 16"
+              style="color: red"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
+              />
+            </svg>
+          </div>
+          <span style="text-align: left">좋아요</span>
+          <span class="fw-bold" style="text-align: left">183</span>
+          <span style="text-align: left">개</span>
         </div>
-        <div class="row post-detail-content">
-          <span style="text-align: left">아... 하루만 못생겨보고 싶다..</span>
+        <div class="post-detail-content">
+          <div style="text-align: left">아... 하루만 못생겨보고 싶다..</div>
+          <div style="text-align: left; color: skyblue">
+            #강남 #역삼 #ftf #선팔 #맞팔 #인생네컷
+          </div>
         </div>
         <!-- 댓글 -->
-        <div class="row post-detail-comment" style="background-color: red">
-          steststestet
+        <div class="post-detail-comment">
+          <div
+            class="post-detail-comment-cnt"
+            style="color: grey; text-align: left"
+          >
+            댓글 98개
+          </div>
         </div>
       </div>
       <div class="col"></div>
@@ -134,7 +156,7 @@
 <script>
 export default {};
 </script>
-<style>
+<style scoped>
 .profile {
   height: 7vh;
   border-radius: 100%;
@@ -146,5 +168,14 @@ export default {};
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
+}
+.post-detail-like {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.post-detail-content {
+  margin-bottom: 10px;
 }
 </style>
