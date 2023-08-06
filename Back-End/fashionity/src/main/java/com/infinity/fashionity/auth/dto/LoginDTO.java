@@ -32,5 +32,6 @@ public class LoginDTO {
 
         private Long memberSeq;
         private String accessToken;
+        private String refreshToken;
     }
 }
