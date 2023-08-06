@@ -119,3 +119,21 @@ export default {
   },
 };
 </script>
+<style scoped>
+a {
+  text-decoration-line: none;
+}
+
+a:link {
+  color: black;
+}
+a:visited {
+  color: black;
+}
+a:hover {
+  color: black;
+}
+a:active {
+  color: black;
+}
+</style>
