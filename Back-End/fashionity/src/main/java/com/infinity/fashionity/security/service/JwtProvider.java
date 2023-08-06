@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.infinity.fashionity.global.exception.ErrorCode.EXPIRED_TOKEN;
+import static com.infinity.fashionity.global.exception.ErrorCode.INVALID_TOKEN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
@@ -76,9 +78,9 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
-            throw new ExpiredTokenException();
+            throw new ExpiredTokenException(EXPIRED_TOKEN);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(INVALID_TOKEN);
         }
     }
 

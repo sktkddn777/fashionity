@@ -1,12 +1,11 @@
 package com.infinity.fashionity.security.exception;
 
-public class InvalidTokenException extends RuntimeException{
+import com.infinity.fashionity.global.exception.CustomException;
+import com.infinity.fashionity.global.exception.ErrorCode;
 
-    public InvalidTokenException(String message) {
-        super(message);
-    }
+public class InvalidTokenException extends CustomException {
 
-    public InvalidTokenException() {
-        super("토큰 정보가 잘못되었습니다.");
+    public InvalidTokenException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
