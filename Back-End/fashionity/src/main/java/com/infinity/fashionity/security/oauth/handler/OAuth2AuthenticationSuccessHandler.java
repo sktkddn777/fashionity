@@ -14,6 +14,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Component
@@ -21,6 +25,7 @@ import java.io.IOException;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final TokenService tokenService;
+    private final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -29,10 +34,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
 
         Tokens tokens = tokenService.createTokens(oAuth2User.getUserInfo());
-
         // setRefreshToken in Cookie
 
-        String redirect_uri = "/"; // 프론트 코드 넣어주면 될거 같당
+        String redirect_uri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+                .map(cookie -> cookie.getValue())
+                .map(cookie -> URLDecoder.decode(cookie, UTF_8))
+                .orElse(getDefaultTargetUrl());
 
         String targetUrl = UriComponentsBuilder.fromUriString(redirect_uri)
                 .queryParam("accessToken", tokens.getAccessToken())

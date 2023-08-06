@@ -51,20 +51,26 @@
               style="margin-bottom: 10px; margin-top: 20px"
             >
               <img src="@/assets/img/naver.png" style="height: 30px" />
-              <a style="padding-left: 53px; padding-right: 73px"
+              <a
+                href="http://localhost:8080/oauth2/authorization/naver?redirect_uri=http://localhost:3333/oauth2/redirect"
+                style="padding-left: 53px; padding-right: 73px"
                 >네이버로 로그인</a
               >
             </v-btn>
 
             <v-btn color="#FFE812" block style="margin-bottom: 10px">
               <img src="@/assets/img/kakao.png" style="height: 30px" />
-              <a style="padding-left: 53px; padding-right: 73px"
+              <a
+                href="http://localhost:8080/oauth2/authorization/kakao?redirect_uri=http://localhost:3333/oauth2/redirect"
+                style="padding-left: 53px; padding-right: 73px"
                 >카카오로 로그인</a
               >
             </v-btn>
             <v-btn color="#FFFFFF" block>
               <img src="@/assets/img/google.png" style="height: 25px" />
-              <a style="padding-left: 65px; padding-right: 75px"
+              <a
+                href="http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3333/oauth2/redirect"
+                style="padding-left: 65px; padding-right: 75px"
                 >구글로 로그인</a
               >
             </v-btn>
