@@ -1,13 +1,12 @@
 package com.infinity.fashionity.security.exception;
 
-public class ExpiredTokenException extends RuntimeException{
+import com.infinity.fashionity.global.exception.CustomException;
+import com.infinity.fashionity.global.exception.ErrorCode;
 
-    public ExpiredTokenException(String message) {
-        super(message);
-    }
+public class ExpiredTokenException extends CustomException {
 
-    public ExpiredTokenException() {
-        super("토큰 기간이 만료되었습니다.");
+    public ExpiredTokenException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.infinity.fashionity.global.config;
 
+import com.infinity.fashionity.security.filter.ExceptionHandlerFilter;
 import com.infinity.fashionity.security.filter.JwtAuthenticationEntryPoint;
 import com.infinity.fashionity.security.filter.JwtAuthenticationFilter;
 import com.infinity.fashionity.security.handler.CustomAccessDeniedHandler;
@@ -35,7 +36,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
     private final String[] allowedUrls = {"/api/v1/auth/**", "/api/v1/posts/**"};
 
     @Bean
@@ -60,7 +61,6 @@ public class SecurityConfig {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .accessDeniedHandler(customAccessDeniedHandler)
@@ -73,8 +73,10 @@ public class SecurityConfig {
                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 .and()
                 .exceptionHandling()
-//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 .build();
 
     }
