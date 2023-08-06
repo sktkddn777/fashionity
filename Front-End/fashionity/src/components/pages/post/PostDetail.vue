@@ -35,7 +35,7 @@
             </div>
           </div>
         </div>
-        <!-- 게시글 -->
+        <!-- 이미지 -->
         <div class="row post-detail-image">
           <div id="carouselExampleIndicators" class="carousel slide">
             <div class="carousel-indicators">
@@ -112,6 +112,7 @@
             </button>
           </div>
         </div>
+        <!-- 본문 내용 -->
         <div class="post-detail-like">
           <div class="post-detail-like-icon">
             <svg
@@ -135,17 +136,51 @@
         </div>
         <div class="post-detail-content">
           <div style="text-align: left">아... 하루만 못생겨보고 싶다..</div>
-          <div style="text-align: left; color: skyblue">
-            #강남 #역삼 #ftf #선팔 #맞팔 #인생네컷
+          <div class="post-detail-content-hashtag">
+            <a v-for="(tag, i) in hashtags" :key="i" style="color: skyblue">
+              {{ tag }} &nbsp;
+            </a>
           </div>
         </div>
         <!-- 댓글 -->
-        <div class="post-detail-comment">
-          <div
-            class="post-detail-comment-cnt"
-            style="color: grey; text-align: left"
-          >
-            댓글 98개
+        <div>
+          <div class="post-detail-comment-cnt">댓글 98개</div>
+        </div>
+        <div class="post-detail-header">
+          <div class="post-detail-header-img">
+            <img
+              src="../../../assets/img/hyeonwook.jpg"
+              alt=""
+              class="profile-comment"
+            />
+          </div>
+          <div>
+            <div class="fw-bold" style="text-align: left">hyeonwook_12</div>
+            <div style="text-align: left; font-size: 15px">
+              안녕하세요ㅎ 선팔하고 갑니다ㅎ
+            </div>
+          </div>
+          <div class="post-detail-comment-info">
+            <div style="color: grey; font-size: 13px">1시간 전</div>
+            <div>
+              <div>...</div>
+              <div class="post-detail-like-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-heart-fill"
+                  viewBox="0 0 16 16"
+                  style="color: red"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -154,11 +189,22 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      hashtags: ["#맞팔", "#팔로우", "#강남", "#역삼", "#인생네컷"],
+    };
+  },
+};
 </script>
 <style scoped>
 .profile {
   height: 7vh;
+  border-radius: 100%;
+  object-fit: contain;
+}
+.profile-comment {
+  height: 5vh;
   border-radius: 100%;
   object-fit: contain;
 }
@@ -177,5 +223,20 @@ export default {};
 }
 .post-detail-content {
   margin-bottom: 10px;
+}
+.post-detail-content-hashtag {
+  display: flex;
+}
+.post-detail-comment-cnt {
+  color: grey;
+  text-align: left;
+  margin-bottom: 10px;
+}
+.post-detail-comment-content {
+  display: flex;
+}
+.post-detail-comment-info {
+  margin-left: auto;
+  display: flex;
 }
 </style>
