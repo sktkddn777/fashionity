@@ -1,7 +1,7 @@
 <template lang="">
   <div
     class="container-fluid justify-content-center d-flex align-items-center"
-    style="height: 65vh"
+    style="height: 65vh; margin-left: 4vw"
   >
     <div class="row" style="height: 55vh; width: 80%">
       <!-- 오전 -->
