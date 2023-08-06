@@ -4,7 +4,7 @@ import ProfileView from "../views/ProfileView.vue";
 import UserView from "../views/UserView.vue";
 import UserRegister from "../components/pages/user/UserRegister.vue";
 import UserLogin from "../components/pages/user/UserLogin.vue";
-
+import Oauth2Redirect from "../components/pages/oauth2/Oauth2Redirect.vue";
 import PostView from "../components/pages/post/PostList.vue";
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
@@ -74,6 +74,10 @@ const router = createRouter({
           name: "UserLogout",
         },
       ],
+    },
+    {
+      path: "/oauth2/redirect",
+      component: Oauth2Redirect,
     },
 
     {
