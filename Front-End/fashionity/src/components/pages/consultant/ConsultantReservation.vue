@@ -1,15 +1,10 @@
 <template lang="">
-  <div class="container-fliud" style="height: 75vh">
+  <div class="container-fliud" style="height: 75vh; margin-left: 5vw">
     <div class="row">
       <div class="col-3" style="height: 75vh">
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
-            <img
-              src="../../../assets/img/imgtemp.jpg"
-              alt=""
-              class="profile"
-              style="width: 50%"
-            />
+            <img src="../../../assets/img/imgtemp.jpg" alt="" class="profile" style="width: 50%" />
           </div>
         </div>
         <div class="row" style="height: 30px"></div>
@@ -29,7 +24,9 @@
         <router-view></router-view>
         <div class="row justify-content-end">
           <div class="col-1">
-            <button>NEXT</button>
+            <router-link class="link" to="/consultant/reservation/time"
+              ><button>NEXT</button></router-link
+            >
           </div>
         </div>
       </div>

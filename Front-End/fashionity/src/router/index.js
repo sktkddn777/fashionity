@@ -10,6 +10,7 @@ import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
+import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -79,9 +80,14 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "date",
+              path: "",
               name: "date",
               component: ConsultantReservationDate,
+            },
+            {
+              path: "time",
+              name: "time",
+              component: ConsultantReservationTime,
             },
           ],
         },

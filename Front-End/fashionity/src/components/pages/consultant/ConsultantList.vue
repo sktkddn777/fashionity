@@ -18,22 +18,22 @@
     <div class="container">
       <div class="row" style="justify-content: center">
         <div class="col">
-          <router-link class="link" to="/consultant/reservation/date"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
@@ -43,22 +43,22 @@
 
       <div class="row">
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>
         <div class="col">
-          <router-link class="link" to="/reservation"
+          <router-link class="link" to="/consultant/reservation/"
             ><consultant-block-vue></consultant-block-vue
           ></router-link>
         </div>

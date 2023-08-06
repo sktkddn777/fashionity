@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="container-fluid">
+  <div class="container-fluid" style="height: 65vh">
     <v-calendar is-expanded></v-calendar>
     <!-- <ConsultantCalenerTempVue></ConsultantCalenerTempVue> -->
     <!-- <v-date-picker
