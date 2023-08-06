@@ -4,29 +4,30 @@
       <div class="col"></div>
       <div class="col-6">
         <!-- 작성자 정보 -->
-        <div class="row post-detail-header">
-          <div
-            class="col post-detail-header-img"
-            style="margin: auto; min-width: 70px"
-          >
+        <div class="post-detail-header">
+          <div class="post-detail-header-img">
             <img
               src="../../../assets/img/hyeonwook.jpg"
               alt=""
               class="profile"
-              style="width: 100%"
             />
           </div>
-          <div class="col-8 post-detail-header-info">
+          <div class="post-detail-header-info">
             <div
-              class="row post-detail-header-info-nickname fw-bold"
+              class="post-detail-header-info-nickname fw-bold"
               style="font: bold"
             >
               hyeonwook_12
             </div>
-            <div class="row post-detail-header-info-time fs-6">2시간 전</div>
+            <div
+              class="post-detail-header-info-time fs-6"
+              style="text-align: left"
+            >
+              2시간 전
+            </div>
           </div>
-          <div class="col post-detail-header-follow" style="margin: auto">
-            <div class="col align-self-center">
+          <div class="post-detail-header-follow" style="margin-left: auto">
+            <div class="align-self-center">
               <button
                 type="button"
                 class="btn btn-dark"
@@ -73,7 +74,7 @@
               </div>
               <div class="carousel-item">
                 <img
-                  src="../../../assets/img/testImage.jpeg"
+                  src="../../../assets/img/hyeonwook2.jpg"
                   class="d-block w-100"
                   alt="두 번째 사진"
                   style="aspect-ratio: 1 / 1"
@@ -81,7 +82,7 @@
               </div>
               <div class="carousel-item">
                 <img
-                  src="../../../assets/img/KakaoTalk_20230803_125708971.jpg"
+                  src="../../../assets/img/hyeonwook3.jpg"
                   class="d-block w-100"
                   alt="세 번째 사진"
                   style="aspect-ratio: 1 / 1"
@@ -136,10 +137,14 @@ export default {};
 <style>
 .profile {
   height: 7vh;
-  border-radius: 0%;
+  border-radius: 100%;
   object-fit: contain;
 }
 .post-detail-header {
   margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 </style>
