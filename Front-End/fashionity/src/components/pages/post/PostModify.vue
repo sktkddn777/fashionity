@@ -9,7 +9,7 @@
             <img
               src="../../../assets/img/hyeonwook.jpg"
               alt=""
-              class="profile"
+              class="post-detail-profile"
             />
           </div>
           <div class="post-detail-header-info">
@@ -144,7 +144,7 @@ export default {
 };
 </script>
 <style scoped>
-.profile {
+.post-detail-profile {
   height: 7vh;
   border-radius: 100%;
   object-fit: contain;

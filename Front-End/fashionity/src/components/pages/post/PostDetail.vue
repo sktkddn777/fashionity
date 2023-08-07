@@ -9,7 +9,7 @@
             <img
               src="../../../assets/img/hyeonwook.jpg"
               alt=""
-              class="profile"
+              class="post-detail-profile"
             />
           </div>
           <div class="post-detail-header-info">
@@ -166,11 +166,11 @@
                   />
                 </template>
 
-                <v-list style="height: 80px">
-                  <v-list-item v-for="(item, i) in dropdown" :key="i">
-                    <v-list-item-title style="height: 20px">{{
-                      item
-                    }}</v-list-item-title>
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-title type="button">수정</v-list-item-title>
+                    <v-list-item-title type="button">삭제</v-list-item-title>
+                    <v-list-item-title type="button">신고</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -203,7 +203,6 @@ export default {
   data() {
     return {
       hashtags: ["#맞팔", "#팔로우", "#강남", "#역삼", "#인생네컷"],
-      dropdown: ["수정", "삭제", "신고"],
       images: [
         "../../../assets/img/hyeonwook.jpg",
         "../../../assets/img/hyeonwook2.jpg",
@@ -214,7 +213,7 @@ export default {
 };
 </script>
 <style scoped>
-.profile {
+.post-detail-profile {
   height: 7vh;
   border-radius: 100%;
   object-fit: contain;
