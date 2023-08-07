@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-3" id="logo">
           <router-link
-            to="post"
+            to="/"
             class="link"
             style="font-style: normal; font-size: 50px; padding-top: 20px"
             >fashionity</router-link

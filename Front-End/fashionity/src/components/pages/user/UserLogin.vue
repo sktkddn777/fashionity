@@ -114,8 +114,12 @@ export default {
     register() {
       router.push({ name: "UserRegister" });
     },
-    findIdByEmail() {},
-    reissuePasswordByEmail() {},
+    findIdByEmail() {
+      router.push({ name: "UserFindId" });
+    },
+    reissuePasswordByEmail() {
+      router.push({ name: "UserReissuePw" });
+    },
   },
 };
 </script>

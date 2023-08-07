@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ProfilePage from "../components/pages/user/Profile.vue";
-import ProfileView from "../views/ProfileView.vue";
-import UserView from "../views/UserView.vue";
-import UserRegister from "../components/pages/user/UserRegister.vue";
-import UserLogin from "../components/pages/user/UserLogin.vue";
-import Oauth2Redirect from "../components/pages/oauth2/Oauth2Redirect.vue";
+import ProfilePage from "@/components/pages/user/Profile";
+import ProfileView from "@/views/ProfileView";
+import UserView from "@/views/UserView";
+import UserRegister from "@/components/pages/user/UserRegister";
+import UserLogin from "@/components/pages/user/UserLogin";
+import UserFindId from "@/components/pages/user/UserFindId";
+import UserReissuePw from "@/components/pages/user/UserReissuePw";
+import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
 import PostView from "../components/pages/post/PostList.vue";
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
@@ -72,6 +74,16 @@ const router = createRouter({
         {
           path: "logout",
           name: "UserLogout",
+        },
+        {
+          path: "findId",
+          name: "UserFindId",
+          component: UserFindId,
+        },
+        {
+          path: "findPw",
+          name: "UserReissuePw",
+          component: UserReissuePw,
         },
       ],
     },
