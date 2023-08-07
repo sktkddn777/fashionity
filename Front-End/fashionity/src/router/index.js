@@ -9,6 +9,7 @@ import PostView from "../components/pages/post/PostView.vue";
 import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
+import PostModify from "../components/pages/post/PostModify.vue";
 
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
@@ -80,6 +81,11 @@ const router = createRouter({
           path: "write",
           name: "write",
           component: PostWrite,
+        },
+        {
+          path: "modify",
+          name: "modify",
+          component: PostModify,
         },
       ],
     },

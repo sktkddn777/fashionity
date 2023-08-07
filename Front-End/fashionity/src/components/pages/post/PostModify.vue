@@ -32,14 +32,7 @@
             multiple
           ></v-file-input>
         </div>
-        <!-- <div class="row post-detail-image">
-          <div>
-            <v-file-input
-              label="File input"
-              variant="underlined"
-              multiple
-            ></v-file-input>
-          </div>
+        <div class="row post-detail-image">
           <div id="carouselExampleIndicators" class="carousel slide">
             <div class="carousel-indicators">
               <button
@@ -114,16 +107,15 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
-        </div> -->
+        </div>
         <!-- 본문 내용 -->
         <textarea
           class="form-control"
           rows="1"
           placeholder="해시태그를 입력해주세요."
         ></textarea>
-        <br />
         <textarea
-          class="form-control"
+          class="form-control content"
           rows="3"
           placeholder="내용을 입력해주세요."
         ></textarea>
@@ -136,7 +128,7 @@
             <span style="font-size: smaller">&nbsp;취소&nbsp;</span>
           </button>
           <button type="button" class="btn btn-dark" style="min-width: 70px">
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+            <span style="font-size: smaller">&nbsp;수정&nbsp;</span>
           </button>
         </div>
       </div>
@@ -168,6 +160,12 @@ export default {
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
+}
+.post-detail-image {
+  margin-bottom: 10px;
+}
+.content {
+  margin-top: 10px;
 }
 .post-detail-like {
   display: flex;

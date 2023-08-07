@@ -157,10 +157,23 @@
           <div class="post-detail-comment-info">
             <div style="color: grey; font-size: 13px">1시간 전</div>
             <div>
-              <font-awesome-icon
-                :icon="['fas', 'ellipsis']"
-                style="color: #999999"
-              />
+              <v-menu>
+                <template v-slot:activator="{ props }">
+                  <font-awesome-icon
+                    v-bind="props"
+                    :icon="['fas', 'ellipsis']"
+                    style="color: #999999"
+                  />
+                </template>
+
+                <v-list style="height: 80px">
+                  <v-list-item v-for="(item, i) in dropdown" :key="i">
+                    <v-list-item-title style="height: 20px">{{
+                      item
+                    }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
               <div class="post-detail-like-icon">
                 <font-awesome-icon
                   :icon="['far', 'heart']"
