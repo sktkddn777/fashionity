@@ -29,6 +29,14 @@ const router = createRouter({
           name: "ProfilePage",
           component: ProfilePage,
         },
+        {
+          path: "/liked",
+          name: "likedList",
+          // component: ,
+        },
+        {
+
+        }
       ],
     },
 

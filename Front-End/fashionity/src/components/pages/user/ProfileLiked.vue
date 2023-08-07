@@ -57,26 +57,64 @@
         </div>
       </div>
     </div>
-    <div
-    class="row justify-content-center"
-    style="
-      margin-top: 2rem;
-      margin-bottom: 30px;
-      border-style: solid;
-      border-width: 1px;
-      border-color: white white #bdbdbd white;
-    "
-    ><div class="col col-lg-2 header-tab">
-      <router-link to="/posts" style="text-decoration: none; color: #424242; font-size:1.2rem"
-        >Posts</router-link
-      >
+      <div
+      class="row justify-content-center"
+      style="
+        margin-top: 2rem;
+        margin-bottom: 30px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: white white #bdbdbd white;
+      "
+      ><div class="col col-lg-2 header-tab">
+        <router-link to="/posts" style="text-decoration: none; color: #424242; font-size:1.2rem"
+          >Posts</router-link
+        >
+      </div>
+      <div class="col col-lg-2 header-tab point">
+        <router-link to="/liked" style="text-decoration: none; color: #424242 ; font-size:1.2rem"
+          >Liked</router-link
+        >
+      </div>
     </div>
-    <div class="col col-lg-2 header-tab point">
-      <router-link to="/liked" style="text-decoration: none; color: #424242 ; font-size:1.2rem"
-        >Liked</router-link
-      >
+    <div class="row" style="height: 30px"></div>
+
+    <div class="container">
+      <div class="row" style="justify-content: center">
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+      </div>
+
+      <div class="row" style="height: 30px"></div>
+
+      <div class="row">
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+      </div>
+
+      <div class="row" style="height: 40px"></div>
     </div>
-  </div>
+
 
   </div>
 </template>
