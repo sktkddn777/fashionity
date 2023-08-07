@@ -45,6 +45,16 @@
         </div>
       </div>
 
+      <div class="row d-flex">
+        <div
+          class="col-3 time-block d-flex align-items-center justify-content-center"
+          v-for="(time, index) in pm2"
+          :key="index"
+        >
+          {{ time }}
+        </div>
+      </div>
+
       <!-- <div v-for="(time, index) in pm" :key="index">{{ time }}</div> -->
     </div>
   </div>
@@ -57,6 +67,7 @@ export default {
       am2: [],
       pm1: [],
       pm2: [],
+      pm3: [],
     };
   },
   created() {
@@ -64,6 +75,7 @@ export default {
     this.am2 = ["9:00", "10:00", "11:00", "12:00"];
     this.pm1 = ["13:00", "14:00", "15:00", "16:00"];
     this.pm2 = ["17:00", "18:00", "19:00", "20:00"];
+    this.pm3 = ["21:00", "22:00", "23:00", "24:00"];
   },
 };
 </script>
