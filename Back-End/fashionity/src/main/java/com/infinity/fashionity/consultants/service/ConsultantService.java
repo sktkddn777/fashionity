@@ -5,10 +5,14 @@ import com.infinity.fashionity.consultants.dto.*;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface ConsultantService {
-    ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto);
 
+    // [공통] 컨설턴트 목록 조회
     @Transactional(readOnly = true)
-    ConsultantInfoDTO.Response getConsultantDetail(ConsultantInfoDTO.Request dto);
+    ConsultantListDTO.Response getAllConsultants(Long memberSeq, ConsultantListDTO.Request dto);
+
+    // [공통] 컨설턴트 상세 정보 조회
+    @Transactional(readOnly = true)
+    ConsultantInfoDTO.Response getConsultantDetail(Long memberSeq, String consultantNickname);
 
     @Transactional(readOnly = true)
     UserReservationListDTO.Response getUserReservationsList(Long memberSeq);
@@ -21,5 +25,8 @@ public interface ConsultantService {
 
     @Transactional(readOnly = true)
     ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
+
+    @Transactional(readOnly = true)
+    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname);
 }
 

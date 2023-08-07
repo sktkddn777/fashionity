@@ -5,6 +5,7 @@
       is-expanded
       is-range
       color="orange"
+      style=""
     ></v-date-picker>
   </div>
 </template>

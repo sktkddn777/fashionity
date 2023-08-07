@@ -37,7 +37,7 @@
   </div>
 </template>
 <script>
-import thePost from "@/components/shared/ThePost";
+import ThePost from "./ThePost.vue";
 import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
 import axios from 'axios';
 
@@ -52,7 +52,7 @@ export default {
     };
   },
   components: {
-    thePost,
+    ThePost,
     TheNavBarPost,
   },
   computed:{

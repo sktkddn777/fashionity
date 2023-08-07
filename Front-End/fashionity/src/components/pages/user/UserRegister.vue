@@ -1,70 +1,79 @@
 <template>
-  <v-sheet width="300" class="mx-auto">
-    <v-form ref="form" v-model="isValid">
-      <v-text-field
-        @keyup="validate"
-        v-model="id"
-        :counter="20"
-        :rules="idRules"
-        label="아이디를 입력하시오"
-        required
-      ></v-text-field>
-      <span class="register-id-check"></span>
-      <v-text-field
-        @keyup="validate"
-        v-model="password"
-        :counter="20"
-        :rules="passwordRules"
-        label="비밀번호를 입력하시오"
-        required
-      ></v-text-field>
-      <span class="register-password-check"></span>
-      <v-text-field
-        @keyup="validate"
-        v-model="nickname"
-        :counter="12"
-        :rules="nicknameRules"
-        label="닉네임을 입력하시오"
-        required
-      ></v-text-field>
-      <span class="register-nickname-check"></span>
-      <v-text-field
-        @keyup="validate"
-        v-model="email"
-        :rules="emailRules"
-        label="이메일을 입력하시오"
-        required
-      ></v-text-field>
-      <span class="register-email-check"></span>
-      <v-checkbox
-        @keyup="validate"
-        v-model="checkbox"
-        :rules="[(v) => !!v || '이용약관에 동의해주세요']"
-        label="[필수] 만 14세 이상이며 모두 동의합니다."
-        required
-      ></v-checkbox>
-      <div class="d-flex flex-column">
-        <v-btn
-          v-bind:disabled="!isValid"
-          v-bind:color="!isValid ? 'grey' : 'blue'"
-          class="register-button"
-          block
-          @click="register"
-        >
-          회원가입
-        </v-btn>
-      </div>
-    </v-form>
-  </v-sheet>
+  <div
+    class="container-fluid d-flex align-items-center justify-content-center"
+    style="height: 65vh"
+  >
+    <div class="row d-flex d-flex align-items-center justify-content-center">
+      <v-sheet width="300" class="mx-auto">
+        <v-form ref="form" v-model="isValid">
+          <v-text-field
+            @keyup="validate"
+            v-model="id"
+            :counter="20"
+            :rules="idRules"
+            label="아이디를 입력하시오"
+            required
+          ></v-text-field>
+          <span class="register-id-check"></span>
+          <v-text-field
+            @keyup="validate"
+            v-model="password"
+            :counter="20"
+            :rules="passwordRules"
+            label="비밀번호를 입력하시오"
+            required
+          ></v-text-field>
+          <span class="register-password-check"></span>
+          <v-text-field
+            @keyup="validate"
+            v-model="nickname"
+            :counter="12"
+            :rules="nicknameRules"
+            label="닉네임을 입력하시오"
+            required
+          ></v-text-field>
+          <span class="register-nickname-check"></span>
+          <v-text-field
+            @keyup="validate"
+            v-model="email"
+            :rules="emailRules"
+            label="이메일을 입력하시오"
+            required
+          ></v-text-field>
+          <span class="register-email-check"></span>
+          <v-checkbox
+            @keyup="validate"
+            v-model="checkbox"
+            :rules="[(v) => !!v || '이용약관에 동의해주세요']"
+            label="[필수] 만 14세 이상이며 모두 동의합니다."
+            required
+          ></v-checkbox>
+          <div class="d-flex flex-column">
+            <v-btn
+              v-bind:disabled="!isValid"
+              v-bind:color="!isValid ? 'grey' : 'blue'"
+              class="register-button"
+              block
+              @click="register"
+            >
+              회원가입
+            </v-btn>
+          </div>
+        </v-form>
+      </v-sheet>
+    </div>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
 import { useToast } from "vue-toastification";
-
+const memberStore = "memberStore";
 const toast = useToast();
 
 export default {
+  name: "UserRegister",
   data: () => ({
     id: "",
     id_check: "",
@@ -115,6 +124,7 @@ export default {
   }),
 
   methods: {
+    ...mapActions(memberStore, ["registerAction"]),
     async validate() {
       const { valid } = await this.$refs.form.validate();
       if (valid) {
@@ -152,25 +162,20 @@ export default {
         return;
       }
 
-      axios({
-        url: "http://localhost/api/v1/auth/register",
-        method: "POST",
-        data: {
-          id: this.id,
-          password: this.password,
-          nickname: this.nickname,
-          email: this.email,
-        },
-      });
-
-      toast.success("사랑합니다 " + this.nickname + "고객님");
+      const user = {
+        id: this.id,
+        password: this.password,
+        nickname: this.nickname,
+        email: this.email,
+      };
+      await this.registerAction(user);
     },
 
     async checkId() {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost/api/v1/auth/check/id",
+          url: "http://localhost:8080/api/v1/auth/check/id",
           method: "GET",
           params: {
             id: this.id,
@@ -185,7 +190,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost/api/v1/auth/check/email",
+          url: "http://localhost:8080/api/v1/auth/check/email",
           method: "GET",
           params: {
             email: this.email,
@@ -199,7 +204,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost/api/v1/auth/check/nickname",
+          url: "http://localhost:8080/api/v1/auth/check/nickname",
           method: "GET",
           params: {
             nickname: this.nickname,

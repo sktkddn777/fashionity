@@ -19,6 +19,6 @@ public class ConsultantSummary {
     private String profileUrl;
     private Float avgGrade;
     private Integer totalCnt;
-    private String nickname;
+    private String nickname; // 컨설턴트 닉네임
     private Level level;
 }

@@ -1,7 +1,18 @@
 <template lang="">
-  <div></div>
+  <div class="container-fluid">
+    <the-nav-bar-consultant></the-nav-bar-consultant>
+    <router-view></router-view>
+  </div>
 </template>
 <script>
-export default {};
+import TheNavBarConsultant from "@/components/layout/TheNavBarConsultant.vue";
+export default {
+  data() {
+    return {};
+  },
+  components: {
+    TheNavBarConsultant,
+  },
+};
 </script>
 <style></style>

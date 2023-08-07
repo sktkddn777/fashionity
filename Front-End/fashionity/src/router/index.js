@@ -1,13 +1,39 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ProfilePage from "../components/pages/user/Profile.vue";
-import ProfileView from "../views/ProfileView.vue";
-import UserView from "../views/UserView.vue";
-import UserRegister from "../components/pages/user/UserRegister.vue";
-import UserLogin from "../components/pages/user/UserLogin.vue";
-
+import ProfilePage from "@/components/pages/user/Profile";
+import ProfileView from "@/views/ProfileView";
+import UserView from "@/views/UserView";
+import UserRegister from "@/components/pages/user/UserRegister";
+import UserLogin from "@/components/pages/user/UserLogin";
+import UserFindId from "@/components/pages/user/UserFindId";
+import UserReissuePw from "@/components/pages/user/UserReissuePw";
+import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
 import PostView from "../components/pages/post/PostList.vue";
-import ConsultantView from "../components/pages/consultant/ConsultantList";
-import ConsultantDetailDate from "../components/pages/consultant/ConsultantDetailDate";
+import ConsultantList from "@/components/pages/consultant/ConsultantList";
+import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
+import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
+import ConsultantView from "@/components/pages/consultant/ConsultantView";
+
+// import store from "@/store";
+
+// const onlyAuthUser = async (to, from, next) => {
+//   const checkUserInfo = store.getters["memberStore/checkUserInfo"];
+//   const checkToken = store.getters["memberStore/checkToken"];
+//   let token = sessionStorage.getItem("access-token");
+//   console.log("로그인 처리 전", checkUserInfo, token);
+
+//   if (checkUserInfo != null && token) {
+//     console.log("토큰 유효성 체크하러 가자!!!!");
+//     await store.dispatch("memberStore/getUserInfo", token);
+//   }
+//   if (!checkToken || checkUserInfo === null) {
+//     alert("로그인이 필요한 페이지입니다..");
+//     // next({ name: "login" });
+//     router.push({ name: "userlogin" });
+//   } else {
+//     console.log("로그인 했다!!!!!!!!!!!!!.");
+//     next();
+//   }
+// };
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,6 +53,11 @@ const router = createRouter({
           name: "ProfilePage",
           component: ProfilePage,
         },
+        {
+          path: "/liked",
+          name: "likedList",
+          // component: ,
+        },
       ],
     },
 
@@ -45,7 +76,25 @@ const router = createRouter({
           name: "UserLogin",
           component: UserLogin,
         },
+        {
+          path: "logout",
+          name: "UserLogout",
+        },
+        {
+          path: "findId",
+          name: "UserFindId",
+          component: UserFindId,
+        },
+        {
+          path: "findPw",
+          name: "UserReissuePw",
+          component: UserReissuePw,
+        },
       ],
+    },
+    {
+      path: "/oauth2/redirect",
+      component: Oauth2Redirect,
     },
 
     {
@@ -69,24 +118,19 @@ const router = createRouter({
         {
           path: "",
           name: "home",
-          component: ConsultantView,
+          component: ConsultantList,
         },
-        // {
-        //   path: "detail",
-        //   name: "detail",
-        //   component: ConsultantDetailDate,
-        // }
-      ],
-    },
-    {
-      path: "/reservation",
-      name: "reservationView",
-      component: ConsultantDetailDate,
-      children: [
         {
-          path: "",
-          name: "date",
-          component: ConsultantDetailDate,
+          path: "reservation",
+          name: "reservation",
+          component: ConsultantReservation,
+          children: [
+            {
+              path: "date",
+              name: "date",
+              component: ConsultantReservationDate,
+            },
+          ],
         },
         // {
         //   path: "detail",

@@ -39,11 +39,12 @@ public class MemberServiceImpl implements MemberService{
         List<FollowEntity> followedList = followRepository.findByFollowedMember(memberByNickname);
 
         return ProfileDTO.Response.builder()
+                .nickname(memberByNickname.getNickname())
                 .profileUrl(memberByNickname.getProfileUrl())
                 .profileIntro(memberByNickname.getProfileIntro())
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
-                .myProfile(memberByNickname.getSeq() == seq)
+                .myProfile(memberByNickname.getSeq().equals(seq))
                 .build();
     }
 
@@ -68,17 +69,19 @@ public class MemberServiceImpl implements MemberService{
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
+
         member.updateProfile(profile);
 
         if (RegexUtil.checkNicknameRegex(profile.getNickname()))
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
 
         return ProfileDTO.Response.builder()
+                .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .profileIntro(member.getProfileIntro())
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
-                .myProfile(member.getSeq() == seq)
+                .myProfile(member.getSeq().equals(seq))
                 .build();
     }
 
@@ -87,10 +90,10 @@ public class MemberServiceImpl implements MemberService{
     public ProfileDTO.PwResponse editMyPassword(Long seq, ProfileDTO.PwRequest data) {
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(data.getPassword(),member.getPassword()))
+        if (!passwordEncoder.matches(data.getPassword(), member.getPassword()))
             throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
-        if (RegexUtil.checkPasswordRegex(data.getPassword()))
+        if (!RegexUtil.checkPasswordRegex(data.getNewPassword()))
             throw new CustomValidationException(INVALID_MEMBER_PASSWORD);
 
         member.setPassword(passwordEncoder.encode(data.getNewPassword()));
