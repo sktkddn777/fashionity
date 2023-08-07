@@ -57,6 +57,16 @@ export default {
       const data = {
         email: this.email,
       };
+
+      const emailValid = await this.checkEmail();
+      if (emailValid) {
+        toast.error("가입하지 않은 사용자입니다.", {
+          position: "bottom-right",
+          timeout: 2000,
+        });
+        return;
+      }
+
       axios({
         url: "http://localhost:8080/api/v1/auth/find/id",
         method: "POST",
@@ -74,6 +84,21 @@ export default {
         });
       toast.success("아이디를 메일로 보냈습니다.");
       router.push({ name: "UserLogin" });
+    },
+
+    async checkEmail() {
+      const validate = await this.$refs.form.validate();
+      if (validate.valid) {
+        return axios({
+          url: "http://localhost:8080/api/v1/auth/check/email",
+          method: "GET",
+          params: {
+            email: this.email,
+          },
+        }).then((data) => {
+          return data.data ? true : false;
+        });
+      }
     },
   },
 };

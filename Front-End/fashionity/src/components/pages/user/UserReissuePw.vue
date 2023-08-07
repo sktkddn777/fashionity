@@ -70,6 +70,15 @@ export default {
 
   methods: {
     async reissuePwByEmail() {
+      const emailValid = await this.checkEmail();
+      if (emailValid) {
+        toast.error("가입하지 않은 사용자입니다.", {
+          position: "bottom-right",
+          timeout: 2000,
+        });
+        return;
+      }
+
       const data = {
         id: this.id,
         email: this.email,
@@ -91,6 +100,20 @@ export default {
         });
       toast.success("임시비밀번호를 메일로 보냈습니다.");
       router.push({ name: "UserLogin" });
+    },
+    async checkEmail() {
+      const validate = await this.$refs.form.validate();
+      if (validate.valid) {
+        return axios({
+          url: "http://localhost:8080/api/v1/auth/check/email",
+          method: "GET",
+          params: {
+            email: this.email,
+          },
+        }).then((data) => {
+          return data.data ? true : false;
+        });
+      }
     },
   },
 };
