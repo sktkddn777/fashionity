@@ -12,6 +12,8 @@ import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
+import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
+import ConsultingView from "../views/Consulting-WebCam-View.vue";
 
 // import store from "@/store";
 
@@ -60,7 +62,6 @@ const router = createRouter({
         },
       ],
     },
-
     {
       path: "/user",
       name: "userView",
@@ -106,6 +107,18 @@ const router = createRouter({
           path: "",
           name: "home",
           component: PostView,
+        }
+      ]
+    },
+    {
+      path: "/consulting",
+      name: "Consulting-WebCam-View",
+      component: ConsultingView,
+      children: [
+        {
+          path: "",
+          name: "ConsultingPage",
+          component: ConsultingPage,
         },
       ],
     },
