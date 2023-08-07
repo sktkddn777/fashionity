@@ -58,9 +58,6 @@ const router = createRouter({
           name: "likedList",
           // component: ,
         },
-        {
-
-        }
       ],
     },
 
