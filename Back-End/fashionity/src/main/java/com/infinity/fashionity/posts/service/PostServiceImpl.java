@@ -53,7 +53,10 @@ public class PostServiceImpl implements PostService {
         int size = dto.getSize();
         String s = dto.getS();
         Long memberSeq = dto.getMemberSeq();
-
+        System.out.println("page = " + page);
+        System.out.println("size = " + size);
+        System.out.println("s = " + s);
+        System.out.println("memberSeq = " + memberSeq);
         // s 기준으로 paging처리 (s 기본값 popular)
         Pageable pageable = PageRequest.of(page, size);
         Page<Object[]> result = null;
@@ -67,6 +70,7 @@ public class PostServiceImpl implements PostService {
                 .map(obj -> {
                     PostEntity entity = (PostEntity) obj[0];
                     int likeCount = ((Long) obj[1]).intValue();
+                    System.out.println("entity.getSeq() = " + entity.getSeq());
                     List<String> imageUrls = entity.getPostImages().stream()
                             .map(imageEntity -> imageEntity.getUrl())
                             .collect(Collectors.toList());
