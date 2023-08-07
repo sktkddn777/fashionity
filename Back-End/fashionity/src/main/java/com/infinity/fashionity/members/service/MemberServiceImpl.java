@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService{
                 .profileIntro(memberByNickname.getProfileIntro())
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
-                .myProfile(memberByNickname.getSeq() == seq)
+                .myProfile(memberByNickname.getSeq().equals(seq))
                 .build();
     }
 
@@ -81,7 +81,7 @@ public class MemberServiceImpl implements MemberService{
                 .profileIntro(member.getProfileIntro())
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
-                .myProfile(member.getSeq() == seq)
+                .myProfile(member.getSeq().equals(seq))
                 .build();
     }
 

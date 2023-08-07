@@ -1,11 +1,10 @@
 package com.infinity.fashionity.auth.service;
 
-import com.infinity.fashionity.auth.dto.FindByEmailDTO;
-import com.infinity.fashionity.auth.dto.LoginDTO;
-import com.infinity.fashionity.auth.dto.LogoutDTO;
-import com.infinity.fashionity.auth.dto.SaveDTO;
+import com.infinity.fashionity.auth.dto.*;
 import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
 import com.infinity.fashionity.security.oauth.dto.OAuthUserInfo;
+
+import javax.servlet.http.HttpServletResponse;
 
 public interface AuthService {
 
@@ -18,4 +17,5 @@ public interface AuthService {
     FindByEmailDTO.IDResponse findIdByEmail(FindByEmailDTO.IDRequest dto);
     FindByEmailDTO.PasswordResponse reissuePasswordByEmail(FindByEmailDTO.PasswordRequest dto);
     LogoutDTO.Response logout();
+    ReissueDTO.Response reissue(String refreshToken);
 }
