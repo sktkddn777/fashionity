@@ -2,11 +2,7 @@
   <div id="post outer" class="container-fluid" style="background-color: white">
     <div class="row justify-content-center">
       <img
-<<<<<<< HEAD:Front-End/fashionity/src/components/shared/ThePost.vue
         :src="post.images[0]" 
-=======
-        src="../../../assets/img/postImg.jpg"
->>>>>>> 526eb63da398375671f22bdd6390b4a76144b22e:Front-End/fashionity/src/components/pages/post/ThePost.vue
         alt=""
         style="
           top: 0;
