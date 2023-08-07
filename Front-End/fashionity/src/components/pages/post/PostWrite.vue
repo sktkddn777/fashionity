@@ -23,20 +23,23 @@
               2시간 전
             </div>
           </div>
-          <div class="post-detail-header-follow" style="margin-left: auto">
-            <div class="align-self-center">
-              <button
-                type="button"
-                class="btn btn-dark"
-                style="min-width: 70px"
-              >
-                <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
-              </button>
-            </div>
-          </div>
         </div>
         <!-- 이미지 -->
-        <div class="row post-detail-image">
+        <div>
+          <v-file-input
+            label="File input"
+            variant="underlined"
+            multiple
+          ></v-file-input>
+        </div>
+        <!-- <div class="row post-detail-image">
+          <div>
+            <v-file-input
+              label="File input"
+              variant="underlined"
+              multiple
+            ></v-file-input>
+          </div>
           <div id="carouselExampleIndicators" class="carousel slide">
             <div class="carousel-indicators">
               <button
@@ -60,8 +63,8 @@
                 aria-label="Slide 3"
               ></button>
             </div>
-            <div class="carousel-inner" v-for="(item, i) in images" :key="i">
-              <div v-if="i == 0" class="carousel-item active">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
                 <img
                   src="../../../assets/img/hyeonwook.jpg"
                   class="d-block w-100"
@@ -69,22 +72,22 @@
                   style="aspect-ratio: 1 / 1"
                 />
               </div>
-              <div v-else class="carousel-item">
+              <div class="carousel-item">
                 <img
-                  :src="item"
+                  src="../../../assets/img/hyeonwook2.jpg"
                   class="d-block w-100"
-                  alt="사진"
+                  alt="두 번째 사진"
                   style="aspect-ratio: 1 / 1"
                 />
               </div>
-              <!-- <div class="carousel-item">
+              <div class="carousel-item">
                 <img
                   src="../../../assets/img/hyeonwook3.jpg"
                   class="d-block w-100"
                   alt="세 번째 사진"
                   style="aspect-ratio: 1 / 1"
                 />
-              </div> -->
+              </div>
             </div>
             <button
               class="carousel-control-prev"
@@ -111,75 +114,19 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
-        </div>
+        </div> -->
         <!-- 본문 내용 -->
-        <div class="post-detail-like">
-          <div class="post-detail-like-icon">
-            <font-awesome-icon :icon="['fas', 'heart']" style="color: red" />
-          </div>
-          <div>
-            <span style="text-align: left">좋아요&nbsp;</span>
-            <span class="fw-bold" style="text-align: left">183</span>
-            <span style="text-align: left">개</span>
-          </div>
-        </div>
-        <div class="post-detail-content">
-          <div style="text-align: left">아... 하루만 못생겨보고 싶다..</div>
-          <div class="post-detail-content-hashtag">
-            <a v-for="(tag, i) in hashtags" :key="i" style="color: skyblue">
-              {{ tag }} &nbsp;
-            </a>
-          </div>
-        </div>
-        <!-- 댓글 -->
-        <div class="post-detail-comment-cnt">
-          <span>댓글&nbsp;</span>
-          <span class="fw-bold">98</span>
-          <span>개</span>
-        </div>
-        <!--댓글 프로필 이미지-->
-        <div class="post-detail-header">
-          <div class="post-detail-header-img">
-            <img
-              src="../../../assets/img/hyeonwook.jpg"
-              alt=""
-              class="profile-comment"
-            />
-          </div>
-          <!--댓글 내용-->
-          <div>
-            <div class="fw-bold" style="text-align: left">hyeonwook_12</div>
-            <div style="text-align: left; font-size: 15px">
-              안녕하세요ㅎ 선팔하고 갑니다ㅎ
-            </div>
-          </div>
-          <!--댓글 정보-->
-          <div class="post-detail-comment-info">
-            <div style="color: grey; font-size: 13px">1시간 전</div>
-            <div>
-              <font-awesome-icon
-                :icon="['fas', 'ellipsis']"
-                style="color: #999999"
-              />
-              <div class="post-detail-like-icon">
-                <font-awesome-icon
-                  :icon="['far', 'heart']"
-                  style="color: #999999"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="post-detail-comment-submit">
-          <input
-            class="form-control"
-            type="text"
-            placeholder="댓글을 입력해주세요."
-          />
-          <button type="button" class="btn btn-dark" style="min-width: 70px">
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
-          </button>
-        </div>
+        <textarea
+          class="form-control"
+          rows="1"
+          placeholder="해시태그를 입력해주세요."
+        ></textarea>
+        <br />
+        <textarea
+          class="form-control"
+          rows="3"
+          placeholder="본문 내용을 입력해주세요."
+        ></textarea>
       </div>
       <div class="col"></div>
     </div>
@@ -188,15 +135,7 @@
 <script>
 export default {
   data() {
-    return {
-      hashtags: ["#맞팔", "#팔로우", "#강남", "#역삼", "#인생네컷"],
-      dropdown: ["수정", "삭제", "신고"],
-      images: [
-        "../../../assets/img/hyeonwook.jpg",
-        "../../../assets/img/hyeonwook2.jpg",
-        "../../../assets/img/hyeonwook3.jpg",
-      ],
-    };
+    return {};
   },
 };
 </script>

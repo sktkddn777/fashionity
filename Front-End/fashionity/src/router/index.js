@@ -7,11 +7,13 @@ import UserLogin from "../components/pages/user/UserLogin.vue";
 
 import PostView from "../components/pages/post/PostView.vue";
 import PostList from "../components/pages/post/PostList.vue";
+import PostDetail from "../components/pages/post/PostDetail.vue";
+import PostWrite from "../components/pages/post/PostWrite.vue";
+
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
-import PostDetail from "../components/pages/post/PostDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -73,6 +75,11 @@ const router = createRouter({
           path: "detail",
           name: "detail",
           component: PostDetail,
+        },
+        {
+          path: "write",
+          name: "write",
+          component: PostWrite,
         },
       ],
     },
