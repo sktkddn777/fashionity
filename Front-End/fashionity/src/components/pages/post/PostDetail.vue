@@ -115,24 +115,13 @@
         <!-- 본문 내용 -->
         <div class="post-detail-like">
           <div class="post-detail-like-icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-heart-fill"
-              viewBox="0 0 16 16"
-              style="color: red"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
-              />
-            </svg>
+            <font-awesome-icon :icon="['fas', 'heart']" style="color: red" />
           </div>
-          <span style="text-align: left">좋아요</span>
-          <span class="fw-bold" style="text-align: left">183</span>
-          <span style="text-align: left">개</span>
+          <div>
+            <span style="text-align: left">좋아요&nbsp;</span>
+            <span class="fw-bold" style="text-align: left">183</span>
+            <span style="text-align: left">개</span>
+          </div>
         </div>
         <div class="post-detail-content">
           <div style="text-align: left">아... 하루만 못생겨보고 싶다..</div>
@@ -143,9 +132,12 @@
           </div>
         </div>
         <!-- 댓글 -->
-        <div>
-          <div class="post-detail-comment-cnt">댓글 98개</div>
+        <div class="post-detail-comment-cnt">
+          <span>댓글&nbsp;</span>
+          <span class="fw-bold">98</span>
+          <span>개</span>
         </div>
+        <!--댓글 프로필 이미지-->
         <div class="post-detail-header">
           <div class="post-detail-header-img">
             <img
@@ -154,34 +146,39 @@
               class="profile-comment"
             />
           </div>
+          <!--댓글 내용-->
           <div>
             <div class="fw-bold" style="text-align: left">hyeonwook_12</div>
             <div style="text-align: left; font-size: 15px">
               안녕하세요ㅎ 선팔하고 갑니다ㅎ
             </div>
           </div>
+          <!--댓글 정보-->
           <div class="post-detail-comment-info">
             <div style="color: grey; font-size: 13px">1시간 전</div>
             <div>
-              <div>...</div>
+              <font-awesome-icon
+                :icon="['fas', 'ellipsis']"
+                style="color: #999999"
+              />
               <div class="post-detail-like-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-heart-fill"
-                  viewBox="0 0 16 16"
-                  style="color: red"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
-                  />
-                </svg>
+                <font-awesome-icon
+                  :icon="['far', 'heart']"
+                  style="color: #999999"
+                />
               </div>
             </div>
           </div>
+        </div>
+        <div class="post-detail-comment-submit">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="댓글을 입력해주세요."
+          />
+          <button type="button" class="btn btn-dark" style="min-width: 70px">
+            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+          </button>
         </div>
       </div>
       <div class="col"></div>
@@ -193,6 +190,7 @@ export default {
   data() {
     return {
       hashtags: ["#맞팔", "#팔로우", "#강남", "#역삼", "#인생네컷"],
+      dropdown: ["수정", "삭제", "신고"],
     };
   },
 };
@@ -237,6 +235,10 @@ export default {
 }
 .post-detail-comment-info {
   margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+.post-detail-comment-submit {
   display: flex;
 }
 </style>
