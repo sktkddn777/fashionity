@@ -1,7 +1,5 @@
 <template lang="">
   <div class="container-fluid">
-    <the-nav-bar-post></the-nav-bar-post>
-
     <div class="row justify-content-space-around">
       <div class="col-3">
         <input
@@ -23,23 +21,46 @@
     <div class="row" style="height: 30px"></div>
 
     <div class="container">
-      <div v-if = "dataLoaded">
-        <div class="row" style="justify-content: center" v-for="(arr,index) in postRow" :key="index">
-          <div class="col" v-for="post in arr" :key="post.post_seq" >
-            <the-post :post="post"/>
-          </div>
+      <div class="row" style="justify-content: center">
+        <div class="col">
+          <router-link to="/post/detail" class="link"
+            ><the-post></the-post
+          ></router-link>
+        </div>
+        <div class="col">
+          <the-post></the-post>
+        </div>
+        <div class="col">
+          <the-post></the-post>
+        </div>
+        <div class="col">
+          <the-post></the-post>
         </div>
       </div>
-      <div v-else>
-        Loading....
+
+      <div class="row" style="height: 30px"></div>
+
+      <div class="row">
+        <div class="col">
+          <the-post></the-post>
+        </div>
+        <div class="col">
+          <the-post></the-post>
+        </div>
+        <div class="col">
+          <the-post></the-post>
+        </div>
+        <div class="col">
+          <the-post></the-post>
+        </div>
       </div>
+
+      <div class="row" style="height: 40px"></div>
     </div>
   </div>
 </template>
 <script>
 import ThePost from "./ThePost.vue";
-import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
-import axios from "axios";
 
 export default {
   data() {

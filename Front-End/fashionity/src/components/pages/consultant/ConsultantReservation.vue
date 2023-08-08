@@ -47,7 +47,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .profile {
   padding-top: 1px;
   height: 50%;
