@@ -18,10 +18,12 @@
                 <div></div>
                 <div class="col-6"></div>
                 <div class="col">
-                  <font-awesome-icon
-                    :icon="['fas', 'circle-plus']"
-                    style="color: #bdbdbd"
-                  />
+                  <router-link to="/post/write" class="link">
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-plus']"
+                      style="color: #bdbdbd"
+                    />
+                  </router-link>
                 </div>
                 <div class="col">
                   <font-awesome-icon
@@ -30,11 +32,6 @@
                   />
                 </div>
                 <div class="col">
-                  <!-- <font-awesome-icon
-                    :icon="['far', 'bell']"
-                    style="color: #bdbdbd"
-                    type="button"
-                  /> -->
                   <button
                     type="button"
                     data-bs-toggle="offcanvas"
@@ -47,7 +44,7 @@
                       type="button"
                     />
                   </button>
-
+                  <!--사이드바-->
                   <div
                     class="offcanvas offcanvas-end"
                     tabindex="-1"
