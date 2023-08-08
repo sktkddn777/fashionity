@@ -6,34 +6,30 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConsultantReservationListDTO {
+public class UserReservationInfoDTO {
 
     @Builder
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Request {
-
+    public static class Request{
         @JsonIgnore
         private Long memberSeq;
-
         @JsonIgnore
-        private String consultantNickname;
-
+        private Long reservationSeq;
     }
 
     @Builder
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Response {
-
+    public static class Response{
         private Long memberSeq;
-        private String consultantNickname;
+        private Long reservationSeq;
 
         @Builder.Default
-        private List<ConsultantReservationSummary> consultantReservationSummaries = new ArrayList<>();
+        private List<UserReservationDetail> userReservationDetails = new ArrayList<>();
     }
-
 }
