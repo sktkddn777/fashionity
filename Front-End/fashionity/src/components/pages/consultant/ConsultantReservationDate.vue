@@ -19,8 +19,6 @@
 <script>
 // import ConsultantCalenerTempVue from "./ConsultantCalenerTemp.vue";
 
-import "v-calendar/style.css";
-
 export default {
   data() {
     return {

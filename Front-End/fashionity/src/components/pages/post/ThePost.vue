@@ -2,7 +2,7 @@
   <div id="post outer" class="container-fluid" style="background-color: white">
     <div class="row justify-content-center">
       <img
-        :src="post.images[0]"
+        src="../../../assets/img/postImg.jpg"
         alt=""
         style="
           top: 0;
@@ -18,28 +18,25 @@
           style="display: flex; justify-content: center; align-items: center"
         >
           <img class="profile" src="@/assets/img/unknown.png" />
-          <span class="post-font">{{ post.name }}</span>
+          <span class="post-font">rlaxogus123</span>
         </div>
         <div class="col post-font align-self-center">좋아유</div>
       </div>
       <div class="row post-font justify-content-center">
-        {{ post.content }}
+        게시글이에요오오오오오오오오오오오오
       </div>
     </div>
   </div>
 </template>
 <script>
-export default {
-  props: ["post"],
-};
+export default {};
 </script>
-<style scoped>
+<style scpoed>
 .profile {
   height: 20px;
   width: 20px;
   border-radius: 70%;
   object-fit: contain;
-  margin-right: 10px;
 }
 
 .outer {

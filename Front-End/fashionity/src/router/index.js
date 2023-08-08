@@ -14,9 +14,10 @@ import ConsultantReservationDate from "@/components/pages/consultant/ConsultantR
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
-import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
-import ConsultingView from "../views/Consulting-WebCam-View.vue";
-
+import PostList from "../components/pages/post/PostList.vue";
+import PostDetail from "../components/pages/post/PostDetail.vue";
+import PostWrite from "../components/pages/post/PostWrite.vue";
+import PostModify from "../components/pages/post/PostModify.vue";
 // import store from "@/store";
 
 // const onlyAuthUser = async (to, from, next) => {
@@ -107,20 +108,23 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
-          component: PostView,
+          name: "postList",
+          component: PostList,
         },
-      ],
-    },
-    {
-      path: "/consulting",
-      name: "Consulting-WebCam-View",
-      component: ConsultingView,
-      children: [
         {
-          path: "",
-          name: "ConsultingPage",
-          component: ConsultingPage,
+          path: "detail",
+          name: "detail",
+          component: PostDetail,
+        },
+        {
+          path: "write",
+          name: "write",
+          component: PostWrite,
+        },
+        {
+          path: "modify",
+          name: "modify",
+          component: PostModify,
         },
       ],
     },
