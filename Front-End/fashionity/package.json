@@ -13,9 +13,10 @@
     "@mdi/font": "^7.2.96",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.4.0",
-    "bootstrap": "^5.3.0",
-    "bootstrap-vue": "^2.23.1",
+    "bootstrap": "^5.3.1",
+    "bootstrap-vue-3": "^0.5.1",
     "core-js": "^3.8.3",
+<<<<<<< HEAD
     "face-api.js": "^0.20.0",
     "jwt-decode": "^3.1.2",
     "openvidu-browser": "2.20.0",
@@ -23,8 +24,17 @@
     "vue": "^3.3.4",
     "vue-advanced-cropper": "^2.8.8",
     "vue-persistedstate": "^1.2.5",
+=======
+    "flowbite": "^1.8.1",
+    "flowbite-vue": "^0.0.17-next.0",
+    "v-calendar": "^3.0.3",
+    "vue": "^3.3.4",
+    "vue-dropdowns": "^1.1.2",
+>>>>>>> feature/fe-post-home
     "vue-router": "^4.2.4",
+    "vue-sweetalert2": "^5.0.5",
     "vue-toastification": "^2.0.0-rc.5",
+    "vue3-side-panel": "^1.2.0",
     "vuetify": "^3.3.10",
     "vuex": "^4.1.0",
     "vuex-persistedstate": "^4.1.0"

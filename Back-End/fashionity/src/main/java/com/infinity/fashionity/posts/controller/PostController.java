@@ -88,7 +88,7 @@ public class PostController {
     public ResponseEntity<PostLikeDTO.Response> likePost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            @RequestBody PostLikeDTO.Request dto) {
+            PostLikeDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
         PostLikeDTO.Response success = postService.likePost(dto);

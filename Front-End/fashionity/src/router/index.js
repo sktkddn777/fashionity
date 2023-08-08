@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+<<<<<<< HEAD
 import ProfilePage from "@/components/pages/user/Profile";
 import ProfileView from "@/views/ProfileView";
 import UserView from "@/views/UserView";
@@ -8,6 +9,20 @@ import UserFindId from "@/components/pages/user/UserFindId";
 import UserReissuePw from "@/components/pages/user/UserReissuePw";
 import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
 import PostView from "../components/pages/post/PostView.vue";
+=======
+import ProfilePage from "../components/pages/user/Profile.vue";
+import ProfileView from "../views/ProfileView.vue";
+import UserView from "../views/UserView.vue";
+import UserRegister from "../components/pages/user/UserRegister.vue";
+import UserLogin from "../components/pages/user/UserLogin.vue";
+
+import PostView from "../components/pages/post/PostView.vue";
+import PostList from "../components/pages/post/PostList.vue";
+import PostDetail from "../components/pages/post/PostDetail.vue";
+import PostWrite from "../components/pages/post/PostWrite.vue";
+import PostModify from "../components/pages/post/PostModify.vue";
+
+>>>>>>> feature/fe-post-home
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
@@ -46,7 +61,18 @@ const router = createRouter({
     {
       path: "/",
       name: "main",
+<<<<<<< HEAD
       redirect: "/post",
+=======
+      component: PostView,
+      children: [
+        {
+          path: "/",
+          name: "home",
+          component: PostList,
+        },
+      ],
+>>>>>>> feature/fe-post-home
     },
     {
       path: "/profile",
@@ -113,17 +139,29 @@ const router = createRouter({
         },
         {
           path: "detail",
+<<<<<<< HEAD
           name: "postDetail",
+=======
+          name: "detail",
+>>>>>>> feature/fe-post-home
           component: PostDetail,
         },
         {
           path: "write",
+<<<<<<< HEAD
           name: "postWrite",
+=======
+          name: "write",
+>>>>>>> feature/fe-post-home
           component: PostWrite,
         },
         {
           path: "modify",
+<<<<<<< HEAD
           name: "postModify",
+=======
+          name: "modify",
+>>>>>>> feature/fe-post-home
           component: PostModify,
         },
       ],
@@ -136,7 +174,11 @@ const router = createRouter({
       children: [
         {
           path: "",
+<<<<<<< HEAD
           name: "consultantview",
+=======
+          name: "consultantList",
+>>>>>>> feature/fe-post-home
           component: ConsultantList,
         },
         {

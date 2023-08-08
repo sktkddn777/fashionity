@@ -72,7 +72,11 @@ export default {
   }
 };
 </script>
+<<<<<<< HEAD
 <style scoped>
+=======
+<style scpoed>
+>>>>>>> feature/fe-post-home
 .profile {
   height: 20px;
   width: 20px;
