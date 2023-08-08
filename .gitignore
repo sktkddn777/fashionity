@@ -1,0 +1,4 @@
+/Front-End/fashionity/Dockerfile
+/Back-End/fashionity/Dockerfile
+docker-compose.yml
+up.sh

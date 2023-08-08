@@ -196,9 +196,9 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public FindByEmailDTO.IDResponse findIdByEmail(FindByEmailDTO.IDRequest dto) {
         try {
-            MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> {
-                throw new MemberNotFoundException(MEMBER_NOT_FOUND);
-            });
+            MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() ->
+                new MemberNotFoundException(MEMBER_NOT_FOUND)
+            );
 
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "utf-8");
@@ -221,9 +221,9 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     public FindByEmailDTO.PasswordResponse reissuePasswordByEmail(FindByEmailDTO.PasswordRequest dto) {
         try {
-            MemberEntity member = memberRepository.findByIdAndEmail(dto.getId(), dto.getEmail()).orElseThrow(() -> {
-                throw new MemberNotFoundException(MEMBER_NOT_FOUND);
-            });
+            MemberEntity member = memberRepository.findByIdAndEmail(dto.getId(), dto.getEmail()).orElseThrow(() ->
+                new MemberNotFoundException(MEMBER_NOT_FOUND)
+            );
 
             String newPassword = HashUtil.makeHashPassword();
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();

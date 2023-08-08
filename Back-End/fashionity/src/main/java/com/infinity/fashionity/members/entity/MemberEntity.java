@@ -17,6 +17,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -28,6 +29,7 @@ import static javax.persistence.GenerationType.*;
 @Entity
 @Table(name = "members")
 @SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE member_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor
