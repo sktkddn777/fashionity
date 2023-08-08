@@ -25,6 +25,10 @@ import "vue-toastification/dist/index.css";
 import "v-calendar/dist/style.css";
 import VCalendar from "v-calendar";
 import { loadFonts } from "./fontAwesomeIcon";
+import VueSidePanel from "vue3-side-panel";
+import "vue3-side-panel/dist/vue3-side-panel.css";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
 /* add icons to the library */
 library.add(faUserSecret);
@@ -36,6 +40,7 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(Toast)
+  .use(VueSidePanel)
   .use(VCalendar, {})
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");
