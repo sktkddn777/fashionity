@@ -14,9 +14,11 @@
       </div>
       <div class="col"></div>
       <div class="col-3">
-        <span>최신순</span>
+        <span class="sortBtn" @click="sortBy('popular')"
+        :class="{ 'highlighted': sorting === 'popular' }">인기순</span>
         <span> | </span>
-        <span>인기순</span>
+        <span class="sortBtn" @click="sortBy('latest')"
+        :class="{ 'highlighted': sorting === 'latest' }">최신순</span>
       </div>
     </div>
 
@@ -50,6 +52,7 @@ export default {
       dataLoaded: false,
       loadingNextPage:false,
       itemPerRow: 4,
+      sorting:'popular'
     };
   },
   components: {
@@ -71,8 +74,9 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
 
     let token = sessionStorage.getItem("token");
+    // this.loadNextPage();
     axios({
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
       headers:{
         "Authorization" : `Bearer ${token}`
       },
@@ -95,16 +99,22 @@ export default {
     });
   },
   methods: {
+    async sortBy(order){
+      console.log("order = "+order);
+      this.sorting=order;
+      this.page=0;
+      this.posts = [];
+      this.loadNextPage();
+    },
     async loadNextPage(){
       if(this.loadingNextPage) return;
 
       this.loadingNextPage = true;
-      this.page++;
 
       let token = sessionStorage.getItem("token");
 
       axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
         headers:{
           "Authorization" : `Bearer ${token}`
         },
@@ -138,4 +148,12 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style>
+.sortBtn{
+  color:#BDBDBD;
+}
+.highlighted {
+  color:#424242;
+  font-weight: bold; /* 원하는 스타일로 변경 */
+}
+</style>
