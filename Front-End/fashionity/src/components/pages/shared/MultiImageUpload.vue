@@ -25,7 +25,6 @@
                   id="file"
                   ref="files"
                   @change="imageUpload"
-                  multiple
                 />
               </div>
             </div>
@@ -55,7 +54,6 @@
                   id="file"
                   ref="files"
                   @change="imageAddUpload"
-                  multiple
                 />
               </div>
               <!-- <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div> -->
@@ -64,16 +62,24 @@
         </div>
       </div>
     </div>
+    <cropper :src="img" @change="change" />
   </div>
 </template>
 <script>
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
+
 export default {
   data() {
     return {
       files: [], //업로드용 파일
       filesPreview: [],
       uploadImageIndex: 0, // 이미지 업로드를 위한 변수
+      img: "https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg",
     };
+  },
+  components: {
+    Cropper,
   },
   methods: {
     imageUpload() {
@@ -143,6 +149,9 @@ export default {
       this.files = this.files.filter((data) => data.number !== Number(name));
       // console.log(this.files);
     },
+  },
+  change({ coordinates, canvas }) {
+    console.log(coordinates, canvas);
   },
 };
 </script>

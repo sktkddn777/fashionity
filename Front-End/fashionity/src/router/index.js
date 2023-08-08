@@ -7,16 +7,17 @@ import UserLogin from "@/components/pages/user/UserLogin";
 import UserFindId from "@/components/pages/user/UserFindId";
 import UserReissuePw from "@/components/pages/user/UserReissuePw";
 import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
-import PostView from "../components/pages/post/PostList.vue";
+import PostView from "../components/pages/post/PostView.vue";
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
-import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
-import ConsultingView from "../views/Consulting-WebCam-View.vue";
-
+import PostList from "../components/pages/post/PostList.vue";
+import PostDetail from "../components/pages/post/PostDetail.vue";
+import PostWrite from "../components/pages/post/PostWrite.vue";
+import PostModify from "../components/pages/post/PostModify.vue";
 // import store from "@/store";
 
 // const onlyAuthUser = async (to, from, next) => {
@@ -45,7 +46,7 @@ const router = createRouter({
     {
       path: "/",
       name: "main",
-      component: PostView,
+      redirect: "/post",
     },
     {
       path: "/profile",
@@ -107,20 +108,23 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
-          component: PostView,
+          name: "postList",
+          component: PostList,
         },
-      ],
-    },
-    {
-      path: "/consulting",
-      name: "Consulting-WebCam-View",
-      component: ConsultingView,
-      children: [
         {
-          path: "",
-          name: "ConsultingPage",
-          component: ConsultingPage,
+          path: "detail",
+          name: "postDetail",
+          component: PostDetail,
+        },
+        {
+          path: "write",
+          name: "postWrite",
+          component: PostWrite,
+        },
+        {
+          path: "modify",
+          name: "postModify",
+          component: PostModify,
         },
       ],
     },
@@ -142,17 +146,17 @@ const router = createRouter({
           children: [
             {
               path: "",
-              name: "date",
+              name: "consultantDate",
               component: ConsultantReservationDate,
             },
             {
               path: "time",
-              name: "time",
+              name: "consultantTime",
               component: ConsultantReservationTime,
             },
             {
               path: "detail",
-              name: "detail",
+              name: "consultantDetail",
               component: ConsultantReservationForm,
             },
           ],
