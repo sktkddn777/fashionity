@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.infinity.fashionity.global.exception.ErrorCode.EXPIRED_TOKEN;
+import static com.infinity.fashionity.global.exception.ErrorCode.INVALID_TOKEN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
@@ -27,16 +29,19 @@ public class JwtProvider {
     private static final long MILLI_SECOND = 1000L;
     private final String issuer;
     private final String secretKey;
-    private final long accessTokenExpire;
+    private final int accessTokenExpire;
+    private final int refreshTokenExpire;
 
     public JwtProvider(
             @Value("${issuer}") String issuer,
             @Value("${secret-key}") String secretKey,
-            @Value("${access-token-expire}") long accessTokenExpire
+            @Value("${access-token-expire}") int accessTokenExpire,
+            @Value("${refresh-token-expire}") int refreshTokenExpire
     ) {
         this.issuer=issuer;
         this.secretKey=secretKey;
         this.accessTokenExpire=accessTokenExpire;
+        this.refreshTokenExpire=refreshTokenExpire;
     }
 
     public String createAccessToken(Long userId, List<MemberRoleEntity> memberRoles) {
@@ -76,19 +81,26 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
-            throw new ExpiredTokenException();
+            throw new ExpiredTokenException(EXPIRED_TOKEN);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(INVALID_TOKEN);
         }
     }
 
-    // TODO: refreshToken 생성 함수
-    public String createRefreshToken(Long userId, List<MemberRoleEntity> memberRoles) {
-        return null;
+    public String createRefreshToken() {
+        log.info("createRefreshToken start");
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() + refreshTokenExpire * MILLI_SECOND);
+
+        return Jwts.builder()
+                .setIssuer(issuer)
+                .setIssuedAt(now)
+                .setExpiration(expiredDate)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(UTF_8)))
+                .compact();
     }
 
-    // TODO: accessToken으로 refreshToken 재발급 받는 함수
-    public String getAccessTokenByRefreshToken(String refreshToken) {
-        return null;
+    public int getRefreshTokenExpire() {
+        return refreshTokenExpire;
     }
 }

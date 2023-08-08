@@ -33,6 +33,7 @@ public class PostListDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @ToString
     public static class Response{
         @Builder.Default
         private List<Post> posts = new ArrayList<>();
@@ -43,6 +44,7 @@ public class PostListDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @ToString
     public static class Post{
         @JsonAlias(value = "post_seq")
         private Long postSeq;

@@ -8,6 +8,7 @@ import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.dto.ProfileDTO;
+import com.infinity.fashionity.posts.entity.PostEntity;
 import lombok.*;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -15,6 +16,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -26,6 +28,7 @@ import static javax.persistence.GenerationType.*;
 @Entity
 @Table(name = "members")
 @SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE member_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -84,6 +87,10 @@ public class MemberEntity extends CUDEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     @Builder.Default
     private List<ReservationEntity> reservations = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @Builder.Default
+    private List<PostEntity> posts = new ArrayList<>();
 
     @Override
     public String toString() {

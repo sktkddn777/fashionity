@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "consultant_infos")
 @SQLDelete(sql = "UPDATE consultant_infos SET deleted_at = now() WHERE consultant_info_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
