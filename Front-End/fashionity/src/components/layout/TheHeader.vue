@@ -148,8 +148,8 @@ export default {
 
 .profile {
   padding-top: 1px;
-  width: 100%;
-  height: 100%;
+  width: 20px;
+  height: 20px;
   border-radius: 100%;
   object-fit: cover;
 }

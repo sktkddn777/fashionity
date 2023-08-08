@@ -168,9 +168,182 @@
 
                 <v-list>
                   <v-list-item>
-                    <v-list-item-title type="button">수정</v-list-item-title>
-                    <v-list-item-title type="button">삭제</v-list-item-title>
-                    <v-list-item-title type="button">신고</v-list-item-title>
+                    <router-link to="/post/modify" class="link">
+                      <v-list-item-title type="button">수정</v-list-item-title>
+                    </router-link>
+                    <v-list-item-title
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteModal"
+                      >삭제</v-list-item-title
+                    >
+                    <v-list-item-title
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#reportModal"
+                      >신고</v-list-item-title
+                    >
+
+                    <!-- delete Modal -->
+                    <div
+                      class="modal fade"
+                      id="deleteModal"
+                      tabindex="-1"
+                      aria-labelledby="deleteModalLabel"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
+                          </div>
+                          <div class="modal-body" style="text-align: center">
+                            정말 삭제하시겠습니까?
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-outline-secondary"
+                              data-bs-dismiss="modal"
+                            >
+                              아니오
+                            </button>
+                            <button type="button" class="btn btn-primary">
+                              &nbsp;&nbsp;네&nbsp;&nbsp;
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- report Modal -->
+                    <div
+                      class="modal fade"
+                      id="reportModal"
+                      tabindex="-1"
+                      aria-labelledby="reportModalLabel"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="reportModalLabel">
+                              신고
+                            </h1>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="exampleRadios"
+                                id="exampleRadios1"
+                                value="option1"
+                                checked
+                              />
+                              <label
+                                class="form-check-label"
+                                for="exampleRadios1"
+                              >
+                                욕설 / 비방
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="exampleRadios"
+                                id="exampleRadios2"
+                                value="option2"
+                              />
+                              <label
+                                class="form-check-label"
+                                for="exampleRadios2"
+                              >
+                                성희롱 / 음란물
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="exampleRadios"
+                                id="exampleRadios3"
+                                value="option3"
+                              />
+                              <label
+                                class="form-check-label"
+                                for="exampleRadios3"
+                              >
+                                상업 목적 광고
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="exampleRadios"
+                                id="exampleRadios4"
+                                value="option4"
+                              />
+                              <label
+                                class="form-check-label"
+                                for="exampleRadios4"
+                              >
+                                사진 도용
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="exampleRadios"
+                                id="exampleRadios5"
+                                value="option5"
+                              />
+                              <label
+                                class="form-check-label"
+                                for="exampleRadios5"
+                              >
+                                기타
+                              </label>
+                            </div>
+                            <div>
+                              <div class="post-detail-comment-submit">
+                                <input
+                                  class="form-control"
+                                  type="text"
+                                  placeholder="신고 사유를 입력해주세요."
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-outline-secondary"
+                              data-bs-dismiss="modal"
+                            >
+                              취소
+                            </button>
+                            <button type="button" class="btn btn-primary">
+                              신고
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -209,6 +382,23 @@ export default {
         "../../../assets/img/hyeonwook3.jpg",
       ],
     };
+  },
+  methods: {
+    sweetAlert() {
+      this.$swal({
+        title: "Custom width, padding, color, background.",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff url(https://sweetalert2.github.io/images/trees.png)",
+        backdrop: `
+    rgba(0,0,123,0.4)
+    url("https://sweetalert2.github.io/images/nyan-cat.gif")
+    left top
+    no-repeat
+  `,
+      });
+    },
   },
 };
 </script>

@@ -31,9 +31,10 @@
 <script>
 export default {};
 </script>
-<style>
+<style scpoed>
 .profile {
   height: 20px;
+  width: 20px;
   border-radius: 70%;
   object-fit: contain;
 }

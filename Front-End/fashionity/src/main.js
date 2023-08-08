@@ -30,6 +30,9 @@ import "vue3-side-panel/dist/vue3-side-panel.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
+import VueSweetalert2 from "vue-sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
+
 /* add icons to the library */
 library.add(faUserSecret);
 
@@ -42,5 +45,6 @@ createApp(App)
   .use(Toast)
   .use(VueSidePanel)
   .use(VCalendar, {})
+  .use(VueSweetalert2)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");
