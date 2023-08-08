@@ -1,6 +1,6 @@
 <template lang="">
   <div class="container-fluid" style="height: 65vh">
-    <v-calendar is-expanded></v-calendar>
+    <v-date-picker width="400"></v-date-picker>
     <!-- <ConsultantCalenerTempVue></ConsultantCalenerTempVue> -->
     <!-- <v-date-picker
         v-model="date"
@@ -8,6 +8,12 @@
         is-range
         color="orange"
       ></v-date-picker> -->
+    <!-- 
+    <div class="d-flex justify-center">
+      <v-locale-provider locale="sv">
+        <v-date-picker></v-date-picker>
+      </v-locale-provider> -->
+    <!-- </div> -->
   </div>
 </template>
 <script>

@@ -31,7 +31,7 @@
 <script>
 export default {};
 </script>
-<style>
+<style scoped>
 .profile {
   height: 20px;
   width: 20px;
