@@ -2,6 +2,7 @@ package com.infinity.fashionity.posts.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -16,9 +17,9 @@ public class PostLikeDTO {
     public static class Request{
         @JsonIgnore
         private Long memberSeq;
-        @JsonAlias(value = "post_seq")
+        @JsonIgnore
         private Long postSeq;
-        @JsonAlias(value = "is_like")
+        @JsonProperty(value = "is_like")
         private boolean isLike;
     }
 
