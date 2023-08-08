@@ -4,6 +4,7 @@ import com.infinity.fashionity.global.entity.CUDEntity;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Min;
 @Entity
 @Table(name="reviews")
 @SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE review_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor

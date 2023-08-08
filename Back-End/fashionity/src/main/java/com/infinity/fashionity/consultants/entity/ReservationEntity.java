@@ -5,6 +5,8 @@ import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.awt.*;
@@ -15,6 +17,7 @@ import java.util.List;
 @Entity
 @Table(name="reservations")
 @SQLDelete(sql = "UPDATE Reservations SET deleted_at = now() WHERE reservation_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor
