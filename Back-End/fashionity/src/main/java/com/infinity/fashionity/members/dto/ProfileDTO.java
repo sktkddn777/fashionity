@@ -32,6 +32,7 @@ public class ProfileDTO {
         private String profileUrl;
         private String nickname;
         private String profileIntro;
+        private Integer postsCnt;
         private Integer followerCnt;
         private Integer followingCnt;
         private boolean myProfile;

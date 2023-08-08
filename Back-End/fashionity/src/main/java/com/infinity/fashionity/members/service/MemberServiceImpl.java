@@ -47,11 +47,12 @@ public class MemberServiceImpl implements MemberService{
         MemberEntity memberByNickname = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(memberByNickname);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(memberByNickname);
-
+        Integer postsCnt = postRepository.postsCnt(nickname);
         return ProfileDTO.Response.builder()
                 .nickname(memberByNickname.getNickname())
                 .profileUrl(memberByNickname.getProfileUrl())
                 .profileIntro(memberByNickname.getProfileIntro())
+                .postsCnt(postsCnt)
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
                 .myProfile(memberByNickname.getSeq().equals(seq))
