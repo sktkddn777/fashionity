@@ -35,6 +35,7 @@ public class ProfileDTO {
         private Integer postsCnt;
         private Integer followerCnt;
         private Integer followingCnt;
+        private Boolean isFollowed;
         private boolean myProfile;
     }
 

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
@@ -48,6 +49,14 @@ public class MemberServiceImpl implements MemberService{
         List<FollowEntity> followingList = followRepository.findByMember(memberByNickname);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(memberByNickname);
         Integer postsCnt = postRepository.postsCnt(nickname);
+
+        FollowKey followKey = FollowKey.builder()
+                .member(seq)
+                .followedMember(memberByNickname.getSeq())
+                .build();
+        Optional<FollowEntity> byId = followRepository.findById(followKey);
+        boolean isFollowed = byId.isPresent();
+
         return ProfileDTO.Response.builder()
                 .nickname(memberByNickname.getNickname())
                 .profileUrl(memberByNickname.getProfileUrl())
@@ -55,6 +64,7 @@ public class MemberServiceImpl implements MemberService{
                 .postsCnt(postsCnt)
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
+                .isFollowed(isFollowed)
                 .myProfile(memberByNickname.getSeq().equals(seq))
                 .build();
     }
