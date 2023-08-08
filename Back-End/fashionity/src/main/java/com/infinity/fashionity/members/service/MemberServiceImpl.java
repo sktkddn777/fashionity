@@ -1,5 +1,6 @@
 package com.infinity.fashionity.members.service;
 
+import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
@@ -11,14 +12,23 @@ import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 
+import com.infinity.fashionity.posts.entity.PostEntity;
+import com.infinity.fashionity.posts.entity.PostImageEntity;
+import com.infinity.fashionity.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
@@ -31,36 +41,101 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PostRepository postRepository;
 
     @Override
     public ProfileDTO.Response getMemberProfile(Long seq, String nickname) {
         MemberEntity memberByNickname = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(memberByNickname);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(memberByNickname);
+        Integer postsCnt = postRepository.postsCnt(nickname);
+
+        FollowKey followKey = FollowKey.builder()
+                .member(seq)
+                .followedMember(memberByNickname.getSeq())
+                .build();
+        Optional<FollowEntity> byId = followRepository.findById(followKey);
+        boolean isFollowed = byId.isPresent();
 
         return ProfileDTO.Response.builder()
+                .nickname(memberByNickname.getNickname())
                 .profileUrl(memberByNickname.getProfileUrl())
                 .profileIntro(memberByNickname.getProfileIntro())
+                .postsCnt(postsCnt)
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
-                .myProfile(memberByNickname.getSeq() == seq)
+                .isFollowed(isFollowed)
+                .myProfile(memberByNickname.getSeq().equals(seq))
                 .build();
     }
 
     @Override
-    public ProfilePostDTO.Response getMemberProfilePost(Long seq, String nickname) {
-        return null;
+    public ProfilePostDTO.Response getMemberProfilePost(Long seq, String nickname, ProfilePostDTO.Request dto) {
+        int page = dto.getPage();
+        int size = dto.getSize();
+        String memberNickname = dto.getNickname();
+
+        // 등록된 유저가 아니면 예외 처리
+        MemberEntity profileMember = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<PostEntity> result = postRepository.findPostsByMember(profileMember, pageable);
+
+        List<ProfilePost> profilePosts = result.stream().map(entity -> {
+            Long postSeq = entity.getSeq();
+            String postThumbnailImage = getThumbnail(entity);
+            return ProfilePost.builder()
+                    .postSeq(postSeq)
+                    .postThumbnailImage(postThumbnailImage)
+                    .build();
+        }).collect(Collectors.toList());
+        return ProfilePostDTO.Response.builder()
+                .prev(result.hasPrevious())
+                .next(result.hasNext())
+                .page(result.getNumber())
+                .nickname(memberNickname)
+                .profilePosts(profilePosts)
+                .build();
     }
 
     @Override
-    public ProfilePostDTO.Response getMemberProfileLikedPost(Long seq, String nickname) {
-        return null;
+    public ProfilePostDTO.Response getMemberProfileLikedPost(Long seq, ProfilePostDTO.Request dto) {
+        int page = dto.getPage();
+        int size = dto.getSize();
+        String nickname = dto.getNickname();
+
+        MemberEntity profileMember = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<PostEntity> result = postRepository.findLikedPostsByMember(profileMember, pageable);
+
+        List<ProfilePost> profilePosts = result.stream().map(entity -> {
+            Long postSeq = entity.getSeq();
+            String postThumbnailImage = getThumbnail(entity);
+            return ProfilePost.builder()
+                    .postSeq(postSeq)
+                    .postThumbnailImage(postThumbnailImage)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return ProfilePostDTO.Response.builder()
+                .nickname(nickname)
+                .profilePosts(profilePosts)
+                .prev(result.hasPrevious())
+                .next(result.hasNext())
+                .page(result.getNumber())
+                .build();
     }
 
-    @Override
-    public ProfilePostDTO.Response getMemberProfileHiddenPost(Long seq, String nickname) {
-        return null;
+    private String getThumbnail(PostEntity postEntity) {
+        List<PostImageEntity> postImages = postEntity.getPostImages();
+        if (postImages.size() == 0)
+            return null;
+        return postImages.get(0).getUrl();
     }
+
 
     @Override
     @Transactional
@@ -68,17 +143,19 @@ public class MemberServiceImpl implements MemberService{
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
+
         member.updateProfile(profile);
 
         if (RegexUtil.checkNicknameRegex(profile.getNickname()))
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
 
         return ProfileDTO.Response.builder()
+                .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .profileIntro(member.getProfileIntro())
                 .followerCnt(followedList.size())
                 .followingCnt(followingList.size())
-                .myProfile(member.getSeq() == seq)
+                .myProfile(member.getSeq().equals(seq))
                 .build();
     }
 
@@ -87,10 +164,10 @@ public class MemberServiceImpl implements MemberService{
     public ProfileDTO.PwResponse editMyPassword(Long seq, ProfileDTO.PwRequest data) {
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(data.getPassword(),member.getPassword()))
+        if (!passwordEncoder.matches(data.getPassword(), member.getPassword()))
             throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
-        if (RegexUtil.checkPasswordRegex(data.getPassword()))
+        if (!RegexUtil.checkPasswordRegex(data.getNewPassword()))
             throw new CustomValidationException(INVALID_MEMBER_PASSWORD);
 
         member.setPassword(passwordEncoder.encode(data.getNewPassword()));

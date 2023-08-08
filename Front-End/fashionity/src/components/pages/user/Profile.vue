@@ -2,39 +2,120 @@
   <div class="container-fluid">
     <the-nav-bar-mypage></the-nav-bar-mypage>
     <div class="profile-container">
-      <div class="profile-title">프로필</div>
+      <!-- <div class="profile-title">프로필</div> -->
       <div class="profile-main">
-        <!-- 사용자 프로필 사진 -->
-        <div class="profile-main-photo">
-          <img class="image-box" width="200" height="200" />
+        <div style = "display:flex; flex-direction: row; justify-content: center;">
+          <!-- 사용자 프로필 사진 -->
+          <div class="profile-main-photo">
+            <img class="image-box" width="150" height="150" />
+          </div>
+          <div class = "infos" style = "display:flex; flex-direction: column;">
+            <div class="profile-main-form" style = "display:flex; flex-direction: row; justify-content: start;">
+            <v-form disabled class="d-flex align-self-center">
+              <div class="profile-main-form-text" style = "display:flex; flex-direction: column; ">
+                <!-- 프로필 정보 -->
+                <div class="profile-main-form-text-nickname" style = "display: flex ; jus tify-self : start; ">
+                  <!-- <div>닉네임</div> -->
+                  <v-text-field
+                    v-model="state.nickname"
+                    density="compact"
+                  ></v-text-field>
+                </div>
+                <div class="m-top-d" style = "width:20rem;" align = "left">
+                  <v-text-field
+                    v-model="state.profileIntro"
+                    density="compact"
+                    min = 0
+                    max = 50 
+                  ></v-text-field>
+                </div>
+                <div class="m-top-d" style = "display:flex; justify-content: start;">
+                  <button class = "follow-button" onclick = "">손민수</button>
+                  <button class = "unfollow-button">언민수</button>
+                </div>
+              </div>
+            </v-form>
+          </div>
+          </div>
+
         </div>
-        <div class="profile-main-form">
-          <v-form disabled>
-            <div class="profile-main-form-text">
-              <!-- 프로필 정보 -->
-              <div class="profile-main-form-text-nickname">
-                <div>닉네임</div>
-                <v-text-field
-                  v-model="state.nickname"
-                  density="compact"
-                ></v-text-field>
+        <div class = "profile-followings-info" style = "display:flex; flex-direction: row; justify-content: center;">
+          <v-form>
+              <div class="posts-cnt" style = "float: left; margin-left: 1rem; margin-right:1rem">
+                <div><b>Posts</b></div>
+                <div>PostsCnt</div>
               </div>
-              <div class="m-top-d">
-                <div>한줄 소개</div>
-                <v-text-field
-                  v-model="state.profileIntro"
-                  density="compact"
-                ></v-text-field>
+              <div class = "followers-cnt" style = "float: left;  margin-left: 1rem;  margin-right:1rem">
+                <div><b>Followers</b></div>
+                <div>FollowersCnt</div>
               </div>
-              <div class="m-top-d">
-                <div>손민수</div>
-                <v-text-field density="compact">손민수</v-text-field>
+              <div class = "followings-cnt" style = "float: left;  margin-left: 1rem; margin-right:1rem">
+                <div><b>Followings</b></div>
+                <div>FollowingsCnt</div>
               </div>
-            </div>
           </v-form>
         </div>
       </div>
     </div>
+      <div
+      class="row justify-content-center"
+      style="
+        margin-top: 2rem;
+        margin-bottom: 30px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: white white #bdbdbd white;
+      "
+      ><div class="col col-lg-2 header-tab point">
+        <router-link to="/posts" style="text-decoration: none; color: #424242; font-size:1.2rem"
+          >Posts</router-link
+        >
+      </div>
+      <div class="col col-lg-2 header-tab">
+        <router-link to="/liked" style="text-decoration: none; color: #424242 ; font-size:1.2rem"
+          >Liked</router-link
+        >
+      </div>
+    </div>
+    <div class="row" style="height: 30px"></div>
+
+    <div class="container">
+      <div class="row" style="justify-content: center">
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+      </div>
+
+      <div class="row" style="height: 30px"></div>
+
+      <div class="row">
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+        <div class="col">
+          <the-post>post</the-post>
+        </div>
+      </div>
+
+      <div class="row" style="height: 40px"></div>
+    </div>
+
+
   </div>
 </template>
 
@@ -165,7 +246,7 @@ input[type="file"] {
   font-size: 14px;
 }
 .profile-main-form {
-  width: 270px;
+  width: 250px;
   height: 290px;
 }
 .profile-title {
@@ -190,9 +271,24 @@ input[type="file"] {
 }
 .profile-container {
   font-family: appleB;
-  margin-top: 95px;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.follow-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191FF;
+  color: #fffFFF;
+}
+.unfollow-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #fffFFF;
 }
 </style>

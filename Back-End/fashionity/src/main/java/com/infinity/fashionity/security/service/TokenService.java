@@ -23,9 +23,6 @@ public class TokenService {
 
     private final JwtProvider jwtProvider;
 
-    @Value("${refresh-token-expire}")
-    private long refreshTokenExpire;
-
     public JwtAuthenticationToken getAuthentication(String accessToken) {
         jwtProvider.validateToken(accessToken);
 
@@ -48,7 +45,7 @@ public class TokenService {
         String accessToken = jwtProvider.createAccessToken(authUserInfo.getId(), authUserInfo.getRoles());
 
         // TODO: refreshToken 발급 + redis를 통해 관리
-        String refreshToken = "test_refresh_token";
+        String refreshToken = jwtProvider.createRefreshToken();
 
         return Tokens.builder()
                 .accessToken(accessToken)
