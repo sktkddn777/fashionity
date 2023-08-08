@@ -21,12 +21,9 @@ public class PostListDTO {
     public static class Request{
         @JsonIgnore
         private Long memberSeq;
-        @Builder.Default
         private int page = 0;
-        @Builder.Default
         private int size = 12;
-        @Builder.Default
-        private String s = "popular";
+        private String s;
     }
 
     @Getter

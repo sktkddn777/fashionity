@@ -66,7 +66,6 @@ public class PostServiceImpl implements PostService {
                 .map(obj -> {
                     PostEntity entity = (PostEntity) obj[0];
                     int likeCount = ((Long) obj[1]).intValue();
-                    int commentCount = ((Long)obj[2]).intValue();
                     List<String> imageUrls = postImageRepository.findAllByPost(entity)
                             .stream()
                             .map(PostImageEntity::getUrl)
@@ -87,7 +86,6 @@ public class PostServiceImpl implements PostService {
                             .name(entity.getMember().getNickname())
                             .profileImg(entity.getMember().getProfileUrl())
                             .content(entity.getContent())
-                            .commentCount(commentCount)
                             .likeCount(likeCount)
                             .images(imageUrls)
                             .liked(isLike)

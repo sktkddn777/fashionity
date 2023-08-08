@@ -33,15 +33,13 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             "where p.member = :member")
     Page<PostEntity> findPostsByMember(@Param("member") MemberEntity member, Pageable pageable);
 
-    @Query("SELECT p,count(distinct pl) as lcnt,count(distinct c) as ccnt FROM PostEntity p " +
+    @Query("SELECT p,count(distinct pl) as lcnt FROM PostEntity p " +
             "LEFT JOIN PostLikeEntity pl on p = pl.post " +
-            "LEFT JOIN CommentEntity c on c.post = p " +
             "GROUP BY p ORDER BY lcnt DESC, p.createdAt DESC")
     Page<Object[]> findPostsOrderByLikesDesc(Pageable pageable);
 
     @Query("SELECT p,count(distinct pl) as lcnt FROM PostEntity p " +
             "LEFT JOIN PostLikeEntity pl on pl.post = p " +
-            "LEFT JOIN CommentEntity c on c.post = p " +
             "GROUP BY p ORDER BY p.createdAt DESC")
     Page<Object[]> findPostsOrderByCreatedAt(Pageable pageable);
 
