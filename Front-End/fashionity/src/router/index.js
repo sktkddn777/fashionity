@@ -12,10 +12,8 @@ import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
-<<<<<<< HEAD
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
-=======
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 
@@ -25,7 +23,7 @@ import ConsultingView from "../views/Consulting-WebCam-View.vue";
 //   const checkUserInfo = store.getters["memberStore/checkUserInfo"];
 //   const checkToken = store.getters["memberStore/checkToken"];
 //   let token = sessionStorage.getItem("access-token");
-//   console.log("로그인 처리 전", checkUserInfo, token);
+//   console.log("로그인 처리 전", checkUserInfo,  token);
 
 //   if (checkUserInfo != null && token) {
 //     console.log("토큰 유효성 체크하러 가자!!!!");
@@ -41,7 +39,6 @@ import ConsultingView from "../views/Consulting-WebCam-View.vue";
 //   }
 // };
 
->>>>>>> fa6b5e088416003b55de72b4f8972200d81baaf6
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -112,8 +109,8 @@ const router = createRouter({
           path: "",
           name: "home",
           component: PostView,
-        }
-      ]
+        },
+      ],
     },
     {
       path: "/consulting",

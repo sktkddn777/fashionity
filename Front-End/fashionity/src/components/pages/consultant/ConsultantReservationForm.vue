@@ -57,6 +57,11 @@
         <div class="row">
           <multi-image-upload></multi-image-upload>
         </div>
+
+        <!-- 평소 나의  등록 -->
+        <div class="row">
+          <multi-image-upload></multi-image-upload>
+        </div>
       </form>
     </div>
     <!-- <v-form ref="form" v-model="isValid">
