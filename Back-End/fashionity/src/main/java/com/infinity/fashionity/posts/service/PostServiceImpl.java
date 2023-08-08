@@ -57,15 +57,16 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Object[]> result = null;
         if (s.equals("popular")) {
-            result = postLikeRepository.findPostsOrderByLikesDesc(pageable);
+            result = postRepository.findPostsOrderByLikesDesc(pageable);
         } else {
-            result = postLikeRepository.findPostsOrderByCreatedAt(pageable);
+            result = postRepository.findPostsOrderByCreatedAt(pageable);
         }
         // page, size에 맞게 게시물 목록 가져오기
         List<PostListDTO.Post> posts = result.getContent().stream()
                 .map(obj -> {
                     PostEntity entity = (PostEntity) obj[0];
                     int likeCount = ((Long) obj[1]).intValue();
+                    int commentCount = ((Long)obj[2]).intValue();
                     List<String> imageUrls = postImageRepository.findAllByPost(entity)
                             .stream()
                             .map(PostImageEntity::getUrl)
@@ -86,7 +87,7 @@ public class PostServiceImpl implements PostService {
                             .name(entity.getMember().getNickname())
                             .profileImg(entity.getMember().getProfileUrl())
                             .content(entity.getContent())
-                            .commentCount(entity.getCommentCount())
+                            .commentCount(commentCount)
                             .likeCount(likeCount)
                             .images(imageUrls)
                             .liked(isLike)

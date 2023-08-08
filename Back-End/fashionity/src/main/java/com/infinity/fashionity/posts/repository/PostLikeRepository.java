@@ -14,15 +14,6 @@ import java.util.List;
 
 public interface PostLikeRepository extends JpaRepository<PostLikeEntity, PostLikeKey> {
 //    @Query("SELECT p,count(*) FROM PostLikeEntity pl LEFT JOIN pl.post p GROUP BY p ORDER BY COUNT(p) DESC, p.createdAt DESC")
-    @Query("SELECT p,count(pl) FROM PostEntity p " +
-            "LEFT JOIN PostLikeEntity pl on p = pl.post " +
-            "GROUP BY p ORDER BY COUNT(pl) DESC, p.createdAt DESC")
-    Page<Object[]> findPostsOrderByLikesDesc(Pageable pageable);
-
-    @Query("SELECT p,count(pl) FROM PostEntity p " +
-            "LEFT JOIN PostLikeEntity pl on pl.post = p " +
-            "GROUP BY p ORDER BY p.createdAt DESC")
-    Page<Object[]> findPostsOrderByCreatedAt(Pageable pageable);
 
     List<PostLikeEntity> findAllByPost(PostEntity post);
 }
