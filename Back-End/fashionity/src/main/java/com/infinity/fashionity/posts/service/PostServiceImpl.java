@@ -141,10 +141,11 @@ public class PostServiceImpl implements PostService {
         // 게시글 만들기
         PostDetailDTO.Post postDetail = PostDetailDTO.Post.builder()
                 .name(post.getMember().getNickname())
-                .profileImg(post.getMember().getProfileIntro())
+                .profileImg(post.getMember().getProfileUrl())
                 .postSeq(postSeq)
                 .content(post.getContent())
                 .images(imageUrls)
+                .hashtags(post.getPostHashtags().stream().map(hashtag->hashtag.getHashtag().getName()).collect(Collectors.toList()))
                 .liked(isLike)
                 .following(isFollow)
                 .commentCount(post.getCommentCount())

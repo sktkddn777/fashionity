@@ -30,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping(value = "/{postSeq}/comments", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{postSeq}/comments", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentListDTO.Response> getCommentList(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
