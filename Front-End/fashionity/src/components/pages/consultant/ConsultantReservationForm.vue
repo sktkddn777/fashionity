@@ -1,6 +1,8 @@
 <template lang="">
   <div id="reservation-form" class="container-fluid scroll">
-    <div class="row justify-content-center detail-title">상세 예약 정보 등록</div>
+    <div class="row justify-content-center detail-title">
+      상세 예약 정보 등록
+    </div>
     <!-- 불러오기 버튼 -->
     <div class="row justify-content-end">
       <div class="col">
@@ -21,21 +23,17 @@
             <input type="text" class="input-form" />
           </div>
           <div class="col">
-            <div class="pretty p-icon p-round">
-              <input type="radio" name="icon" />
-              <div class="state p-primary-o">
-                <i class="icon mdi mdi-check"></i>
-                <label>Dollar</label>
-              </div>
-            </div>
+            <fieldset>
+              <label>
+                <input type="radio" name="gender" value="m" checked />
+                <span>남성</span>
+              </label>
 
-            <div class="pretty p-icon p-round">
-              <input type="radio" name="icon" />
-              <div class="state p-success-o">
-                <i class="icon mdi mdi-check"></i>
-                <label>Euro</label>
-              </div>
-            </div>
+              <label>
+                <input type="radio" name="gender" value="f" />
+                <span>여성</span>
+              </label>
+            </fieldset>
           </div>
         </div>
 
@@ -192,5 +190,68 @@ export default {
   border: none;
   border-bottom: 1px solid black; /* 밑줄 스타일 지정 */
   padding: 5px;
+}
+
+label {
+  font-size: 18px;
+  line-height: 2rem;
+  padding: 0.2em 0.4em;
+}
+
+[type="radio"],
+span {
+  vertical-align: middle;
+}
+
+[type="radio"] {
+  appearance: none;
+  border: max(2px, 0.1em) solid gray;
+  border-radius: 50%;
+  width: 1.25em;
+  height: 1.25em;
+  transition: border 0.5s ease-in-out;
+}
+
+[type="radio"]:checked {
+  border: 0.4em solid #424242;
+}
+
+[type="radio"]:focus-visible {
+  outline-offset: max(2px, 0.1em);
+  outline: max(2px, 0.1em) dotted #424242;
+}
+
+[type="radio"]:hover {
+  box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+  cursor: pointer;
+}
+
+[type="radio"]:hover + span {
+  cursor: pointer;
+}
+
+[type="radio"]:disabled {
+  background-color: lightgray;
+  box-shadow: none;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+[type="radio"]:disabled + span {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Global CSS */
+fieldset {
+  display: flex;
+  justify-content: center;
+  border: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 </style>
