@@ -2,7 +2,7 @@ import { apiInstance } from ".";
 
 const api = apiInstance();
 
-const authURL = "http://localhost:8080/api/v1/auth";
+const authURL = process.env.VUE_APP_API_URL + "/api/v1/auth";
 async function login(data, success, fail) {
   await api.post(`${authURL}/login`, data).then(success).catch(fail);
 }

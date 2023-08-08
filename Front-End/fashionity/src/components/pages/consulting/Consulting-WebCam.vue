@@ -2,9 +2,11 @@
   <div id="main-container" class="container">
     <div id="join" v-if="!session">
       <div id="join-dialog" class="jumbotron vertical-center">
-        <h1>Join a video session</h1>
+        <h1>컨설팅 대기중...</h1>
+
         <div class="form-group">
           <p>
+            <!-- 참가자 닉네임 or 아이디 -->
             <label>Participant</label>
             <input
               v-model="myUserName"
@@ -14,6 +16,7 @@
             />
           </p>
           <p>
+            <!-- 참가할 세션 -->
             <label>Session</label>
             <input
               v-model="mySessionId"
@@ -22,6 +25,7 @@
               required
             />
           </p>
+          <!-- 세션에 참가하는 버튼 -->
           <p class="text-center">
             <button class="btn btn-lg btn-success" @click="joinSession()">
               Join!
@@ -31,6 +35,7 @@
       </div>
     </div>
 
+    <!-- 세션 종료 버튼 -->
     <div id="session" v-if="session">
       <div id="session-header">
         <h1 id="session-title">{{ mySessionId }}</h1>
@@ -43,9 +48,10 @@
         />
       </div>
       <div id="main-video" class="col-md-6">
-        <user-video :stream-manager="mainStreamManager" />
+        <!-- mainStreamManager : 포커싱을 맞춰주는 화면 -->
+        <!-- <user-video :stream-manager="mainStreamManager" /> -->
       </div>
-      <div id="video-container" class="col-md-6">
+      <div id="video-container" class="col-md-6" style="display: flex">
         <user-video
           :stream-manager="publisher"
           @click="updateMainVideoStreamManager(publisher)"

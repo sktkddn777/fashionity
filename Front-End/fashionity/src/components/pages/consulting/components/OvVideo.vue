@@ -1,7 +1,9 @@
 <template>
-  <video autoplay />
+  <video ref="myWebCam" class="webcam" autoplay />
 </template>
-
+<style>
+@import url("./OvVideo.css");
+</style>
 <script>
 export default {
   name: "OvVideo",

@@ -24,7 +24,7 @@ public class PostController {
     private final PostService postService;
 
     //전체 게시글 조회
-    @GetMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostListDTO.Response> getAllPosts(
             @AuthenticationPrincipal JwtAuthentication auth,
             PostListDTO.Request dto) {

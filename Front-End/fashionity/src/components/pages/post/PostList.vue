@@ -39,24 +39,24 @@
 <script>
 import ThePost from "./ThePost.vue";
 import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       keyword: "",
-      page:0,
-      posts:[],
-      dataLoaded:false,
-      itemPerRow:4,
+      page: 0,
+      posts: [],
+      dataLoaded: false,
+      itemPerRow: 4,
     };
   },
   components: {
     ThePost,
     TheNavBarPost,
   },
-  computed:{
-    postRow(){
+  computed: {
+    postRow() {
       const itemsPerRow = 4;
       const rows = [];
       for (let i = 0; i < this.posts.length; i += itemsPerRow) {
@@ -65,18 +65,16 @@ export default {
       return rows;
     },
   },
-  async mounted(){
+  async mounted() {
     axios({
-      url:"http://localhost/api/v1/posts",
-      method:"GET"
-    }).then((data)=>{
+      url: "http://localhost/api/v1/posts",
+      method: "GET",
+    }).then((data) => {
       this.posts = data.data.posts;
       this.dataLoaded = true;
-    })
+    });
   },
-  methods:{
-    
-  }
+  methods: {},
 };
 </script>
 <style lang=""></style>
