@@ -2,6 +2,7 @@ package com.infinity.fashionity.members.controller;
 
 import com.infinity.fashionity.members.dto.MemberFollowDTO;
 import com.infinity.fashionity.members.dto.ProfileDTO;
+import com.infinity.fashionity.members.dto.ProfilePost;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.service.MemberService;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
@@ -33,27 +34,21 @@ public class MemberController {
     @GetMapping("/{nickname}/posts")
     public ResponseEntity<ProfilePostDTO.Response> getMemberProfilePost(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable String nickname
-    ) {
-        ProfilePostDTO.Response response = memberService.getMemberProfilePost(auth.getSeq(), nickname);
+            @PathVariable String nickname,
+            ProfilePostDTO.Request dto) {
+        dto.setNickname(nickname);
+        ProfilePostDTO.Response response = memberService.getMemberProfilePost(auth.getSeq(), nickname, dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{nickname}/liked")
     public ResponseEntity<ProfilePostDTO.Response> getMemberProfileLikedPost(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable String nickname
+            @PathVariable String nickname,
+            @RequestBody ProfilePostDTO.Request dto
     ) {
-        ProfilePostDTO.Response response = memberService.getMemberProfileLikedPost(auth.getSeq(), nickname);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/{nickname}/hidden")
-    public ResponseEntity<ProfilePostDTO.Response> getMemberProfileHiddenPost(
-            @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable String nickname
-    ) {
-        ProfilePostDTO.Response response = memberService.getMemberProfileHiddenPost(auth.getSeq(), nickname);
+        dto.setNickname(nickname);
+        ProfilePostDTO.Response response = memberService.getMemberProfileLikedPost(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -11,4 +11,8 @@ public class ProfilePost {
 
     private Long postSeq;
     private String postThumbnailImage;
+
+    public ProfilePost(Long postSeq){
+        this.postSeq = postSeq;
+    }
 }
