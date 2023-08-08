@@ -28,7 +28,9 @@
       <div v-if = "dataLoaded">
         <div class="row" style="justify-content: center" v-for="(arr,index) in postRow" :key="index">
           <div class="col" v-for="post in arr" :key="post.post_seq" >
-            <the-post :post="post"/>
+            <router-link :to="{path : `/post/${post.post_seq}`}" style="text-decoration: none; color: #424242"> 
+              <the-post :post="post"/>
+            </router-link>
           </div>
         </div>
       </div>
@@ -75,7 +77,7 @@ export default {
     // this.loadNextPage();
     axios({
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
-      headers:{
+      headers: token === null ? null : {
         "Authorization" : `Bearer ${token}`
       },
       method: "GET",
@@ -113,18 +115,26 @@ export default {
 
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
-        headers:{
-          "Authorization" : `Bearer ${token}`
-        },
+        headers: token === null ? null : {
+        "Authorization" : `Bearer ${token}`
+      },
         method:"GET"
       }).then((response)=>{
         const newPosts = response.data.posts;
         this.posts = [...this.posts,...newPosts];
         this.loadingNextPage = false;
-      }).catch(exception=>{
-        this.loadingNextPage = false;
-        console.log(exception);
-      })
+      }).catch((exception)=>{
+      let data = (exception.response.data);
+      if(data.code === 'A004'){//유효기간이 다 된 토큰이면 일단 보여주셈
+        axios({
+          url:`${process.env.VUE_APP_API_URL}/api/v1/posts`,
+          method:'GET'
+        }).then((data)=>{
+          this.posts = data.data.posts;
+          this.dataLoaded = true;
+        })
+      }
+    });
     },
     handleScroll() {
       // 현재 스크롤 위치
