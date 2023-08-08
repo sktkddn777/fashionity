@@ -7,7 +7,7 @@ import UserLogin from "@/components/pages/user/UserLogin";
 import UserFindId from "@/components/pages/user/UserFindId";
 import UserReissuePw from "@/components/pages/user/UserReissuePw";
 import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
-import PostView from "../components/pages/post/PostList.vue";
+import PostView from "../components/pages/post/PostView.vue";
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
@@ -113,17 +113,17 @@ const router = createRouter({
         },
         {
           path: "detail",
-          name: "detail",
+          name: "postDetail",
           component: PostDetail,
         },
         {
           path: "write",
-          name: "write",
+          name: "postWrite",
           component: PostWrite,
         },
         {
           path: "modify",
-          name: "modify",
+          name: "postModify",
           component: PostModify,
         },
       ],
@@ -146,17 +146,17 @@ const router = createRouter({
           children: [
             {
               path: "",
-              name: "date",
+              name: "consultantDate",
               component: ConsultantReservationDate,
             },
             {
               path: "time",
-              name: "time",
+              name: "consultantTime",
               component: ConsultantReservationTime,
             },
             {
               path: "detail",
-              name: "detail",
+              name: "consultantDetail",
               component: ConsultantReservationForm,
             },
           ],
