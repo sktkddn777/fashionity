@@ -33,6 +33,14 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             "where p.member = :member")
     Page<PostEntity> findPostsByMember(@Param("member") MemberEntity member, Pageable pageable);
 
+
+    // 내가 작성한 게시글 갯수
+    @Query("select coalesce(count(p.seq),0) " +
+            "from MemberEntity m " +
+            "left join  m.posts p " +
+            "where m.nickname = :nickname")
+    Integer postsCnt(String nickname);
+
     @Query("SELECT p,count(distinct pl) as lcnt,count(distinct c) as ccnt FROM PostEntity p " +
             "LEFT JOIN PostLikeEntity pl on p = pl.post " +
             "LEFT JOIN CommentEntity c on c.post = p " +
