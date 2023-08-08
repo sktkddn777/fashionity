@@ -61,6 +61,7 @@
 </template>
 <script>
 import ThePost from "./ThePost.vue";
+import axios from "axios";
 
 export default {
   data() {
@@ -69,13 +70,12 @@ export default {
       page: 0,
       posts: [],
       dataLoaded: false,
-      loadingNextPage:false,
+      loadingNextPage: false,
       itemPerRow: 4,
     };
   },
   components: {
     ThePost,
-    TheNavBarPost,
   },
   computed: {
     postRow() {
@@ -94,30 +94,33 @@ export default {
     let token = sessionStorage.getItem("token");
     axios({
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
-      headers:{
-        "Authorization" : `Bearer ${token}`
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
       method: "GET",
-    }).then((data) => {
-      this.posts = data.data.posts;
-      console.log(this.posts);
-      this.dataLoaded = true;
-    }).catch((exception)=>{
-      let data = (exception.response.data);
-      if(data.code === 'A004'){//유효기간이 다 된 토큰이면 일단 보여주셈
-        axios({
-          url:`${process.env.VUE_APP_API_URL}/api/v1/posts`,
-          method:'GET'
-        }).then((data)=>{
-          this.posts = data.data.posts;
-          this.dataLoaded = true;
-        })
-      }
-    });
+    })
+      .then((data) => {
+        this.posts = data.data.posts;
+        console.log(this.posts);
+        this.dataLoaded = true;
+      })
+      .catch((exception) => {
+        let data = exception.response.data;
+        if (data.code === "A004") {
+          //유효기간이 다 된 토큰이면 일단 보여주셈
+          axios({
+            url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+            method: "GET",
+          }).then((data) => {
+            this.posts = data.data.posts;
+            this.dataLoaded = true;
+          });
+        }
+      });
   },
   methods: {
-    async loadNextPage(){
-      if(this.loadingNextPage) return;
+    async loadNextPage() {
+      if (this.loadingNextPage) return;
 
       this.loadingNextPage = true;
       this.page++;
@@ -126,18 +129,20 @@ export default {
 
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}`,
-        headers:{
-          "Authorization" : `Bearer ${token}`
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        method:"GET"
-      }).then((response)=>{
-        const newPosts = response.data.posts;
-        this.posts = [...this.posts,...newPosts];
-        this.loadingNextPage = false;
-      }).catch(exception=>{
-        this.loadingNextPage = false;
-        console.log(exception);
+        method: "GET",
       })
+        .then((response) => {
+          const newPosts = response.data.posts;
+          this.posts = [...this.posts, ...newPosts];
+          this.loadingNextPage = false;
+        })
+        .catch((exception) => {
+          this.loadingNextPage = false;
+          console.log(exception);
+        });
     },
     handleScroll() {
       // 현재 스크롤 위치
