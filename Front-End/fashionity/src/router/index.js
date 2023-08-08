@@ -46,7 +46,7 @@ const router = createRouter({
     {
       path: "/",
       name: "main",
-      component: PostView,
+      redirect: "/post",
     },
     {
       path: "/profile",
