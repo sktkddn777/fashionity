@@ -1,12 +1,19 @@
 <template>
   <div>
-    <router-view></router-view>
+    <first-component></first-component>
+    <second-component></second-component>
   </div>
 </template>
 
 <script>
+import FirstComponent from "../components/pages/consulting/Consulting-WebCam.vue";
+import SecondComponent from "../components/pages/consulting/TheChatting.vue";
+
 export default {
-  name: "Consulting-WebCam-View",
+  components: {
+    FirstComponent,
+    SecondComponent,
+  },
 };
 </script>
 

@@ -14,6 +14,7 @@ import ConsultantReservationDate from "@/components/pages/consultant/ConsultantR
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
+import ChattingPage from "../components/pages/consulting/TheChatting.vue"
 
 // import store from "@/store";
 
@@ -116,9 +117,14 @@ const router = createRouter({
       component: ConsultingView,
       children: [
         {
-          path: "",
+          path: "/meeting",
           name: "ConsultingPage",
           component: ConsultingPage,
+        },
+        {
+          path: "/chatting",
+          name: "TheChatting",
+          component: ChattingPage,
         },
       ],
     },
