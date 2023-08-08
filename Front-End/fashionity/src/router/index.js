@@ -12,6 +12,8 @@ import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
+import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
+import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 
@@ -21,7 +23,7 @@ import ConsultingView from "../views/Consulting-WebCam-View.vue";
 //   const checkUserInfo = store.getters["memberStore/checkUserInfo"];
 //   const checkToken = store.getters["memberStore/checkToken"];
 //   let token = sessionStorage.getItem("access-token");
-//   console.log("로그인 처리 전", checkUserInfo, token);
+//   console.log("로그인 처리 전", checkUserInfo,  token);
 
 //   if (checkUserInfo != null && token) {
 //     console.log("토큰 유효성 체크하러 가자!!!!");
@@ -107,8 +109,8 @@ const router = createRouter({
           path: "",
           name: "home",
           component: PostView,
-        }
-      ]
+        },
+      ],
     },
     {
       path: "/consulting",
@@ -130,7 +132,7 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
+          name: "consultantview",
           component: ConsultantList,
         },
         {
@@ -139,17 +141,22 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "date",
+              path: "",
               name: "date",
               component: ConsultantReservationDate,
             },
+            {
+              path: "time",
+              name: "time",
+              component: ConsultantReservationTime,
+            },
+            {
+              path: "detail",
+              name: "detail",
+              component: ConsultantReservationForm,
+            },
           ],
         },
-        // {
-        //   path: "detail",
-        //   name: "detail",
-        //   component: ConsultantDetailDate,
-        // }
       ],
     },
   ],

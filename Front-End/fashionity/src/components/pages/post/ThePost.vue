@@ -36,8 +36,10 @@ export default {
 <style>
 .profile {
   height: 20px;
+  width: 20px;
   border-radius: 70%;
   object-fit: contain;
+  margin-right: 10px;
 }
 
 .outer {
