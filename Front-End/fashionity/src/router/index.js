@@ -18,6 +18,8 @@ import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
 import PostModify from "../components/pages/post/PostModify.vue";
+import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
+import ConsultingView from "../views/Consulting-WebCam-View.vue";
 // import store from "@/store";
 
 // const onlyAuthUser = async (to, from, next) => {
@@ -128,7 +130,18 @@ const router = createRouter({
         },
       ],
     },
-
+{
+      path: "/consulting",
+      name: "Consulting-WebCam-View",
+      component: ConsultingView,
+      children: [
+        {
+          path: "",
+          name: "ConsultingPage",
+          component: ConsultingPage,
+        },
+      ],
+    },
     {
       path: "/consultant",
       name: "consultantView",
