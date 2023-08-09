@@ -1,5 +1,7 @@
 <template lang="">
   <div class="container-fluid">
+    <the-nav-bar-post></the-nav-bar-post>
+
     <div class="row justify-content-space-around">
       <div class="col-3">
         <input
@@ -12,50 +14,27 @@
       </div>
       <div class="col"></div>
       <div class="col-3">
-        <span>최신순</span>
+        <span class="sortBtn" @click="sortBy('popular')"
+        :class="{ 'highlighted': sorting === 'popular' }">인기순</span>
         <span> | </span>
-        <span>인기순</span>
+        <span class="sortBtn" @click="sortBy('latest')"
+        :class="{ 'highlighted': sorting === 'latest' }">최신순</span>
       </div>
     </div>
 
     <div class="row" style="height: 30px"></div>
 
     <div class="container">
-      <div class="row" style="justify-content: center">
-        <div class="col">
-          <router-link to="/post/detail" class="link"
-            ><the-post></the-post
-          ></router-link>
-        </div>
-        <div class="col">
-          <the-post></the-post>
-        </div>
-        <div class="col">
-          <the-post></the-post>
-        </div>
-        <div class="col">
-          <the-post></the-post>
+      <div v-if = "dataLoaded">
+        <div class="row" style="justify-content: center" v-for="(arr,index) in postRow" :key="index">
+          <div class="col" v-for="post in arr" :key="post.post_seq" >
+            <the-post :post="post"/>
+          </div>
         </div>
       </div>
-
-      <div class="row" style="height: 30px"></div>
-
-      <div class="row">
-        <div class="col">
-          <the-post></the-post>
-        </div>
-        <div class="col">
-          <the-post></the-post>
-        </div>
-        <div class="col">
-          <the-post></the-post>
-        </div>
-        <div class="col">
-          <the-post></the-post>
-        </div>
+      <div v-else>
+        Loading....
       </div>
-
-      <div class="row" style="height: 40px"></div>
     </div>
   </div>
 </template>
@@ -72,6 +51,7 @@ export default {
       dataLoaded: false,
       loadingNextPage: false,
       itemPerRow: 4,
+      sorting:'popular'
     };
   },
   components: {
@@ -92,10 +72,17 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
 
     let token = sessionStorage.getItem("token");
+    // this.loadNextPage();
     axios({
+<<<<<<< HEAD
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
       headers: {
         Authorization: `Bearer ${token}`,
+=======
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
+      headers:{
+        "Authorization" : `Bearer ${token}`
+>>>>>>> d36c4e72932315ef389e4eeb5333493442914809
       },
       method: "GET",
     })
@@ -119,18 +106,35 @@ export default {
       });
   },
   methods: {
+<<<<<<< HEAD
     async loadNextPage() {
       if (this.loadingNextPage) return;
+=======
+    async sortBy(order){
+      console.log("order = "+order);
+      this.sorting=order;
+      this.page=0;
+      this.posts = [];
+      this.loadNextPage();
+    },
+    async loadNextPage(){
+      if(this.loadingNextPage) return;
+>>>>>>> d36c4e72932315ef389e4eeb5333493442914809
 
       this.loadingNextPage = true;
-      this.page++;
 
       let token = sessionStorage.getItem("token");
 
       axios({
+<<<<<<< HEAD
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}`,
         headers: {
           Authorization: `Bearer ${token}`,
+=======
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
+        headers:{
+          "Authorization" : `Bearer ${token}`
+>>>>>>> d36c4e72932315ef389e4eeb5333493442914809
         },
         method: "GET",
       })
@@ -164,4 +168,12 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style>
+.sortBtn{
+  color:#BDBDBD;
+}
+.highlighted {
+  color:#424242;
+  font-weight: bold; /* 원하는 스타일로 변경 */
+}
+</style>

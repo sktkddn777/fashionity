@@ -29,6 +29,9 @@ public class PostController {
             @AuthenticationPrincipal JwtAuthentication auth,
             PostListDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        if(dto.getS() == null || !(dto.getS().equals("popular")||dto.getS().equals("latest")) ){
+            dto.setS("popular");
+        }
         PostListDTO.Response list = postService.getAllPosts(dto);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

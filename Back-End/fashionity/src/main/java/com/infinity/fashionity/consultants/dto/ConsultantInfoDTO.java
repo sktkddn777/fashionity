@@ -9,7 +9,6 @@ public class ConsultantInfoDTO {
 
     @Builder
     @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {

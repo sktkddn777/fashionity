@@ -1,12 +1,15 @@
 package com.infinity.fashionity.consultants.service;
 
 import com.infinity.fashionity.consultants.dto.*;
-import com.infinity.fashionity.consultants.entity.ConsultantEntity;
-import com.infinity.fashionity.consultants.entity.ImageEntity;
-import com.infinity.fashionity.consultants.entity.ReviewEntity;
-import com.infinity.fashionity.consultants.entity.ScheduleEntity;
+import com.infinity.fashionity.consultants.entity.*;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
 import com.infinity.fashionity.consultants.repository.ReservationRepository;
+import com.infinity.fashionity.consultants.repository.ReviewRepository;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.exception.NotFoundException;
+import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +33,8 @@ import java.util.stream.Collectors;
 public class ConsultantServiceImpl implements ConsultantService {
     private final ConsultantRepository consultantRepository;
     private final ReservationRepository reservationRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewRepository reviewRepository;
 
     // [공통] 컨설턴트 목록 조회
     @Override
@@ -71,6 +77,11 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Override
     @Transactional(readOnly = true)
     public ConsultantInfoDTO.Response getConsultantDetail(Long memberSeq, String consultantNickname){
+
+
+        // 존재하지 않는 컨설턴트이면 에러 반환
+        ConsultantEntity consultant = consultantRepository.findByNickname(consultantNickname)
+                .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
 
         List<ConsultantDetail> consultantDetails = new ArrayList<>();
 
@@ -141,10 +152,22 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [컨설턴트] 예약 목록 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname) {
+    public ConsultantReservationListDTO.Response getConsultantReservationsList(Long memberSeq, String consultantNickname, ConsultantReservationListDTO.Request dto) {
+
+        memberSeq = dto.getMemberSeq();
+        consultantNickname = dto.getConsultantNickname();
+
+        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
+
+        if (!Objects.equals(checkSeq, memberSeq)){
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
 
         List<ConsultantReservationSummary> result = reservationRepository.findConsultantReservations(consultantNickname);
+
         return ConsultantReservationListDTO.Response.builder()
+                .memberSeq(memberSeq)
+                .consultantNickname(consultantNickname)
                 .consultantReservationSummaries(result)
                 .build();
     }
@@ -152,7 +175,17 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [컨설턴트] 예약 상세 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq){
+    public ConsultantReservationInfoDTO.Response getConsultantReservationDetail(Long memberSeq, String consultantNickname, Long reservationSeq, ConsultantReservationInfoDTO.Request dto ){
+
+        memberSeq = dto.getMemberSeq();
+        consultantNickname = dto.getConsultantNickname();
+        reservationSeq = dto.getReservationSeq();
+
+
+        // Reservation 이 존재하는지 확인
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+
 
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
@@ -176,6 +209,9 @@ public class ConsultantServiceImpl implements ConsultantService {
         }).collect(Collectors.toList());
 
         return ConsultantReservationInfoDTO.Response.builder()
+                .memberSeq(memberSeq)
+                .consultantNickname(consultantNickname)
+                .reservationSeq(reservationSeq)
                 .consultantReservationDetails(details)
                 .build();
 
@@ -193,7 +229,17 @@ public class ConsultantServiceImpl implements ConsultantService {
 
      //[컨설턴트] 평점 통계, 수익 조회
     @Override
-    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname){
+    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
+        memberSeq = dto.getMemberSeq();
+        consultantNickname = dto.getConsultantNickname();
+
+        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
+
+        if (!Objects.equals(checkSeq, memberSeq)){
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+
         return ConsultantStatisticsDTO.Response.builder()
                 .avgGrade(consultantRepository.avgGrade(consultantNickname))
                 .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
@@ -204,11 +250,155 @@ public class ConsultantServiceImpl implements ConsultantService {
 
     }
 
+    // [공통] 리뷰 작성
+    @Override
+    @Transactional
+    public ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto){
+
+        memberSeq = dto.getMemberSeq();
+        reservationSeq = dto.getReservationSeq();
+        Float reviewGrade = dto.getReviewGrade();
+        String reviewContent = dto.getReviewContent();
+
+        if (memberSeq == null ||  reservationSeq == null || reviewGrade == null){
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        ReviewEntity review = ReviewEntity.builder()
+                .grade(reviewGrade)
+                .content(reviewContent)
+                .reservation(reservation)
+                .build();
+
+        ReviewEntity save = reviewRepository.save(review);
+
+        return ReviewSaveDTO.Response.builder()
+                .success(true)
+                .seq(save.getSeq())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ReviewUpdateDTO.Response updateReview(Long memberSeq, Long reviewSeq, ReviewUpdateDTO.Request dto ) {
+
+        memberSeq = dto.getMemberSeq();
+        reviewSeq = dto.getReviewSeq();
+        Float reviewGrade = dto.getReviewGrade();
+        String reviewContent = dto.getReviewContent();
+
+        // 입력값 검증
+        if (memberSeq == null || reviewSeq == null || reviewGrade == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // 회원 검증
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 존재하는 리뷰인지 확인
+        ReviewEntity review = reviewRepository.findById(reviewSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+
+        // 내가 작성한 리뷰가 아닌 리뷰를 수정하면 error
+        if (review.getReservation().getMember().getSeq() != member.getSeq()) {
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        review.updateContent(reviewContent);
+        return ReviewUpdateDTO.Response.builder()
+                .success(true)
+                .build();
+        }
+
+    @Override
+    @Transactional
+    public ReviewDeleteDTO.Response deleteReview(Long memberSeq, Long reviewSeq, ReviewDeleteDTO.Request dto) {
+        memberSeq = dto.getMemberSeq();
+        reviewSeq = dto.getReviewSeq();
+        Float reviewGrade = dto.getReviewGrade();
+        String reviewContent = dto.getReviewContent();
+
+        // 입력값 검증
+        if (memberSeq == null || reviewSeq == null || reviewGrade == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // 회원 검증
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 존재하는 리뷰인지 확인
+        ReviewEntity review = reviewRepository.findById(reviewSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+
+        // 내가 작성한 리뷰가 아닌 리뷰를 수정하면 error
+        if (review.getReservation().getMember().getSeq() != member.getSeq()) {
+            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        reviewRepository.delete(review);
+        return ReviewDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+
+    }
+
+    // [공통] 에약 상세 조회
+    @Transactional
+    public UserReservationInfoDTO.Response getUserReservationDetail(Long memberSeq, Long reservationSeq, UserReservationInfoDTO.Request dto) {
+
+        memberSeq = dto.getMemberSeq();
+        reservationSeq = dto.getReservationSeq();
+
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq)
+                .orElseThrow(() -> new ValidationException(ErrorCode.RESERVATION_NOT_FOUND));
+
+
+        List<UserReservationDetail> result = reservationRepository.findUserReservation(memberSeq, reservationSeq);
+
+        List<UserReservationDetail> details = result.stream().map(entity -> {
+            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
+
+            List<Image> images = imageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+
+            return UserReservationDetail.builder()
+                    .reservationSeq(entity.getReservationSeq())
+                    .consultantNickname(entity.getConsultantNickname())
+                    .reservationDateTime(entity.getReservationDateTime())
+                    .reservationDetail(entity.getReservationDetail())
+                    .images(images)
+                    .build();
+        }).collect(Collectors.toList());
+
+        return UserReservationInfoDTO.Response.builder()
+                .memberSeq(memberSeq)
+                .reservationSeq(reservationSeq)
+                .userReservationDetails(details)
+                .build();
+    }
 
 
 
 
 }
+
+
+
+
+
+
+
 
 
 

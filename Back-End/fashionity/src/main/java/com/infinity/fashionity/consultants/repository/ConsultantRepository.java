@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.persistence.Id;
 import java.util.List;
+import java.util.Optional;
 
 public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Long> {
 
@@ -103,4 +104,14 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "where c.nickname = :consultantNickname and res.deletedAt is null and res.date >= current_timestamp ")
     Integer totalSalary(String consultantNickname);
 
+    @Query("select m.seq " +
+            "from ConsultantEntity  c " +
+            "left join c.member m " +
+            "where c.nickname = :consultantNickname ")
+    Long findConsultantMemberSeq(String consultantNickname);
+
+    @Query("select c " +
+            "from ConsultantEntity c " +
+            "where c.nickname = :consultantNickname")
+    Optional<ConsultantEntity> findByNickname(String consultantNickname) ;
 }

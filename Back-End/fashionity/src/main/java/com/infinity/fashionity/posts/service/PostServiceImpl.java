@@ -66,7 +66,6 @@ public class PostServiceImpl implements PostService {
                 .map(obj -> {
                     PostEntity entity = (PostEntity) obj[0];
                     int likeCount = ((Long) obj[1]).intValue();
-                    int commentCount = ((Long)obj[2]).intValue();
                     List<String> imageUrls = postImageRepository.findAllByPost(entity)
                             .stream()
                             .map(PostImageEntity::getUrl)
@@ -87,7 +86,6 @@ public class PostServiceImpl implements PostService {
                             .name(entity.getMember().getNickname())
                             .profileImg(entity.getMember().getProfileUrl())
                             .content(entity.getContent())
-                            .commentCount(commentCount)
                             .likeCount(likeCount)
                             .images(imageUrls)
                             .liked(isLike)
@@ -143,10 +141,11 @@ public class PostServiceImpl implements PostService {
         // 게시글 만들기
         PostDetailDTO.Post postDetail = PostDetailDTO.Post.builder()
                 .name(post.getMember().getNickname())
-                .profileImg(post.getMember().getProfileIntro())
+                .profileImg(post.getMember().getProfileUrl())
                 .postSeq(postSeq)
                 .content(post.getContent())
                 .images(imageUrls)
+                .hashtags(post.getPostHashtags().stream().map(hashtag->hashtag.getHashtag().getName()).collect(Collectors.toList()))
                 .liked(isLike)
                 .following(isFollow)
                 .commentCount(post.getCommentCount())
