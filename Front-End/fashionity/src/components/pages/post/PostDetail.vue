@@ -25,13 +25,22 @@
             </div>
           </div>
           <div class="post-detail-header-follow" style="margin-left: auto">
-            <div class="align-self-center">
+            <div class="align-self-center" @click="toggleFollowing">
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                style="min-width: 70px"
+                v-if="this.post.following === true"
+              >
+                <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
+              </button>
               <button
                 type="button"
                 class="btn btn-dark"
                 style="min-width: 70px"
+                v-else
               >
-                <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
+                <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
               </button>
             </div>
           </div>
@@ -192,6 +201,7 @@ export default {
       method: "get",
     }).then((data) => {
       this.post = data.data.post;
+      console.log(this.post);
     });
 
     axios({
@@ -221,6 +231,53 @@ export default {
         const days = Math.floor(elapsedSeconds / 86400);
         return `${days}일 전`;
       }
+    },
+    toggleFollowing() {
+      if (this.post.following) {
+        this.callUnFollowingAPI(this.post.name);
+      } else {
+        this.callFollowingAPI(this.post.name);
+      }
+      this.post.following = !this.post.following;
+    },
+    callFollowingAPI(name) {
+      let token = sessionStorage.getItem("token");
+      // name = this.post.name;
+      console.log(name);
+      let body = {
+        nickname: name,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        data: body,
+      }).then((data) => {
+        this.post.following = data.data.success;
+        console.log(this.post.following);
+      });
+    },
+    callUnFollowingAPI(name) {
+      let token = sessionStorage.getItem("token");
+      // name = this.post.name;
+      let body = {
+        nickname: name,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        method: "DELETE",
+        data: body,
+      }).then((data) => {
+        this.post.following = data.data.success;
+        console.log(this.post.following);
+      });
     },
   },
 };
