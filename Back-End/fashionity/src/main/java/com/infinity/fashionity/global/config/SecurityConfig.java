@@ -37,7 +37,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
-    private final String[] allowedUrls = {"/api/v1/auth/**", "/api/v1/posts/**"};
+    private final String[] allowedUrls = {"/api/v1/auth/**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,7 +51,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
+                .antMatchers("/auth/logout").authenticated()
                 .antMatchers(allowedUrls).permitAll()
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
+                .antMatchers("/**").authenticated()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -85,8 +88,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true); //  자격증명과 함께 요청 여부 (???)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3333"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3333","https://i9a108.p.ssafy.io"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "DELETE","OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
