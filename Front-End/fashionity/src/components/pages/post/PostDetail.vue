@@ -7,20 +7,21 @@
         <div class="post-detail-header">
           <div class="post-detail-header-img">
             <img
-              src="../../../assets/img/hyeonwook.jpg"
-              alt=""
+              :src="this.post.profileImg || '../img/unknown.e083a226.png'"
+              alt="profileImg"
               class="post-detail-profile"
             />
           </div>
           <div class="post-detail-header-info">
             <div class="post-detail-header-info-nickname fw-bold">
-              hyeonwook_12
+              <!-- hyeonwook_12 -->
+              {{ this.post.name }}
             </div>
             <div
               class="post-detail-header-info-time fs-6"
               style="text-align: left"
             >
-              2시간 전
+              {{ this.timeAgo(this.post.createdAt) }}
             </div>
           </div>
           <div class="post-detail-header-follow" style="margin-left: auto">
@@ -60,10 +61,14 @@
                 aria-label="Slide 3"
               ></button>
             </div>
-            <div class="carousel-inner" v-for="(item, i) in images" :key="i">
+            <div
+              class="carousel-inner"
+              v-for="(item, i) in this.post.images"
+              :key="i"
+            >
               <div v-if="i == 0" class="carousel-item active">
                 <img
-                  src="../../../assets/img/hyeonwook.jpg"
+                  :src="item"
                   class="d-block w-100"
                   alt="첫 번째 사진"
                   style="aspect-ratio: 1 / 1"
@@ -115,18 +120,27 @@
         <!-- 본문 내용 -->
         <div class="post-detail-like">
           <div class="post-detail-like-icon">
-            <font-awesome-icon :icon="['fas', 'heart']" style="color: red" />
+            <font-awesome-icon
+              :icon="['fas', 'heart']"
+              :color="post.liked === true ? 'red' : 'black'"
+            />
           </div>
           <div>
             <span style="text-align: left">좋아요&nbsp;</span>
-            <span class="fw-bold" style="text-align: left">183</span>
+            <span class="fw-bold" style="text-align: left">{{
+              post.likeCount
+            }}</span>
             <span style="text-align: left">개</span>
           </div>
         </div>
         <div class="post-detail-content">
-          <div style="text-align: left">아... 하루만 못생겨보고 싶다..</div>
+          <div style="text-align: left">{{ post.content }}</div>
           <div class="post-detail-content-hashtag">
-            <a v-for="(tag, i) in hashtags" :key="i" style="color: skyblue">
+            <a
+              v-for="(tag, i) in post.hashtags"
+              :key="i"
+              style="color: skyblue"
+            >
               {{ tag }} &nbsp;
             </a>
           </div>
@@ -134,228 +148,14 @@
         <!-- 댓글 -->
         <div class="post-detail-comment-cnt">
           <span>댓글&nbsp;</span>
-          <span class="fw-bold">98</span>
+          <span class="fw-bold">{{ post.commentCount }}</span>
           <span>개</span>
         </div>
-        <!--댓글 프로필 이미지-->
-        <div class="post-detail-header">
-          <div class="post-detail-header-img">
-            <img
-              src="../../../assets/img/hyeonwook.jpg"
-              alt=""
-              class="profile-comment"
-            />
-          </div>
-          <!--댓글 내용-->
-          <div>
-            <div class="fw-bold" style="text-align: left">hyeonwook_12</div>
-            <div style="text-align: left; font-size: 15px">
-              안녕하세요ㅎ 선팔하고 갑니다ㅎ
-            </div>
-          </div>
-          <!--댓글 정보-->
-          <div class="post-detail-comment-info">
-            <div style="color: grey; font-size: 13px">1시간 전</div>
-            <div>
-              <v-menu>
-                <template v-slot:activator="{ props }">
-                  <font-awesome-icon
-                    v-bind="props"
-                    :icon="['fas', 'ellipsis']"
-                    style="color: #999999"
-                  />
-                </template>
 
-                <v-list>
-                  <v-list-item>
-                    <router-link to="/post/modify" class="link">
-                      <v-list-item-title type="button">수정</v-list-item-title>
-                    </router-link>
-                    <v-list-item-title
-                      type="button"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteModal"
-                      >삭제</v-list-item-title
-                    >
-                    <v-list-item-title
-                      type="button"
-                      data-bs-toggle="modal"
-                      data-bs-target="#reportModal"
-                      >신고</v-list-item-title
-                    >
-
-                    <!-- delete Modal -->
-                    <div
-                      class="modal fade"
-                      id="deleteModal"
-                      tabindex="-1"
-                      aria-labelledby="deleteModalLabel"
-                      aria-hidden="true"
-                    >
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
-                          </div>
-                          <div class="modal-body" style="text-align: center">
-                            정말 삭제하시겠습니까?
-                          </div>
-                          <div class="modal-footer">
-                            <button
-                              type="button"
-                              class="btn btn-outline-secondary"
-                              data-bs-dismiss="modal"
-                            >
-                              아니오
-                            </button>
-                            <button type="button" class="btn btn-primary">
-                              &nbsp;&nbsp;네&nbsp;&nbsp;
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- report Modal -->
-                    <div
-                      class="modal fade"
-                      id="reportModal"
-                      tabindex="-1"
-                      aria-labelledby="reportModalLabel"
-                      aria-hidden="true"
-                    >
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="reportModalLabel">
-                              신고
-                            </h1>
-                            <button
-                              type="button"
-                              class="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            ></button>
-                          </div>
-                          <div class="modal-body">
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                name="exampleRadios"
-                                id="exampleRadios1"
-                                value="option1"
-                                checked
-                              />
-                              <label
-                                class="form-check-label"
-                                for="exampleRadios1"
-                              >
-                                욕설 / 비방
-                              </label>
-                            </div>
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                name="exampleRadios"
-                                id="exampleRadios2"
-                                value="option2"
-                              />
-                              <label
-                                class="form-check-label"
-                                for="exampleRadios2"
-                              >
-                                성희롱 / 음란물
-                              </label>
-                            </div>
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                name="exampleRadios"
-                                id="exampleRadios3"
-                                value="option3"
-                              />
-                              <label
-                                class="form-check-label"
-                                for="exampleRadios3"
-                              >
-                                상업 목적 광고
-                              </label>
-                            </div>
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                name="exampleRadios"
-                                id="exampleRadios4"
-                                value="option4"
-                              />
-                              <label
-                                class="form-check-label"
-                                for="exampleRadios4"
-                              >
-                                사진 도용
-                              </label>
-                            </div>
-                            <div class="form-check">
-                              <input
-                                class="form-check-input"
-                                type="radio"
-                                name="exampleRadios"
-                                id="exampleRadios5"
-                                value="option5"
-                              />
-                              <label
-                                class="form-check-label"
-                                for="exampleRadios5"
-                              >
-                                기타
-                              </label>
-                            </div>
-                            <div>
-                              <div class="post-detail-comment-submit">
-                                <input
-                                  class="form-control"
-                                  type="text"
-                                  placeholder="신고 사유를 입력해주세요."
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button
-                              type="button"
-                              class="btn btn-outline-secondary"
-                              data-bs-dismiss="modal"
-                            >
-                              취소
-                            </button>
-                            <button type="button" class="btn btn-primary">
-                              신고
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-              <div class="post-detail-like-icon">
-                <font-awesome-icon
-                  :icon="['far', 'heart']"
-                  style="color: #999999"
-                />
-              </div>
-            </div>
-          </div>
+        <div v-for="(comment, index) in comments" :key="index">
+          <the-comment></the-comment>
         </div>
+
         <div class="post-detail-comment-submit">
           <input
             class="form-control"
@@ -372,32 +172,55 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import TheComment from "./TheComment.vue";
 export default {
+  props: ["seq"],
   data() {
     return {
-      hashtags: ["#맞팔", "#팔로우", "#강남", "#역삼", "#인생네컷"],
-      images: [
-        "../../../assets/img/hyeonwook.jpg",
-        "../../../assets/img/hyeonwook2.jpg",
-        "../../../assets/img/hyeonwook3.jpg",
-      ],
+      post: {},
+      comments: [],
+      commentOpen: false,
     };
   },
+  components: {
+    TheComment,
+  },
+  async mounted() {
+    axios({
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
+      method: "get",
+    }).then((data) => {
+      this.post = data.data.post;
+    });
+
+    axios({
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
+      method: "get",
+    }).then((data) => {
+      this.comments = [...data.data.comments];
+      console.log(this.comments);
+    });
+  },
   methods: {
-    sweetAlert() {
-      this.$swal({
-        title: "Custom width, padding, color, background.",
-        width: 600,
-        padding: "3em",
-        color: "#716add",
-        background: "#fff url(https://sweetalert2.github.io/images/trees.png)",
-        backdrop: `
-    rgba(0,0,123,0.4)
-    url("https://sweetalert2.github.io/images/nyan-cat.gif")
-    left top
-    no-repeat
-  `,
-      });
+    timeAgo(timestamp) {
+      const currentTime = new Date();
+      const targetTime = new Date(timestamp);
+      const elapsedMilliseconds = currentTime - targetTime;
+      const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+
+      if (elapsedSeconds < 60) {
+        return `${elapsedSeconds}초 전`;
+      } else if (elapsedSeconds < 3600) {
+        const minutes = Math.floor(elapsedSeconds / 60);
+        return `${minutes}분 전`;
+      } else if (elapsedSeconds < 86400) {
+        const hours = Math.floor(elapsedSeconds / 3600);
+        return `${hours}시간 전`;
+      } else {
+        const days = Math.floor(elapsedSeconds / 86400);
+        return `${days}일 전`;
+      }
     },
   },
 };

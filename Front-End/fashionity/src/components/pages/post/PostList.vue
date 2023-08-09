@@ -14,27 +14,38 @@
       </div>
       <div class="col"></div>
       <div class="col-3">
-        <span class="sortBtn" @click="sortBy('popular')"
-        :class="{ 'highlighted': sorting === 'popular' }">인기순</span>
+        <span
+          class="sortBtn"
+          @click="sortBy('popular')"
+          :class="{ highlighted: sorting === 'popular' }"
+          >인기순</span
+        >
         <span> | </span>
-        <span class="sortBtn" @click="sortBy('latest')"
-        :class="{ 'highlighted': sorting === 'latest' }">최신순</span>
+        <span
+          class="sortBtn"
+          @click="sortBy('latest')"
+          :class="{ highlighted: sorting === 'latest' }"
+          >최신순</span
+        >
       </div>
     </div>
 
     <div class="row" style="height: 30px"></div>
 
     <div class="container">
-      <div v-if = "dataLoaded">
-        <div class="row" style="justify-content: center" v-for="(arr,index) in postRow" :key="index">
-          <div class="col" v-for="post in arr" :key="post.post_seq" >
-            <the-post :post="post"/>
+      <div v-if="dataLoaded">
+        <div
+          class="row"
+          style="justify-content: center"
+          v-for="(arr, index) in postRow"
+          :key="index"
+        >
+          <div class="col" v-for="post in arr" :key="post.post_seq">
+            <the-post :post="post" />
           </div>
         </div>
       </div>
-      <div v-else>
-        Loading....
-      </div>
+      <div v-else>Loading....</div>
     </div>
   </div>
 </template>
@@ -51,7 +62,7 @@ export default {
       dataLoaded: false,
       loadingNextPage: false,
       itemPerRow: 4,
-      sorting:'popular'
+      sorting: "popular",
     };
   },
   components: {
@@ -74,15 +85,11 @@ export default {
     let token = sessionStorage.getItem("token");
     // this.loadNextPage();
     axios({
-<<<<<<< HEAD
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${
+        this.sorting
+      }`,
       headers: {
         Authorization: `Bearer ${token}`,
-=======
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
-      headers:{
-        "Authorization" : `Bearer ${token}`
->>>>>>> d36c4e72932315ef389e4eeb5333493442914809
       },
       method: "GET",
     })
@@ -106,35 +113,25 @@ export default {
       });
   },
   methods: {
-<<<<<<< HEAD
-    async loadNextPage() {
-      if (this.loadingNextPage) return;
-=======
-    async sortBy(order){
-      console.log("order = "+order);
-      this.sorting=order;
-      this.page=0;
+    async sortBy(order) {
+      console.log("order = " + order);
+      this.sorting = order;
+      this.page = 0;
       this.posts = [];
       this.loadNextPage();
     },
-    async loadNextPage(){
-      if(this.loadingNextPage) return;
->>>>>>> d36c4e72932315ef389e4eeb5333493442914809
+    async loadNextPage() {
+      if (this.loadingNextPage) return;
 
       this.loadingNextPage = true;
 
       let token = sessionStorage.getItem("token");
 
       axios({
-<<<<<<< HEAD
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this
+          .page++}&s=${this.sorting}`,
         headers: {
           Authorization: `Bearer ${token}`,
-=======
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
-        headers:{
-          "Authorization" : `Bearer ${token}`
->>>>>>> d36c4e72932315ef389e4eeb5333493442914809
         },
         method: "GET",
       })
@@ -169,11 +166,11 @@ export default {
 };
 </script>
 <style>
-.sortBtn{
-  color:#BDBDBD;
+.sortBtn {
+  color: #bdbdbd;
 }
 .highlighted {
-  color:#424242;
+  color: #424242;
   font-weight: bold; /* 원하는 스타일로 변경 */
 }
 </style>

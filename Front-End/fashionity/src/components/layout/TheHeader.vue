@@ -18,11 +18,7 @@
                 <div></div>
                 <div class="col-6"></div>
                 <div class="col">
-<<<<<<< HEAD
-                  <router-link to="post/write" class="link">
-=======
                   <router-link to="/post/write" class="link">
->>>>>>> feature/fe-post-home
                     <font-awesome-icon
                       :icon="['fas', 'circle-plus']"
                       style="color: #bdbdbd"
@@ -48,11 +44,6 @@
                       type="button"
                     />
                   </button>
-<<<<<<< HEAD
-
-=======
-                  <!--사이드바-->
->>>>>>> feature/fe-post-home
                   <div
                     class="offcanvas offcanvas-end"
                     tabindex="-1"
