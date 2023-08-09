@@ -24,17 +24,20 @@ public class PostController {
     private final PostService postService;
 
     //전체 게시글 조회
-    @GetMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostListDTO.Response> getAllPosts(
             @AuthenticationPrincipal JwtAuthentication auth,
             PostListDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        if(dto.getS() == null || !(dto.getS().equals("popular")||dto.getS().equals("latest")) ){
+            dto.setS("popular");
+        }
         PostListDTO.Response list = postService.getAllPosts(dto);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     //게시글 상세 조회
-    @GetMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{postSeq}")
     public ResponseEntity<PostDetailDTO.Response> getPost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable long postSeq) {

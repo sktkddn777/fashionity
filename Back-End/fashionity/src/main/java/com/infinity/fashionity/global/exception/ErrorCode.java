@@ -15,11 +15,13 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "C004", "사용할 수 없는 메서드입니다."),
     NOT_EXIST_API(HttpStatus.BAD_REQUEST, "C005", "요청 주소가 올바르지 않습니다."),
     INVALID_PATH_VALUE(HttpStatus.BAD_REQUEST,"C006","요청이 잘못됐습니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C007", "서버 에러"),
 
     // Auth
     CREDENTIAL_NOT_MATCHED(HttpStatus.UNAUTHORIZED, "A001", "아이디 또는 비밀번호가 일치하지 않습니다."),
     UNAUTHENTICATED_MEMBER(HttpStatus.UNAUTHORIZED,"A002","인증되지 않은 사용자입니다."),
-
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "A003", "토큰이 만료되었습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A004", "유효하지 않은 토큰입니다."),
 
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자입니다."),
@@ -47,10 +49,19 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"CM001","존재하지 않는 댓글입니다."),
     COMMENT_REPORT_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"CM002","이미 신고한 댓글입니다."),
 
+    // Consultant
+    CONSULTANT_NOT_FOUND(HttpStatus.NOT_FOUND, "CS001", "존재하지 않는 컨설턴트입니다."),
+
     //image
     IMAGE_SAVE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"I001","이미지를 저장 중 오류가 발생했습니다."),
-    INVALID_IMAGE_TYPE(HttpStatus.BAD_REQUEST,"I002","이미지만 저장할 수 있습니다.");
+    INVALID_IMAGE_TYPE(HttpStatus.BAD_REQUEST,"I002","이미지만 저장할 수 있습니다."),
 
+    // Reservation
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RES001", "존재하지 않는 예약입니다."),
+
+    // Review
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다.")
+    ;
 
     private final HttpStatus status;
     private final String code;

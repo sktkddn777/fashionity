@@ -7,7 +7,6 @@ public class LoginDTO {
     @Builder
     @NoArgsConstructor
     @Getter
-    @Setter
     @ToString
     public static class Request{
         private String id;
@@ -29,8 +28,10 @@ public class LoginDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    @Setter
     public static class Response{
+
+        private Long memberSeq;
         private String accessToken;
+        private String refreshToken;
     }
 }

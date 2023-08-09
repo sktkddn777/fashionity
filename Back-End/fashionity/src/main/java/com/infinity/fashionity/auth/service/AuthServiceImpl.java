@@ -1,8 +1,6 @@
 package com.infinity.fashionity.auth.service;
 
-import com.infinity.fashionity.auth.dto.FindByEmailDTO;
-import com.infinity.fashionity.auth.dto.LoginDTO;
-import com.infinity.fashionity.auth.dto.SaveDTO;
+import com.infinity.fashionity.auth.dto.*;
 import com.infinity.fashionity.auth.exception.MailSendException;
 import com.infinity.fashionity.global.utils.HashUtil;
 import com.infinity.fashionity.global.utils.RegexUtil;
@@ -18,16 +16,19 @@ import com.infinity.fashionity.members.repository.MemberRepository;
 import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
 import com.infinity.fashionity.security.oauth.dto.OAuthUserInfo;
 import com.infinity.fashionity.security.service.JwtProvider;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
@@ -58,8 +59,13 @@ public class AuthServiceImpl implements AuthService{
         if (!member.getId().equals(dto.getId()) || !passwordEncoder.matches(dto.getPassword(),member.getPassword()))
             throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
+        String refreshToken = jwtProvider.createRefreshToken();
+        // TODO: redis 에 저장
+
         return LoginDTO.Response.builder()
+                .memberSeq(member.getSeq())
                 .accessToken(jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles()))
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -190,9 +196,9 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public FindByEmailDTO.IDResponse findIdByEmail(FindByEmailDTO.IDRequest dto) {
         try {
-            MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> {
-                throw new MemberNotFoundException(MEMBER_NOT_FOUND);
-            });
+            MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() ->
+                new MemberNotFoundException(MEMBER_NOT_FOUND)
+            );
 
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "utf-8");
@@ -215,9 +221,9 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     public FindByEmailDTO.PasswordResponse reissuePasswordByEmail(FindByEmailDTO.PasswordRequest dto) {
         try {
-            MemberEntity member = memberRepository.findByIdAndEmail(dto.getId(), dto.getEmail()).orElseThrow(() -> {
-                throw new MemberNotFoundException(MEMBER_NOT_FOUND);
-            });
+            MemberEntity member = memberRepository.findByIdAndEmail(dto.getId(), dto.getEmail()).orElseThrow(() ->
+                new MemberNotFoundException(MEMBER_NOT_FOUND)
+            );
 
             String newPassword = HashUtil.makeHashPassword();
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -236,6 +242,34 @@ public class AuthServiceImpl implements AuthService{
 
         return FindByEmailDTO.PasswordResponse.builder()
                 .success(true)
+                .build();
+    }
+
+    @Override
+    public LogoutDTO.Response logout() {
+        // TODO: redis 도입해 AT, RT에 대한 blackList 만들기
+
+        // 컨텍스트에 있는 값 제거
+        SecurityContextHolder.clearContext();
+        return LogoutDTO.Response.builder()
+                .success(true)
+                .build();
+    }
+
+    @Override
+    public ReissueDTO.Response reissue(String refreshToken) {
+
+        // refreshToken 유효성 확인 (만료 여부, 변조 여부)
+        jwtProvider.validateToken(refreshToken);
+
+        // TODO: redis BlackList 에 있는지 확인, redis 키 값이 RT, value 가 memberSeq
+        // TODO: memberSeq 를 바탕으로 DB에서 멤버 꺼내고 정보를 넘겨줘 AT 재발급 함
+
+        MemberEntity member = memberRepository.findById(1L).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        String accessToken = jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles());
+        return ReissueDTO.Response.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 

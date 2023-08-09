@@ -1,16 +1,19 @@
 package com.infinity.fashionity.auth.controller;
 
-import com.infinity.fashionity.auth.dto.FindByEmailDTO;
-import com.infinity.fashionity.auth.dto.LoginDTO;
-import com.infinity.fashionity.auth.dto.SaveDTO;
+import com.infinity.fashionity.auth.dto.*;
 import com.infinity.fashionity.auth.service.AuthService;
+import com.infinity.fashionity.security.dto.JwtAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
@@ -20,7 +23,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login",produces = APPLICATION_JSON_VALUE,consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginDTO.Response> login(
             @RequestBody LoginDTO.Request dto
     ) {
@@ -28,7 +31,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register",produces = APPLICATION_JSON_VALUE,consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<SaveDTO.Response> register(
             @RequestBody @Valid SaveDTO.Request dto
     ) {
@@ -73,6 +76,22 @@ public class AuthController {
             @RequestBody FindByEmailDTO.PasswordRequest dto
     ) {
         FindByEmailDTO.PasswordResponse response = authService.reissuePasswordByEmail(dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutDTO.Response> logout (
+            @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        LogoutDTO.Response response = authService.logout();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<ReissueDTO.Response> reissue(
+            @CookieValue("refreshToken") String refreshToken
+    ) {
+        ReissueDTO.Response response = authService.reissue(refreshToken);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

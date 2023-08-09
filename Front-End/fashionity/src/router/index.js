@@ -1,15 +1,46 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ProfilePage from "../components/pages/user/Profile.vue";
-import ProfileView from "../views/ProfileView.vue";
-import UserView from "../views/UserView.vue";
-import UserRegister from "../components/pages/user/UserRegister.vue";
-import UserLogin from "../components/pages/user/UserLogin.vue";
-
-import PostView from "../components/pages/post/PostList.vue";
+import ProfilePage from "@/components/pages/user/Profile";
+import ProfileView from "@/views/ProfileView";
+import UserView from "@/views/UserView";
+import UserRegister from "@/components/pages/user/UserRegister";
+import UserLogin from "@/components/pages/user/UserLogin";
+import UserFindId from "@/components/pages/user/UserFindId";
+import UserReissuePw from "@/components/pages/user/UserReissuePw";
+import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
+import PostView from "../components/pages/post/PostView.vue";
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
+import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
+import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
+import PostList from "../components/pages/post/PostList.vue";
+import PostDetail from "../components/pages/post/PostDetail.vue";
+import PostWrite from "../components/pages/post/PostWrite.vue";
+import PostModify from "../components/pages/post/PostModify.vue";
+import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
+import ConsultingView from "../views/Consulting-WebCam-View.vue";
+// import store from "@/store";
+
+// const onlyAuthUser = async (to, from, next) => {
+//   const checkUserInfo = store.getters["memberStore/checkUserInfo"];
+//   const checkToken = store.getters["memberStore/checkToken"];
+//   let token = sessionStorage.getItem("access-token");
+//   console.log("로그인 처리 전", checkUserInfo,  token);
+
+//   if (checkUserInfo != null && token) {
+//     console.log("토큰 유효성 체크하러 가자!!!!");
+//     await store.dispatch("memberStore/getUserInfo", token);
+//   }
+//   if (!checkToken || checkUserInfo === null) {
+//     alert("로그인이 필요한 페이지입니다..");
+//     // next({ name: "login" });
+//     router.push({ name: "userlogin" });
+//   } else {
+//     console.log("로그인 했다!!!!!!!!!!!!!.");
+//     next();
+//   }
+// };
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,7 +48,7 @@ const router = createRouter({
     {
       path: "/",
       name: "main",
-      component: PostView,
+      redirect: "/post",
     },
     {
       path: "/profile",
@@ -29,9 +60,13 @@ const router = createRouter({
           name: "ProfilePage",
           component: ProfilePage,
         },
+        {
+          path: "/liked",
+          name: "likedList",
+          // component: ,
+        },
       ],
     },
-
     {
       path: "/user",
       name: "userView",
@@ -47,7 +82,25 @@ const router = createRouter({
           name: "UserLogin",
           component: UserLogin,
         },
+        {
+          path: "logout",
+          name: "UserLogout",
+        },
+        {
+          path: "findId",
+          name: "UserFindId",
+          component: UserFindId,
+        },
+        {
+          path: "findPw",
+          name: "UserReissuePw",
+          component: UserReissuePw,
+        },
       ],
+    },
+    {
+      path: "/oauth2/redirect",
+      component: Oauth2Redirect,
     },
 
     {
@@ -57,12 +110,38 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
-          component: PostView,
+          name: "postList",
+          component: PostList,
+        },
+        {
+          path: "detail",
+          name: "postDetail",
+          component: PostDetail,
+        },
+        {
+          path: "write",
+          name: "postWrite",
+          component: PostWrite,
+        },
+        {
+          path: "modify",
+          name: "postModify",
+          component: PostModify,
         },
       ],
     },
-
+{
+      path: "/consulting",
+      name: "Consulting-WebCam-View",
+      component: ConsultingView,
+      children: [
+        {
+          path: "",
+          name: "ConsultingPage",
+          component: ConsultingPage,
+        },
+      ],
+    },
     {
       path: "/consultant",
       name: "consultantView",
@@ -70,7 +149,7 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
+          name: "consultantview",
           component: ConsultantList,
         },
         {
@@ -79,17 +158,22 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "date",
-              name: "date",
+              path: "",
+              name: "consultantDate",
               component: ConsultantReservationDate,
+            },
+            {
+              path: "time",
+              name: "consultantTime",
+              component: ConsultantReservationTime,
+            },
+            {
+              path: "detail",
+              name: "consultantDetail",
+              component: ConsultantReservationForm,
             },
           ],
         },
-        // {
-        //   path: "detail",
-        //   name: "detail",
-        //   component: ConsultantDetailDate,
-        // }
       ],
     },
   ],

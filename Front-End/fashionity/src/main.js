@@ -22,8 +22,6 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 /* import toast css */
 import "vue-toastification/dist/index.css";
 
-import "v-calendar/dist/style.css";
-import VCalendar from "v-calendar";
 import { loadFonts } from "./fontAwesomeIcon";
 
 /* add icons to the library */
@@ -36,6 +34,5 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(Toast)
-  .use(VCalendar, {})
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");

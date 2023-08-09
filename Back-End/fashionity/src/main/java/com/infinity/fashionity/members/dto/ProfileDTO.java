@@ -1,9 +1,6 @@
 package com.infinity.fashionity.members.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class ProfileDTO {
 
@@ -30,12 +27,15 @@ public class ProfileDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @ToString
     public static class Response {
         private String profileUrl;
         private String nickname;
         private String profileIntro;
+        private Integer postsCnt;
         private Integer followerCnt;
         private Integer followingCnt;
+        private Boolean isFollowed;
         private boolean myProfile;
     }
 
