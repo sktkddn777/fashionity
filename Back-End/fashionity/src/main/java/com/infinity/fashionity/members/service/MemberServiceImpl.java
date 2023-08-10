@@ -44,6 +44,18 @@ public class MemberServiceImpl implements MemberService{
     private final PostRepository postRepository;
 
     @Override
+    public ProfileDTO.MyProfileResponse getMyProfileInfo(Long seq) {
+        log.info("getMyProfileInfo start");
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        log.info("MEMBER = " + member.toString());
+        return ProfileDTO.MyProfileResponse.builder()
+                .nickname(member.getNickname())
+                .profileUrl(member.getProfileUrl())
+                .profileIntro(member.getProfileIntro())
+                .build();
+    }
+
+    @Override
     public ProfileDTO.Response getMemberProfile(Long seq, String nickname) {
         MemberEntity memberByNickname = memberRepository.findByNickname(nickname).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(memberByNickname);

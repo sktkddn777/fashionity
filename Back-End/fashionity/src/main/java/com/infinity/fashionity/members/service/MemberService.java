@@ -5,6 +5,7 @@ import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 
 public interface MemberService {
+    ProfileDTO.MyProfileResponse getMyProfileInfo(Long seq);
     ProfileDTO.Response getMemberProfile(Long seq, String nickname);
     ProfilePostDTO.Response getMemberProfilePost(Long seq, String nickname, ProfilePostDTO.Request dto);
     ProfilePostDTO.Response getMemberProfileLikedPost(Long seq, ProfilePostDTO.Request dto);
