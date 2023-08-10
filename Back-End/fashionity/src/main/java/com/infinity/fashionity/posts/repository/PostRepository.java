@@ -20,7 +20,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     Page<PostEntity> findAll(Pageable pageable);
 
     List<PostEntity> findAllByMember(MemberEntity member);
-
     @Query("select p from PostEntity p " +
             "left join PostLikeEntity pl on pl.post = p " +
             "where pl.member = :member"
@@ -33,5 +32,23 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             "left join m.posts p " +
             "where p.member = :member")
     Page<PostEntity> findPostsByMember(@Param("member") MemberEntity member, Pageable pageable);
+
+
+    // 내가 작성한 게시글 갯수
+    @Query("select coalesce(count(p.seq),0) " +
+            "from MemberEntity m " +
+            "left join  m.posts p " +
+            "where m.nickname = :nickname")
+    Integer postsCnt(String nickname);
+
+    @Query("SELECT p,count(distinct pl) as lcnt FROM PostEntity p " +
+            "LEFT JOIN PostLikeEntity pl on p = pl.post " +
+            "GROUP BY p ORDER BY lcnt DESC, p.createdAt DESC")
+    Page<Object[]> findPostsOrderByLikesDesc(Pageable pageable);
+
+    @Query("SELECT p,count(distinct pl) as lcnt FROM PostEntity p " +
+            "LEFT JOIN PostLikeEntity pl on pl.post = p " +
+            "GROUP BY p ORDER BY p.createdAt DESC")
+    Page<Object[]> findPostsOrderByCreatedAt(Pageable pageable);
 
 }

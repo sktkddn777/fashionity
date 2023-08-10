@@ -7,11 +7,17 @@ import UserLogin from "@/components/pages/user/UserLogin";
 import UserFindId from "@/components/pages/user/UserFindId";
 import UserReissuePw from "@/components/pages/user/UserReissuePw";
 import Oauth2Redirect from "@/components/pages/oauth2/Oauth2Redirect";
-import PostView from "../components/pages/post/PostList.vue";
+import PostView from "../components/pages/post/PostView.vue";
 import ConsultantList from "@/components/pages/consultant/ConsultantList";
 import ConsultantReservation from "@/components/pages/consultant/ConsultantReservation";
 import ConsultantReservationDate from "@/components/pages/consultant/ConsultantReservationDate";
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
+import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
+import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
+import PostList from "../components/pages/post/PostList.vue";
+import PostDetail from "../components/pages/post/PostDetail.vue";
+import PostWrite from "../components/pages/post/PostWrite.vue";
+import PostModify from "../components/pages/post/PostModify.vue";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue"
@@ -22,7 +28,7 @@ import ChattingPage from "../components/pages/consulting/TheChatting.vue"
 //   const checkUserInfo = store.getters["memberStore/checkUserInfo"];
 //   const checkToken = store.getters["memberStore/checkToken"];
 //   let token = sessionStorage.getItem("access-token");
-//   console.log("로그인 처리 전", checkUserInfo, token);
+//   console.log("로그인 처리 전", checkUserInfo,  token);
 
 //   if (checkUserInfo != null && token) {
 //     console.log("토큰 유효성 체크하러 가자!!!!");
@@ -44,7 +50,7 @@ const router = createRouter({
     {
       path: "/",
       name: "main",
-      component: PostView,
+      redirect: "/post",
     },
     {
       path: "/profile",
@@ -106,12 +112,27 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
-          component: PostView,
-        }
-      ]
+          name: "postList",
+          component: PostList,
+        },
+        {
+          path: "detail",
+          name: "postDetail",
+          component: PostDetail,
+        },
+        {
+          path: "write",
+          name: "postWrite",
+          component: PostWrite,
+        },
+        {
+          path: "modify",
+          name: "postModify",
+          component: PostModify,
+        },
+      ],
     },
-    {
+{
       path: "/consulting",
       name: "Consulting-WebCam-View",
       component: ConsultingView,
@@ -128,7 +149,6 @@ const router = createRouter({
         },
       ],
     },
-
     {
       path: "/consultant",
       name: "consultantView",
@@ -136,7 +156,7 @@ const router = createRouter({
       children: [
         {
           path: "",
-          name: "home",
+          name: "consultantview",
           component: ConsultantList,
         },
         {
@@ -145,17 +165,22 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "date",
-              name: "date",
+              path: "",
+              name: "consultantDate",
               component: ConsultantReservationDate,
+            },
+            {
+              path: "time",
+              name: "consultantTime",
+              component: ConsultantReservationTime,
+            },
+            {
+              path: "detail",
+              name: "consultantDetail",
+              component: ConsultantReservationForm,
             },
           ],
         },
-        // {
-        //   path: "detail",
-        //   name: "detail",
-        //   component: ConsultantDetailDate,
-        // }
       ],
     },
   ],

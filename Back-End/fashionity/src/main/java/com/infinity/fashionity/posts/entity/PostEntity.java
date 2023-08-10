@@ -41,10 +41,12 @@ public class PostEntity extends CUDEntity {
     private MemberEntity member;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-    private List<PostImageEntity> postImages;
+    @Builder.Default
+    private List<PostImageEntity> postImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-    private List<PostHashtagEntity> postHashtags;
+    @Builder.Default
+    private List<PostHashtagEntity> postHashtags = new ArrayList<>();
 
     //댓글 개수
     @Formula("(SELECT count(1) FROM comments c WHERE c.post_seq = post_seq)")

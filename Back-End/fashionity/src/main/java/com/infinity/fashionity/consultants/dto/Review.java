@@ -38,9 +38,9 @@ public class Review {
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime deletedAt;
 
-    // 리뷰 작성자 닉네임
-    @JsonAlias(value = "member_nickname")
-    private String memberNickname;
+//    // 리뷰 작성자 닉네임
+//    @JsonAlias(value = "member_nickname")
+//    private String memberNickname;
 
     // 리뷰 내용
     @JsonAlias(value = "review_content")

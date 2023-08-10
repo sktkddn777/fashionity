@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -21,7 +23,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login",produces = APPLICATION_JSON_VALUE,consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginDTO.Response> login(
             @RequestBody LoginDTO.Request dto
     ) {
@@ -29,7 +31,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register",produces = APPLICATION_JSON_VALUE,consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<SaveDTO.Response> register(
             @RequestBody @Valid SaveDTO.Request dto
     ) {

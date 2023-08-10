@@ -45,6 +45,7 @@ public class PostDetailDTO {
         @JsonAlias(value = "post_seq")
         private Long postSeq;
         private List<String> images;
+        private List<String> hashtags;
         private String content;
         private String name;
         @JsonAlias(value = "profile_img")
@@ -55,10 +56,10 @@ public class PostDetailDTO {
         @JsonAlias(value = "comment_count")
         private int commentCount;
         @JsonAlias(value = "created_at")
-        @JsonFormat(pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
+        @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
         @JsonAlias(value = "updated_at")
-        @JsonFormat(pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
+        @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
         private boolean following;
     }
