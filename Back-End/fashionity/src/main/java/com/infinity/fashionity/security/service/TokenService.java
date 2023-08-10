@@ -1,5 +1,6 @@
 package com.infinity.fashionity.security.service;
 
+import com.infinity.fashionity.global.utils.JwtUtil;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
 import com.infinity.fashionity.security.dto.JwtAuthenticationToken;
 import com.infinity.fashionity.security.dto.Tokens;
@@ -7,7 +8,6 @@ import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +22,10 @@ import java.util.stream.Collectors;
 public class TokenService {
 
     private final JwtProvider jwtProvider;
+    private final JwtUtil jwtUtil;
 
     public JwtAuthenticationToken getAuthentication(String accessToken) {
-        jwtProvider.validateToken(accessToken);
+        jwtUtil.validateToken(accessToken);
 
         Claims claims = jwtProvider.getClaims(accessToken);
 
