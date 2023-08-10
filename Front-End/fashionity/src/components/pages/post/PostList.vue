@@ -2,18 +2,17 @@
   <div class="container-fluid">
     <the-nav-bar-post></the-nav-bar-post>
 
-    <div class="row justify-content-space-around">
-      <div class="col-3">
+    <div class="row justify-content-space-around tools" ref="toolsContainer">
+      <div class="col-3 search">
         <input
           type="text"
           id="search"
           name="search"
           placeholder="검색어를 입력하세요"
-          style="border: 1px solid #bdbdbd"
         />
       </div>
       <div class="col"></div>
-      <div class="col-3">
+      <div class="col-3 sort">
         <span
           class="sortBtn"
           @click="sortBy('popular')"
@@ -30,9 +29,9 @@
       </div>
     </div>
 
-    <div class="row" style="height: 30px"></div>
+    <!-- <div class="row" style="height: 30px"></div> -->
 
-    <div class="container">
+    <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div
           class="row"
@@ -40,13 +39,13 @@
           v-for="(arr, index) in postRow"
           :key="index"
         >
-          <div class="col" v-for="post in arr" :key="post.post_seq">
-            <router-link
-              :to="{ path: `/post/${post.post_seq}` }"
-              style="text-decoration: none; color: #424242"
-            >
-              <the-post :post="post" />
-            </router-link>
+          <div
+            class="col"
+            v-for="post in arr"
+            :key="post.post_seq"
+            style="margin-bottom: 20px"
+          >
+            <the-post :post="post" />
           </div>
         </div>
       </div>
@@ -89,9 +88,7 @@ export default {
     let token = sessionStorage.getItem("token");
     // this.loadNextPage();
     axios({
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${
-        this.sorting
-      }`,
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}`,
       headers:
         token === null
           ? null
@@ -104,10 +101,11 @@ export default {
         this.posts = data.data.posts;
         console.log(this.posts);
         this.dataLoaded = true;
+        this.page++;
       })
       .catch((exception) => {
-        let data = exception.response.data;
-        if (data.code === "A004") {
+        let data = exception.response;
+        if (data.status === 401) {
           //유효기간이 다 된 토큰이면 일단 보여주셈
           axios({
             url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
@@ -121,7 +119,6 @@ export default {
   },
   methods: {
     async sortBy(order) {
-      console.log("order = " + order);
       this.sorting = order;
       this.page = 0;
       this.posts = [];
@@ -135,8 +132,7 @@ export default {
       let token = sessionStorage.getItem("token");
 
       axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this
-          .page++}&s=${this.sorting}`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}`,
         headers:
           token === null
             ? null
@@ -149,17 +145,20 @@ export default {
           const newPosts = response.data.posts;
           this.posts = [...this.posts, ...newPosts];
           this.loadingNextPage = false;
+          this.page++;
         })
         .catch((exception) => {
-          let data = exception.response.data;
-          if (data.code === "A004") {
+          let data = exception.response;
+          if (data.status === 401) {
             //유효기간이 다 된 토큰이면 일단 보여주셈
             axios({
-              url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+              url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}`,
               method: "GET",
-            }).then((data) => {
-              this.posts = data.data.posts;
-              this.dataLoaded = true;
+            }).then((response) => {
+              const newPosts = response.data.posts;
+              this.posts = [...this.posts, ...newPosts];
+              this.loadingNextPage = false;
+              this.page++;
             });
           }
         });
@@ -185,6 +184,30 @@ export default {
 };
 </script>
 <style>
+.tools {
+  margin-bottom: 30px;
+}
+.tools,
+.container {
+  display: flex;
+  justify-content: space-around;
+}
+.tools,
+.container-fluid {
+  flex-wrap: wrap;
+}
+#search {
+  all: unset;
+  border: 1px solid rgba(189, 189, 189, 0.8);
+  color: #424242;
+  font-size: 12px;
+  width: 200px;
+  height: 30px;
+  border-radius: 20px;
+}
+.sort {
+  white-space: nowrap;
+}
 .sortBtn {
   color: #bdbdbd;
 }
