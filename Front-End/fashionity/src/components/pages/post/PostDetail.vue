@@ -25,7 +25,8 @@
             </div>
           </div>
           <div class="post-detail-header-follow" style="margin-left: auto">
-            <div class="align-self-center" @click="toggleFollowing">
+            <div v-if="!isLogin"></div>
+            <div v-else class="align-self-center" @click="toggleFollowing">
               <button
                 type="button"
                 class="btn btn-outline-dark"
@@ -183,8 +184,13 @@
 <script>
 import axios from "axios";
 import TheComment from "./TheComment.vue";
+import { mapState } from "vuex";
+const memberStore = "memberStore";
 export default {
   props: ["seq"],
+  computed: {
+    ...mapState(memberStore, ["isLogin"]),
+  },
   data() {
     return {
       post: {},
@@ -196,7 +202,14 @@ export default {
     TheComment,
   },
   async mounted() {
+    let token = sessionStorage.getItem("token");
     axios({
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
       method: "get",
     }).then((data) => {
@@ -205,6 +218,12 @@ export default {
     });
 
     axios({
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
       method: "get",
     }).then((data) => {
@@ -242,7 +261,6 @@ export default {
     },
     callFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
-      console.log(name);
       let body = {
         nickname: name,
       };
@@ -256,7 +274,6 @@ export default {
         data: body,
       }).then((data) => {
         this.following = data.data.success;
-        console.log(this.post.following);
       });
     },
     callUnFollowingAPI(name) {
@@ -274,7 +291,6 @@ export default {
         data: body,
       }).then((data) => {
         this.following = data.data.success;
-        console.log(this.post.following);
       });
     },
   },
