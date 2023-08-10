@@ -172,7 +172,6 @@ export default {
     },
 
     async checkId() {
-      console.log("잘 되나? " + process.env.VUE_APP_API_URL);
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
