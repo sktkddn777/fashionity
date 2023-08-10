@@ -92,7 +92,7 @@ export default {
       publisher: undefined,
       subscribers: [],
 
-      mySessionId: "SessionA",
+      mySessionId: "djEjsdladmldmltptus",
       myUserName: "Participant" + Math.floor(Math.random() * 100),
     };
   },

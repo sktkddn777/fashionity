@@ -1,13 +1,14 @@
 <template>
-  <div>
-    <first-component></first-component>
-    <second-component></second-component>
+  <div class="container">
+    <first-component class="compo"></first-component>
+    <second-component class="compo"></second-component>
   </div>
 </template>
 
 <script>
 import FirstComponent from "../components/pages/consulting/Consulting-WebCam.vue";
 import SecondComponent from "../components/pages/consulting/TheChatting.vue";
+// import SecondComponent from "../components/pages/consulting/ChattingRoomDetail.vue";
 
 export default {
   components: {
@@ -17,4 +18,15 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.container {
+  display: flex;
+}
+
+.compo {
+  flex: 1;
+}
+/* .compo:nth-child(2) {
+  flex: 1;
+} */
+</style>
