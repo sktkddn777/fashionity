@@ -1,113 +1,67 @@
 <template>
-  <div class="container" id="app" v-cloak>
-    <div class="chat-header">
-      <h2>채팅</h2>
-    </div>
-    <div class="chat-content">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <label class="input-group-text">세션</label>
-        </div>
-        <input type="text" class="form-control" v-model="roomSession" />
-        <div class="input-group-prepend">
-          <label class="input-group-text">내용</label>
-        </div>
-        <input
-          type="text"
-          class="form-control"
-          v-model="message"
-          @keyup.enter="sendMessage"
-        />
-        <div class="input-group-append">
-          <button class="btn btn-primary" type="button" @click="sendMessage">
-            보내기
-          </button>
-        </div>
+  <div class="chat-container" style="border: 1px solid #ccc">
+    <div class="message-list" ref="messageList">
+      <div class="message" v-for="(message, index) in recvList" :key="index">
+        <div class="message-child" align="left">{{ message.userName }}</div>
+        <div class="message-child" align="right">{{ message.content }}</div>
       </div>
-      <ul class="message-list" ref="messageList">
-        <li class="message-item" v-for="(item, idx) in recvList" :key="idx">
-          <div class="message-content">
-            <span class="user-name">{{ item.userName }}</span>
-            <span class="message-text">{{ item.content }}</span>
-          </div>
-        </li>
-      </ul>
     </div>
-    <div class="footer"></div>
+    <div class="input-container">
+      <input
+        class="message-input"
+        v-model="message"
+        @keyup.enter="sendMessage"
+        placeholder="메세지를 입력하세요..."
+      />
+      <button class="send-button" @click="sendMessage">보내기</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.container {
+.chat-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  height: 100vh;
-  background-color: #f4f4f4;
-}
-
-.chat-header {
-  margin-bottom: 20px;
-}
-
-.chat-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.input-group {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.input-group-prepend,
-.input-group-append {
-  display: flex;
-  align-items: center;
-  margin-right: 10px;
-}
-
-.form-control {
-  padding: 10px;
-}
-
-.btn-primary {
-  padding: 10px 20px;
+  height: 500px;
 }
 
 .message-list {
-  list-style: none;
-  padding: 0;
-  width: 100%;
-  max-height: 400px; /* 최대 높이 */
-  overflow-y: auto; /* 스크롤바 표시 */
+  flex: 1;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
-.message-item {
+.message {
+  padding: 10px;
+  border: 1px solid #ccc;
+  display: flex;
+}
+
+.input-container {
   display: flex;
   align-items: center;
   padding: 10px;
-  border: 1px solid #ddd;
-  margin-bottom: 10px;
+  background-color: #f5f5f5;
 }
 
-.message-content {
-  display: flex;
-  flex-direction: column;
+.message-input {
+  flex: 1;
+  padding: 5px;
 }
 
-.user-name {
-  font-weight: bold;
-  margin-bottom: 5px;
+.message-child {
+  flex: 1;
 }
 
-.message-text {
-  font-size: 14px;
+.send-button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 </style>
+
 
 <script>
 import Stomp from "webstomp-client";
@@ -128,11 +82,17 @@ export default {
     this.connect();
   },
   methods: {
-    sendMessage(e) {
-      if (e.keyCode === 13 && this.userName !== "" && this.message !== "") {
+    sendMessage() {
+      if (this.userName !== "" && this.message !== "") {
         this.send();
         this.message = "";
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
       }
+    },
+    scrollToBottom() {
+      this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
     },
     send() {
       console.log("Send message:" + this.message);
@@ -172,6 +132,9 @@ export default {
 
               // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
               this.recvList.push(JSON.parse(res.body));
+              this.$nextTick(() => {
+                this.scrollToBottom();
+              });
             }
           );
         },
@@ -181,6 +144,13 @@ export default {
           this.connected = false;
         }
       );
+    },
+  },
+  watch: {
+    messages() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
     },
   },
 };
