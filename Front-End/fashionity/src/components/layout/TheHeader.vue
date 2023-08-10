@@ -28,6 +28,7 @@
                 <div class="col">
                   <font-awesome-icon
                     :icon="['fas', 'video']"
+                    @click="meeting"
                     style="color: #bdbdbd"
                   />
                 </div>
@@ -154,6 +155,9 @@ export default {
     },
     login() {
       router.push({ name: "UserLogin" });
+    },
+    meeting() {
+      router.push({ name: "ConsultingPage" });
     },
   },
 
