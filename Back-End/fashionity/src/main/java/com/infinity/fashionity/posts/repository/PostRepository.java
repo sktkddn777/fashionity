@@ -39,7 +39,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             "from MemberEntity m " +
             "left join  m.posts p " +
             "where m.nickname = :nickname")
-    Integer postsCnt(String nickname);
+    Integer postsCnt(@Param("nickname") String nickname);
 
     @Query("SELECT p,count(distinct pl) as lcnt FROM PostEntity p " +
             "LEFT JOIN PostLikeEntity pl on p = pl.post " +

@@ -21,7 +21,7 @@ import PostWrite from "../components/pages/post/PostWrite.vue";
 import PostModify from "../components/pages/post/PostModify.vue";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
-import ChattingPage from "../components/pages/consulting/TheChatting.vue"
+import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 
 // import store from "@/store";
 
@@ -59,7 +59,7 @@ const router = createRouter({
       component: ProfileView,
       children: [
         {
-          path: "",
+          path: ":nickname",
           name: "ProfilePage",
           component: ProfilePage,
         },

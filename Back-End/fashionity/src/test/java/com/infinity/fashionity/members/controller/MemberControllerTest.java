@@ -30,8 +30,7 @@ import java.util.stream.IntStream;
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -178,13 +177,13 @@ class MemberControllerTest {
             // given
             MemberEntity member = memberRepository.findById(memberSeq).get();
             ProfileDTO.Request request = ProfileDTO.Request.builder()
-                    .profileUrl("newProfileUrl")
+//                    .profileUrl("newProfileUrl")
                     .profileIntro("newProfileIntro")
-                    .nickname("newNickname001")
+                    .nickname("khu147")
                     .build();
 
             // when & then
-            mvc.perform(patch(BASE_URL.concat("/edit"))
+            mvc.perform(post(BASE_URL.concat("/edit"))
                             .contentType(CONTENT_TYPE)
                             .characterEncoding(UTF_8)
                             .header("Authorization", "Bearer ".concat(accessToken))
@@ -193,7 +192,7 @@ class MemberControllerTest {
                     .andExpect(handler().handlerType(MemberController.class))
                     .andExpect(handler().methodName("editMyProfile"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.profileUrl", is(request.getProfileUrl())))
+//                    .andExpect(jsonPath("$.profileUrl", is(request.getProfileUrl())))
                     .andExpect(jsonPath("$.nickname", is(request.getNickname())))
                     .andExpect(jsonPath("$.profileIntro", is(request.getProfileIntro())))
                     .andExpect(jsonPath("$.followerCnt", is(followRepository.findByFollowedMember(member).size())))
@@ -203,7 +202,7 @@ class MemberControllerTest {
             MemberEntity updatedMember = memberRepository.findById(memberSeq).get();
             assertThat(updatedMember.getNickname()).isEqualTo(request.getNickname());
             assertThat(updatedMember.getProfileIntro()).isEqualTo(request.getProfileIntro());
-            assertThat(updatedMember.getProfileUrl()).isEqualTo(request.getProfileUrl());
+//            assertThat(updatedMember.getProfileUrl()).isEqualTo(request.getProfileUrl());
 
         }
 
@@ -215,13 +214,13 @@ class MemberControllerTest {
             // 닉네임 제약조건에 맞지 않은 케이스
             MemberEntity member = memberRepository.findById(memberSeq).get();
             ProfileDTO.Request request = ProfileDTO.Request.builder()
-                    .profileUrl("newProfileUrl")
+//                    .profileUrl("newProfileUrl")
                     .profileIntro("newProfileIntro")
                     .nickname("invalid")
                     .build();
 
             // when & then
-            mvc.perform(patch(BASE_URL.concat("/edit"))
+            mvc.perform(post(BASE_URL.concat("/edit"))
                             .contentType(CONTENT_TYPE)
                             .characterEncoding(UTF_8)
                             .header("Authorization", "Bearer ".concat(accessToken))

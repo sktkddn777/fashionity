@@ -18,7 +18,7 @@
         <!-- 프로필 정보 및 좋아요 -->
         <!-- 프로필 정보 -->
         <router-link
-          :to="{ path: `` }"
+          :to="{ path: `/profile/${[post.name]}` }"
           style="text-decoration: none; color: #424242"
         >
           <div class="col align-self-center align-middle post-detail-writer">
