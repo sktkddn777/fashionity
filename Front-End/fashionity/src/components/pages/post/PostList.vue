@@ -14,36 +14,49 @@
       </div>
       <div class="col"></div>
       <div class="col-3">
-        <span class="sortBtn" @click="sortBy('popular')"
-        :class="{ 'highlighted': sorting === 'popular' }">인기순</span>
+        <span
+          class="sortBtn"
+          @click="sortBy('popular')"
+          :class="{ highlighted: sorting === 'popular' }"
+          >인기순</span
+        >
         <span> | </span>
-        <span class="sortBtn" @click="sortBy('latest')"
-        :class="{ 'highlighted': sorting === 'latest' }">최신순</span>
+        <span
+          class="sortBtn"
+          @click="sortBy('latest')"
+          :class="{ highlighted: sorting === 'latest' }"
+          >최신순</span
+        >
       </div>
     </div>
 
     <div class="row" style="height: 30px"></div>
 
     <div class="container">
-      <div v-if = "dataLoaded">
-        <div class="row" style="justify-content: center" v-for="(arr,index) in postRow" :key="index">
-          <div class="col" v-for="post in arr" :key="post.post_seq" >
-            <router-link :to="{path : `/post/${post.post_seq}`}" style="text-decoration: none; color: #424242"> 
-              <the-post :post="post"/>
+      <div v-if="dataLoaded">
+        <div
+          class="row"
+          style="justify-content: center"
+          v-for="(arr, index) in postRow"
+          :key="index"
+        >
+          <div class="col" v-for="post in arr" :key="post.post_seq">
+            <router-link
+              :to="{ path: `/post/${post.post_seq}` }"
+              style="text-decoration: none; color: #424242"
+            >
+              <the-post :post="post" />
             </router-link>
           </div>
         </div>
       </div>
-      <div v-else>
-        Loading....
-      </div>
+      <div v-else>Loading....</div>
     </div>
   </div>
 </template>
 <script>
 import ThePost from "./ThePost.vue";
 import axios from "axios";
-
 export default {
   data() {
     return {
@@ -51,9 +64,9 @@ export default {
       page: 0,
       posts: [],
       dataLoaded: false,
-      loadingNextPage:false,
+      loadingNextPage: false,
       itemPerRow: 4,
-      sorting:'popular'
+      sorting: "popular",
     };
   },
   components: {
@@ -76,65 +89,80 @@ export default {
     let token = sessionStorage.getItem("token");
     // this.loadNextPage();
     axios({
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
-      headers: token === null ? null : {
-        "Authorization" : `Bearer ${token}`
-      },
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${
+        this.sorting
+      }`,
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
       method: "GET",
-    }).then((data) => {
-      this.posts = data.data.posts;
-      console.log(this.posts);
-      this.dataLoaded = true;
-    }).catch((exception)=>{
-      let data = (exception.response.data);
-      if(data.code === 'A004'){//유효기간이 다 된 토큰이면 일단 보여주셈
-        axios({
-          url:`${process.env.VUE_APP_API_URL}/api/v1/posts`,
-          method:'GET'
-        }).then((data)=>{
-          this.posts = data.data.posts;
-          this.dataLoaded = true;
-        })
-      }
-    });
+    })
+      .then((data) => {
+        this.posts = data.data.posts;
+        console.log(this.posts);
+        this.dataLoaded = true;
+      })
+      .catch((exception) => {
+        let data = exception.response.data;
+        if (data.code === "A004") {
+          //유효기간이 다 된 토큰이면 일단 보여주셈
+          axios({
+            url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+            method: "GET",
+          }).then((data) => {
+            this.posts = data.data.posts;
+            this.dataLoaded = true;
+          });
+        }
+      });
   },
   methods: {
-    async sortBy(order){
-      console.log("order = "+order);
-      this.sorting=order;
-      this.page=0;
+    async sortBy(order) {
+      console.log("order = " + order);
+      this.sorting = order;
+      this.page = 0;
       this.posts = [];
       this.loadNextPage();
     },
-    async loadNextPage(){
-      if(this.loadingNextPage) return;
+    async loadNextPage() {
+      if (this.loadingNextPage) return;
 
       this.loadingNextPage = true;
 
       let token = sessionStorage.getItem("token");
 
       axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${this.sorting}`,
-        headers: token === null ? null : {
-        "Authorization" : `Bearer ${token}`
-      },
-        method:"GET"
-      }).then((response)=>{
-        const newPosts = response.data.posts;
-        this.posts = [...this.posts,...newPosts];
-        this.loadingNextPage = false;
-      }).catch((exception)=>{
-      let data = (exception.response.data);
-      if(data.code === 'A004'){//유효기간이 다 된 토큰이면 일단 보여주셈
-        axios({
-          url:`${process.env.VUE_APP_API_URL}/api/v1/posts`,
-          method:'GET'
-        }).then((data)=>{
-          this.posts = data.data.posts;
-          this.dataLoaded = true;
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this
+          .page++}&s=${this.sorting}`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "GET",
+      })
+        .then((response) => {
+          const newPosts = response.data.posts;
+          this.posts = [...this.posts, ...newPosts];
+          this.loadingNextPage = false;
         })
-      }
-    });
+        .catch((exception) => {
+          let data = exception.response.data;
+          if (data.code === "A004") {
+            //유효기간이 다 된 토큰이면 일단 보여주셈
+            axios({
+              url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+              method: "GET",
+            }).then((data) => {
+              this.posts = data.data.posts;
+              this.dataLoaded = true;
+            });
+          }
+        });
     },
     handleScroll() {
       // 현재 스크롤 위치
@@ -157,11 +185,11 @@ export default {
 };
 </script>
 <style>
-.sortBtn{
-  color:#BDBDBD;
+.sortBtn {
+  color: #bdbdbd;
 }
 .highlighted {
-  color:#424242;
+  color: #424242;
   font-weight: bold; /* 원하는 스타일로 변경 */
 }
 </style>
