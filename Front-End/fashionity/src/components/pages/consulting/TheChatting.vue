@@ -66,19 +66,31 @@
 <script>
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
+import { mapState } from "vuex";
 
 export default {
   name: "TheChatting",
   data() {
     return {
-      userName: "태현",
+      // userName: "",
       message: "",
       recvList: [],
-      roomSession: "kth",
+      // roomSession: "",
     };
+  },
+  computed: {
+    ...mapState(["meetingInfo"]),
+    userName() {
+      return this.meetingInfo.userName;
+    },
+    roomId() {
+      return this.meetingInfo.roomId;
+    },
   },
   created() {
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
+    console.log("크리에이티드1 : " + this.userName);
+    console.log("크리에이티드2 : " + this.roomId);
     this.connect();
   },
   methods: {
@@ -101,16 +113,17 @@ export default {
           userName: this.userName,
           content: this.message,
           // roomId: "djEjsdladmldmltptus",
-          roomId: this.roomSession,
+          roomId: this.roomId,
         };
         this.stompClient.send(
-          "/chatting/receive/" + this.roomSession,
+          "/chatting/receive/" + this.roomId,
           JSON.stringify(msg),
           {}
         );
       }
     },
     connect() {
+      console.log("방 정보 : " + this.roomId);
       const serverURL = "http://localhost:8080";
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
@@ -124,19 +137,15 @@ export default {
           console.log("소켓 연결 성공", frame);
           // 서버의 메시지 전송 endpoint를 구독합니다.
           // 이런형태를 pub sub 구조라고 합니다.
-          console.log("과연? : " + this.roomSession);
-          this.stompClient.subscribe(
-            "/chatting/send/" + this.roomSession,
-            (res) => {
-              console.log("구독으로 받은 메시지 입니다.", res.body);
+          this.stompClient.subscribe("/chatting/send/" + this.roomId, (res) => {
+            // console.log("구독으로 받은 메시지 입니다.", res.body);
 
-              // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-              this.recvList.push(JSON.parse(res.body));
-              this.$nextTick(() => {
-                this.scrollToBottom();
-              });
-            }
-          );
+            // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+            this.recvList.push(JSON.parse(res.body));
+            this.$nextTick(() => {
+              this.scrollToBottom();
+            });
+          });
         },
         (error) => {
           // 소켓 연결 실패
