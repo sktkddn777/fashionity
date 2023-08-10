@@ -105,12 +105,18 @@
                 </div>
 
                 <div class="col">
-                  <div class="row">
-                    <router-link to="/user/login" class="link"
-                      ><img class="profile" src="@/assets/img/unknown.png"
+                  <div v-if="!isLogin" class="row">
+                    <router-link to="/user/login" class="link">
+                      <img class="profile" src="@/assets/img/unknown.png"
+                    /></router-link>
+                  </div>
+                  <div v-else class="row">
+                    <router-link to="/profile" class="link">
+                      <img class="profile" src="@/assets/img/panda.png"
                     /></router-link>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -120,13 +126,36 @@
   </div>
 </template>
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
+import router from "@/router";
+const memberStore = "memberStore";
 export default {
+  setup() {},
+  computed: {
+    ...mapState(memberStore, ["isLogin", "userInfo"]),
+    ...mapGetters(["checkUserInfo"]),
+  },
   data() {
     return {
       keyword: "",
     };
   },
   components: {},
+  methods: {
+    ...mapActions(memberStore, ["logoutAction"]),
+
+    logout() {
+      const user = {
+        memberSeq: sessionStorage.getItem("memberSeq"),
+      };
+
+      this.logoutAction(user);
+    },
+    login() {
+      router.push({ name: "UserLogin" });
+    },
+  },
+
 };
 </script>
 <style scoped>
