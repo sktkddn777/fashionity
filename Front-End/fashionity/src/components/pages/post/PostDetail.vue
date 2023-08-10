@@ -112,47 +112,9 @@
                           >수정</v-list-item-title
                         >
                       </router-link>
-                      <v-list-item-title
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#deleteModal"
+                      <v-list-item-title type="button" @click="deleteConfirm"
                         >삭제</v-list-item-title
                       >
-                      <div
-                        class="modal fade"
-                        id="deleteModal"
-                        tabindex="-1"
-                        aria-labelledby="deleteModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div class="modal-body" style="text-align: center">
-                              정말 삭제하시겠습니까?
-                            </div>
-                            <div class="modal-footer">
-                              <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal"
-                              >
-                                아니오
-                              </button>
-                              <button type="button" class="btn btn-primary">
-                                &nbsp;&nbsp;네&nbsp;&nbsp;
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -435,6 +397,38 @@ export default {
     },
     loginAlert() {
       alert("로그인해주세요.");
+    },
+    deleteConfirm() {
+      if (confirm("삭제하시겠습니까?")) {
+        this.deletePost;
+      }
+    },
+    async deletePost() {
+      try {
+        await this.callDeleteAPI();
+        alert("삭제되었습니다.");
+        this.navigateToMain();
+      } catch (error) {
+        console.error("게시글 삭제 실패", error);
+      }
+    },
+    navigateToMain() {
+      this.$router.push("/");
+    },
+    callDeleteAPI() {
+      let token = sessionStorage.getItem("token");
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.post.postSeq}`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "DELETE",
+      }).then((data) => {
+        console.log(data);
+      });
     },
   },
 };
