@@ -112,7 +112,20 @@ public class PostServiceImpl implements PostService {
                 .map(postImageEntity -> postImageEntity.getUrl())
                 .collect(Collectors.toList());
 
-        // 좋아요 여부
+        // 좋아요
+
+        MemberEntity member = null;
+        //인증정보가 들어오면 찾음
+        if(memberSeq != null){
+            member = memberRepository.findById(memberSeq).orElseThrow(()->new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        }
+        //아니라면 미인증 사용자기 떄문에 liked 상태를 false로 만들기 위해 존재하지 않는 값으로 만듬
+        else{
+            member = MemberEntity.builder()
+                    .seq(-1l)
+                    .build();
+        }
+
         // 게시글 좋아요 복합키 생성
         PostLikeKey likeKey = PostLikeKey.builder()
                 .post(postSeq)
@@ -138,6 +151,12 @@ public class PostServiceImpl implements PostService {
             isFollow = true;
         }
 
+        // 내가 쓴 글인지 확인
+        boolean isMyPost = false;
+        if(memberSeq == post.getMember().getSeq()){
+            isMyPost = true;
+        }
+
         // 게시글 만들기
         PostDetailDTO.Post postDetail = PostDetailDTO.Post.builder()
                 .name(post.getMember().getNickname())
@@ -148,6 +167,7 @@ public class PostServiceImpl implements PostService {
                 .hashtags(post.getPostHashtags().stream().map(hashtag->hashtag.getHashtag().getName()).collect(Collectors.toList()))
                 .liked(isLike)
                 .following(isFollow)
+                .isMyPost(isMyPost)
                 .commentCount(post.getCommentCount())
                 .likeCount(post.getLikeCount())
                 .createdAt(post.getCreatedAt())

@@ -54,10 +54,10 @@
     </div>
   </div>
 </template>
+
 <script>
 import ThePost from "./ThePost.vue";
 import axios from "axios";
-
 export default {
   data() {
     return {
@@ -185,6 +185,7 @@ export default {
   },
 };
 </script>
+
 <style>
 .sortBtn {
   color: #bdbdbd;
