@@ -1,36 +1,113 @@
 <template>
   <div class="container" id="app" v-cloak>
-    <div>
+    <div class="chat-header">
       <h2>채팅</h2>
     </div>
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <label class="input-group-text">세션</label>
+    <div class="chat-content">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <label class="input-group-text">세션</label>
+        </div>
+        <input type="text" class="form-control" v-model="roomSession" />
+        <div class="input-group-prepend">
+          <label class="input-group-text">내용</label>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          v-model="message"
+          @keyup.enter="sendMessage"
+        />
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="button" @click="sendMessage">
+            보내기
+          </button>
+        </div>
       </div>
-      <input type="text" class="form-control" v-model="roomSession" />
-      <div class="input-group-prepend">
-        <label class="input-group-text">내용</label>
-      </div>
-      <input
-        type="text"
-        class="form-control"
-        v-model="message"
-        @keyup="sendMessage"
-      />
-      <div class="input-group-append">
-        <button class="btn btn-primary" type="button" @click="sendMessage">
-          보내기
-        </button>
-      </div>
+      <ul class="message-list" ref="messageList">
+        <li class="message-item" v-for="(item, idx) in recvList" :key="idx">
+          <div class="message-content">
+            <span class="user-name">{{ item.userName }}</span>
+            <span class="message-text">{{ item.content }}</span>
+          </div>
+        </li>
+      </ul>
     </div>
-    <ul class="list-group">
-      <li class="list-group-item" v-for="(item, idx) in recvList" :key="idx">
-        {{ item.userName }} - {{ item.content }}
-      </li>
-    </ul>
-    <div></div>
+    <div class="footer"></div>
   </div>
 </template>
+
+<style>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.chat-header {
+  margin-bottom: 20px;
+}
+
+.chat-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.input-group-prepend,
+.input-group-append {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.form-control {
+  padding: 10px;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+}
+
+.message-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-height: 400px; /* 최대 높이 */
+  overflow-y: auto; /* 스크롤바 표시 */
+}
+
+.message-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message-text {
+  font-size: 14px;
+}
+</style>
 
 <script>
 import Stomp from "webstomp-client";
