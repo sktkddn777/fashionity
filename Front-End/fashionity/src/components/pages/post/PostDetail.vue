@@ -26,14 +26,8 @@
           </div>
           <div class="post-detail-header-follow" style="margin-left: auto">
             <div v-if="!isLogin"></div>
-            <div v-else class="align-self-center">
-              <div v-if="this.post.myPost">
-                <font-awesome-icon
-                  :icon="['fas', 'ellipsis']"
-                  style="color: #999999"
-                />
-              </div>
-              <div v-else @click="toggleFollowing">
+            <div v-else class="post-detail-header-modal align-self-center">
+              <div v-if="!this.post.myPost" @click="toggleFollowing">
                 <button
                   type="button"
                   class="btn btn-outline-dark"
@@ -50,6 +44,118 @@
                 >
                   <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
                 </button>
+              </div>
+              <div v-else></div>
+              <div>
+                <v-menu>
+                  <template v-slot:activator="{ props }">
+                    <font-awesome-icon
+                      v-bind="props"
+                      :icon="['fas', 'ellipsis']"
+                      style="color: #999999"
+                    />
+                  </template>
+                  <v-list>
+                    <v-list-item v-if="!this.post.myPost">
+                      <v-list-item-title
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#reportModal"
+                        >신고</v-list-item-title
+                      >
+                      <!-- report Modal -->
+                      <div
+                        class="modal fade"
+                        id="reportModal"
+                        tabindex="-1"
+                        aria-labelledby="reportModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1
+                                class="modal-title fs-5"
+                                id="reportModalLabel"
+                              >
+                                신고
+                              </h1>
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div class="modal-body">
+                              <report-modal></report-modal>
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal"
+                              >
+                                취소
+                              </button>
+                              <button type="button" class="btn btn-primary">
+                                신고
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </v-list-item>
+                    <v-list-item v-else>
+                      <router-link to="/post/modify" class="link">
+                        <v-list-item-title type="button"
+                          >수정</v-list-item-title
+                        >
+                      </router-link>
+                      <v-list-item-title
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteModal"
+                        >삭제</v-list-item-title
+                      >
+                      <div
+                        class="modal fade"
+                        id="deleteModal"
+                        tabindex="-1"
+                        aria-labelledby="deleteModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div class="modal-body" style="text-align: center">
+                              정말 삭제하시겠습니까?
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal"
+                              >
+                                아니오
+                              </button>
+                              <button type="button" class="btn btn-primary">
+                                &nbsp;&nbsp;네&nbsp;&nbsp;
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </div>
             </div>
           </div>
@@ -185,6 +291,7 @@
 import axios from "axios";
 import TheComment from "./TheComment.vue";
 import { mapState } from "vuex";
+import ReportModal from "./ReportModal.vue";
 const memberStore = "memberStore";
 export default {
   props: ["seq"],
@@ -200,6 +307,7 @@ export default {
   },
   components: {
     TheComment,
+    ReportModal,
   },
   async mounted() {
     let token = sessionStorage.getItem("token");
@@ -341,5 +449,9 @@ export default {
 }
 .post-detail-comment-submit {
   display: flex;
+}
+.post-detail-header-modal {
+  display: flex;
+  gap: 20px;
 }
 </style>
