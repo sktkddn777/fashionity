@@ -45,6 +45,17 @@ public class ProfileDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @ToString
+    public static class MyProfileResponse {
+        private String profileUrl;
+        private String nickname;
+        private String profileIntro;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class PwResponse {
         private boolean success;
     }

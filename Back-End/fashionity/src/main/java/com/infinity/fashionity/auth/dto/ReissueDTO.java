@@ -9,6 +9,16 @@ public class ReissueDTO {
     @NoArgsConstructor
     @Getter
     @ToString
+    public static class Request {
+        private String accessToken;
+        private Long memberSeq;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @ToString
     public static class Response{
 
         private String accessToken;
@@ -16,3 +26,4 @@ public class ReissueDTO {
     }
 
 }
+
