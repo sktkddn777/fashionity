@@ -1,79 +1,80 @@
-<template lang="">
-  <div>
-    <a class="btn" @click="toggleShow">set avatar</a>
-    <my-upload
-      field="img"
-      @crop-success="cropSuccess"
-      @crop-upload-success="cropUploadSuccess"
-      @crop-upload-fail="cropUploadFail"
-      v-model="show"
-      :width="300"
-      :height="300"
-      url="/upload"
-      :params="params"
-      :headers="headers"
-      img-format="png"
-    ></my-upload>
-    <img :src="imgDataUrl" />
-  </div>
-</template>
 <script>
-import myUpload from "vue-image-crop-upload";
+import {
+  StencilPreview,
+  BoundingBox,
+  DraggableArea,
+} from "vue-advanced-cropper";
+
 export default {
-  data() {
-    return {
-      show: true,
-      params: {
-        token: "123456798",
-        name: "avatar",
-      },
-      headers: {
-        smail: "*_~",
-      },
-      imgDataUrl: "", // the datebase64 url of created image
-    };
-  },
   components: {
-    myUpload,
+    StencilPreview,
+    BoundingBox,
+    DraggableArea,
+  },
+  props: [
+    // Image object
+    "image",
+    // Actual coordinates of the cropped fragment
+    "coordinates",
+    // Stencil size desired by cropper
+    "stencilCoordinates",
+    // Aspect ratios
+    "aspectRatio",
+    "minAspectRatio",
+    "maxAspectRatio",
+    // Transitions:
+    "transitions",
+  ],
+  computed: {
+    style() {
+      const { height, width, left, top } = this.stencilCoordinates;
+      const style = {
+        position: "absolute",
+        width: `${width}px`,
+        height: `${height}px`,
+        transform: `translate(${left}px, ${top}px)`,
+      };
+      if (this.transitions && this.transitions.enabled) {
+        style.transition = `${this.transitions.time}ms ${this.transitions.timingFunction}`;
+      }
+      return style;
+    },
   },
   methods: {
-    toggleShow() {
-      this.show = !this.show;
+    onMove(moveEvent) {
+      this.$emit("move", moveEvent);
     },
-    /**
-     * crop success
-     *
-     * [param] imgDataUrl
-     * [param] field
-     */
-    cropSuccess(imgDataUrl, field) {
-      console.log("-------- crop success --------");
-      this.imgDataUrl = imgDataUrl;
-      console.log("field: " + field);
+    onMoveEnd() {
+      this.$emit("moveEnd");
     },
-    /**
-     * upload success
-     *
-     * [param] jsonData  server api return data, already json encode
-     * [param] field
-     */
-    cropUploadSuccess(jsonData, field) {
-      console.log("-------- upload success --------");
-      console.log(jsonData);
-      console.log("field: " + field);
+    onResize(resizeEvent) {
+      this.$emit("resize", resizeEvent);
     },
-    /**
-     * upload fail
-     *
-     * [param] status    server api return error status, like 500
-     * [param] field
-     */
-    cropUploadFail(status, field) {
-      console.log("-------- upload fail --------");
-      console.log(status);
-      console.log("field: " + field);
+    onResizeEnd() {
+      this.$emit("resizeEnd");
+    },
+    aspectRatios() {
+      return {
+        minimum: this.aspectRatio || this.minAspectRatio,
+        maximum: this.aspectRatio || this.maxAspectRatio,
+      };
     },
   },
 };
 </script>
-<style lang=""></style>
+
+<template>
+  <div :style="style">
+    <bounding-box @resize="onResize" @resize-end="onMoveEnd">
+      <draggable-area @move="onMove" @move-end="onMoveEnd">
+        <stencil-preview
+          :image="image"
+          :width="stencilCoordinates.width"
+          :height="stencilCoordinates.height"
+          :coordinates="coordinates"
+          :transitions="transitions"
+        />
+      </draggable-area>
+    </bounding-box>
+  </div>
+</template>
