@@ -14,6 +14,7 @@ import ConsultantReservationDate from "@/components/pages/consultant/ConsultantR
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
+import ConsultantMyList from "@/components/pages/consultant/ConsultantMyList";
 import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
@@ -132,7 +133,7 @@ const router = createRouter({
         },
       ],
     },
-{
+    {
       path: "/consulting",
       name: "Consulting-WebCam-View",
       component: ConsultingView,
@@ -180,6 +181,11 @@ const router = createRouter({
               component: ConsultantReservationForm,
             },
           ],
+        },
+        {
+          path: "myreservation/list",
+          name: "consultant-myreservation",
+          component: ConsultantMyList,
         },
       ],
     },
