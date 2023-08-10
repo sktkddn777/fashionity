@@ -32,7 +32,6 @@ public class PostController {
         if(dto.getS() == null || !(dto.getS().equals("popular")||dto.getS().equals("latest")) ){
             dto.setS("popular");
         }
-        System.out.println(dto);
         PostListDTO.Response list = postService.getAllPosts(dto);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

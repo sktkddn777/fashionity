@@ -9,6 +9,8 @@
           id="search"
           name="search"
           placeholder="검색어를 입력하세요"
+          v-model="hashtagInput"
+          @input="updateInput()"
         />
       </div>
       <div class="col"></div>
@@ -66,6 +68,7 @@ export default {
       loadingNextPage: false,
       itemPerRow: 4,
       sorting: "popular",
+      hashtagInput: "",
     };
   },
   components: {
@@ -88,7 +91,7 @@ export default {
     let token = sessionStorage.getItem("token");
     // this.loadNextPage();
     axios({
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}`,
+      url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}&h=${this.hashtagInput}`,
       headers:
         token === null
           ? null
@@ -108,7 +111,7 @@ export default {
         if (data.status === 401) {
           //유효기간이 다 된 토큰이면 일단 보여주셈
           axios({
-            url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+            url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}&h=${this.hashtagInput}`,
             method: "GET",
           }).then((data) => {
             this.posts = data.data.posts;
@@ -118,6 +121,9 @@ export default {
       });
   },
   methods: {
+    updateInput() {
+      this.sortBy(this.sorting);
+    },
     async sortBy(order) {
       this.sorting = order;
       this.page = 0;
@@ -132,7 +138,7 @@ export default {
       let token = sessionStorage.getItem("token");
 
       axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}&h=${this.hashtagInput}`,
         headers:
           token === null
             ? null
@@ -152,7 +158,7 @@ export default {
           if (data.status === 401) {
             //유효기간이 다 된 토큰이면 일단 보여주셈
             axios({
-              url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}`,
+              url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}&h=${this.hashtagInput}`,
               method: "GET",
             }).then((response) => {
               const newPosts = response.data.posts;

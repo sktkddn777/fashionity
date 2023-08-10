@@ -51,4 +51,21 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             "GROUP BY p ORDER BY p.createdAt DESC")
     Page<Object[]> findPostsOrderByCreatedAt(Pageable pageable);
 
+    @Query("SELECT DISTINCT p ,count(distinct pl) as lcnt FROM PostEntity p " +
+            "LEFT JOIN PostLikeEntity pl on p = pl.post " +
+            "LEFT JOIN p.postHashtags ph " +
+            "LEFT JOIN ph.hashtag h " +
+            "WHERE p.deletedAt IS NULL " +
+            "AND h.name LIKE %:hashtag% " +
+            "GROUP BY p ORDER BY lcnt DESC,p.createdAt DESC")
+    Page<Object[]> findAllWithHashtagOrderByLikeCount(@Param("hashtag") String hashtag,Pageable pageable);
+
+    @Query("SELECT DISTINCT p ,count(distinct pl) as lcnt FROM PostEntity p " +
+            "LEFT JOIN PostLikeEntity pl on p = pl.post " +
+            "LEFT JOIN p.postHashtags ph " +
+            "LEFT JOIN ph.hashtag h " +
+            "WHERE p.deletedAt IS NULL " +
+            "AND h.name LIKE %:hashtag% " +
+            "GROUP BY p ORDER BY p.createdAt DESC")
+    Page<Object[]> findAllWithHashtagOrderByCreatedAt(@Param("hashtag") String hashtag,Pageable pageable);
 }
