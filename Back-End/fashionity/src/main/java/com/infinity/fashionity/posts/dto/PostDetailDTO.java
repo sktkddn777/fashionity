@@ -62,5 +62,6 @@ public class PostDetailDTO {
         @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
         private boolean following;
+        private boolean isMyPost;
     }
 }

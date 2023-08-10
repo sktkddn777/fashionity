@@ -151,6 +151,12 @@ public class PostServiceImpl implements PostService {
             isFollow = true;
         }
 
+        // 내가 쓴 글인지 확인
+        boolean isMyPost = false;
+        if(memberSeq == post.getMember().getSeq()){
+            isMyPost = true;
+        }
+
         // 게시글 만들기
         PostDetailDTO.Post postDetail = PostDetailDTO.Post.builder()
                 .name(post.getMember().getNickname())
@@ -161,6 +167,7 @@ public class PostServiceImpl implements PostService {
                 .hashtags(post.getPostHashtags().stream().map(hashtag->hashtag.getHashtag().getName()).collect(Collectors.toList()))
                 .liked(isLike)
                 .following(isFollow)
+                .isMyPost(isMyPost)
                 .commentCount(post.getCommentCount())
                 .likeCount(post.getLikeCount())
                 .createdAt(post.getCreatedAt())
