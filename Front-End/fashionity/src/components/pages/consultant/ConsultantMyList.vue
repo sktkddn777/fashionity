@@ -56,7 +56,7 @@
         <div class="row" style="font-size: 15px">
           예약 일시 : 2023년 07월 17시 15시
         </div>
-        <div class="row" style="font-size: 15px">담당 컨설턴트 : 푸바오</div>
+        <div class="row" style="font-size: 15px">담당 컨설턴트 : 아이바오</div>
       </div>
       <div class="col">
         <button class="consultant-mylist-modify-review">후기 수정</button>
