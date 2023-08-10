@@ -233,7 +233,7 @@ export default {
       }
     },
     toggleFollowing() {
-      if (this.post.following) {
+      if (this.post.following === true) {
         this.callUnFollowingAPI(this.post.name);
       } else {
         this.callFollowingAPI(this.post.name);
@@ -242,7 +242,6 @@ export default {
     },
     callFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
-      // name = this.post.name;
       console.log(name);
       let body = {
         nickname: name,
@@ -256,13 +255,12 @@ export default {
         method: "POST",
         data: body,
       }).then((data) => {
-        this.post.following = data.data.success;
+        this.following = data.data.success;
         console.log(this.post.following);
       });
     },
     callUnFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
-      // name = this.post.name;
       let body = {
         nickname: name,
       };
@@ -275,7 +273,7 @@ export default {
         method: "DELETE",
         data: body,
       }).then((data) => {
-        this.post.following = data.data.success;
+        this.following = data.data.success;
         console.log(this.post.following);
       });
     },
