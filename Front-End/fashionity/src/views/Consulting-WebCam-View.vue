@@ -8,7 +8,6 @@
 <script>
 import FirstComponent from "../components/pages/consulting/Consulting-WebCam.vue";
 import SecondComponent from "../components/pages/consulting/TheChatting.vue";
-// import SecondComponent from "../components/pages/consulting/ChattingRoomDetail.vue";
 
 export default {
   components: {
