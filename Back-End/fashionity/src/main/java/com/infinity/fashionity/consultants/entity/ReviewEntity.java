@@ -1,9 +1,13 @@
 package com.infinity.fashionity.consultants.entity;
 
 import com.infinity.fashionity.global.entity.CUDEntity;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.StringUtils;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -12,6 +16,7 @@ import javax.validation.constraints.Min;
 @Entity
 @Table(name="reviews")
 @SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE review_seq = ?")
+@Where(clause = "deleted_at is null")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -35,5 +40,9 @@ public class ReviewEntity extends CUDEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private ReservationEntity reservation;
 
+    public void updateContent(String content){
+//        if(StringUtils.isBlank(content)) throw new ValidationException(ErrorCode.INVALID_INPUT_VALUE);
+        this.content= content;
+    }
 
 }

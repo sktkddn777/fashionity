@@ -30,7 +30,10 @@
 <script>
 export default {};
 </script>
-<style>
+<style scoped>
+* {
+  font-size: 25px;
+}
 .point {
   font-weight: bold;
 }

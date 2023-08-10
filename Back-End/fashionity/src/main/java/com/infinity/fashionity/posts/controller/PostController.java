@@ -29,12 +29,15 @@ public class PostController {
             @AuthenticationPrincipal JwtAuthentication auth,
             PostListDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        if(dto.getS() == null || !(dto.getS().equals("popular")||dto.getS().equals("latest")) ){
+            dto.setS("popular");
+        }
         PostListDTO.Response list = postService.getAllPosts(dto);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     //게시글 상세 조회
-    @GetMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{postSeq}")
     public ResponseEntity<PostDetailDTO.Response> getPost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable long postSeq) {
