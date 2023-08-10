@@ -235,7 +235,10 @@
         </div>
         <!-- 본문 내용 -->
         <div class="post-detail-like">
-          <div class="post-detail-like-icon">
+          <div v-if="!isLogin" @click="loginAlert">
+            <font-awesome-icon :icon="['fas', 'heart']" />
+          </div>
+          <div v-else class="post-detail-like-icon" @click="toggleLike">
             <font-awesome-icon
               :icon="['fas', 'heart']"
               :color="post.liked === true ? 'red' : 'black'"
@@ -303,6 +306,8 @@ export default {
       post: {},
       comments: [],
       commentOpen: false,
+      like: "",
+      likeCount: "",
     };
   },
   components: {
@@ -323,6 +328,8 @@ export default {
     }).then((data) => {
       this.post = data.data.post;
       console.log(this.post);
+      this.like = this.post.liked;
+      this.likeCount = this.post.likeCount;
     });
 
     axios({
@@ -400,6 +407,34 @@ export default {
       }).then((data) => {
         this.following = data.data.success;
       });
+    },
+    toggleLike() {
+      this.callLikeAPI(this.post.liked);
+      this.post.liked = !this.post.liked;
+      this.post.liked ? this.post.likeCount++ : this.post.likeCount--;
+    },
+    callLikeAPI(status) {
+      let token = sessionStorage.getItem("token");
+
+      let body = {
+        is_like: status,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.post.postSeq}/like`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "POST",
+        data: body,
+      }).then((data) => {
+        this.post.liked = data.data.like;
+      });
+    },
+    loginAlert() {
+      alert("로그인해주세요.");
     },
   },
 };
