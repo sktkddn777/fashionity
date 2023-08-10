@@ -52,14 +52,28 @@ public class PostServiceImpl implements PostService {
         int page = dto.getPage();
         int size = dto.getSize();
         String s = dto.getS();
+        String h = dto.getH();
         Long memberSeq = dto.getMemberSeq();
+
+
         // s 기준으로 paging처리 (s 기본값 popular)
         Pageable pageable = PageRequest.of(page, size);
         Page<Object[]> result = null;
-        if (s.equals("popular")) {
-            result = postRepository.findPostsOrderByLikesDesc(pageable);
-        } else {
-            result = postRepository.findPostsOrderByCreatedAt(pageable);
+
+        //해시태그를 기준으로 정렬
+        if(!StringUtils.isBlank(h)) {
+            if (s.equals("popular")) {
+                result = postRepository.findAllWithHashtagOrderByLikeCount(h,pageable);
+            } else {
+                result = postRepository.findAllWithHashtagOrderByCreatedAt(h,pageable);
+            }
+        }
+        else {
+            if (s.equals("popular")) {
+                result = postRepository.findPostsOrderByLikesDesc(pageable);
+            } else {
+                result = postRepository.findPostsOrderByCreatedAt(pageable);
+            }
         }
         // page, size에 맞게 게시물 목록 가져오기
         List<PostListDTO.Post> posts = result.getContent().stream()

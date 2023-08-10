@@ -18,12 +18,18 @@ public class PostListDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
+    @ToString
     public static class Request{
         @JsonIgnore
         private Long memberSeq;
+        @Builder.Default
         private int page = 0;
+        @Builder.Default
         private int size = 12;
+        //sorting기준, popular or latest
         private String s;
+        //hashtag 입력값
+        private String h;
     }
 
     @Getter

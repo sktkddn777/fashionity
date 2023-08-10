@@ -14,11 +14,16 @@ import ConsultantReservationDate from "@/components/pages/consultant/ConsultantR
 import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
+import ConsultantMyList from "@/components/pages/consultant/ConsultantMyList";
 import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
 import PostModify from "../components/pages/post/PostModify.vue";
 import store from "@/store";
+import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
+import ConsultingView from "../views/Consulting-WebCam-View.vue";
+import ChattingPage from "../components/pages/consulting/TheChatting.vue";
+
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -64,7 +69,7 @@ const router = createRouter({
       component: ProfileView,
       children: [
         {
-          path: "",
+          path: ":nickname",
           name: "ProfilePage",
           beforeEnter: onlyAuthUser,
           component: ProfilePage,
@@ -140,7 +145,23 @@ const router = createRouter({
         },
       ],
     },
-
+    {
+      path: "/consulting",
+      name: "Consulting-WebCam-View",
+      component: ConsultingView,
+      children: [
+        {
+          path: "/meeting",
+          name: "ConsultingPage",
+          component: ConsultingPage,
+        },
+        {
+          path: "/chatting",
+          name: "TheChatting",
+          component: ChattingPage,
+        },
+      ],
+    },
     {
       path: "/consultant",
       name: "consultantView",
@@ -172,6 +193,11 @@ const router = createRouter({
               component: ConsultantReservationForm,
             },
           ],
+        },
+        {
+          path: "myreservation/list",
+          name: "consultant-myreservation",
+          component: ConsultantMyList,
         },
       ],
     },

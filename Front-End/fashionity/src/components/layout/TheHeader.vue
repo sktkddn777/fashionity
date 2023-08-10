@@ -47,6 +47,7 @@
                 <div class="col">
                   <font-awesome-icon
                     :icon="['fas', 'video']"
+                    @click="meeting"
                     style="color: #bdbdbd"
                   />
                 </div>
@@ -170,8 +171,10 @@ export default {
       router.push({ name: "UserLogin" });
     },
     getProfileUrl() {
-      console.log("PU: " + this.loginUser.profileUri);
       return this.loginUser.profileUri;
+    },
+    meeting() {
+      router.push({ name: "ConsultingPage" });
     },
   },
 };

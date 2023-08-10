@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -60,12 +61,12 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/edit")
+    @PutMapping("/edit")
     public ResponseEntity<ProfileDTO.Response> editMyProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @RequestBody ProfileDTO.Request profile
+            ProfileDTO.Request dto
     ) {
-        ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), profile);
+        ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
