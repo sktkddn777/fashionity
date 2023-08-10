@@ -26,23 +26,31 @@
           </div>
           <div class="post-detail-header-follow" style="margin-left: auto">
             <div v-if="!isLogin"></div>
-            <div v-else class="align-self-center" @click="toggleFollowing">
-              <button
-                type="button"
-                class="btn btn-outline-dark"
-                style="min-width: 70px"
-                v-if="this.post.following === true"
-              >
-                <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-dark"
-                style="min-width: 70px"
-                v-else
-              >
-                <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
-              </button>
+            <div v-else class="align-self-center">
+              <div v-if="this.post.myPost">
+                <font-awesome-icon
+                  :icon="['fas', 'ellipsis']"
+                  style="color: #999999"
+                />
+              </div>
+              <div v-else @click="toggleFollowing">
+                <button
+                  type="button"
+                  class="btn btn-outline-dark"
+                  style="min-width: 70px"
+                  v-if="this.post.following === true"
+                >
+                  <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-dark"
+                  style="min-width: 70px"
+                  v-else
+                >
+                  <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -92,14 +100,6 @@
                   style="aspect-ratio: 1 / 1"
                 />
               </div>
-              <!-- <div class="carousel-item">
-                <img
-                  src="../../../assets/img/hyeonwook3.jpg"
-                  class="d-block w-100"
-                  alt="세 번째 사진"
-                  style="aspect-ratio: 1 / 1"
-                />
-              </div> -->
             </div>
             <button
               class="carousel-control-prev"

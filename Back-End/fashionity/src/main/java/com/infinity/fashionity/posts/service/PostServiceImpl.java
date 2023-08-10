@@ -151,9 +151,9 @@ public class PostServiceImpl implements PostService {
             isFollow = true;
         }
 
-        // 내 게시글인지 확인
+        // 내가 쓴 글인지 확인
         boolean isMyPost = false;
-        if(memberSeq.equals(post.getMember().getSeq())){
+        if(memberSeq == post.getMember().getSeq()){
             isMyPost = true;
         }
 
