@@ -41,7 +41,12 @@
           :key="index"
         >
           <div class="col" v-for="post in arr" :key="post.post_seq">
-            <the-post :post="post" />
+            <router-link
+              :to="{ path: `/post/${post.post_seq}` }"
+              style="text-decoration: none; color: #424242"
+            >
+              <the-post :post="post" />
+            </router-link>
           </div>
         </div>
       </div>
@@ -88,9 +93,12 @@ export default {
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page++}&s=${
         this.sorting
       }`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
       method: "GET",
     })
       .then((data) => {
@@ -130,9 +138,12 @@ export default {
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this
           .page++}&s=${this.sorting}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
         method: "GET",
       })
         .then((response) => {
@@ -141,8 +152,17 @@ export default {
           this.loadingNextPage = false;
         })
         .catch((exception) => {
-          this.loadingNextPage = false;
-          console.log(exception);
+          let data = exception.response.data;
+          if (data.code === "A004") {
+            //유효기간이 다 된 토큰이면 일단 보여주셈
+            axios({
+              url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+              method: "GET",
+            }).then((data) => {
+              this.posts = data.data.posts;
+              this.dataLoaded = true;
+            });
+          }
         });
     },
     handleScroll() {
