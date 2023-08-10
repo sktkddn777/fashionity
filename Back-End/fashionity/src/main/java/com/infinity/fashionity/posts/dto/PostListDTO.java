@@ -26,7 +26,10 @@ public class PostListDTO {
         private int page = 0;
         @Builder.Default
         private int size = 12;
+        //sorting기준, popular or latest
         private String s;
+        //hashtag 입력값
+        private String h;
     }
 
     @Getter
