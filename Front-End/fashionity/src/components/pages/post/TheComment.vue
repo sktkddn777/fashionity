@@ -12,8 +12,18 @@
       <!--댓글 내용-->
       <div>
         <div class="fw-bold" style="text-align: left">hyeonwook_12</div>
-        <div style="text-align: left; font-size: 15px">
+        <div v-if="!this.isChecked" style="text-align: left; font-size: 15px">
           안녕하세요ㅎ 선팔하고 갑니다ㅎ
+        </div>
+        <div v-else class="post-detail-comment-submit">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="원래 댓글내용 넣기."
+          />
+          <button type="button" class="btn btn-dark" style="min-width: 70px">
+            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+          </button>
         </div>
       </div>
       <!--댓글 정보-->
@@ -31,9 +41,9 @@
 
             <v-list>
               <v-list-item>
-                <router-link to="/post/modify" class="link">
-                  <v-list-item-title type="button">수정</v-list-item-title>
-                </router-link>
+                <v-list-item-title type="button" @click="modifyComment"
+                  >수정</v-list-item-title
+                >
                 <v-list-item-title
                   type="button"
                   data-bs-toggle="modal"
@@ -142,6 +152,16 @@ import ReportModal from "./ReportModal.vue";
 export default {
   components: {
     ReportModal,
+  },
+  data() {
+    return {
+      isChecked: false,
+    };
+  },
+  methods: {
+    modifyComment() {
+      this.isChecked = !this.isChecked;
+    },
   },
 };
 </script>
