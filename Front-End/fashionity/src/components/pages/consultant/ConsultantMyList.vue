@@ -64,10 +64,6 @@
     </div>
   </div>
 </template>
-<<<<<<< HEAD
-<script scoped>
-export default {};
-=======
 
 <script>
 import { mapActions } from "vuex";
@@ -92,7 +88,6 @@ export default {
     },
   },
 };
->>>>>>> 9d27a3bb18e3a4839307a1bb4e3e35162e459f76
 </script>
 <style scoped>
 .block {
