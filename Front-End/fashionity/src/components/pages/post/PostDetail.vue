@@ -261,7 +261,7 @@ const memberStore = "memberStore";
 export default {
   props: ["seq"],
   computed: {
-    ...mapState(memberStore, ["isLogin"]),
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
   },
   data() {
     return {
