@@ -24,7 +24,6 @@ import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 
-
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
   const checkToken = store.getters["memberStore/checkToken"];
@@ -113,7 +112,7 @@ const router = createRouter({
       ],
     },
     {
-      path: "/oauth2/redirect",
+      path: "/oauth/redirect",
       component: Oauth2Redirect,
     },
 
