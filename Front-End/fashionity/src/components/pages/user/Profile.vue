@@ -1,134 +1,200 @@
 <template>
-  <div class="container-fluid">
-    <the-nav-bar-mypage></the-nav-bar-mypage>
-    <div class="profile-container">
-      <!-- <div class="profile-title">프로필</div> -->
-      <div class="profile-main">
-        <div style = "display:flex; flex-direction: row; justify-content: center;">
-          <!-- 사용자 프로필 사진 -->
-          <div class="profile-main-photo">
-            <img class="image-box" width="150" height="150" />
+  <div>
+    <!-- 팔로워 모달창 -->
+    <div class="black-bg" v-if="followersPop === true" style="z-index: 1050">
+      <div class="fmodal">
+        <div style="display: flex; flex-direction: row; justify-content: left">
+          <!-- <div style="display: flex; align-items: center"> -->
+          <div class="modalTitle" style="font-size: 2rem; margin-left: 1rem">
+            <b>Followers</b>
           </div>
-          <div class = "infos" style = "display:flex; flex-direction: column;">
-            <div class="profile-main-form" style = "display:flex; flex-direction: row; justify-content: start;">
-            <v-form disabled class="d-flex align-self-center">
-              <div class="profile-main-form-text" style = "display:flex; flex-direction: column; ">
-                <!-- 프로필 정보 -->
-                <div class="profile-main-form-text-nickname" style = "display: flex ; jus tify-self : start; ">
-                  <!-- <div>닉네임</div> -->
-                  <v-text-field
-                    v-model="state.nickname"
-                    density="compact"
-                  ></v-text-field>
-                </div>
-                <div class="m-top-d" style = "width:20rem;" align = "left">
-                  <v-text-field
-                    v-model="state.profileIntro"
-                    density="compact"
-                    min = 0
-                    max = 50 
-                  ></v-text-field>
-                </div>
-                <div class="m-top-d" style = "display:flex; justify-content: start;">
-                  <button class = "follow-button" onclick = "">손민수</button>
-                  <button class = "unfollow-button">언민수</button>
-                </div>
-              </div>
-            </v-form>
-          </div>
-          </div>
-
+          <button id="followersbtn" class="close" @click="showFollowers()">
+            ×
+          </button>
         </div>
-        <div class = "profile-followings-info" style = "display:flex; flex-direction: row; justify-content: center;">
-          <v-form>
-              <div class="posts-cnt" style = "float: left; margin-left: 1rem; margin-right:1rem">
-                <div><b>Posts</b></div>
-                <div>PostsCnt</div>
-              </div>
-              <div class = "followers-cnt" style = "float: left;  margin-left: 1rem;  margin-right:1rem">
-                <div><b>Followers</b></div>
-                <div>FollowersCnt</div>
-              </div>
-              <div class = "followings-cnt" style = "float: left;  margin-left: 1rem; margin-right:1rem">
-                <div><b>Followings</b></div>
-                <div>FollowingsCnt</div>
-              </div>
-          </v-form>
+        <div class="follwerList">
+          <followers-list />
         </div>
       </div>
     </div>
+    <!-- 팔로잉 모달창 -->
+    <div class="black-bg" v-if="followingsPop === true" style="z-index: 1050">
+      <div class="fmodal">
+        <div style="display: flex; flex-direction: row; justify-content: left">
+          <div class="modalTitle" style="font-size: 2rem; margin-left: 1rem">
+            <b>Followings</b>
+          </div>
+          <button id="followingsbtn" class="close" @click="showFollowings()">
+            ×
+          </button>
+        </div>
+        <div class="follwingList">
+          <followings-list />
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <the-nav-bar-mypage></the-nav-bar-mypage>
+      <!-- 프로필 영역 -->
+      <div class="profile-container">
+        <div class="profile-main">
+          <div
+            style="display: flex; flex-direction: row; justify-content: center"
+          >
+            <!-- 사용자 프로필 사진 -->
+            <div class="profile-main-photo">
+              <img class="image-box" width="200" height="200" />
+            </div>
+            <!-- 사용자 정보 -->
+            <div class="infos" style="display: flex; flex-direction: column">
+              <!-- 이름, 팔로우, 수정 버튼 -->
+              <div
+                class="username-follow-edit"
+                style="display: flex; flex-direction: row"
+              >
+                <div
+                  class="profile-main-form-text-nickname point"
+                  style="
+                    display: flex;
+                    justify-self: start;
+                    font-size: 2rem;
+                    margin-right: 3rem;
+                  "
+                >
+                  {{ nickname }}
+                </div>
+
+                <button
+                  id="followbtn"
+                  :class="isFollowed ? 'inactive-button' : 'active-button'"
+                  @click="toggleFollow()"
+                  style="margin-left: 0.5rem"
+                >
+                  팔로우
+                </button>
+                <button class="inactive-button" style="margin-left: 0.5rem">
+                  프로필 수정
+                </button>
+              </div>
+              <br />
+              <div class="m-top-d" style="width: 30rem" align="left">
+                {{ profileIntro }}
+              </div>
+              <br />
+              <!-- 게시글 수, 팔로워 수, 팔로잉 수 정보 -->
+              <div class="posts-followers-followings-cnt" style="display: flex">
+                <div
+                  class="posts-cnt point"
+                  style="margin-right: 2rem; font-size: 1.2rem"
+                >
+                  {{ postsCnt }} Posts
+                </div>
+                <button
+                  class="followers-cnt open point"
+                  @click="showFollowers()"
+                  style="float: left; margin-right: 2rem; font-size: 1.2rem"
+                >
+                  {{ followersCnt }} Followers
+                </button>
+                <button
+                  class="followings-cnt open point"
+                  @click="showFollowings()"
+                  style="float: left; margin-right: 2rem; font-size: 1.2rem"
+                >
+                  {{ followingsCnt }} Follwing
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 미니 메뉴 -->
       <div
-      class="row justify-content-center"
-      style="
-        margin-top: 2rem;
-        margin-bottom: 30px;
-        border-style: solid;
-        border-width: 1px;
-        border-color: white white #bdbdbd white;
-      "
-      ><div class="col col-lg-2 header-tab point">
-        <router-link to="/posts" style="text-decoration: none; color: #424242; font-size:1.2rem"
-          >Posts</router-link
-        >
-      </div>
-      <div class="col col-lg-2 header-tab">
-        <router-link to="/liked" style="text-decoration: none; color: #424242 ; font-size:1.2rem"
-          >Liked</router-link
-        >
-      </div>
-    </div>
-    <div class="row" style="height: 30px"></div>
-
-    <div class="container">
-      <div class="row" style="justify-content: center">
-        <div class="col">
-          <the-post>post</the-post>
+        class="row justify-content-center"
+        style="
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+          border-style: solid;
+          border-width: 1px;
+          border-color: white white #bdbdbd white;
+        "
+      >
+        <div class="col col-lg-2 header-tab point">
+          <router-link
+            to="/profile"
+            style="text-decoration: none; color: #424242; font-size: 1.2rem"
+            >Posts</router-link
+          >
         </div>
-        <div class="col">
-          <the-post>post</the-post>
-        </div>
-        <div class="col">
-          <the-post>post</the-post>
-        </div>
-        <div class="col">
-          <the-post>post</the-post>
+        <div class="col col-lg-2 header-tab">
+          <router-link
+            to="/liked"
+            style="text-decoration: none; color: #424242; font-size: 1.2rem"
+            >Liked</router-link
+          >
         </div>
       </div>
 
+      <!-- 게시글 영역 -->
       <div class="row" style="height: 30px"></div>
+      <div class="container">
+        <div class="row" style="justify-content: center">
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+        </div>
 
-      <div class="row">
-        <div class="col">
-          <the-post>post</the-post>
+        <div class="row" style="height: 30px"></div>
+
+        <div class="row">
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
+          <div class="col">
+            <the-post>post</the-post>
+          </div>
         </div>
-        <div class="col">
-          <the-post>post</the-post>
-        </div>
-        <div class="col">
-          <the-post>post</the-post>
-        </div>
-        <div class="col">
-          <the-post>post</the-post>
-        </div>
+
+        <div class="row" style="height: 40px"></div>
       </div>
-
-      <div class="row" style="height: 40px"></div>
     </div>
-
-
   </div>
 </template>
 
 <script>
 import { onMounted } from "vue";
 import { reactive } from "vue";
-// import { useRouter } from "vue-router";
+
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
+import axios from "axios";
+import FollowersList from "@/components/pages/user/FollowersList.vue";
+import FollowingsList from "@/components/pages/user/FollowingsList.vue";
+
+let token = sessionStorage.getItem("token");
 
 export default {
   name: "ProfilePage",
   components: {
     TheNavBarMypage,
+    FollowersList,
+    FollowingsList,
   },
   setup() {
     // const router = useRouter();
@@ -151,11 +217,99 @@ export default {
       state,
     };
   },
+  data() {
+    return {
+      nickname: "",
+      postsCnt: "",
+      followersCnt: "",
+      followingsCnt: "",
+      isFollowed: "",
+      myProfile: "",
+      profileIntro: "",
+      profileUrl: "",
+      followersPop: false,
+      followingsPop: false,
+    };
+  },
+  created() {
+    this.getProfile();
+  },
+  methods: {
+    toLiked() {
+      this.$router.push({ name: "likedPosts" });
+    },
+    getProfile() {
+      const nickname = this.$route.params.nickname;
+      axios({
+        method: "get",
+        url: `${process.env.VUE_APP_API_URL}/api/v1/members/${nickname}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(({ data }) => {
+        console.log(data);
+        this.nickname = data.nickname;
+        this.postsCnt = data.postsCnt;
+        this.followersCnt = data.followerCnt;
+        this.followingsCnt = data.followingCnt;
+        this.isFollowed = data.isFollowed;
+        this.myProfile = data.myProfile;
+        this.profileIntro = data.profileIntro;
+        this.profileUrl = data.profileUrl;
 
-  // components: {},
-  // props: {},
-  // data: () => ({}),
-  // methods: {},
+        const followbtn = document.querySelector("#followbtn");
+        if (this.isFollowed === true) {
+          followbtn.innerText = "팔로잉";
+        } else {
+          followbtn.innerText = "팔로우";
+        }
+      });
+    },
+    async toggleFollow() {
+      if (!this.isFollowed) {
+        await this.followAPI(this.nickname);
+      } else {
+        await this.unfollowAPI(this.nickname);
+      }
+      this.isFollowed = !this.isFollowed;
+      this.isFollowed ? this.followersCnt++ : this.followersCnt--;
+
+      const followbtn = document.querySelector("#followbtn");
+      if (this.isFollowed === true) {
+        followbtn.innerText = "팔로잉";
+      } else {
+        followbtn.innerText = "팔로우";
+      }
+    },
+    async followAPI(nickname) {
+      let body = { nickname: nickname };
+      axios({
+        method: "post",
+        url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
+        headers: { Authorization: `Bearer ${token}` },
+        data: body,
+      })
+        .then((res) => {
+          this.success = res.data.success;
+        })
+        .catch((e) => console.log(e));
+    },
+    async unfollowAPI(nickname) {
+      let body = { nickname: nickname };
+      axios({
+        method: "delete",
+        url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
+        headers: { Authorization: `Bearer ${token}` },
+        data: body,
+      }).then((res) => (this.success = res.data.success));
+    },
+    showFollowers() {
+      this.followersPop = !this.followersPop;
+    },
+    showFollowings() {
+      this.followingsPop = !this.followingsPop;
+    },
+  },
 };
 </script>
 
@@ -234,8 +388,8 @@ input[type="file"] {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 270px;
-  height: 290px;
+  width: 300px;
+  height: 200px;
   object-fit: block;
 }
 .profile-main-photo:hover {
@@ -275,20 +429,46 @@ input[type="file"] {
   flex-direction: column;
   align-items: center;
 }
-.follow-button {
+.active-button {
   width: 100px;
   height: 40px;
   flex-shrink: 0;
   border-radius: 10px;
-  background: #2191FF;
-  color: #fffFFF;
+  background: #2191ff;
+  color: #ffffff;
 }
-.unfollow-button {
+.inactive-button {
   width: 100px;
   height: 40px;
   flex-shrink: 0;
   border-radius: 10px;
   background: #cecece;
-  color: #fffFFF;
+  color: #ffffff;
+}
+.black-bg {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+.fmodal {
+  width: 35%;
+  height: 80%;
+  background: white;
+  /* background-color: white; */
+  border-radius: 10px;
+  padding: 20px;
+}
+.close {
+  position: absolute;
+  right: 35%;
+  font-size: 2rem;
+  color: #bdbdbd;
+}
+.open:hover {
+  color: #2191ff;
 }
 </style>
