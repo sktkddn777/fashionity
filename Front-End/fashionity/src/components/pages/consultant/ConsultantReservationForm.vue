@@ -102,7 +102,7 @@
         <div class="col-3">
           <router-link
             class="link"
-            to="/consultant/reservation/time"
+            to="/consultant/reservation/confirm"
             @propChange="propChange"
             ><button>NEXT</button></router-link
           >
