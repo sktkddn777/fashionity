@@ -64,8 +64,35 @@
     </div>
   </div>
 </template>
+<<<<<<< HEAD
 <script scoped>
 export default {};
+=======
+
+<script>
+import { mapActions } from "vuex";
+import router from "@/router";
+
+export default {
+  data() {
+    return {
+      userName: "태현",
+      roomId: "kth",
+    };
+  },
+  methods: {
+    ...mapActions(["updateMeetingInfo"]),
+    startMeeting() {
+      const meetingInfo = {
+        userName: this.userName,
+        roomId: this.roomId,
+      };
+      this.updateMeetingInfo(meetingInfo);
+      router.push({ name: "Consulting-WebCam-View" });
+    },
+  },
+};
+>>>>>>> 9d27a3bb18e3a4839307a1bb4e3e35162e459f76
 </script>
 <style scoped>
 .block {

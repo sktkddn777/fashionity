@@ -75,6 +75,7 @@ export default {
       message: "",
       recvList: [],
       roomSession: "xogus",
+      roomId: "kth",
     };
   },
   // computed: {
@@ -123,7 +124,7 @@ export default {
     },
     connect() {
       console.log("방 정보 : " + this.roomId);
-      const serverURL = "http://localhost:8080";
+      const serverURL = "http://localhost:8081";
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
