@@ -19,6 +19,7 @@
             @keyup="validate"
             v-model="password"
             :counter="20"
+            type="password"
             :rules="passwordRules"
             label="비밀번호를 입력하시오"
             required
