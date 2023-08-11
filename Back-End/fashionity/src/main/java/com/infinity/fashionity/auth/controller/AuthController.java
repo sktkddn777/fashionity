@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -89,9 +88,11 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity<ReissueDTO.Response> reissue(
-            @CookieValue("refreshToken") String refreshToken
+            @RequestBody ReissueDTO.Request dto,
+            @CookieValue(name = "refreshToken") String refreshToken
     ) {
-        ReissueDTO.Response response = authService.reissue(refreshToken);
+        ReissueDTO.Response response = authService.reissue(refreshToken, dto.getAccessToken(), dto.getMemberSeq());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }

@@ -1,13 +1,16 @@
 import router from "@/router";
-import { login, logout, register } from "@/api/member";
+import { login, logout, register, tokenRegeneration } from "@/api/member";
 import { useToast } from "vue-toastification";
+import { useCookies } from "vue3-cookies";
+import axios from "axios";
 
 const toast = useToast();
+const { cookies } = useCookies();
 
 const memberStore = {
   namespaced: true,
   state: {
-    loginUser: {},
+    loginUser: null,
     isLogin: false,
     isValidToken: false,
   },
@@ -29,11 +32,14 @@ const memberStore = {
     LOGOUT(state) {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("memberSeq");
-      state.loginUser = {};
+      state.loginUser = null;
       state.isLogin = false;
     },
-    SET_IS_VALID_TOKEN: (state, isValidToken) => {
+    SET_IS_VALID_TOKEN(state, isValidToken) {
       state.isValidToken = isValidToken;
+    },
+    SET_USER_INFO(state, data) {
+      state.loginUser = data;
     },
   },
   actions: {
@@ -57,9 +63,13 @@ const memberStore = {
       await login(
         user,
         ({ data }) => {
-          console.log("data: " + data);
-
+          console.log("login success");
+          if (!data.profileUri)
+            data.profileUri =
+              "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Front-Facing%20Baby%20Chick.png";
           commit("LOGIN", data);
+          commit("SET_IS_VALID_TOKEN", true);
+          cookies.set("refreshToken", data.refreshToken, "14d");
           router.push({ name: "main" });
         },
         ({ response }) => {
@@ -105,18 +115,72 @@ const memberStore = {
         }
       );
     },
-    async logoutAction({ commit }, user) {
+    async logoutAction({ commit }) {
+      console.log("logoutAction start");
       await logout(
-        user,
         ({ data }) => {
           console.log("data: " + data);
           commit("LOGOUT");
+          commit("SET_IS_VALID_TOKEN", false);
+          cookies.remove("refreshToken");
         },
         ({ response }) => {
           console.log(response);
         }
       );
     },
+    async getUserInfoAction({ commit, dispatch }) {
+      axios({
+        url: `${process.env.VUE_APP_API_URL} + "/api/v1/members";`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        method: "GET",
+      })
+        .then(({ data }) => {
+          console.log("[getUserInfoAction] success " + data);
+        })
+        .catch(async ({ response }) => {
+          console.log("[getUserInfoAction] fail " + response);
+          commit("SET_IS_VALID_TOKEN", false);
+          await dispatch("tokenRegeneration");
+        });
+    },
+
+    async tokenRegeneration({ commit }) {
+      const reissueRequest = {
+        accessToken: sessionStorage.getItem("token"),
+        memberSeq: sessionStorage.getItem("memberSeq"),
+      };
+      await tokenRegeneration(
+        reissueRequest,
+        ({ data }) => {
+          let accessToken = data.accessToken;
+          console.log("[tokenRegeneration] success : {}", accessToken);
+          sessionStorage.setItem("token", accessToken);
+          commit("SET_IS_VALID_TOKEN", true);
+        },
+        async ({ response }) => {
+          console.log("[tokenRegeneration] fail : {}", response);
+          await logout(
+            ({ data }) => {
+              console.log("[logout] " + data);
+              alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
+              commit("LOGOUT");
+              commit("SET_IS_VALID_TOKEN", false);
+              cookies.remove("refreshToken");
+              router.push({ name: "login" });
+            },
+            (error) => {
+              console.log(error);
+              commit("SET_IS_LOGIN", false);
+              commit("SET_USER_INFO", null);
+            }
+          );
+        }
+      );
+    },
+
     // async userConfirm({ commit }, user) {
     //   await login(
     //     user,
@@ -161,48 +225,7 @@ const memberStore = {
     //     }
     //   );
     // },
-    // async tokenRegeneration({ commit, state }) {
-    //   console.log(
-    //     "토큰 재발급 >> 기존 토큰 정보 : {}",
-    //     sessionStorage.getItem("access-token")
-    //   );
-    //   await tokenRegeneration(
-    //     JSON.stringify(state.userInfo),
-    //     ({ data }) => {
-    //       if (data.message === "success") {
-    //         let accessToken = data["access-token"];
-    //         console.log("재발급 완료 >> 새로운 토큰 : {}", accessToken);
-    //         sessionStorage.setItem("access-token", accessToken);
-    //         commit("SET_IS_VALID_TOKEN", true);
-    //       }
-    //     },
-    //     async (error) => {
-    //       if (error.response.status === 401) {
-    //         console.log("갱신 실패");
-    //         await logout(
-    //           state.userInfo.userid,
-    //           ({ data }) => {
-    //             if (data.message === "success") {
-    //               console.log("리프레시 토큰 제거 성공");
-    //             } else {
-    //               console.log("리프레시 토큰 제거 실패");
-    //             }
-    //             alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
-    //             commit("SET_IS_LOGIN", false);
-    //             commit("SET_USER_INFO", null);
-    //             commit("SET_IS_VALID_TOKEN", false);
-    //             router.push({ name: "login" });
-    //           },
-    //           (error) => {
-    //             console.log(error);
-    //             commit("SET_IS_LOGIN", false);
-    //             commit("SET_USER_INFO", null);
-    //           }
-    //         );
-    //       }
-    //     }
-    //   );
-    // },
+
     // async userLogout({ commit }, userid) {
     //   await logout(
     //     userid,

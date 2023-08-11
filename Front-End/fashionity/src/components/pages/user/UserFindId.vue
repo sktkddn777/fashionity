@@ -68,7 +68,7 @@ export default {
       }
 
       axios({
-        url: "http://localhost:8080/api/v1/auth/find/id",
+        url: `${process.env.VUE_APP_API_URL}/api/v1/auth/find/id`,
         method: "POST",
         data: data,
       })
@@ -90,7 +90,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: "http://localhost:8080/api/v1/auth/check/email",
+          url: `${process.env.VUE_APP_API_URL}/api/v1/auth/check/email`,
           method: "GET",
           params: {
             email: this.email,
