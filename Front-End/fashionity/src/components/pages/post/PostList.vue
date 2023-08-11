@@ -55,6 +55,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import ThePost from "./ThePost.vue";
 import axios from "axios";
@@ -189,6 +190,7 @@ export default {
   },
 };
 </script>
+
 <style>
 .tools {
   margin-bottom: 30px;

@@ -112,6 +112,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 #post_outer {
   border: 1px solid rgba(189, 189, 189, 0.3);

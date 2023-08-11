@@ -24,6 +24,10 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import "vue-toastification/dist/index.css";
 
 import { loadFonts } from "./fontAwesomeIcon";
+// import VueSidePanel from "vue3-side-panel";
+// import "vue3-side-panel/dist/vue3-side-panel.css";
+import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
 /* add icons to the library */
 library.add(faUserSecret);
