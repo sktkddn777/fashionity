@@ -11,6 +11,11 @@
         />
       </div>
       <div class="col"></div>
+      <div class="col-3">
+        <router-link to="/consultant/myreservation/list" class="link"
+          ><div>내 예약 바로가기</div></router-link
+        >
+      </div>
     </div>
 
     <div class="row" style="height: 30px"></div>

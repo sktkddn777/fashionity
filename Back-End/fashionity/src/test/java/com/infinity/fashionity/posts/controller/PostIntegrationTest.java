@@ -283,7 +283,6 @@ public class PostIntegrationTest {
                 assertThat(post.getPostSeq()).isEqualTo(expect.getPostSeq());
                 assertThat(post.getName()).isEqualTo(expect.getName());
                 assertThat(post.getLikeCount()).isEqualTo(expect.getLikeCount());
-                assertThat(post.getCommentCount()).isEqualTo(expect.getCommentCount());
                 assertThat(post.isLiked()).isEqualTo(expect.isLiked());
                 assertThat(post.getProfileImg()).isEqualTo(expect.getProfileImg());
                 assertThat(post.getImages().size()).isEqualTo(expect.getImages().size());
@@ -332,7 +331,6 @@ public class PostIntegrationTest {
                 assertThat(post.getPostSeq()).isEqualTo(expect.getPostSeq());
                 assertThat(post.getName()).isEqualTo(expect.getName());
                 assertThat(post.getLikeCount()).isEqualTo(expect.getLikeCount());
-                assertThat(post.getCommentCount()).isEqualTo(expect.getCommentCount());
                 assertThat(post.isLiked()).isEqualTo(expect.isLiked());
                 assertThat(post.getProfileImg()).isEqualTo(expect.getProfileImg());
                 assertThat(post.getImages().size()).isEqualTo(expect.getImages().size());

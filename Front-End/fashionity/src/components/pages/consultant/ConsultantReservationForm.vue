@@ -1,17 +1,21 @@
 <template lang="">
   <div id="reservation-form" class="container-fluid scroll">
-    <div class="row justify-content-center detail-title">
+    <div
+      class="row justify-content-center detail-title"
+      style="margin-top: 5px"
+    >
       상세 예약 정보 등록
     </div>
     <!-- 불러오기 버튼 -->
-    <div class="row justify-content-end">
-      <div class="col">
+    <div class="row justify-content-end" style="margin-bottom: 20px">
+      <div class="col"></div>
+      <div class="col-1">
         <div class="detail-button">불러오기</div>
       </div>
     </div>
 
     <!-- 예약 정보 form  -->
-    <div class="row">
+    <div class="row margin">
       <form action="">
         <!-- 나이, 성별 -->
         <div class="row justify-content-center">
@@ -20,10 +24,10 @@
         </div>
         <div class="row justify-content-center">
           <div class="col">
-            <input type="text" class="input-form" />
+            <input type="text" class="input-form" style="width: 10vw" />
           </div>
           <div class="col">
-            <fieldset>
+            <fieldset style="padding-top: 10px">
               <label>
                 <input type="radio" name="gender" value="m" checked />
                 <span>남성</span>
@@ -37,7 +41,7 @@
           </div>
         </div>
 
-        <div class="row" style="height: 40px"></div>
+        <div class="row margin" style="height: 30px"></div>
 
         <!-- 신장, 몸무게 -->
         <div class="row justify-content-center">
@@ -46,95 +50,54 @@
         </div>
         <div class="row justify-content-center">
           <div class="col">
-            <input type="text" class="input-form" />
+            <input type="text" class="input-form" style="width: 10vw" />
           </div>
           <div class="col">
-            <input type="text" class="input-form" />
+            <input type="text" class="input-form" style="width: 10vw" />
           </div>
+        </div>
+
+        <div class="row margin" style="height: 30px"></div>
+
+        <!-- 퍼스널 컬러 -->
+
+        <div class="row justify-content-center">
+          <div class="col">퍼스널 컬러</div>
+          <div class="col"></div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col"></div>
+          <div class="col-9 justify-content-center">
+            <v-select
+              class="row"
+              clearable
+              :items="[
+                '모름',
+                '봄 : 웜톤',
+                '여름 : 쿨톤',
+                '가을 : 웜톤',
+                '겨울 : 쿨톤',
+              ]"
+              style="width: 15vw"
+            ></v-select>
+          </div>
+          <div class="col"></div>
         </div>
 
         <!-- 평소 나의 스타일 등록 -->
-        <div class="row">
-          <multi-image-upload></multi-image-upload>
+        <div class="row justify-content-center">
+          <div class="col-9">
+            <multi-image-upload></multi-image-upload>
+          </div>
         </div>
 
         <!-- 평소 나의  등록 -->
-        <div class="row">
+        <!-- <div class="row">
           <multi-image-upload></multi-image-upload>
-        </div>
+        </div> -->
       </form>
     </div>
-    <!-- <v-form ref="form" v-model="isValid">
-  
-      <div class="row">
-        <div class="col-2">
-          <div class="row justify-content-center">나이</div>
-          <div class="row justify-content-center">
-            <v-text-field
-              @keyup="validate"
-              v-model="id"
-              :counter="20"
-              :rules="idRules"
-              label="아이디를 입력하시오"
-              required
-            ></v-text-field>
-          </div>
-        </div>
-        <div class="col">
-          <v-text-field
-            @keyup="validate"
-            v-model="id"
-            :counter="20"
-            :rules="idRules"
-            label="아이디를 입력하시오"
-            required
-          ></v-text-field>
-        </div>
-      </div>
-     
-
-      <div class="row justify-content-center">
-        <div class="col-3">
-          <div class="row justify-content-center">나이</div>
-          <div class="col">
-            <v-text-field
-              @keyup="validate"
-              v-model="id"
-              :counter="20"
-              :rules="idRules"
-              label="아이디를 입력하시오"
-              required
-            ></v-text-field>
-          </div>
-        </div>
-
-        <div class="col-3">
-          <div class="row justify-content-center">나이</div>
-          <div class="row justify-content-center">
-            <v-text-field
-              @keyup="validate"
-              v-model="id"
-              :counter="20"
-              :rules="idRules"
-              label="아이디를 입력하시오"
-              required
-            ></v-text-field>
-          </div>
-        </div>
-      </div> -->
-
-    <!-- <div class="row"> -->
-    <!-- <v-btn
-          v-bind:disabled="!isValid"
-          v-bind:color="!isValid ? 'grey' : 'black'"
-          class="register-button"
-          block
-          @click="register"
-        >
-          회원가입
-        </v-btn> -->
-    <!-- </div> -->
-    <!-- </v-form> -->
   </div>
 </template>
 <script>
@@ -187,6 +150,7 @@ export default {
 }
 
 .scroll {
+  overflow: scroll;
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
 }

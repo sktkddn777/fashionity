@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import Toast from "vue-toastification";
+import testStore from "./store/modules/testStore";
 // import "v-calendar/dist/style.css";
 // import VCalendar from "v-calendar";
 
@@ -38,5 +39,6 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(Toast)
+  .use(testStore)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");
