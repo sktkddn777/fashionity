@@ -27,8 +27,9 @@
       </div>
       <div class="col-8" style="height: 75vh">
         <router-view></router-view>
-        <div class="row justify-content-end">
-          <div class="col-1">
+        <div class="row">
+          <div class="col"></div>
+          <div class="col-3">
             <button>NEXT</button>
           </div>
         </div>
@@ -71,12 +72,12 @@ export default {
 }
 
 button {
-  background: #424242;
+  background: black;
   color: #fff;
   border: none;
   position: relative;
-  height: 60px;
-  font-size: 1.6em;
+  height: 40px;
+  font-size: 1.2em;
   padding: 0 2em;
   cursor: pointer;
   transition: 800ms ease all;
