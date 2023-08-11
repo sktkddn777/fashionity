@@ -400,10 +400,11 @@ export default {
     },
     deleteConfirm() {
       if (confirm("삭제하시겠습니까?")) {
-        this.deletePost;
+        this.deletePost();
       }
     },
     async deletePost() {
+      console.log("deletePost");
       try {
         await this.callDeleteAPI();
         alert("삭제되었습니다.");
@@ -413,9 +414,10 @@ export default {
       }
     },
     navigateToMain() {
-      this.$router.push("/");
+      this.$router.push("/post");
     },
     callDeleteAPI() {
+      console.log("callDeleteAPI");
       let token = sessionStorage.getItem("token");
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.post.postSeq}`,
