@@ -37,7 +37,7 @@
                   </div>
                 </div>
                 <div class="col">
-                  <router-link to="post/write" class="link">
+                  <router-link to="/post/write" class="link">
                     <font-awesome-icon
                       :icon="['fas', 'circle-plus']"
                       style="color: #bdbdbd"
@@ -64,7 +64,6 @@
                       type="button"
                     />
                   </button>
-
                   <div
                     class="offcanvas offcanvas-end"
                     tabindex="-1"

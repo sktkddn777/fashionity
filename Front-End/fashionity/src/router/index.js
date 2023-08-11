@@ -128,9 +128,10 @@ const router = createRouter({
           component: PostList,
         },
         {
-          path: "detail",
+          path: ":seq",
           name: "postDetail",
           component: PostDetail,
+          props: true,
         },
         {
           path: "write",
