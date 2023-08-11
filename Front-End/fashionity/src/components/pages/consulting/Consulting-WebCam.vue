@@ -225,6 +225,7 @@ export default {
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
     createSession(sessionId) {
       return new Promise((resolve, reject) => {
+        axios.defaults.withCredentials = false;
         console.log("---------------------createSession : " + sessionId);
         axios
           .post(
