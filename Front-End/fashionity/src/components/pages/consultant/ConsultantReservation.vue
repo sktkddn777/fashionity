@@ -29,13 +29,6 @@
         <router-view></router-view>
         <div class="row">
           <div class="col"></div>
-          <div v-if="pageIngo == 'date'" class="col-3">
-            <router-link to="time" :pageInfo="pageInfo"></router-link
-            ><button>NEXT</button>
-          </div>
-          <div v-else class="col-3">
-            <router-link to="detail"><button>NEXT</button></router-link>
-          </div>
         </div>
       </div>
     </div>
@@ -46,13 +39,30 @@ import ConsultantReview from "@/components/pages/consultant/ConsultantReview.vue
 export default {
   data() {
     return {
-      pagaInfo: "date",
+      // propInfo: "",
     };
   },
   components: {
     ConsultantReview,
   },
   props: {},
+  // methods: {
+  //   propChange(prop) {
+  //     console.log("AAAAAAAAAAAAAAAAAA");
+  //     this.propInfo = prop;
+  //     console.log("mount 후", this.propInfo);
+  //   },
+  // },
+  // mounted() {
+  //   this.propInfo = "date";
+  //   console.log(this.propInfo);
+  // },
+  // watch: {
+  //   propInfo(newVal) {
+  //     this.propInfo = newVal;
+  //     console.log("watch", this.propInfo);
+  //   },
+  // },
 };
 </script>
 <style scoped>
@@ -76,44 +86,5 @@ export default {
 .scroll {
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
-}
-
-button {
-  background: black;
-  color: #fff;
-  border: none;
-  position: relative;
-  height: 40px;
-  font-size: 1.2em;
-  padding: 0 2em;
-  cursor: pointer;
-  transition: 800ms ease all;
-  outline: none;
-}
-button:hover {
-  background: #fff;
-  color: #424242;
-}
-button:before,
-button:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 2px;
-  width: 0;
-  background: #424242;
-  transition: 400ms ease all;
-}
-button:after {
-  right: inherit;
-  top: inherit;
-  left: 0;
-  bottom: 0;
-}
-button:hover:before,
-button:hover:after {
-  width: 100%;
-  transition: 800ms ease all;
 }
 </style>
