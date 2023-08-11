@@ -29,8 +29,12 @@
         <router-view></router-view>
         <div class="row">
           <div class="col"></div>
-          <div class="col-3">
-            <button>NEXT</button>
+          <div v-if="pageIngo == 'date'" class="col-3">
+            <router-link to="time" :pageInfo="pageInfo"></router-link
+            ><button>NEXT</button>
+          </div>
+          <div v-else class="col-3">
+            <router-link to="detail"><button>NEXT</button></router-link>
           </div>
         </div>
       </div>
@@ -41,11 +45,14 @@
 import ConsultantReview from "@/components/pages/consultant/ConsultantReview.vue";
 export default {
   data() {
-    return {};
+    return {
+      pagaInfo: "date",
+    };
   },
   components: {
     ConsultantReview,
   },
+  props: {},
 };
 </script>
 <style scoped>
