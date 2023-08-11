@@ -2,9 +2,9 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import testStore from "./store/modules/testStore";
 import vuetify from "./plugins/vuetify";
 import Toast from "vue-toastification";
+import testStore from "./store/modules/testStore";
 // import "v-calendar/dist/style.css";
 // import VCalendar from "v-calendar";
 

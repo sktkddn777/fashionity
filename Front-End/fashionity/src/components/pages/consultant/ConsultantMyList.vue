@@ -84,7 +84,7 @@ export default {
         roomId: this.roomId,
       };
       this.updateMeetingInfo(meetingInfo);
-      router.push({ name: "ConsultingPage" });
+      router.push({ name: "Consulting-WebCam-View" });
     },
   },
 };

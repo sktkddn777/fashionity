@@ -66,27 +66,27 @@
 <script>
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
-import { mapState } from "vuex";
+// import { mapState } from "vuex";
 
 export default {
   name: "TheChatting",
   data() {
     return {
-      // userName: "",
+      userName: "태현",
       message: "",
       recvList: [],
-      // roomSession: "",
+      roomId: "kth",
     };
   },
-  computed: {
-    ...mapState(["meetingInfo"]),
-    userName() {
-      return this.meetingInfo.userName;
-    },
-    roomId() {
-      return this.meetingInfo.roomId;
-    },
-  },
+  // computed: {
+  //   ...mapState(["meetingInfo"]),
+  //   userName() {
+  //     return this.meetingInfo.userName;
+  //   },
+  //   roomId() {
+  //     return this.meetingInfo.roomId;
+  //   },
+  // },
   created() {
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
     console.log("크리에이티드1 : " + this.userName);
@@ -124,7 +124,7 @@ export default {
     },
     connect() {
       console.log("방 정보 : " + this.roomId);
-      const serverURL = "http://localhost:8080";
+      const serverURL = "http://localhost:8081";
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
