@@ -12,18 +12,18 @@
       class="profile-info"
       style="display: flex; flex-direction: row; align-items: center"
     >
-      <!-- <div>{{ follower.profileUrl }}</div> -->
       <div class="profile-photo" style="margin-right: 1.2rem">
-        <img class="image-box" width="60" height="60" />
+        <img :src = "profileUrl" class="image-box" width="60" height="60" />
       </div>
       <div>{{ follower.nickname }}</div>
     </div>
     <button
+      v-if = "nickname !== myNickname"
       id="followbtn"
       :class="isFollowed ? 'inactive-button' : 'active-button'"
       @click="toggleFollow()"
     >
-      팔로우
+      {{ isFollowed ? '팔로잉' : '팔로우' }}
     </button>
   </div>
 </template>
@@ -32,46 +32,29 @@
 import axios from "axios";
 
 let token = sessionStorage.getItem("token");
-// let loginNickname =
 const followbtn = document.querySelector("#followvbtn");
 
 export default {
   props: ["follower"],
   data() {
     return {
-      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
       profileUrl: this.follower.profileUrl,
       nickname: this.follower.nickname,
       isFollowing: this.follower.isFollowing,
-      isFollowed: null, // 로그인한 유저가 팔로우하는지
+      isFollowed: this.follower.isFollowed, // 로그인한 유저가 팔로우하는지
+      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
     };
   },
+  
   methods: {
-    async getFollowInfo() {
-      // 로그인한 유저의 팔로우 정보
-      axios({
-        method: "get",
-        url: `${process.env.VUE_APP_API_URL}/api/v1/members/${this.myNickname}`,
-        headers: { Authorization: `Bearer ${token}` },
-      }).then(({ data }) => {
-        this.isFollowed = data.isFollowed;
-        console.log("AA:" + data.isFollowed);
-        if (this.isFollowed) {
-          followbtn.innerText = "팔로잉";
-        } else {
-          followbtn.innerText = "팔로우";
-        }
-      });
-    },
     async toggleFollow() {
       if (!this.isFollowed) {
         await this.followAPI(this.follower.nickname);
       } else {
         await this.unfollowAPI(this.follower.nickname);
       }
-
       if (this.isFollowed == true) {followbtn.innerText = "팔로잉";} 
-      else if (this.follower.nickname === this.myNickname) {followbtn.style.display = "none"}
+      else if (this.follower.nickname === this.myNickname) {followbtn.innerText = "팔로잉";} //{followbtn.style.display = "none"}
       else {followbtn.innerText = "팔로우";}
     },
     async followAPI(nickname) {

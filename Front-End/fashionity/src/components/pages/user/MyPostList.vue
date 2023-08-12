@@ -51,13 +51,13 @@ export default{
       method: "GET",
     })
     .then(({data}) => {
-      console.log(data)
+      // console.log(data)
       this.posts = data.profilePosts;
       this.dataLoaded = true;
       this.page++;
     })
     .catch((exception) => {
-      console.log(exception)
+      // console.log(exception)
       if (exception.response && exception.response.status === 401) {
         //유효기간이 다 된 토큰이면 일단 보여주셈
         axios({
@@ -141,9 +141,6 @@ export default{
 .row {
   display: flex;
   margin-bottom: 1.2rem;
-}
-.first-in-row {
-  margin-left: 0;
 }
 
 </style>

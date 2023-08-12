@@ -66,12 +66,13 @@
                 </div>
 
                 <button
+                  v-if = "nickname !== myNickname"
                   id="followbtn"
                   :class="isFollowed ? 'inactive-button' : 'active-button'"
                   @click="toggleFollow()"
                   style="margin-left: 0.5rem"
                 >
-                  팔로우
+                  {{isFollowed ? '팔로잉':'팔로우'}}
                 </button>
                 <button class="inactive-button" style="margin-left: 0.5rem">
                   프로필 수정
@@ -197,6 +198,7 @@ export default {
       profileUrl: "",
       followersPop: false,
       followingsPop: false,
+      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
     };
   },
   created() {
@@ -215,7 +217,6 @@ export default {
           Authorization: `Bearer ${token}`,
         },
       }).then(({ data }) => {
-        console.log(data);
         this.nickname = data.nickname;
         this.postsCnt = data.postsCnt;
         this.followersCnt = data.followerCnt;
@@ -224,11 +225,6 @@ export default {
         this.myProfile = data.myProfile;
         this.profileIntro = data.profileIntro;
         this.profileUrl = data.profileUrl;
-
-        const followbtn = document.querySelector("#followbtn");
-        if (this.isFollowed === true) {followbtn.innerText = "팔로잉";} 
-        else if (this.nickname === this.$store.getters["memberStore/checkLoginUser"].nickname) {followbtn.style.display = "none"}
-        else {followbtn.innerText = "팔로우";}
       });
     },
     async toggleFollow() {
@@ -239,13 +235,6 @@ export default {
       }
       this.isFollowed = !this.isFollowed;
       this.isFollowed ? this.followersCnt++ : this.followersCnt--;
-
-      const followbtn = document.querySelector("#followbtn");
-      if (this.isFollowed === true) {
-        followbtn.innerText = "팔로잉";
-      } else {
-        followbtn.innerText = "팔로우";
-      }
     },
     async followAPI(nickname) {
       let body = { nickname: nickname };

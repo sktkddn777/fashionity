@@ -12,18 +12,18 @@
       class="profile-info"
       style="display: flex; flex-direction: row; align-items: center"
     >
-      <!-- <div>{{ following.profileUrl }}</div> -->
       <div class="profile-photo" style="margin-right: 1.2rem">
-        <img class="image-box" width="60" height="60" />
+        <img :src = "profileUrl" class="image-box" width="60" height="60" />
       </div>
       <div>{{ following.nickname }}</div>
     </div>
     <button
+      v-if = "nickname !== myNickname"
       id="followbtn"
       :class="isFollowed ? 'inactive-button' : 'active-button'"
       @click="toggleFollow()"
     >
-      팔로우
+      {{ isFollowed ? '팔로잉' : '팔로우' }}
     </button>
   </div>
 </template>
@@ -42,15 +42,10 @@ export default {
       profileUrl: this.following.profileUrl,
       nickname: this.following.nickname,
       isFollowing: this.following.isFollowing,
+      isFollowed : this.following.isFollowed,
+      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
     };
   },
-  // setup() {
-  //   const store = useStore();
-  //   this.test = computed(() => store.state.loginUser);
-  // },
-  // computed: {
-  // 	...mapGetters(memberStore, ['checkLoginUser']),
-  // },
   methods: {
     async toggleFollow() {
       console.log(this.nickname);
@@ -63,7 +58,7 @@ export default {
       if (this.isFollowing == true) {
         followbtn.innerText = "팔로잉";
       }
-      // else if(this.nickname === this.checkLoginUser){document.getElementById('followbtn').style.visibility ='hidden'}
+      else if(this.nickname === this.$store.getters["memberStore/checkLoginUser"].nickname){document.getElementById('followbtn').style.display ="none"}
       else {
         followbtn.innerText = "팔로우";
       }
