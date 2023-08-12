@@ -1,9 +1,6 @@
 <template lang="">
   <div id="reservation-form" class="container-fluid scroll">
-    <div
-      class="row justify-content-center detail-title"
-      style="margin-top: 5px"
-    >
+    <div class="row justify-content-center detail-title" style="margin-top: 5px">
       상세 예약 정보 등록
     </div>
     <!-- 불러오기 버튼 -->
@@ -72,13 +69,7 @@
             <v-select
               class="row"
               clearable
-              :items="[
-                '모름',
-                '봄 : 웜톤',
-                '여름 : 쿨톤',
-                '가을 : 웜톤',
-                '겨울 : 쿨톤',
-              ]"
+              :items="['모름', '봄 : 웜톤', '여름 : 쿨톤', '가을 : 웜톤', '겨울 : 쿨톤']"
               style="width: 15vw"
             ></v-select>
           </div>
@@ -100,10 +91,7 @@
       <div class="row">
         <div class="col"></div>
         <div class="col-3">
-          <router-link
-            class="link"
-            to="/consultant/reservation/confirm"
-            @propChange="propChange"
+          <router-link class="link" to="/consultant/reservation/confirm" @propChange="propChange"
             ><button>NEXT</button></router-link
           >
         </div>

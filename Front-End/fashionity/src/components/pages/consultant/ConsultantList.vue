@@ -20,7 +20,7 @@
 
     <div class="row" style="height: 30px"></div>
 
-    <div class="container">
+    <div class="container-fluid">
       <div class="row" style="justify-content: center">
         <div class="col">
           <router-link class="link" to="/consultant/reservation/"
@@ -87,4 +87,4 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style scoped></style>
