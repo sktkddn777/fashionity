@@ -17,8 +17,8 @@ export default {
 </script>
 <style>
 .fixed-image-size {
-  width: 200px;
-  height: 200px; 
+  width: 300px;
+  height: 300px; 
   object-fit: cover; 
 }
 </style>

@@ -70,16 +70,9 @@ export default {
         await this.unfollowAPI(this.follower.nickname);
       }
 
-      if (this.isFollowed == true) {
-        followbtn.innerText = "팔로잉";
-      } else if (
-        this.follower.nickname ===
-        this.$store.getters["memberStore/checkLoginUser"].nickname
-      ) {
-        followbtn.innerText = "나";
-      } else {
-        followbtn.innerText = "팔로우";
-      }
+      if (this.isFollowed == true) {followbtn.innerText = "팔로잉";} 
+      else if (this.follower.nickname === this.myNickname) {followbtn.style.display = "none"}
+      else {followbtn.innerText = "팔로우";}
     },
     async followAPI(nickname) {
       let body = { nickname: nickname };

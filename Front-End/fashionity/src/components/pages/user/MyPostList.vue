@@ -1,7 +1,7 @@
 <template>
   <div class = "container">
     <div v-if="dataLoaded">
-      <div class = "row" style="justify-content:center" v-for="(row, index) in postRow" :key = "index">
+      <div class = "row" style="justify-content:center; margin-bottom:1.2rem" v-for="(row, index) in postRow" :key = "index" >
         <div class = "col" v-for = "post in row" :key = "post.postSeq" >
           <my-post :post = "post"/>
         </div>
@@ -58,16 +58,15 @@ export default{
     })
     .catch((exception) => {
       console.log(exception)
-        let data = exception.response;
-        if (data.status === 401) {
-          //유효기간이 다 된 토큰이면 일단 보여주셈
-          axios({
-            url: `${process.env.VUE_APP_API_URL}/api/v1/members/${this.$route.params.nickname}/posts?page=${this.page}`,
-            method: "GET",
-          }).then((data) => {
-            this.posts = data.profilePosts;
-            this.dataLoaded = true;
-          });
+      if (exception.response && exception.response.status === 401) {
+        //유효기간이 다 된 토큰이면 일단 보여주셈
+        axios({
+          url: `${process.env.VUE_APP_API_URL}/api/v1/members/${this.$route.params.nickname}/posts?page=${this.page}`,
+          method: "GET",
+        }).then((data) => {
+          this.posts = data.profilePosts;
+          this.dataLoaded = true;
+        });
         }
       });
 
@@ -97,8 +96,8 @@ export default{
           this.page++;
         })
         .catch((exception) => {
-          let data = exception.response;
-          if (data.status === 401) {
+          // let data = exception.response;
+          if (exception.response && exception.response.status === 401) {
             //유효기간이 다 된 토큰이면 일단 보여주셈
             axios({
               url: `${process.env.VUE_APP_API_URL}/api/v1/members/${this.$route.params.nickname}/posts?page=${this.page}`,

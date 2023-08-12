@@ -139,7 +139,7 @@
 
       <!-- 게시글 영역 -->
       <my-post-list/>
-      
+
     </div>
   </div>
 </template>
@@ -226,11 +226,9 @@ export default {
         this.profileUrl = data.profileUrl;
 
         const followbtn = document.querySelector("#followbtn");
-        if (this.isFollowed === true) {
-          followbtn.innerText = "팔로잉";
-        } else {
-          followbtn.innerText = "팔로우";
-        }
+        if (this.isFollowed === true) {followbtn.innerText = "팔로잉";} 
+        else if (this.nickname === this.$store.getters["memberStore/checkLoginUser"].nickname) {followbtn.style.display = "none"}
+        else {followbtn.innerText = "팔로우";}
       });
     },
     async toggleFollow() {
