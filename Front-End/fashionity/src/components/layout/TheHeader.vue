@@ -1,17 +1,23 @@
 <template lang="">
   <div>
-    <div class="container-fluid">
-      <div class="row">
+    <div class="container-fluid" style="background-color: white">
+      <div class="row" style="margin-top: 20px">
         <div class="col-3" id="logo">
           <router-link
             to="/"
             class="link"
-            style="font-style: normal; font-size: 50px; padding-top: 20px"
+            style="
+              font-style: normal;
+              font-size: 50px;
+              padding-top: 30px;
+              background-color: white;
+              margin-top: 20px;
+            "
             >fashionity</router-link
           >
         </div>
         <div class="col">
-          <div class="row justify-content-end">
+          <div class="row justify-content-end" style="margin-top: -20px">
             <div class="col-8"></div>
             <div class="col">
               <div class="row justify-content-end">

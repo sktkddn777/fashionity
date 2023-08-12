@@ -15,6 +15,7 @@ import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
 import ConsultantMyList from "@/components/pages/consultant/ConsultantMyList";
+import ConsultantReservationSubmit from "@/components/pages/consultant/ConsultantReservationSubmit";
 import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
@@ -191,6 +192,11 @@ const router = createRouter({
               path: "detail",
               name: "consultantDetail",
               component: ConsultantReservationForm,
+            },
+            {
+              path: "confirm",
+              name: "sumbit",
+              component: ConsultantReservationSubmit,
             },
           ],
         },
