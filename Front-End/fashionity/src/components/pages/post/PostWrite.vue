@@ -80,7 +80,7 @@ export default {
       tagInput: "",
       tagList: [],
       contentInput: "",
-      images: [],
+      imgList: [],
     };
   },
   components: {
@@ -94,31 +94,50 @@ export default {
       }
     },
     submitPost() {
+      console.log("버튼눌렀다아ㅏ아ㅏ아아ㅏㅇ아ㅏ아ㅏ아아");
       const postData = {
-        images: [],
+        images: this.imgList,
         content: this.contentInput,
         hashtags: this.tagList,
       };
+      console.log("submit Post " + postData.content);
       this.callPostSaveAPI(postData);
+      this.navigateToMain();
     },
     callPostSaveAPI(postData) {
-      let token = sessionStorage.getItem("token");
+      console.log("API: " + postData.content);
+      let formData = new FormData();
+      formData.append("content", postData.content);
+      formData.append("hashtags", JSON.stringify(postData.hashtags));
+
+      // 이미지 업로드 처리
+      for (let i = 0; i < postData.images.length; i++) {
+        formData.append("images", postData.images[i]);
+      }
+      console.log("에이피아이이이ㅣ잉폼데이터" + formData.get("content"));
+      console.log("hello", sessionStorage.getItem("token"));
+      var token = sessionStorage.getItem("token");
+      console.log("에이ㅣ핑아이 " + token);
+      console.log("token after");
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
         headers:
           token === null
             ? null
             : {
-                Authorization: `Bearer ${token}`,
+                Authorization: token,
               },
         method: "POST",
-        data: postData,
+        data: formData,
       }).then((data) => {
-        console.log(data.data.postSeq);
+        console.log("callPostSaveAPI" + data.data.postSeq);
       });
     },
-    uploadImg(images) {
-      this.images = images;
+    uploadImg(imgList) {
+      this.imgList = imgList;
+    },
+    navigateToMain() {
+      this.$router.push("/post");
     },
   },
 };
