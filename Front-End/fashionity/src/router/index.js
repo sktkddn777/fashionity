@@ -24,6 +24,7 @@ import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 import FollowersList from "@/components/pages/user/FollowersList"
+import ProfileLiked from "@/components/pages/user/ProfileLiked"
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -76,8 +77,8 @@ const router = createRouter({
         },
         {
           path: ":nickname/liked",
-          name: "likedList",
-          // component: ,
+          name: "profileLiked",
+          component: ProfileLiked,
         },
         {
           path: ":nickname/followers",
