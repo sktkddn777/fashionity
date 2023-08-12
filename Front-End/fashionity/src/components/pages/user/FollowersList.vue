@@ -31,6 +31,7 @@ export default {
 				headers: {Authorization:`Bearer ${token}`}
 			})
 			.then(({data}) => {
+				console.log(data.followers)
 				this.followers = data.followers
 			})
 			.catch((error) => console.log(error))

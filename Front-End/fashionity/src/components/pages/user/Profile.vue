@@ -138,42 +138,8 @@
       </div>
 
       <!-- 게시글 영역 -->
-      <div class="row" style="height: 30px"></div>
-      <div class="container">
-        <div class="row" style="justify-content: center">
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-        </div>
-
-        <div class="row" style="height: 30px"></div>
-
-        <div class="row">
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-          <div class="col">
-            <the-post>post</the-post>
-          </div>
-        </div>
-
-        <div class="row" style="height: 40px"></div>
-      </div>
+      <my-post-list/>
+      
     </div>
   </div>
 </template>
@@ -186,6 +152,7 @@ import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
+import MyPostList from "@/components/pages/user/MyPostList.vue"
 
 let token = sessionStorage.getItem("token");
 
@@ -195,6 +162,7 @@ export default {
     TheNavBarMypage,
     FollowersList,
     FollowingsList,
+    MyPostList,
   },
   setup() {
     // const router = useRouter();
