@@ -71,6 +71,7 @@ export default {
       img: "https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg",
       cropImgURL: "",
       currImgList: [],
+      currFileList: [],
     };
   },
   // props: {
@@ -80,7 +81,7 @@ export default {
     Cropper,
   },
   methods: {
-    makePreview() {
+    makePreview(blobData) {
       for (let i = 0; i < this.$refs.files.files.length; i++) {
         console.log("안녕 난 for문이야");
         this.files = [
@@ -101,7 +102,11 @@ export default {
         //이미지 업로드용 프리뷰
         this.filesPreview = [
           ...this.filesPreview,
-          { file: URL.createObjectURL(this.$refs.files.files[i]), number: this.uploadImageIndex },
+          {
+            file: URL.createObjectURL(this.$refs.files.files[i]),
+            number: this.uploadImageIndex,
+            binaryFile: blobData,
+          },
         ];
       }
       this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
@@ -113,6 +118,7 @@ export default {
       // console.log(this.filesPreview);
       this.cropImgURL = "";
       this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
     },
     imageUpload() {
       console.log("upload");
@@ -187,6 +193,7 @@ export default {
       this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
       // console.log(this.files);
       this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
     },
     uploadImage() {
       const { canvas } = this.$refs.cropper.getResult();
@@ -203,16 +210,25 @@ export default {
         //   // Perhaps you should add the setting appropriate file format here
         // }, "image/jpeg");
         // const url = window.URL.createObjectURL(form);
+        var blobData = "";
+        canvas.toBlob((blob) => {
+          console.log("blob", blob);
+          this.cropImgURL = canvas.toDataURL();
+
+          this.makePreview(blob);
+          blobData = blob;
+        });
 
         console.log("blob 후", canvas.toDataURL());
+        console.log(blobData);
         // let blob = new Blob([new ArrayBuffer(canvas.toDataURL())], {
         //   type: "image/png",
         // });
         // const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
 
-        this.cropImgURL = canvas.toDataURL();
+        // this.cropImgURL = canvas.toDataURL();
 
-        this.makePreview();
+        // this.makePreview(blobData);
       }
     },
   },
@@ -224,9 +240,10 @@ export default {
       this.cropImgURL = newVal;
       console.log("watch", this.cropImgURL);
     },
-    currImgList(newVal) {
-      this.currImgList = newVal;
-      this.$emit("updateImg", this.currImgList);
+    currFileList(newVal) {
+      this.currFileList = newVal;
+      console.log("newval", newVal);
+      this.$emit("updateImg", this.currFileList);
     },
   },
 };
