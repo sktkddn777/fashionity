@@ -43,43 +43,39 @@ export default {
       nickname: this.following.nickname,
       isFollowing: this.following.isFollowing,
       isFollowed : this.following.isFollowed,
-      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
+      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
   methods: {
     async toggleFollow() {
-      console.log(this.nickname);
-      if (!this.isFollowing) {
-        await this.followAPI(this.nickname);
+      if (!this.isFollowed) {
+        await this.followAPI(this.following.nickname);
       } else {
-        await this.unfollowAPI(this.nickname);
-      }
-      const followbtn = document.querySelector("#followvbtn");
-      if (this.isFollowing == true) {
-        followbtn.innerText = "팔로잉";
-      }
-      else if(this.nickname === this.$store.getters["memberStore/checkLoginUser"].nickname){document.getElementById('followbtn').style.display ="none"}
-      else {
-        followbtn.innerText = "팔로우";
+        await this.unfollowAPI(this.following.nickname);
       }
     },
     async followAPI(nickname) {
       let body = { nickname: nickname };
       axios({
-        methods: "post",
+        method: "post",
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => (this.success = res.data.success));
+      })
+      .then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed;})
+      .catch((error) => console.log(error))
+
     },
     async unfollowAPI(nickname) {
       let body = { nickname: nickname };
       axios({
-        methods: "delete",
+        method: "delete",
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => (this.success = res.data.success));
+      })
+      .then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed})
+      .catch((error) => console.log(error))
     },
   },
 };

@@ -44,7 +44,7 @@
           >
             <!-- 사용자 프로필 사진 -->
             <div class="profile-main-photo">
-              <img class="image-box" width="200" height="200" />
+              <img :src = "profileUrl" class="image-box" width="200" height="200" />
             </div>
             <!-- 사용자 정보 -->
             <div class="infos" style="display: flex; flex-direction: column">
@@ -146,8 +146,8 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
-import { reactive } from "vue";
+// import { onMounted } from "vue";
+// import { reactive } from "vue";
 
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
@@ -165,27 +165,27 @@ export default {
     FollowingsList,
     MyPostList,
   },
-  setup() {
-    // const router = useRouter();
-    const state = reactive({
-      model: null,
-      nickname: "",
-      profileIntro: "",
-    });
-    // const store = useStore(); -> vuex
+  // setup() {
+  //   // const router = useRouter();
+  //   const state = reactive({
+  //     model: null,
+  //     nickname: "",
+  //     profileIntro: "",
+  //   });
+  //   // const store = useStore(); -> vuex
 
-    // 초기화면 세팅
-    onMounted(() => {
-      const previews = document.querySelectorAll(".image-box");
-      state.nickname = "uzu_munzi";
-      state.profileIntro = "우주먼지의 데일리룩 기록들";
-      previews[0].src = require(`@/assets/img/panda.png`);
-    });
+  //   // 초기화면 세팅
+  //   onMounted(() => {
+  //     const previews = document.querySelectorAll(".image-box");
+  //     state.nickname = "uzu_munzi";
+  //     state.profileIntro = "우주먼지의 데일리룩 기록들";
+  //     previews[0].src = require(`@/assets/img/panda.png`);
+  //   });
 
-    return {
-      state,
-    };
-  },
+  //   return {
+  //     state,
+  //   };
+  // },
   data() {
     return {
       nickname: "",
@@ -208,7 +208,7 @@ export default {
     toLiked() {
       this.$router.push({ name: "likedPosts" });
     },
-    getProfile() {
+    async getProfile() {
       const nickname = this.$route.params.nickname;
       axios({
         method: "get",

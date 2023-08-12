@@ -32,7 +32,6 @@
 import axios from "axios";
 
 let token = sessionStorage.getItem("token");
-const followbtn = document.querySelector("#followvbtn");
 
 export default {
   props: ["follower"],
@@ -53,27 +52,24 @@ export default {
       } else {
         await this.unfollowAPI(this.follower.nickname);
       }
-      if (this.isFollowed == true) {followbtn.innerText = "팔로잉";} 
-      else if (this.follower.nickname === this.myNickname) {followbtn.innerText = "팔로잉";} //{followbtn.style.display = "none"}
-      else {followbtn.innerText = "팔로우";}
     },
     async followAPI(nickname) {
       let body = { nickname: nickname };
       axios({
-        methods: "post",
+        method: "post",
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => (this.success = res.data.success));
+      }).then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed});
     },
     async unfollowAPI(nickname) {
       let body = { nickname: nickname };
       axios({
-        methods: "delete",
+        method: "delete",
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => (this.success = res.data.success));
+      }).then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed});
     },
   },
 };
