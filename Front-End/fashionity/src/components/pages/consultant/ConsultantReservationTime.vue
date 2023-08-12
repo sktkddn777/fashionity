@@ -55,6 +55,18 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-3">
+          <router-link
+            class="link"
+            to="/consultant/reservation/detail"
+            @propChange="propChange"
+            ><button>NEXT</button></router-link
+          >
+        </div>
+      </div>
+
       <!-- <div v-for="(time, index) in pm" :key="index">{{ time }}</div> -->
     </div>
   </div>
@@ -68,6 +80,7 @@ export default {
       pm1: [],
       pm2: [],
       pm3: [],
+      pagaInfo: "date",
     };
   },
   created() {
@@ -87,5 +100,44 @@ export default {
   margin-right: 10px;
   width: 6vw;
   /* padding-top: 10px; */
+}
+
+button {
+  background: black;
+  color: #fff;
+  border: none;
+  position: relative;
+  height: 40px;
+  font-size: 1.2em;
+  padding: 0 2em;
+  cursor: pointer;
+  transition: 800ms ease all;
+  outline: none;
+}
+button:hover {
+  background: #fff;
+  color: #424242;
+}
+button:before,
+button:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2px;
+  width: 0;
+  background: #424242;
+  transition: 400ms ease all;
+}
+button:after {
+  right: inherit;
+  top: inherit;
+  left: 0;
+  bottom: 0;
+}
+button:hover:before,
+button:hover:after {
+  width: 100%;
+  transition: 800ms ease all;
 }
 </style>
