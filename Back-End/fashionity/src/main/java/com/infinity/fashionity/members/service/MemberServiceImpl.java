@@ -5,6 +5,11 @@ import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
 import com.infinity.fashionity.global.utils.RegexUtil;
+import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.image.dto.ImageDTO;
+import com.infinity.fashionity.image.dto.ImageDeleteDTO;
+import com.infinity.fashionity.image.dto.ImageSaveDTO;
+import com.infinity.fashionity.image.service.ImageService;
 import com.infinity.fashionity.members.dto.*;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.exception.CustomValidationException;
@@ -26,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,12 +42,25 @@ import static com.infinity.fashionity.global.exception.ErrorCode.*;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
     private final PostRepository postRepository;
+    private final ImageService imageService;
+
+    @Override
+    public ProfileDTO.MyProfileResponse getMyProfileInfo(Long seq) {
+        log.info("getMyProfileInfo start");
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        log.info("MEMBER = " + member.toString());
+        return ProfileDTO.MyProfileResponse.builder()
+                .nickname(member.getNickname())
+                .profileUrl(member.getProfileUrl())
+                .profileIntro(member.getProfileIntro())
+                .build();
+    }
 
     @Override
     public ProfileDTO.Response getMemberProfile(Long seq, String nickname) {
@@ -144,10 +163,43 @@ public class MemberServiceImpl implements MemberService{
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
 
-        member.updateProfile(profile);
-
-        if (RegexUtil.checkNicknameRegex(profile.getNickname()))
+        //닉네임 유효성 검사
+        boolean blank = StringUtils.isBlank(profile.getNickname());
+        if (StringUtils.isBlank(profile.getNickname()) || !RegexUtil.checkNicknameRegex(profile.getNickname()))
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
+
+        //닉네임 중복 검사, 다른사람이면서 닉네임이 같으면 throw
+        if (member.getSeq() != seq && memberRepository.findByNickname(profile.getNickname()).isPresent())
+            throw new CustomValidationException(EXIST_MEMBER_NICKNAME);
+
+        //이미지를 업데이트 할 때 null이 아니면 이미 저장된 이미지 삭제 및 새로 들어온 이미지 저장
+        if (profile.getProfileImage() != null) {
+            if(member.getProfileName()!=null) {
+                //원래 존재하는 프로필정보
+                ImageDTO origin = ImageDTO.builder()
+                        .fileName(member.getProfileName())
+                        .fileUrl(member.getProfileUrl())
+                        .build();
+                ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
+                        .images(Arrays.asList(origin))
+                        .build());
+            }
+            //새로운 이미지 저장
+            ImageSaveDTO.Response save = imageService.save(ImageSaveDTO.Request.builder()
+                    .images(Arrays.asList(profile.getProfileImage()))
+                    .build()
+            );
+            //저장
+            List<ImageDTO> imageInfos = save.getImageInfos();
+            //저장된 썸네일에 대한 정보를 업데이트
+            ImageDTO savedImageInfo = imageInfos.get(0);
+            member.updateProfileImage(savedImageInfo);
+        }
+        else{
+            member.updateProfileImage(null);
+        }
+
+        member.updateProfile(profile);
 
         return ProfileDTO.Response.builder()
                 .nickname(member.getNickname())
@@ -186,9 +238,9 @@ public class MemberServiceImpl implements MemberService{
         followEntityList.stream().forEach(e -> {
             MemberEntity followedMember = e.getFollowedMember();
             FollowKey followKey = FollowKey.builder()
-                            .member(seq)
-                            .followedMember(followedMember.getSeq())
-                            .build();
+                    .member(seq)
+                    .followedMember(followedMember.getSeq())
+                    .build();
 
             followingList.add(Following.builder()
                     .profileUrl(followedMember.getProfileUrl())

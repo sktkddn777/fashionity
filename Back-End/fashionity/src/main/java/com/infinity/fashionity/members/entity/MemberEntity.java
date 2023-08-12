@@ -6,6 +6,7 @@ import com.infinity.fashionity.consultants.entity.ReservationEntity;
 
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.global.entity.CUDEntity;
+import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.dto.ProfileDTO;
@@ -63,6 +64,9 @@ public class MemberEntity extends CUDEntity {
     @Enumerated(value=EnumType.STRING)
     private SNSType snsType;
 
+    @Column(name="member_profile_name",unique = false,nullable=true)
+    private String profileName;
+
     @Column(name = "member_profile_url", unique = false, nullable = true, columnDefinition = "TEXT")
     private String profileUrl;
 
@@ -106,8 +110,18 @@ public class MemberEntity extends CUDEntity {
         this.password = password;
     }
 
+    public void updateProfileImage(ImageDTO imageInfo){
+        //썸네일을 삭제
+        if(imageInfo == null){
+            this.profileName = this.profileUrl = null;
+        }
+        //아니면 저장
+        else {
+            this.profileName = imageInfo.getFileName();
+            this.profileUrl = imageInfo.getFileUrl();
+        }
+    }
     public void updateProfile(ProfileDTO.Request profile) {
-        this.profileUrl = profile.getProfileUrl();
         this.profileIntro = profile.getProfileIntro();
         this.nickname = profile.getNickname();
     }

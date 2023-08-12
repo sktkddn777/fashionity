@@ -1,6 +1,7 @@
 package com.infinity.fashionity.members.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ProfileDTO {
 
@@ -8,8 +9,9 @@ public class ProfileDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @Setter
     public static class Request {
-        private String profileUrl;
+        private MultipartFile profileImage;
         private String nickname;
         private String profileIntro;
     }
@@ -37,6 +39,17 @@ public class ProfileDTO {
         private Integer followingCnt;
         private Boolean isFollowed;
         private boolean myProfile;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @ToString
+    public static class MyProfileResponse {
+        private String profileUrl;
+        private String nickname;
+        private String profileIntro;
     }
 
     @Getter
