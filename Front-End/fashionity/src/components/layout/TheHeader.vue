@@ -1,24 +1,49 @@
 <template lang="">
   <div>
-    <div class="container-fluid">
-      <div class="row">
+    <div class="container-fluid" style="background-color: white">
+      <div class="row" style="margin-top: 20px">
         <div class="col-3" id="logo">
           <router-link
             to="/"
             class="link"
-            style="font-style: normal; font-size: 50px; padding-top: 20px"
+            style="
+              font-style: normal;
+              font-size: 50px;
+              padding-top: 30px;
+              background-color: white;
+              margin-top: 20px;
+            "
             >fashionity</router-link
           >
         </div>
         <div class="col">
-          <div class="row justify-content-end">
+          <div class="row justify-content-end" style="margin-top: -20px">
             <div class="col-8"></div>
             <div class="col">
               <div class="row justify-content-end">
                 <div></div>
-                <div class="col-6"></div>
+                <div class="col-2"></div>
+
                 <div class="col">
-                  <router-link to="post/write" class="link">
+                  <div
+                    v-if="!isLogin"
+                    class="row"
+                    @click="login"
+                    style="cursor: pointer"
+                  >
+                    로그인
+                  </div>
+                  <div
+                    v-else
+                    class="row"
+                    @click="logout"
+                    style="cursor: pointer"
+                  >
+                    로그아웃
+                  </div>
+                </div>
+                <div class="col">
+                  <router-link to="/post/write" class="link">
                     <font-awesome-icon
                       :icon="['fas', 'circle-plus']"
                       style="color: #bdbdbd"
@@ -28,6 +53,7 @@
                 <div class="col">
                   <font-awesome-icon
                     :icon="['fas', 'video']"
+                    @click="meeting"
                     style="color: #bdbdbd"
                   />
                 </div>
@@ -44,7 +70,6 @@
                       type="button"
                     />
                   </button>
-
                   <div
                     class="offcanvas offcanvas-end"
                     tabindex="-1"
@@ -113,11 +138,10 @@
                   </div>
                   <div v-else class="row">
                     <router-link to="/profile" class="link">
-                      <img class="profile" src="@/assets/img/panda.png"
+                      <img class="profile" :src="getProfileUrl()"
                     /></router-link>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -133,7 +157,7 @@ const memberStore = "memberStore";
 export default {
   setup() {},
   computed: {
-    ...mapState(memberStore, ["isLogin", "userInfo"]),
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
   },
   data() {
@@ -146,17 +170,18 @@ export default {
     ...mapActions(memberStore, ["logoutAction"]),
 
     logout() {
-      const user = {
-        memberSeq: sessionStorage.getItem("memberSeq"),
-      };
-
-      this.logoutAction(user);
+      this.logoutAction();
     },
     login() {
       router.push({ name: "UserLogin" });
     },
+    getProfileUrl() {
+      return this.loginUser.profileUri;
+    },
+    meeting() {
+      router.push({ name: "ConsultingPage" });
+    },
   },
-
 };
 </script>
 <style scoped>

@@ -3,6 +3,7 @@ package com.infinity.fashionity.auth.service;
 import com.infinity.fashionity.auth.dto.*;
 import com.infinity.fashionity.auth.exception.MailSendException;
 import com.infinity.fashionity.global.utils.HashUtil;
+import com.infinity.fashionity.global.utils.JwtUtil;
 import com.infinity.fashionity.global.utils.RegexUtil;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.data.SNSType;
@@ -28,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
@@ -43,6 +43,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
+    private final JwtUtil jwtUtil;
 
     /**
      * 일반 로그인 전용
@@ -64,6 +65,8 @@ public class AuthServiceImpl implements AuthService{
 
         return LoginDTO.Response.builder()
                 .memberSeq(member.getSeq())
+                .profileUri(member.getProfileUrl())
+                .nickname(member.getNickname())
                 .accessToken(jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles()))
                 .refreshToken(refreshToken)
                 .build();
@@ -257,21 +260,31 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public ReissueDTO.Response reissue(String refreshToken) {
+    public ReissueDTO.Response reissue(String refreshToken, String accessToken, Long memberSeq) {
 
-        // refreshToken 유효성 확인 (만료 여부, 변조 여부)
-        jwtProvider.validateToken(refreshToken);
+        String newAccessToken = accessToken;
+        // AT 만료 여부 확인
+        try {
+            log.info("AT 만료 여부 확인");
+            jwtUtil.validateToken(accessToken);
+        } catch (Exception e) {
+            log.info("RT 만료 여부 확인");
+            // RT 유효성 확인 (만료 여부, 변조 여부)
+            jwtUtil.validateToken(refreshToken);
 
-        // TODO: redis BlackList 에 있는지 확인, redis 키 값이 RT, value 가 memberSeq
-        // TODO: memberSeq 를 바탕으로 DB에서 멤버 꺼내고 정보를 넘겨줘 AT 재발급 함
+            // TODO: redis BlackList 에 있는지 확인, redis 키 값이 RT, value 가 memberSeq
+            // TODO: redis 를 가지고 RT를 가지고 email을 찾아 넘겨줘야 함. 지금은 임의로 유저 id 받아서 진행.
 
-        MemberEntity member = memberRepository.findById(1L).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
-        String accessToken = jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles());
+            MemberEntity member = memberRepository.findById(memberSeq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+            newAccessToken = jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles());
+        }
+
         return ReissueDTO.Response.builder()
-                .accessToken(accessToken)
+                .accessToken(newAccessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
+
 
     /**
      * 소셜로그인으로 받아온 닉네임 길이 13자 이상일 때 13자로 제한
