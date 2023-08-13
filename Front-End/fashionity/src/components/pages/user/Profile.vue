@@ -75,6 +75,7 @@
                   {{isFollowed ? '팔로잉':'팔로우'}}
                 </button>
                 <button v-if = "nickname === myNickname" class="inactive-button" style="margin-left: 0.5rem">
+                  <router-link :to="`/profile/${nickname}/edit`"></router-link>
                   프로필 수정
                 </button>
               </div>
@@ -124,14 +125,14 @@
       >
         <div class="col col-lg-2 header-tab point">
           <router-link
-            to="/profile"
+            :to="`/profile/${nickname}`"
             style="text-decoration: none; color: #424242; font-size: 1.2rem"
             >Posts</router-link
           >
         </div>
         <div class="col col-lg-2 header-tab">
           <router-link
-            to="/liked"
+            :to="`/profile/${nickname}/liked`"
             style="text-decoration: none; color: #424242; font-size: 1.2rem"
             >Liked</router-link
           >

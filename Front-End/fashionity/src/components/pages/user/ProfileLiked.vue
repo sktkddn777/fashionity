@@ -73,7 +73,8 @@
                 >
                   팔로우
                 </button>
-                <button class="inactive-button" style="margin-left: 0.5rem">
+                <button v-if = "nickname === myNickname" class="inactive-button" style="margin-left: 0.5rem">
+                  <router-link :to="`/profile/${nickname}/edit`"></router-link>
                   프로필 수정
                 </button>
               </div>
@@ -88,6 +89,7 @@
                   class="posts-cnt point"
                   style="margin-right: 2rem; font-size: 1.2rem"
                 >
+                  <router-link :to="`/profile/${nickname}`"></router-link>
                   {{ postsCnt }} Posts
                 </div>
                 <button
@@ -123,14 +125,14 @@
       >
         <div class="col col-lg-2 header-tab point">
           <router-link
-            to="/profile"
+            :to="`/profile/${nickname}`"
             style="text-decoration: none; color: #424242; font-size: 1.2rem"
             >Posts</router-link
           >
         </div>
         <div class="col col-lg-2 header-tab">
           <router-link
-            to="/liked"
+            :to="`/profile/${nickname}/liked`"
             style="text-decoration: none; color: #424242; font-size: 1.2rem"
             >Liked</router-link
           >
@@ -145,8 +147,8 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
-import { reactive } from "vue";
+// import { onMounted } from "vue";
+// import { reactive } from "vue";
 
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
@@ -164,27 +166,27 @@ export default {
     FollowingsList,
     LikedPostList
   },
-  setup() {
-    // const router = useRouter();
-    const state = reactive({
-      model: null,
-      nickname: "",
-      profileIntro: "",
-    });
-    // const store = useStore(); -> vuex
+  // setup() {
+  //   // const router = useRouter();
+  //   const state = reactive({
+  //     model: null,
+  //     nickname: "",
+  //     profileIntro: "",
+  //   });
+  //   // const store = useStore(); -> vuex
 
-    // 초기화면 세팅
-    onMounted(() => {
-      const previews = document.querySelectorAll(".image-box");
-      state.nickname = "uzu_munzi";
-      state.profileIntro = "우주먼지의 데일리룩 기록들";
-      previews[0].src = require(`@/assets/img/panda.png`);
-    });
+  //   // 초기화면 세팅
+  //   onMounted(() => {
+  //     const previews = document.querySelectorAll(".image-box");
+  //     state.nickname = "uzu_munzi";
+  //     state.profileIntro = "우주먼지의 데일리룩 기록들";
+  //     previews[0].src = require(`@/assets/img/panda.png`);
+  //   });
 
-    return {
-      state,
-    };
-  },
+  //   return {
+  //     state,
+  //   };
+  // },
   data() {
     return {
       nickname: "",
@@ -197,6 +199,7 @@ export default {
       profileUrl: "",
       followersPop: false,
       followingsPop: false,
+      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
     };
   },
   created() {
