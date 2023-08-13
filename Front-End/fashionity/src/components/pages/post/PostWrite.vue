@@ -19,7 +19,7 @@
           </div>
         </div>
         <!--이미지 업로드-->
-        <multi-image-upload @uploadImg="uploadImg"></multi-image-upload>
+        <multi-image-upload @updateImg="updateImg"></multi-image-upload>
         <br />
         <div style="text-align: left">
           <textarea
@@ -81,6 +81,7 @@ export default {
       tagList: [],
       contentInput: "",
       imgList: [],
+      fileList: [],
     };
   },
   components: {
@@ -89,52 +90,63 @@ export default {
   methods: {
     addTag() {
       if (this.tagInput) {
-        this.tagList.push(this.tagInput);
+        this.tagList.push(this.tagInput.substr(0, this.tagInput.length - 1));
         this.tagInput = "";
       }
     },
-    submitPost() {
-      console.log("버튼눌렀다아ㅏ아ㅏ아아ㅏㅇ아ㅏ아ㅏ아아");
+    async submitPost() {
+      console.log("taglist = " + this.tagList);
+      console.log("fileList = " + this.fileList);
       const postData = {
-        images: this.imgList,
+        images: this.fileList,
         content: this.contentInput,
         hashtags: this.tagList,
       };
-      console.log("submit Post " + postData.content);
-      this.callPostSaveAPI(postData);
+      await this.callPostSaveAPI(postData);
       this.navigateToMain();
     },
-    callPostSaveAPI(postData) {
-      console.log("API: " + postData.content);
+    async callPostSaveAPI(postData) {
       let formData = new FormData();
       formData.append("content", postData.content);
-      formData.append("hashtags", JSON.stringify(postData.hashtags));
+      // formData.append("hashtags", JSON.stringify(postData.hashtags));
+      console.log(
+        "API postData = " + postData.images + " " + postData.images.length
+      );
 
       // 이미지 업로드 처리
       for (let i = 0; i < postData.images.length; i++) {
+        console.log(
+          "포문 안에 있는 postData images 입니다 : " + postData.images[i]
+        );
         formData.append("images", postData.images[i]);
       }
-      console.log("에이피아이이이ㅣ잉폼데이터" + formData.get("content"));
-      console.log("hello", sessionStorage.getItem("token"));
+      console.log("포문 밖에 있는 formData images 입니다 : " + formData.images);
+      for (let i = 0; i < postData.hashtags.length; i++) {
+        formData.append("hashtags", postData.hashtags[i]);
+      }
       var token = sessionStorage.getItem("token");
-      console.log("에이ㅣ핑아이 " + token);
-      console.log("token after");
-      axios({
+      await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
         headers:
           token === null
             ? null
             : {
-                Authorization: token,
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
               },
         method: "POST",
         data: formData,
-      }).then((data) => {
-        console.log("callPostSaveAPI" + data.data.postSeq);
-      });
+      })
+        .then((data) => {
+          console.log("callPostSaveAPI " + data.data.postSeq);
+        })
+        .catch(() => {
+          alert("실패!");
+        });
     },
-    uploadImg(imgList) {
-      this.imgList = imgList;
+    updateImg(file) {
+      this.fileList = file;
+      console.log("파일임당", file);
     },
     navigateToMain() {
       this.$router.push("/post");
