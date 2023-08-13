@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 
 @Slf4j
@@ -146,6 +148,16 @@ public class ConsultantController {
             dto.setReservationSeq(reservationSeq);
         UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
         return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
+
+    }
+
+    @PostMapping(value = "/reservations", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ConsultantReservationSaveDto.Response> postReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantReservationSaveDto.Request dto){
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        return new ResponseEntity<>(consultantService.saveReservation(dto), HttpStatus.OK);
 
     }
 

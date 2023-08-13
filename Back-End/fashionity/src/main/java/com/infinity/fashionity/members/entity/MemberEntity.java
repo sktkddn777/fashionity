@@ -8,6 +8,7 @@ import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.members.data.Gender;
+import com.infinity.fashionity.members.data.PersonalColor;
 import com.infinity.fashionity.members.data.SNSType;
 import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.posts.entity.PostEntity;
@@ -70,9 +71,13 @@ public class MemberEntity extends CUDEntity {
     @Column(name = "member_profile_url", unique = false, nullable = true, columnDefinition = "TEXT")
     private String profileUrl;
 
+    @Column(name="member_age", unique = false, nullable = true)
+    private Integer age;
+
     @Column(name = "member_profile_intro", length = 50, unique = false, nullable = true)
     private String profileIntro;
 
+    @Enumerated(value=EnumType.STRING)
     @Column(name = "member_gender", length = 20, unique = false, nullable = true)
     private Gender gender;
 
@@ -82,8 +87,9 @@ public class MemberEntity extends CUDEntity {
     @Column(name = "member_weight", unique = false, nullable = true)
     private Float weight;
 
+    @Enumerated(value=EnumType.STRING)
     @Column(name = "member_personalcolor", length = 20, unique = false, nullable = true)
-    private String personalcolor;
+    private PersonalColor personalcolor;
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member",cascade = CascadeType.ALL)

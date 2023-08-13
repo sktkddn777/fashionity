@@ -8,8 +8,10 @@ import com.infinity.fashionity.consultants.repository.ReviewRepository;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
+import com.infinity.fashionity.posts.entity.PostEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -388,7 +391,30 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    public ConsultantReservationSaveDto.Response saveReservation(ConsultantReservationSaveDto.Request dto) {
 
+        // 입력값 검증
+        Long memberSeq = dto.getMemberSeq();
+
+        List<MultipartFile> images = dto.getImages();
+
+        if (memberSeq == null || images.size() > 4 ) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // member가 있는지 확인
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // PostEntity 등록
+        ReservationEntity reservation = ReservationEntity.builder()
+                .member(member)
+                .build();
+
+
+        return null;
+    }
 
 
 }

@@ -49,4 +49,6 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     List<ImageEntity> findReservationImages(Long reservationSeq);
 
 
+
+
 }
