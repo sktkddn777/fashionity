@@ -32,12 +32,14 @@
                     style="color: #bdbdbd"
                   />
                 </div>
+                <!-- 여기부터 알람 -->
                 <div class="col">
                   <button
                     type="button"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasRight"
                     aria-controls="offcanvasRight"
+                    @click="updateAlarm"
                   >
                     <font-awesome-icon
                       :icon="['far', 'bell']"
@@ -64,42 +66,54 @@
                       ></button>
                     </div>
                     <div class="offcanvas-body">
-                      <div class="alert">
-                        <div class="alert-image">
-                          <img
-                            src="../../assets/img/hyeonwook.jpg"
-                            alt=""
-                            class="profile-comment"
-                          />
+                      <div
+                        class="alert"
+                        v-for="(alarm, index) in this.alarms"
+                        :key="index"
+                      >
+                        <router-link :to="getAlarmLink(alarm)">
+                          <div class="alert-image">
+                            <img
+                              :src="
+                                alarm.imageUrl || '../img/unknown.e083a226.png'
+                              "
+                              alt=""
+                              class="profile-comment"
+                            />
+                          </div>
+                        </router-link>
+                        <!-- 팔로잉 알람 -->
+                        <div
+                          class="alert-content"
+                          v-if="alarm.type === 'FOLLOW'"
+                        >
+                          <span class="fw-bold">{{
+                            alarm.publisher_nickname
+                          }}</span>
+                          님이 회원님을 팔로우 합니다.
                         </div>
-                        <div class="alert-content">
-                          <span class="fw-bold">hyeonwook12</span>
-                          님이 회원님의 게시글에 댓글을 작성했습니다.
+                        <!-- 게시글 좋아요 알람 -->
+                        <div
+                          class="alert-content"
+                          v-else-if="alarm.type === 'POST_LIKE'"
+                        >
+                          {{ alarm.title }}
                         </div>
-                      </div>
-                      <div class="alert">
-                        <div class="alert-image">
-                          <img
-                            src="../../assets/img/hyeonwook.jpg"
-                            alt=""
-                            class="profile-comment"
-                          />
+                        <!-- 댓글 좋아요 알람 -->
+                        <div
+                          class="alert-content"
+                          v-else-if="alarm.type === 'COMMENT_LIKE'"
+                        >
+                          {{ alarm.title }}<br />
+                          {{ alarm.content }}
                         </div>
-                        <div class="alert-content">
-                          누군가 회원님의 게시글을 스크랩했습니다.
-                        </div>
-                      </div>
-                      <div class="alert">
-                        <div class="alert-image">
-                          <img
-                            src="../../assets/img/hyeonwook.jpg"
-                            alt=""
-                            class="profile-comment"
-                          />
-                        </div>
-                        <div class="alert-content">
-                          <span class="fw-bold">2_kyeong</span>
-                          님이 회원님을 팔로우했습니다.
+                        <!-- 게시글에 댓글 등록 알람 -->
+                        <div
+                          class="alert-content"
+                          v-else-if="alarm.type === 'COMMENT_POST'"
+                        >
+                          {{ alarm.title }}<br />
+                          {{ alarm.content }}
                         </div>
                       </div>
                     </div>
@@ -118,7 +132,6 @@
                     /></router-link>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -130,6 +143,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
 import router from "@/router";
+import axios from "axios";
 const memberStore = "memberStore";
 export default {
   setup() {},
@@ -140,6 +154,7 @@ export default {
   data() {
     return {
       keyword: "",
+      alarms: [],
     };
   },
   components: {},
@@ -159,8 +174,34 @@ export default {
     meeting() {
       router.push({ name: "ConsultingPage" });
     },
+    updateAlarm() {
+      let token = sessionStorage.getItem("token");
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/alarm`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "GET",
+      })
+        .then((data) => {
+          this.alarms = data.data;
+          console.log(this.alarms);
+        })
+        .catch(() => {
+          this.alarms = [];
+        });
+    },
+    getAlarmLink(alarm) {
+      if (alarm.type === "FOLLOW") {
+        return { path: `/profile/${alarm.publisher_nickname}` };
+      } else {
+        return { path: `/post/${alarm.post_seq}` };
+      }
+    },
   },
-
 };
 </script>
 <style scoped>

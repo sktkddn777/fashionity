@@ -19,4 +19,6 @@ public class AlarmDTO {
     private Long postSeq;
     private String title;
     private String content;
+
+    private AlarmType type;
 }

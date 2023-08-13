@@ -1,6 +1,7 @@
 package com.infinity.fashionity.follows.service;
 
 
+import com.infinity.fashionity.alarm.dto.AlarmDeleteDTO;
 import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
 import com.infinity.fashionity.alarm.entity.AlarmType;
 import com.infinity.fashionity.alarm.service.AlarmService;

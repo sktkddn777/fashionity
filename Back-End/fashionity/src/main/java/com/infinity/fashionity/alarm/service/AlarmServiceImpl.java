@@ -1,6 +1,7 @@
 package com.infinity.fashionity.alarm.service;
 
 import com.infinity.fashionity.alarm.dto.AlarmDTO;
+import com.infinity.fashionity.alarm.dto.AlarmDeleteDTO;
 import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
 import com.infinity.fashionity.alarm.entity.AlarmEntity;
 import com.infinity.fashionity.alarm.entity.AlarmType;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.infinity.fashionity.alarm.entity.AlarmType.*;
 
 
 @Service
@@ -55,7 +58,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .build();
         }
         //게시글 좋아요 알람
-        else if (type.equals(AlarmType.POST_LIKE)) {
+        else if (type.equals(POST_LIKE)) {
             PostEntity post = postRepository.findById(postSeq)
                     .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
             alarm = AlarmEntity.builder()
@@ -67,8 +70,8 @@ public class AlarmServiceImpl implements AlarmService {
                     .build();
         }
         //댓글 좋아요 알람 && 댓글 등록
-        else if (type.equals(AlarmType.COMMENT_LIKE)
-                || type.equals(AlarmType.COMMENT_POST)) {
+        else if (type.equals(COMMENT_LIKE)
+                || type.equals(COMMENT_POST)) {
             PostEntity post = postRepository.findById(postSeq)
                     .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
             CommentEntity comment = commentRepository.findById(commentSeq)
@@ -87,10 +90,9 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AlarmDTO> findAll(Long memberSeq) {
-        List<AlarmEntity> all = alarmRepository.findAllByOwnerOrderByCreatedAtDesc(MemberEntity.builder()
-                .seq(memberSeq)
-                .build());
+        List<AlarmEntity> all = alarmRepository.findAllByOwnerSeqOrderByCreatedAtDesc(memberSeq);
 
         return all.stream()
                 .map(entity -> {
@@ -100,12 +102,54 @@ public class AlarmServiceImpl implements AlarmService {
                             .imageUrl(alarmType.equals(AlarmType.FOLLOW)
                                     ? entity.getPublisher().getProfileUrl()
                                     : entity.getPost().getPostImages().get(0).getUrl())
-                            .title(entity.getTitle())
-                            .content(entity.getContent())
+                            .title(getTitle(entity))
+                            .content(getContent(entity))
                             .publisherNickname(entity.getPublisher().getNickname())
-                            .postSeq(entity.getPost().getSeq())
+                            .postSeq(entity.getPost() != null ? entity.getPost().getSeq() : null)
+                            .type(alarmType)
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public String getTitle(AlarmEntity alarm){
+        StringBuffer sb = new StringBuffer();
+        switch(alarm.getAlarmType()){
+            case FOLLOW:
+                sb.append(alarm.getPublisher().getNickname()).append(" 님이 회원님을 팔로우했습니다.");
+                break;
+            case POST_LIKE:
+                sb.append("누군가가 회원님의 게시물을 스크랩했습니다.");
+                break;
+            case COMMENT_LIKE:
+                sb.append("누군가가 회원님의 댓글을 좋아합니다.");
+                break;
+            case COMMENT_POST:
+                sb.append(alarm.getPublisher().getNickname()).append("님이 회원님의 게시물에 댓글을 남겼습니다.");
+                break;
+            default:
+                break;
+        }
+        return sb.toString();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public String getContent(AlarmEntity alarm){
+        StringBuffer sb = new StringBuffer();
+        switch(alarm.getAlarmType()){
+            case FOLLOW:
+                break;
+            case POST_LIKE:
+                sb.append(alarm.getPost() != null ? alarm.getPost().getContent() : "");
+            case COMMENT_LIKE:
+            case COMMENT_POST:
+                sb.append(alarm.getComment() != null ? alarm.getComment().getContent() : "");
+                break;
+            default:
+                break;
+        }
+        return sb.toString();
     }
 }

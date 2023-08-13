@@ -1,5 +1,8 @@
 package com.infinity.fashionity.posts.service;
 
+import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
+import com.infinity.fashionity.alarm.entity.AlarmType;
+import com.infinity.fashionity.alarm.service.AlarmService;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
@@ -45,6 +48,7 @@ public class PostServiceImpl implements PostService {
     private final PostImageRepository postImageRepository;
     private final FollowRepository followRepository;
     private final ImageService imageService;
+    private final AlarmService alarmService;
 
     // 게시글 전체 조회
     @Override
@@ -418,6 +422,20 @@ public class PostServiceImpl implements PostService {
                     .member(member)
                     .build());
             like = true;
+        }
+
+
+        //owner에게 알람 보내기 or 지우기
+        if(like) {
+            alarmService.sendAlarm(AlarmSendDTO.Request.builder()
+                    .ownerSeq(post.getMember().getSeq())
+                    .publisherSeq(member.getSeq())
+                    .type(AlarmType.POST_LIKE)
+                    .postSeq(post.getSeq())
+                    .build());
+        }
+        else{
+
         }
         return PostLikeDTO.Response.builder()
                 .like(like)

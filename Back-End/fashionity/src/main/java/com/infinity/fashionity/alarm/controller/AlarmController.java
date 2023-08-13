@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,4 +29,12 @@ public class AlarmController {
 
         return new ResponseEntity<>(alarmService.findAll(seq), HttpStatus.OK);
     }
+
+//    @GetMapping("/read/{alarmSeq}")
+//    public ResponseEntity<Boolean> readAlarm(
+//            @AuthenticationPrincipal JwtAuthentication auth,
+//            @PathVariable("alarmSeq") Long alarmSeq
+//    ){
+//
+//    }
 }

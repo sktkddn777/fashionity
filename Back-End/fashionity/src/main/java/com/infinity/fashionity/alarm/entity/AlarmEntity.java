@@ -46,46 +46,9 @@ public class AlarmEntity extends CUDEntity {
     @JoinColumn(name="publisher_seq")
     private MemberEntity publisher;
 
+    @Column(name="is_readed")
     private boolean read;
 
     @Enumerated(value=EnumType.STRING)
     private AlarmType alarmType;
-
-    public String getTitle(){
-        StringBuffer sb = new StringBuffer();
-        switch(this.alarmType){
-            case FOLLOW:
-                sb.append(publisher.getNickname()).append(" 님이 회원님을 팔로우했습니다.");
-                break;
-            case POST_LIKE:
-                sb.append("누군가가 회원님의 게시물을 스크랩했습니다.");
-                break;
-            case COMMENT_LIKE:
-                sb.append("누군가가 회원님의 댓글을 좋아합니다.");
-                break;
-            case COMMENT_POST:
-                sb.append(publisher.getNickname()).append("님이 회원님을 팔로우 했습니다.");
-                break;
-            default:
-                break;
-        }
-        return sb.toString();
-    }
-
-    public String getContent(){
-        StringBuffer sb = new StringBuffer();
-        switch(this.alarmType){
-            case FOLLOW:
-                break;
-            case POST_LIKE:
-                sb.append(this.post.getContent());
-            case COMMENT_LIKE:
-            case COMMENT_POST:
-                sb.append(this.comment.getContent());
-                break;
-            default:
-                break;
-        }
-        return sb.toString();
-    }
 }
