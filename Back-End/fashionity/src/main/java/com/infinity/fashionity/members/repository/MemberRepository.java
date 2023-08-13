@@ -18,6 +18,9 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     Optional<MemberEntity> findByIdAndEmail(String id, String email);
     @Query("select m from MemberEntity m join fetch m.memberRoles where m.email = :email")
     MemberEntity findByEmailWithRole(String email);
+
+    @Query("select m.seq from MemberEntity m where m.nickname = :nickname ")
+    Long findSeqByNickname(String nickname);
 }
 
 
