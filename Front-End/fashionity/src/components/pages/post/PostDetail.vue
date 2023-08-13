@@ -107,7 +107,10 @@
                       </div>
                     </v-list-item>
                     <v-list-item v-else>
-                      <router-link to="/post/modify" class="link">
+                      <router-link
+                        :to="{ path: `/post/${seq}/modify` }"
+                        class="link"
+                      >
                         <v-list-item-title type="button"
                           >수정</v-list-item-title
                         >
