@@ -1,6 +1,8 @@
 package com.infinity.fashionity.follows.service;
 
 
+import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
+import com.infinity.fashionity.alarm.service.AlarmService;
 import com.infinity.fashionity.follows.dto.FollowDTO;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
@@ -27,6 +29,7 @@ public class FollowServiceImpl implements FollowService{
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final AlarmService alarmService;
 
     @Override
     public FollowDTO.Response follow(Long seq, String nickname) {
@@ -50,6 +53,8 @@ public class FollowServiceImpl implements FollowService{
                 .build();
 
         followRepository.save(followEntity);
+        alarmService.sendAlarm(AlarmSendDTO.Request.builder()
+                .ownerSeq(followe));
         return FollowDTO.Response.builder()
                 .success(true)
                 .build();
