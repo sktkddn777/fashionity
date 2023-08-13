@@ -57,54 +57,8 @@
                   </template>
                   <v-list>
                     <v-list-item v-if="!this.post.myPost">
-                      <v-list-item-title
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#reportModal"
-                        >신고</v-list-item-title
-                      >
-                      <!-- report Modal -->
-                      <div
-                        class="modal fade"
-                        id="reportModal"
-                        tabindex="-1"
-                        aria-labelledby="reportModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1
-                                class="modal-title fs-5"
-                                id="reportModalLabel"
-                              >
-                                신고
-                              </h1>
-                              <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div class="modal-body">
-                              <report-modal></report-modal>
-                            </div>
-                            <div class="modal-footer">
-                              <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal"
-                              >
-                                취소
-                              </button>
-                              <button type="button" class="btn btn-primary">
-                                신고
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <!-- 신고 모달 -->
+                      <report-modal :seq="this.post.postSeq"></report-modal>
                     </v-list-item>
                     <v-list-item v-else>
                       <router-link
