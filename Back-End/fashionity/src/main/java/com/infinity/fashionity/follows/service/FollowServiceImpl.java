@@ -2,6 +2,7 @@ package com.infinity.fashionity.follows.service;
 
 
 import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
+import com.infinity.fashionity.alarm.entity.AlarmType;
 import com.infinity.fashionity.alarm.service.AlarmService;
 import com.infinity.fashionity.follows.dto.FollowDTO;
 import com.infinity.fashionity.follows.entity.FollowEntity;
@@ -33,8 +34,10 @@ public class FollowServiceImpl implements FollowService{
 
     @Override
     public FollowDTO.Response follow(Long seq, String nickname) {
+        //팔로우 당한사람
         MemberEntity followedMember = memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        //팔로우 한 사람
         MemberEntity member = memberRepository.findById(seq)
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         // 복합키 생성
@@ -53,8 +56,13 @@ public class FollowServiceImpl implements FollowService{
                 .build();
 
         followRepository.save(followEntity);
+        
+        //알람 보내기
         alarmService.sendAlarm(AlarmSendDTO.Request.builder()
-                .ownerSeq(followe));
+                .ownerSeq(followedMember.getSeq())
+                .publisherSeq(member.getSeq())
+                .type(AlarmType.FOLLOW)
+                .build());
         return FollowDTO.Response.builder()
                 .success(true)
                 .build();
