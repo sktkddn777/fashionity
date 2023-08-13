@@ -56,7 +56,7 @@ public class PostController {
     public ResponseEntity<PostSaveDTO.Response> savePost(
             @AuthenticationPrincipal JwtAuthentication auth,
             PostSaveDTO.Request dto) {
-        System.out.println("+++++++++++++++++++++++++++"+dto.getImages().size()+"만큼 들어옴");
+        System.out.println(dto.getImages().size()+"만큼 들어옴");
         dto.setHashtags(dto.getHashtags().stream().map(e->e.replaceAll("\"","")).collect(Collectors.toList()));
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
