@@ -60,7 +60,7 @@ export default {
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed});
+      }).then((res) => (this.success = res.data.success));
     },
     async unfollowAPI(nickname) {
       let body = { nickname: nickname };

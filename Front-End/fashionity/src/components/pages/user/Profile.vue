@@ -74,7 +74,7 @@
                 >
                   {{isFollowed ? '팔로잉':'팔로우'}}
                 </button>
-                <button class="inactive-button" style="margin-left: 0.5rem">
+                <button v-if = "nickname === myNickname" class="inactive-button" style="margin-left: 0.5rem">
                   프로필 수정
                 </button>
               </div>
@@ -208,7 +208,7 @@ export default {
     toLiked() {
       this.$router.push({ name: "likedPosts" });
     },
-    async getProfile() {
+    getProfile() {
       const nickname = this.$route.params.nickname;
       axios({
         method: "get",
