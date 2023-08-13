@@ -105,16 +105,10 @@ export default {
         hashtag: this.tagList,
       };
       await this.callPostUpdateAPI(postData);
-      this.navigateToMain();
+      this.navigateToDetail();
     },
     async callPostUpdateAPI(postData) {
       let postSeq = this.$route.params.seq;
-
-      console.log(postSeq);
-      console.log(postData.images);
-      console.log(postData.content);
-      console.log(postData.hashtag);
-
       let formData = new FormData();
       formData.append("content", postData.content);
       for (let i = 0; i < postData.images.length; i++) {
@@ -147,8 +141,9 @@ export default {
       this.fileList = file;
       console.log("파일임당", file);
     },
-    navigateToMain() {
-      this.$router.push("/post");
+    navigateToDetail() {
+      const postSeq = this.$route.params.seq;
+      this.$router.push(`/post/${postSeq}`);
     },
   },
 };

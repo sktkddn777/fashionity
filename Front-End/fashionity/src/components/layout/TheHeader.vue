@@ -43,12 +43,20 @@
                   </div>
                 </div>
                 <div class="col">
-                  <router-link to="/post/write" class="link">
+                  <div v-if="!isLogin" @click="loginAlert">
                     <font-awesome-icon
                       :icon="['fas', 'circle-plus']"
                       style="color: #bdbdbd"
                     />
-                  </router-link>
+                  </div>
+                  <div v-else>
+                    <router-link to="/post/write" class="link">
+                      <font-awesome-icon
+                        :icon="['fas', 'circle-plus']"
+                        style="color: #bdbdbd"
+                      />
+                    </router-link>
+                  </div>
                 </div>
                 <div class="col">
                   <font-awesome-icon
@@ -180,6 +188,9 @@ export default {
     },
     meeting() {
       router.push({ name: "ConsultingPage" });
+    },
+    loginAlert() {
+      alert("로그인해주세요.");
     },
   },
 };
