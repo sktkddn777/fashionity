@@ -72,6 +72,10 @@ public class CommentServiceImpl implements CommentService {
                     CommentEntity entity = (CommentEntity) obj[0];
                     int likesCount = ((Long)obj[1]).intValue();
                     boolean liked = ((Boolean)obj[2]).booleanValue();
+                    boolean isMyComment = false;
+                    if(entity.getMember().getSeq() == memberSeq){
+                        isMyComment = true;
+                    }
                     return Comment.builder()
                             .commentSeq(entity.getSeq())
                             .nickname(entity.getMember().getNickname())
@@ -82,6 +86,7 @@ public class CommentServiceImpl implements CommentService {
                             .updatedAt(entity.getUpdatedAt())
                             .likeCnt(likesCount)
                             .liked(liked)
+                            .isMyComment(isMyComment)
                             .build();
                 })
                 .collect(Collectors.toList());
