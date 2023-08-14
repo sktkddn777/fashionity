@@ -116,14 +116,14 @@ export default {
           type: "message",
         };
         this.stompClient.send(
-          "/chatting/receive/" + this.roomId,
+          `/chatting/send/${this.roomId}`,
           JSON.stringify(msg)
         );
       }
     },
     connect() {
       console.log("방 정보 : " + this.roomId);
-      const serverURL = "http://localhost:8081";
+      const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
@@ -136,7 +136,7 @@ export default {
           console.log("채팅 소켓 연결 성공", frame);
           // 서버의 메시지 전송 endpoint를 구독합니다.
           // 이런형태를 pub sub 구조라고 합니다.
-          this.stompClient.subscribe("/chatting/send/" + this.roomId, (res) => {
+          this.stompClient.subscribe(`/chatting/send/${this.roomId}`, (res) => {
             // console.log("구독으로 받은 메시지 입니다.", res.body);
 
             // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
