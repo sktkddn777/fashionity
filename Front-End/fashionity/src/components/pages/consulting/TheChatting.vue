@@ -22,12 +22,12 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 500px;
+  height: 80vh;
 }
 
 .message-list {
   flex: 1;
-  max-height: 500px;
+  max-height: 80vh;
   overflow-y: auto;
 }
 
@@ -35,6 +35,8 @@
   padding: 10px;
   border: 1px solid #ccc;
   display: flex;
+  margin: 5px;
+  border-radius: 20px;
 }
 
 .input-container {

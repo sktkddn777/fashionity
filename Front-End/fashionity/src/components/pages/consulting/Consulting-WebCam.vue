@@ -51,22 +51,113 @@
         <!-- mainStreamManager : 포커싱을 맞춰주는 화면 -->
         <!-- <user-video :stream-manager="mainStreamManager" /> -->
       </div>
-      <div id="video-container" class="col-md-6" style="display: flex">
+      <!-- 비디오 -->
+      <div id="video-container" class="video-container" style="display: flex">
         <user-video
           :stream-manager="publisher"
           @click="updateMainVideoStreamManager(publisher)"
         />
-        <user-video
-          v-for="sub in subscribers"
-          :key="sub.stream.connection.connectionId"
-          :stream-manager="sub"
-          @click="updateMainVideoStreamManager(sub)"
-        />
+        <div class="user-video">
+          <user-video
+            v-for="sub in subscribers"
+            :key="sub.stream.connection.connectionId"
+            :stream-manager="sub"
+            @click="updateMainVideoStreamManager(sub)"
+            class="user-video-container"
+          />
+          <img
+            :src="require(`@/assets/img/${selectedImage}`)"
+            alt="Selected Image"
+            v-if="selectedImageVisible"
+            @click="showImage(null)"
+            class="personal_color"
+          />
+        </div>
+      </div>
+      <!-- 이미지 div -->
+      <div>
+        <button @click="toggleDiv('colorDiv')" class="image-button">
+          퍼스널 컬러
+        </button>
+        <button @click="toggleDiv('styleDiv')" class="image-button">
+          등록 이미지
+        </button>
+        <!-- 퍼스널 컬러 -->
+        <div class="image-list" v-if="showColorDiv">
+          <div
+            class="image-item"
+            v-for="(image, index) in color_images"
+            :key="index"
+          >
+            <img
+              :src="require(`@/assets/img/${image.url}`)"
+              :alt="image.alt"
+              class="image"
+              @click="showImage(index)"
+            />
+          </div>
+        </div>
+        <!-- 등록 이미지 -->
+        <div class="image-list" v-if="showStyleDiv">
+          <div
+            class="image-item"
+            v-for="(image, index) in style_images"
+            :key="index"
+          >
+            <img
+              :src="require(`@/assets/img/${image.url}`)"
+              :alt="image.alt"
+              class="image"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
+<style scoped>
+@import url("./Consulting-WebCam.css");
+.image-list {
+  display: flex;
+  max-width: 60vw;
+  overflow-x: auto; /* 가로 스크롤을 생성합니다. */
+}
 
+.image-item {
+  border: 1px solid #ccc;
+  flex: 0 0 auto;
+  margin-right: 10px; /* 이미지 간 간격을 조정합니다. */
+}
+.image {
+  max-width: 40vh;
+  max-height: 40vh;
+}
+
+.user-video {
+  position: relative; /* 부모 컨테이너를 상대 위치로 설정 */
+}
+
+.user-video-container {
+  display: block;
+  width: 100%; /* 큰 이미지의 가로 너비를 100%로 설정 */
+  height: auto; /* 이미지 높이에 따라 조정 */
+}
+
+.personal_color {
+  position: absolute; /* 작은 이미지를 절대 위치로 설정 */
+  top: 50%; /* 부모 컨테이너의 50% 위치에 배치 */
+  left: 50%; /* 부모 컨테이너의 50% 위치에 배치 */
+  transform: translate(-50%, -50%); /* 이미지의 중심을 정중앙으로 이동 */
+}
+
+.image-button {
+  background-color: blue;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px;
+}
+</style>
 <script>
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
@@ -95,6 +186,26 @@ export default {
       subscribers: [],
       mySessionId: "djEjsdladmldmltptus",
       myUserName: "Participant" + Math.floor(Math.random() * 100),
+      showColorDiv: false,
+      showStyleDiv: false,
+      selectedImage: null,
+      selectedImageVisible: false,
+      color_images: [
+        { url: "spring_warm.png", alt: "봄웜" },
+        { url: "summer_cool.png", alt: "여름쿨" },
+        { url: "fall_warm.png", alt: "가을웜" },
+        { url: "winter_cool.png", alt: "겨울쿨" },
+      ],
+      style_images: [
+        { url: "hyeonwook.jpg", alt: "현욱1" },
+        { url: "hyeonwook2.jpg", alt: "현욱2" },
+        { url: "hyeonwook3.jpg", alt: "현욱3" },
+        { url: "postImg.jpg", alt: "지원" },
+        { url: "hyeonwook.jpg", alt: "현욱1" },
+        { url: "hyeonwook2.jpg", alt: "현욱2" },
+        { url: "hyeonwook3.jpg", alt: "현욱3" },
+        { url: "postImg.jpg", alt: "지원" },
+      ],
     };
   },
   // computed: {
@@ -281,6 +392,23 @@ export default {
           .then((data) => resolve(data.token))
           .catch((error) => reject(error.response));
       });
+    },
+    toggleDiv(divType) {
+      if (divType === "colorDiv") {
+        this.showColorDiv = !this.showColorDiv;
+        this.showStyleDiv = false;
+      } else if (divType === "styleDiv") {
+        this.showStyleDiv = !this.showStyleDiv;
+        this.showColorDiv = false;
+      }
+    },
+    showImage(index) {
+      if (index !== null) {
+        this.selectedImage = this.color_images[index].url;
+        this.selectedImageVisible = true;
+      } else {
+        this.selectedImageVisible = false;
+      }
     },
   },
 };
