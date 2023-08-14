@@ -82,42 +82,12 @@
         <!-- 이미지 -->
         <div class="row post-detail-image">
           <div id="carouselExampleIndicators" class="carousel slide">
-            <div class="carousel-indicators">
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="0"
-                class="active"
-                aria-current="true"
-                aria-label="Slide 1"
-              ></button>
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="1"
-                aria-label="Slide 2"
-              ></button>
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="2"
-                aria-label="Slide 3"
-              ></button>
-            </div>
-            <div
-              class="carousel-inner"
-              v-for="(item, i) in this.post.images"
-              :key="i"
-            >
-              <div v-if="i == 0" class="carousel-item active">
-                <img
-                  :src="item"
-                  class="d-block w-100"
-                  alt="첫 번째 사진"
-                  style="aspect-ratio: 1 / 1"
-                />
-              </div>
-              <div v-else class="carousel-item">
+            <div class="carousel-inner">
+              <div
+                v-for="(item, i) in this.post.images"
+                :key="i"
+                :class="['carousel-item', i === 0 ? 'active' : '']"
+              >
                 <img
                   :src="item"
                   class="d-block w-100"
@@ -152,6 +122,7 @@
             </button>
           </div>
         </div>
+
         <!-- 본문 내용 -->
         <div class="post-detail-like">
           <div v-if="!isLogin" @click="loginAlert">
