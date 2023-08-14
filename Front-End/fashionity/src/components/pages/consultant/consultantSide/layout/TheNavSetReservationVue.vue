@@ -10,20 +10,17 @@
     "
   >
     <div class="col col-lg-2 header-tab">
-      <router-link to="/post" style="text-decoration: none; color: #424242"
+      <router-link
+        to="/consultant/rc"
+        style="text-decoration: none; color: #424242"
         >예약확인</router-link
       >
     </div>
     <div class="col col-lg-2 header-tab point">
       <router-link
-        to="/consultant"
+        to="/consultant/rc/set"
         style="text-decoration: none; color: #424242"
         >예약설정</router-link
-      >
-    </div>
-    <div class="col col-lg-2 header-tab">
-      <router-link to="/profile" style="text-decoration: none; color: #424242"
-        >통계</router-link
       >
     </div>
   </div>

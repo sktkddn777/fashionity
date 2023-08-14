@@ -7,23 +7,18 @@
       border-color: white white #bdbdbd white;
     "
   >
-    <div class="col col-lg-2 header-tab">
+    <div class="col col-lg-2 header-tab point">
       <router-link
         to="/consultant/rc"
         style="text-decoration: none; color: #424242"
         >예약확인</router-link
       >
     </div>
-    <div class="col col-lg-2 header-tab point">
+    <div class="col col-lg-2 header-tab">
       <router-link
         to="/consultant/rc/set"
         style="text-decoration: none; color: #424242"
         >예약설정</router-link
-      >
-    </div>
-    <div class="col col-lg-2 header-tab">
-      <router-link to="/profile" style="text-decoration: none; color: #424242"
-        >통계</router-link
       >
     </div>
   </div>

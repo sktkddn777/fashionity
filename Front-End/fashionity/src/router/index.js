@@ -27,7 +27,9 @@ import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 
 import RConsultantMain from "../components/pages/consultant/consultantSide/RConsultantMain";
 import ConsultantVue from "../components/pages/consultant/Consultant";
-import RConsultantCheckVue from "../components/pages/consultant/consultantSide/RConsultantCheckVue";
+import RConsultantCheck from "../components/pages/consultant/consultantSide/RConsultantCheck";
+import RConsultantCheckDetail from "../components/pages/consultant/consultantSide/RConsultantCheckDetail";
+import RConsultantSet from "../components/pages/consultant/consultantSide/RConsultantSet";
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -184,13 +186,19 @@ const router = createRouter({
           children: [
             {
               path: "",
-              name: "RConsultantCheckVue",
-              component: RConsultantCheckVue,
+              name: "RConsultantCheck",
+              component: RConsultantCheck,
             },
             {
-              path: "/set",
-              name: "RConsultantCheckVue",
-              component: RConsultantCheckVue,
+              path: "set",
+              name: "RConsultantSet",
+              component: RConsultantSet,
+            },
+            {
+              path: "/detail/:value",
+              name: "RConsultantCheckDetail",
+              component: RConsultantCheckDetail,
+              props: true,
             },
           ],
         },

@@ -1,6 +1,8 @@
 <template>
   <the-nav-check-reservation></the-nav-check-reservation>
-  <router-view></router-view>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>

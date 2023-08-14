@@ -16,6 +16,14 @@
     </div>
     <div class="col col-lg-2 header-tab">
       <router-link
+        v-if="isConsultant"
+        to="/consultant/rc"
+        style="text-decoration: none; color: #424242"
+        >Consultant</router-link
+      >
+
+      <router-link
+        v-else
         to="/consultant"
         style="text-decoration: none; color: #424242"
         >Consultant</router-link
@@ -29,7 +37,13 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      isConsultant: true,
+    };
+  },
+};
 </script>
 <style scoped>
 * {
