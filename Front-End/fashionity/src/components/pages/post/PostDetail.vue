@@ -39,6 +39,16 @@
                 </button> -->
 
                 <button
+                  v-if="this.post.name !== myNickname"
+                  :class="
+                    this.post.following ? 'inactive-button' : 'active-button'
+                  "
+                  @click="toggleFollowing()"
+                >
+                  {{ this.post.following ? "팔로잉" : "팔로우" }}
+                </button>
+
+                <!-- <button
                   type="button"
                   class="btn btn-outline-primary"
                   style="min-width: 70px"
@@ -53,7 +63,7 @@
                   v-else
                 >
                   <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
-                </button>
+                </button> -->
               </div>
               <div v-else></div>
               <div>
