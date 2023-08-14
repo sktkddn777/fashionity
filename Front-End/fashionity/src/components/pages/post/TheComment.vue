@@ -150,6 +150,7 @@
 <script>
 import ReportModal from "./ReportModal.vue";
 export default {
+  props: ["postSeq"],
   components: {
     ReportModal,
   },
