@@ -44,7 +44,12 @@
           >
             <!-- 사용자 프로필 사진 -->
             <div class="profile-main-photo">
-              <img :src = "profileUrl" class="image-box" width="200" height="200" />
+              <img
+                :src="profileUrl"
+                class="image-box"
+                width="200"
+                height="200"
+              />
             </div>
             <!-- 사용자 정보 -->
             <div class="infos" style="display: flex; flex-direction: column">
@@ -64,20 +69,24 @@
                 >
                   {{ nickname }}
                 </div>
-
                 <button
-                  v-if = "nickname !== myNickname"
+                  v-if="nickname !== myNickname"
                   id="followbtn"
                   :class="isFollowed ? 'inactive-button' : 'active-button'"
                   @click="toggleFollow()"
                   style="margin-left: 0.5rem"
                 >
-                  {{isFollowed ? '팔로잉':'팔로우'}}
+                  {{ isFollowed ? "팔로잉" : "팔로우" }}
                 </button>
-                <button v-if = "nickname === myNickname" class="inactive-button" style="margin-left: 0.5rem">
-                  <router-link :to="`/profile/${nickname}/edit`"></router-link>
-                  프로필 수정
-                </button>
+                <router-link :to="`/profile/${nickname}/edit`">
+                  <button
+                    v-if="nickname === myNickname"
+                    class="inactive-button"
+                    style="margin-left: 0.5rem"
+                  >
+                    프로필 수정
+                  </button>
+                </router-link>
               </div>
               <br />
               <div class="m-top-d" style="width: 30rem" align="left">
@@ -140,8 +149,7 @@
       </div>
 
       <!-- 게시글 영역 -->
-      <my-post-list/>
-
+      <my-post-list />
     </div>
   </div>
 </template>
@@ -154,7 +162,7 @@ import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
-import MyPostList from "@/components/pages/user/MyPostList.vue"
+import MyPostList from "@/components/pages/user/MyPostList.vue";
 
 let token = sessionStorage.getItem("token");
 
@@ -199,7 +207,7 @@ export default {
       profileUrl: "",
       followersPop: false,
       followingsPop: false,
-      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
   created() {
@@ -214,9 +222,7 @@ export default {
       axios({
         method: "get",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/${nickname}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       }).then(({ data }) => {
         this.nickname = data.nickname;
         this.postsCnt = data.postsCnt;

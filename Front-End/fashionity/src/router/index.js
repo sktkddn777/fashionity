@@ -23,8 +23,8 @@ import store from "@/store";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
-import FollowersList from "@/components/pages/user/FollowersList"
-import ProfileLiked from "@/components/pages/user/ProfileLiked"
+import ProfileEdit from "@/components/pages/user/ProfileEdit";
+import ProfileLiked from "@/components/pages/user/ProfileLiked";
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -81,9 +81,9 @@ const router = createRouter({
           component: ProfileLiked,
         },
         {
-          path: ":nickname/followers",
-          name: "followersList",
-          component: FollowersList,
+          path: ":nickname/edit",
+          name: "profileEdit",
+          component: ProfileEdit,
         },
       ],
     },
