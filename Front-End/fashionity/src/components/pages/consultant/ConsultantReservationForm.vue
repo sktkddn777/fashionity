@@ -79,7 +79,7 @@
         <!-- 평소 나의 스타일 등록 -->
         <div class="row justify-content-center">
           <div class="col-9">
-            <multi-image-upload></multi-image-upload>
+            <multi-image-upload @updateImg="updateImg"></multi-image-upload>
           </div>
         </div>
 
@@ -106,6 +106,8 @@ export default {
   data() {
     return {
       isValid: false,
+      imgList: [],
+      fileList: [],
     };
   },
   components: {
@@ -120,10 +122,19 @@ export default {
         this.isValid = false;
       }
     },
+    updateImg(file) {
+      this.fileList = file;
+      console.log("파일임당", file);
+    },
   },
   created() {
     this.isVaild = false;
   },
+  // watch: {
+  //   imgList() {
+  //     console.log("이미지 바뀜", this.imgList);
+  //   },
+  // },
 };
 </script>
 <style scoped>

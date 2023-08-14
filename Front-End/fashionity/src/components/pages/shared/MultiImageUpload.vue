@@ -95,39 +95,55 @@ export default {
       uploadImageIndex: 0, // 이미지 업로드를 위한 변수
       img: "https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg",
       cropImgURL: "",
+      currImgList: [],
+      currFileList: [],
     };
   },
+  // props: {
+  //   imgList: [],
+  // },
   components: {
     Cropper,
   },
   methods: {
-    makePreview() {
-      let num = -1;
+    makePreview(blobData) {
       for (let i = 0; i < this.$refs.files.files.length; i++) {
+        console.log("안녕 난 for문이야");
         this.files = [
           ...this.files,
           //이미지 업로드
           {
             //실제 파일
-            file: this.$refs.files.files[i],
+            // file: this.$refs.files.files[i],
+            file: this.cropImgURL,
             //이미지 프리뷰
             // preview: URL.createObjectURL(this.$refs.files.files[i]),
             preview: this.cropImgURL,
             //삭제및 관리를 위한 number
-            number: i,
+            number: this.uploadImageIndex,
           },
         ];
-        num = i;
+        // num = i;
         //이미지 업로드용 프리뷰
-        // this.filesPreview = [
-        //   ...this.filesPreview,
-        //   { file: URL.createObjectURL(this.$refs.files.files[i]), number: i }
-        // ];
+        this.filesPreview = [
+          ...this.filesPreview,
+          {
+            file: URL.createObjectURL(this.$refs.files.files[i]),
+            number: this.uploadImageIndex,
+            binaryFile: blobData,
+          },
+        ];
       }
-      this.uploadImageIndex = num + 1; //이미지 index의 마지막 값 + 1 저장
+      this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
+
+      // this.uploadImageIndex += 1;
       console.log(this.files);
+
+      console.log("프리뷰 입니당", this.filesPreview);
       // console.log(this.filesPreview);
       this.cropImgURL = "";
+      this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
     },
     imageUpload() {
       console.log("upload");
@@ -199,7 +215,12 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter(
+        (data) => data.number !== Number(name)
+      );
       // console.log(this.files);
+      this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
     },
     uploadImage() {
       const { canvas } = this.$refs.cropper.getResult();
@@ -216,15 +237,25 @@ export default {
         //   // Perhaps you should add the setting appropriate file format here
         // }, "image/jpeg");
         // const url = window.URL.createObjectURL(form);
+        var blobData = "";
+        canvas.toBlob((blob) => {
+          console.log("blob", blob);
+          this.cropImgURL = canvas.toDataURL();
+
+          this.makePreview(blob);
+          blobData = blob;
+        });
 
         console.log("blob 후", canvas.toDataURL());
+        console.log(blobData);
         // let blob = new Blob([new ArrayBuffer(canvas.toDataURL())], {
         //   type: "image/png",
         // });
         // const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
 
-        this.cropImgURL = canvas.toDataURL();
-        this.makePreview();
+        // this.cropImgURL = canvas.toDataURL();
+
+        // this.makePreview(blobData);
       }
     },
   },
@@ -235,6 +266,11 @@ export default {
     cropImgURL(newVal) {
       this.cropImgURL = newVal;
       console.log("watch", this.cropImgURL);
+    },
+    currFileList(newVal) {
+      this.currFileList = newVal;
+      console.log("newval", newVal);
+      this.$emit("updateImg", this.currFileList);
     },
   },
 };

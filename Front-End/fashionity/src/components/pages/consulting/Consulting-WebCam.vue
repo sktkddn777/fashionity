@@ -51,28 +51,121 @@
         <!-- mainStreamManager : 포커싱을 맞춰주는 화면 -->
         <!-- <user-video :stream-manager="mainStreamManager" /> -->
       </div>
-      <div id="video-container" class="col-md-6" style="display: flex">
+      <!-- 비디오 -->
+      <div id="video-container" class="video-container" style="display: flex">
         <user-video
           :stream-manager="publisher"
           @click="updateMainVideoStreamManager(publisher)"
         />
-        <user-video
-          v-for="sub in subscribers"
-          :key="sub.stream.connection.connectionId"
-          :stream-manager="sub"
-          @click="updateMainVideoStreamManager(sub)"
-        />
+        <div class="user-video">
+          <user-video
+            v-for="sub in subscribers"
+            :key="sub.stream.connection.connectionId"
+            :stream-manager="sub"
+            @click="updateMainVideoStreamManager(sub)"
+            class="user-video-container"
+          />
+          <img
+            :src="require(`@/assets/img/${selectedImage}`)"
+            alt="Selected Image"
+            v-if="selectedImageVisible"
+            @click="showImage(null)"
+            class="personal_color"
+          />
+        </div>
+      </div>
+      <!-- 이미지 div -->
+      <div>
+        <button @click="toggleDiv('colorDiv')" class="image-button">
+          퍼스널 컬러
+        </button>
+        <button @click="toggleDiv('styleDiv')" class="image-button">
+          등록 이미지
+        </button>
+        <!-- 퍼스널 컬러 -->
+        <div class="image-list" v-if="showColorDiv">
+          <div
+            class="image-item"
+            v-for="(image, index) in color_images"
+            :key="index"
+          >
+            <img
+              :src="require(`@/assets/img/${image.url}`)"
+              :alt="image.alt"
+              class="image"
+              @click="showImage(index)"
+            />
+          </div>
+        </div>
+        <!-- 등록 이미지 -->
+        <div class="image-list" v-if="showStyleDiv">
+          <div
+            class="image-item"
+            v-for="(image, index) in style_images"
+            :key="index"
+          >
+            <img
+              :src="require(`@/assets/img/${image.url}`)"
+              :alt="image.alt"
+              class="image"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
+<style scoped>
+@import url("./Consulting-WebCam.css");
+.image-list {
+  display: flex;
+  max-width: 60vw;
+  overflow-x: auto; /* 가로 스크롤을 생성합니다. */
+}
 
+.image-item {
+  border: 1px solid #ccc;
+  flex: 0 0 auto;
+  margin-right: 10px; /* 이미지 간 간격을 조정합니다. */
+}
+.image {
+  max-width: 40vh;
+  max-height: 40vh;
+}
+
+.user-video {
+  position: relative; /* 부모 컨테이너를 상대 위치로 설정 */
+}
+
+.user-video-container {
+  display: block;
+  width: 100%; /* 큰 이미지의 가로 너비를 100%로 설정 */
+  height: auto; /* 이미지 높이에 따라 조정 */
+}
+
+.personal_color {
+  position: absolute; /* 작은 이미지를 절대 위치로 설정 */
+  top: 50%; /* 부모 컨테이너의 50% 위치에 배치 */
+  left: 50%; /* 부모 컨테이너의 50% 위치에 배치 */
+  transform: translate(-50%, -50%); /* 이미지의 중심을 정중앙으로 이동 */
+}
+
+.image-button {
+  background-color: blue;
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 5px;
+}
+</style>
 <script>
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "./components/UserVideo";
-// import { mapState } from "vuex";
 import router from "@/router";
+import Stomp from "webstomp-client";
+import SockJS from "sockjs-client";
+import { mapGetters } from "vuex";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -94,20 +187,42 @@ export default {
       publisher: undefined,
       subscribers: [],
       mySessionId: "djEjsdladmldmltptus",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      myUserName: null,
+      showColorDiv: false,
+      showStyleDiv: false,
+      selectedImage: null,
+      selectedImageVisible: false,
+      selectedIndex: null,
+      userData: null,
+      color_images: [
+        { url: "spring_warm.png", alt: "봄웜" },
+        { url: "summer_cool.png", alt: "여름쿨" },
+        { url: "fall_warm.png", alt: "가을웜" },
+        { url: "winter_cool.png", alt: "겨울쿨" },
+      ],
+      style_images: [
+        { url: "hyeonwook.jpg", alt: "현욱1" },
+        { url: "hyeonwook2.jpg", alt: "현욱2" },
+        { url: "hyeonwook3.jpg", alt: "현욱3" },
+        { url: "postImg.jpg", alt: "지원" },
+        { url: "hyeonwook.jpg", alt: "현욱1" },
+        { url: "hyeonwook2.jpg", alt: "현욱2" },
+        { url: "hyeonwook3.jpg", alt: "현욱3" },
+        { url: "postImg.jpg", alt: "지원" },
+      ],
     };
   },
-  // computed: {
-  //   ...mapState(["meetingInfo"]),
-  //   myUserName() {
-  //     return this.meetingInfo.userName;
-  //   },
-  //   mySessionId() {
-  //     return this.meetingInfo.roomId;
-  //   },
-  // },
+  computed: {
+    ...mapGetters("memberStore", ["checkLoginUser"]),
+  },
   created() {
+    this.myUserName = this.checkLoginUser.nickname;
+    this.userData = this.checkLoginUser;
+    console.log("유저 정보 : " + this.userData.nickname);
+    console.log("유저 정보 : " + this.userData.memberRole);
+    console.log("유저 정보 : " + this.userData.memberSeq);
     this.joinSession();
+    this.connect();
   },
 
   methods: {
@@ -281,6 +396,84 @@ export default {
           .then((data) => resolve(data.token))
           .catch((error) => reject(error.response));
       });
+    },
+    toggleDiv(divType) {
+      if (divType === "colorDiv") {
+        this.showColorDiv = !this.showColorDiv;
+        this.showStyleDiv = false;
+      } else if (divType === "styleDiv") {
+        this.showStyleDiv = !this.showStyleDiv;
+        this.showColorDiv = false;
+      }
+    },
+    showImage(index) {
+      if (index !== null) {
+        this.selectedIndex = index;
+        this.selectedImage = this.color_images[index].url;
+        this.selectedImageVisible = true;
+        this.send(this.selectedIndex);
+      } else {
+        this.selectedImageVisible = false;
+        this.send(null);
+      }
+    },
+    connect() {
+      console.log("방 정보 : " + this.roomId);
+      const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
+      //  + "/chatting/djEjsdladmldmltptus"
+      let socket = new SockJS(serverURL);
+      this.stompClient = Stomp.over(socket);
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+      this.stompClient.connect(
+        {},
+        (frame) => {
+          // 소켓 연결 성공
+          this.connected = true;
+          console.log("이미지 소켓 연결 성공", frame);
+          // 서버의 메시지 전송 endpoint를 구독합니다.
+          // 이런형태를 pub sub 구조라고 합니다.
+          this.stompClient.subscribe(
+            `/chatting/send/${this.mySessionId}`,
+            (res) => {
+              // console.log("구독으로 받은 메시지 입니다.", res.body);
+
+              // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+              const receiveData = JSON.parse(res.body);
+              if (receiveData.type == "personal_color") {
+                console.log("받아온 이미지 인덱스 : " + receiveData.content);
+                this.selectedIndex = receiveData.content;
+              }
+            }
+          );
+        },
+        (error) => {
+          // 소켓 연결 실패
+          console.log("소켓 연결 실패", error);
+          this.connected = false;
+        }
+      );
+    },
+    send(index) {
+      console.log("보낼 이미지 인덱스 : " + index);
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = {
+          userName: this.myUserName,
+          content: index,
+          // roomId: "djEjsdladmldmltptus",
+          roomId: this.mySessionId,
+          type: "personal_color",
+        };
+        this.stompClient.send(
+          `/chatting/send/${this.roomId}`,
+          JSON.stringify(msg)
+        );
+      }
+    },
+  },
+  watch: {
+    selectedIndex(newVal) {
+      console.log("새로운 값 : " + newVal);
+      this.showImage(newVal);
     },
   },
 };

@@ -2,7 +2,6 @@ import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
 
 import memberStore from "./modules/memberStore";
-import testStore from "./modules/testStore";
 
 export default createStore({
   plugins: [
@@ -16,6 +15,5 @@ export default createStore({
   actions: {},
   modules: {
     memberStore,
-    testStore,
   },
 });
