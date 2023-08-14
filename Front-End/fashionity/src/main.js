@@ -4,9 +4,16 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import Toast from "vue-toastification";
+
+import "v-calendar/dist/style.css";
+
+import { setupCalendar, Calendar, DatePicker } from "v-calendar";
+import "v-calendar/style.css";
+
 import testStore from "./store/modules/testStore";
 // import "v-calendar/dist/style.css";
 // import VCalendar from "v-calendar";
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
@@ -39,6 +46,12 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(Toast)
+
+  .use(setupCalendar, {})
+
   .use(testStore)
+
   .component("font-awesome-icon", FontAwesomeIcon)
+  .component("VCalendar", Calendar)
+  .component("VDatePicker", DatePicker)
   .mount("#app");

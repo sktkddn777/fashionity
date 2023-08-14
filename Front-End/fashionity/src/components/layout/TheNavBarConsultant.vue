@@ -5,6 +5,7 @@
       margin-bottom: 30px;
       border-style: solid;
       border-width: 1px;
+      margin-top: -20px;
       border-color: white white #bdbdbd white;
     "
   >
