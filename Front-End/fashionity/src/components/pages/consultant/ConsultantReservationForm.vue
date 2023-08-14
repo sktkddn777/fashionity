@@ -107,6 +107,7 @@ export default {
     return {
       isValid: false,
       imgList: [],
+      fileList: [],
     };
   },
   components: {
@@ -121,8 +122,9 @@ export default {
         this.isValid = false;
       }
     },
-    updateImg(val) {
-      this.imgList = val;
+    updateImg(file) {
+      this.fileList = file;
+      console.log("파일임당", file);
     },
   },
   created() {

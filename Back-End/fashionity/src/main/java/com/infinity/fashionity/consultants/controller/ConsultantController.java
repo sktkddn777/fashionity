@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -142,10 +141,38 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("reservationSeq") Long reservationSeq,
             UserReservationInfoDTO.Request dto){
-            dto.setMemberSeq(auth.getSeq());
+//            dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
             dto.setReservationSeq(reservationSeq);
         UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
         return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
+
+    }
+
+
+    // 스케쥴 등록
+    @PostMapping("reservation/schedule")
+    public ResponseEntity<ScheduleSaveDTO.Response> saveSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody  ScheduleSaveDTO.Request dto){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        ScheduleSaveDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
+
+        return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("reservation/schedule/{schedule_seq}")
+    public ResponseEntity<ScheduleDeleteDTO.Response> deleteSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody ScheduleDeleteDTO.Request dto,
+            @PathVariable("schedule_seq") Long scheduleSeq){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ScheduleDeleteDTO.Response scheduleDeleteResponse = consultantService.deleteSchedule(dto, scheduleSeq);
+
+        return new ResponseEntity<>(scheduleDeleteResponse, HttpStatus.OK);
 
     }
 
