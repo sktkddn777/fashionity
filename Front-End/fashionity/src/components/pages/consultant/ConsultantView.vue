@@ -8,6 +8,7 @@
 import TheNavBarConsultant from "@/components/layout/TheNavBarConsultant.vue";
 
 export default {
+  created() {},
   data() {
     return {};
   },
