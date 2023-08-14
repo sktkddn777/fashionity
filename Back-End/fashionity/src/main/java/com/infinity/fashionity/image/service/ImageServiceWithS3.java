@@ -1,6 +1,7 @@
 package com.infinity.fashionity.image.service;
 
 import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.image.dto.ImageDeleteDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -59,7 +59,7 @@ public class ImageServiceWithS3 implements ImageService{
      * MultipartFile을 File객체로 변환하는 메서드
      * */
     private Optional<File> convertMultipartFileToFile(MultipartFile multipartFile) {
-        File file = new File(System.getProperty("user.dir").concat("/").concat(multipartFile.getOriginalFilename()));//해당 이름으로 파일을 만듬
+        File file = new File(System.getProperty("user.dir").concat("/").concat(StringUtils.randomSting(30)));//해당 이름으로 파일을 만듬
 
         try {
             if (file.createNewFile()) {
@@ -100,7 +100,7 @@ public class ImageServiceWithS3 implements ImageService{
 
         //이미지파일이 아닌것이 들어오면 THROW
         multipartFiles.stream()
-                .filter(file->!file.getContentType().startsWith("image"))
+                .filter(file->!file.getContentType().toLowerCase().startsWith("image"))
                 .findAny()
                 .ifPresent((f)->new ImageException(ErrorCode.INVALID_IMAGE_TYPE));
 

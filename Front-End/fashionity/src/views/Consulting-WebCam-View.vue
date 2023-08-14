@@ -23,9 +23,9 @@ export default {
 }
 
 .compo {
+  flex: 3;
+}
+.compo:nth-child(2) {
   flex: 1;
 }
-/* .compo:nth-child(2) {
-  flex: 1;
-} */
 </style>

@@ -1,8 +1,13 @@
 <template lang="">
   <div class="container-fluid">
     <div class="row justify-content-start">
-      <div class="row justify-content-start" style="margin-top: 10px">사진 등록</div>
-      <div class="row justify-content-start" style="font-size: 10px; margin-top: 10px">
+      <div class="row justify-content-start" style="margin-top: 10px">
+        사진 등록
+      </div>
+      <div
+        class="row justify-content-start"
+        style="font-size: 10px; margin-top: 10px"
+      >
         * 최대 4장까지 사진 등록이 가능합니다.
       </div>
 
@@ -15,21 +20,41 @@
               <img :src="profileImage" />
               </div>-->
                 <label for="file">사진 등록</label>
-                <input type="file" id="file" ref="files" @change="imageUpload" />
+                <input
+                  type="file"
+                  id="file"
+                  ref="files"
+                  @change="imageUpload"
+                />
               </div>
             </div>
           </div>
         </div>
         <div v-else class="file-preview-content-container">
           <div class="file-preview-container">
-            <div v-for="(file, index) in files" :key="index" class="file-preview-wrapper">
-              <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div>
+            <div
+              v-for="(file, index) in files"
+              :key="index"
+              class="file-preview-wrapper"
+            >
+              <div
+                class="file-close-button"
+                @click="fileDeleteButton"
+                :name="file.number"
+              >
+                x
+              </div>
               <img :src="file.preview" />
             </div>
             <div v-if="files.length < 4">
               <div class="image-box">
                 <label for="file">추가 사진 등록</label>
-                <input type="file" id="file" ref="files" @change="imageUpload" />
+                <input
+                  type="file"
+                  id="file"
+                  ref="files"
+                  @change="imageUpload"
+                />
               </div>
               <!-- <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div> -->
             </div>
@@ -190,7 +215,9 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
-      this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter(
+        (data) => data.number !== Number(name)
+      );
       // console.log(this.files);
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);

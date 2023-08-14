@@ -64,7 +64,11 @@ public enum ErrorCode {
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCH001", "존재하지 않는 스케쥴입니다."),
 
     // Review
-    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다.");
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다."),
+
+    // Alarm
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND,"ALARM001","존재하지 않는 알람입니다.")
+    ;
 
     private final HttpStatus status;
     private final String code;
