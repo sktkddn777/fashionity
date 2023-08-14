@@ -106,10 +106,9 @@ public class PostController {
     public ResponseEntity<PostReportDTO.Response> reportPost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            PostReportDTO.Request dto) {
+            @RequestBody PostReportDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
-        System.out.println("컨트롤러입니다 : " + auth.getSeq() + " / " + postSeq + " / " + dto.getCategory() + " / " + dto.getContent());
         PostReportDTO.Response success = postService.reportPost(dto);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
