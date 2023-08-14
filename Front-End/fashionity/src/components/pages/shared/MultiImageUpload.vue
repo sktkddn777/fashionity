@@ -53,7 +53,7 @@
                   type="file"
                   id="file"
                   ref="files"
-                  @change="imageAddUpload"
+                  @change="imageUpload"
                 />
               </div>
               <!-- <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div> -->
@@ -62,7 +62,25 @@
         </div>
       </div>
     </div>
-    <cropper :src="img" @change="change" />
+    <div v-if="cropImgURL" class="row justify-content-start">
+      <div class="col">
+        <cropper
+          class="cropper"
+          ref="cropper"
+          :auto-zoom="true"
+          :stencil-size="{
+            width: 280,
+            height: 280,
+          }"
+          image-restriction="stencil"
+          :stencil-props="{
+            aspectRatio: 1 / 1,
+          }"
+          :src="cropImgURL"
+        />
+      </div>
+      <div class="col" @click="uploadImage">upload</div>
+    </div>
   </div>
 </template>
 <script>
@@ -76,45 +94,95 @@ export default {
       filesPreview: [],
       uploadImageIndex: 0, // 이미지 업로드를 위한 변수
       img: "https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg",
+      cropImgURL: "",
+      currImgList: [],
+      currFileList: [],
     };
   },
+  // props: {
+  //   imgList: [],
+  // },
   components: {
     Cropper,
   },
   methods: {
+    makePreview(blobData) {
+      for (let i = 0; i < this.$refs.files.files.length; i++) {
+        console.log("안녕 난 for문이야");
+        this.files = [
+          ...this.files,
+          //이미지 업로드
+          {
+            //실제 파일
+            // file: this.$refs.files.files[i],
+            file: this.cropImgURL,
+            //이미지 프리뷰
+            // preview: URL.createObjectURL(this.$refs.files.files[i]),
+            preview: this.cropImgURL,
+            //삭제및 관리를 위한 number
+            number: this.uploadImageIndex,
+          },
+        ];
+        // num = i;
+        //이미지 업로드용 프리뷰
+        this.filesPreview = [
+          ...this.filesPreview,
+          {
+            file: URL.createObjectURL(this.$refs.files.files[i]),
+            number: this.uploadImageIndex,
+            binaryFile: blobData,
+          },
+        ];
+      }
+      this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
+
+      // this.uploadImageIndex += 1;
+      console.log(this.files);
+
+      console.log("프리뷰 입니당", this.filesPreview);
+      // console.log(this.filesPreview);
+      this.cropImgURL = "";
+      this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
+    },
     imageUpload() {
       console.log("upload");
       console.log(this.$refs.files.files);
-      if (this.$refs.files.files.length > 4) {
-        alert("이미지는 최대 4개까지 가능합니다");
-      } else {
-        // this.files = [...this.files, this.$refs.files.files];
-        //하나의 배열로 넣기
-        let num = -1;
-        for (let i = 0; i < this.$refs.files.files.length; i++) {
-          this.files = [
-            ...this.files,
-            //이미지 업로드
-            {
-              //실제 파일
-              file: this.$refs.files.files[i],
-              //이미지 프리뷰
-              preview: URL.createObjectURL(this.$refs.files.files[i]),
-              //삭제및 관리를 위한 number
-              number: i,
-            },
-          ];
-          num = i;
-          //이미지 업로드용 프리뷰
-          // this.filesPreview = [
-          //   ...this.filesPreview,
-          //   { file: URL.createObjectURL(this.$refs.files.files[i]), number: i }
-          // ];
-        }
-        this.uploadImageIndex = num + 1; //이미지 index의 마지막 값 + 1 저장
-        console.log(this.files);
-        // console.log(this.filesPreview);
-      }
+
+      console.log(this.$refs.files.files[this.$refs.files.files.length - 1]);
+      this.cropImgURL = URL.createObjectURL(
+        this.$refs.files.files[this.$refs.files.files.length - 1]
+      );
+      console.log("url입니당", this.cropImgURL);
+      // this.uploadImage();
+
+      // this.files = [...this.files, this.$refs.files.files];
+      //하나의 배열로 넣기
+      // let num = -1;
+      // for (let i = 0; i < this.$refs.files.files.length; i++) {
+      //   this.files = [
+      //     ...this.files,
+      //     //이미지 업로드
+      //     {
+      //       //실제 파일
+      //       file: this.$refs.files.files[i],
+      //       //이미지 프리뷰
+      //       // preview: URL.createObjectURL(this.$refs.files.files[i]),
+      //       preview: this.cropImgURL,
+      //       //삭제및 관리를 위한 number
+      //       number: i,
+      //     },
+      //   ];
+      //   num = i;
+      //   //이미지 업로드용 프리뷰
+      //   // this.filesPreview = [
+      //   //   ...this.filesPreview,
+      //   //   { file: URL.createObjectURL(this.$refs.files.files[i]), number: i }
+      //   // ];
+      // }
+      // this.uploadImageIndex = num + 1; //이미지 index의 마지막 값 + 1 저장
+      // console.log(this.files);
+      // // console.log(this.filesPreview);
     },
 
     imageAddUpload() {
@@ -147,11 +215,63 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter(
+        (data) => data.number !== Number(name)
+      );
       // console.log(this.files);
+      this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
+    },
+    uploadImage() {
+      const { canvas } = this.$refs.cropper.getResult();
+      console.log(canvas);
+      if (canvas) {
+        // const form = new FormData();
+        // canvas.toBlob((blob) => {
+        //   form.append("file", blob);
+        //   // You can use axios, superagent and other libraries instead here
+        //   // fetch("http://example.com/upload/", {
+        //   //   method: "POST",
+        //   //   body: form,
+        //   // });
+        //   // Perhaps you should add the setting appropriate file format here
+        // }, "image/jpeg");
+        // const url = window.URL.createObjectURL(form);
+        var blobData = "";
+        canvas.toBlob((blob) => {
+          console.log("blob", blob);
+          this.cropImgURL = canvas.toDataURL();
+
+          this.makePreview(blob);
+          blobData = blob;
+        });
+
+        console.log("blob 후", canvas.toDataURL());
+        console.log(blobData);
+        // let blob = new Blob([new ArrayBuffer(canvas.toDataURL())], {
+        //   type: "image/png",
+        // });
+        // const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
+
+        // this.cropImgURL = canvas.toDataURL();
+
+        // this.makePreview(blobData);
+      }
     },
   },
   change({ coordinates, canvas }) {
     console.log(coordinates, canvas);
+  },
+  watch: {
+    cropImgURL(newVal) {
+      this.cropImgURL = newVal;
+      console.log("watch", this.cropImgURL);
+    },
+    currFileList(newVal) {
+      this.currFileList = newVal;
+      console.log("newval", newVal);
+      this.$emit("updateImg", this.currFileList);
+    },
   },
 };
 </script>
@@ -428,5 +548,11 @@ width: 100%; */
 
 .room-write-button:hover {
   opacity: 0.8;
+}
+
+.cropper {
+  max-height: 250px;
+  max-width: 250px;
+  background: #ddd;
 }
 </style>

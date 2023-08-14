@@ -64,7 +64,21 @@ export default {
       like_count: this.post.like_count,
     };
   },
+  mounted() {
+    this.cutText();
+  },
   methods: {
+    cutText() {
+      const textContainer = document.querySelector(".post-font");
+
+      if (textContainer.scrollWidth > textContainer.clientWidth) {
+        while (textContainer.scrollWidth > textContainer.clientWidth) {
+          textContainer.textContent = textContainer.textContent.slice(0, -1);
+        }
+        textContainer.textContent =
+          textContainer.textContent.slice(0, -3) + "...";
+      }
+    },
     toggleLike() {
       this.callLikeAPI(this.like);
     },
@@ -98,6 +112,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 #post_outer {
   border: 1px solid rgba(189, 189, 189, 0.3);
@@ -132,11 +147,15 @@ export default {
   font-size: 11px;
   color: #bdbdbd;
   height: 45px;
-  padding: 5px;
+  padding: 5px 15px;
   display: flex;
   align-items: center;
   justify-content: left;
   text-align: left;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profile {

@@ -71,6 +71,8 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "./components/UserVideo";
+// import { mapState } from "vuex";
+import router from "@/router";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -91,10 +93,21 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
-
       mySessionId: "djEjsdladmldmltptus",
       myUserName: "Participant" + Math.floor(Math.random() * 100),
     };
+  },
+  // computed: {
+  //   ...mapState(["meetingInfo"]),
+  //   myUserName() {
+  //     return this.meetingInfo.userName;
+  //   },
+  //   mySessionId() {
+  //     return this.meetingInfo.roomId;
+  //   },
+  // },
+  created() {
+    this.joinSession();
   },
 
   methods: {
@@ -182,6 +195,7 @@ export default {
       this.OV = undefined;
 
       window.removeEventListener("beforeunload", this.leaveSession);
+      router.push({ name: "consultant-myreservation" });
     },
 
     updateMainVideoStreamManager(stream) {
@@ -211,6 +225,7 @@ export default {
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
     createSession(sessionId) {
       return new Promise((resolve, reject) => {
+        axios.defaults.withCredentials = false;
         console.log("---------------------createSession : " + sessionId);
         axios
           .post(

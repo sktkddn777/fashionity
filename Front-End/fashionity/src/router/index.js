@@ -15,35 +15,45 @@ import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
 import ConsultantMyList from "@/components/pages/consultant/ConsultantMyList";
+import ConsultantReservationSubmit from "@/components/pages/consultant/ConsultantReservationSubmit";
 import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
 import PostModify from "../components/pages/post/PostModify.vue";
+import store from "@/store";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 
-// import store from "@/store";
+const onlyAuthUser = async () => {
+  const checkLoginUser = store.getters["memberStore/checkLoginUser"];
+  const checkToken = store.getters["memberStore/checkToken"];
 
-// const onlyAuthUser = async (to, from, next) => {
-//   const checkUserInfo = store.getters["memberStore/checkUserInfo"];
-//   const checkToken = store.getters["memberStore/checkToken"];
-//   let token = sessionStorage.getItem("access-token");
-//   console.log("로그인 처리 전", checkUserInfo,  token);
+  if (checkLoginUser != null) {
+    console.log("토큰 유효성 체크하러 가자!!!!");
+    await store.dispatch("memberStore/getUserInfoAction");
+  }
+  if (!checkToken || checkLoginUser === null) {
+    alert("로그인이 필요한 페이지입니다..");
+    router.push({ name: "UserLogin" });
+  } else {
+    console.log("로그인 한 유저네용");
+  }
+};
 
-//   if (checkUserInfo != null && token) {
-//     console.log("토큰 유효성 체크하러 가자!!!!");
-//     await store.dispatch("memberStore/getUserInfo", token);
-//   }
-//   if (!checkToken || checkUserInfo === null) {
-//     alert("로그인이 필요한 페이지입니다..");
-//     // next({ name: "login" });
-//     router.push({ name: "userlogin" });
-//   } else {
-//     console.log("로그인 했다!!!!!!!!!!!!!.");
-//     next();
-//   }
-// };
+const optionalAuthUser = async () => {
+  const checkLoginUser = store.getters["memberStore/checkLoginUser"];
+  const checkToken = store.getters["memberStore/checkToken"];
+
+  if (checkLoginUser != null) {
+    console.log("토큰 유효성 체크하러 가자!!!!");
+    await store.dispatch("memberStore/getUserInfoAction");
+  }
+
+  if (!checkToken || checkLoginUser === null) {
+    await store.dispatch("memberStore/logoutAction");
+  }
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -61,6 +71,7 @@ const router = createRouter({
         {
           path: ":nickname",
           name: "ProfilePage",
+          beforeEnter: onlyAuthUser,
           component: ProfilePage,
         },
         {
@@ -102,7 +113,7 @@ const router = createRouter({
       ],
     },
     {
-      path: "/oauth2/redirect",
+      path: "/oauth/redirect",
       component: Oauth2Redirect,
     },
 
@@ -114,12 +125,14 @@ const router = createRouter({
         {
           path: "",
           name: "postList",
+          beforeEnter: optionalAuthUser,
           component: PostList,
         },
         {
-          path: "detail",
+          path: ":seq",
           name: "postDetail",
           component: PostDetail,
+          props: true,
         },
         {
           path: "write",
@@ -127,7 +140,7 @@ const router = createRouter({
           component: PostWrite,
         },
         {
-          path: "modify",
+          path: ":seq/modify",
           name: "postModify",
           component: PostModify,
         },
@@ -179,6 +192,11 @@ const router = createRouter({
               path: "detail",
               name: "consultantDetail",
               component: ConsultantReservationForm,
+            },
+            {
+              path: "confirm",
+              name: "sumbit",
+              component: ConsultantReservationSubmit,
             },
           ],
         },

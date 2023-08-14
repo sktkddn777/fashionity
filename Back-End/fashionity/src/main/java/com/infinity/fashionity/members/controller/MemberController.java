@@ -23,6 +23,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @GetMapping
+    public ResponseEntity<ProfileDTO.MyProfileResponse> getMyProfileInfo(
+            @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        ProfileDTO.MyProfileResponse response = memberService.getMyProfileInfo(auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/{nickname}")
     public ResponseEntity<ProfileDTO.Response> getMemberProfile(
             @AuthenticationPrincipal JwtAuthentication auth,

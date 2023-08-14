@@ -4,8 +4,16 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import Toast from "vue-toastification";
+
+import "v-calendar/dist/style.css";
+
+import { setupCalendar, Calendar, DatePicker } from "v-calendar";
+import "v-calendar/style.css";
+
+import testStore from "./store/modules/testStore";
 // import "v-calendar/dist/style.css";
 // import VCalendar from "v-calendar";
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
@@ -23,6 +31,10 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import "vue-toastification/dist/index.css";
 
 import { loadFonts } from "./fontAwesomeIcon";
+// import VueSidePanel from "vue3-side-panel";
+// import "vue3-side-panel/dist/vue3-side-panel.css";
+import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
 /* add icons to the library */
 library.add(faUserSecret);
@@ -34,5 +46,12 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(Toast)
+
+  .use(setupCalendar, {})
+
+  .use(testStore)
+
   .component("font-awesome-icon", FontAwesomeIcon)
+  .component("VCalendar", Calendar)
+  .component("VDatePicker", DatePicker)
   .mount("#app");

@@ -1,40 +1,72 @@
 <template>
-  <div class="container" id="app" v-cloak>
-    <div>
-      <h2>채팅</h2>
+  <div class="chat-container" style="border: 1px solid #ccc">
+    <div class="message-list" ref="messageList">
+      <div class="message" v-for="(message, index) in recvList" :key="index">
+        <div class="message-child" align="left">{{ message.userName }}</div>
+        <div class="message-child" align="right">{{ message.content }}</div>
+      </div>
     </div>
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <label class="input-group-text">세션</label>
-      </div>
-      <input type="text" class="form-control" v-model="roomSession" />
-      <div class="input-group-prepend">
-        <label class="input-group-text">내용</label>
-      </div>
+    <div class="input-container">
       <input
-        type="text"
-        class="form-control"
+        class="message-input"
         v-model="message"
-        @keyup="sendMessage"
+        @keyup.enter="sendMessage"
+        placeholder="메세지를 입력하세요..."
       />
-      <div class="input-group-append">
-        <button class="btn btn-primary" type="button" @click="sendMessage">
-          보내기
-        </button>
-      </div>
+      <button class="send-button" @click="sendMessage">보내기</button>
     </div>
-    <ul class="list-group">
-      <li class="list-group-item" v-for="(item, idx) in recvList" :key="idx">
-        {{ item.userName }} - {{ item.content }}
-      </li>
-    </ul>
-    <div></div>
   </div>
 </template>
+
+<style scoped>
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+
+.message-list {
+  flex: 1;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.message {
+  padding: 10px;
+  border: 1px solid #ccc;
+  display: flex;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.message-input {
+  flex: 1;
+  padding: 5px;
+}
+
+.message-child {
+  flex: 1;
+}
+
+.send-button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+</style>
+
 
 <script>
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
+// import { mapState } from "vuex";
 
 export default {
   name: "TheChatting",
@@ -43,19 +75,36 @@ export default {
       userName: "태현",
       message: "",
       recvList: [],
-      roomSession: "kth",
+      roomId: "kth",
     };
   },
+  // computed: {
+  //   ...mapState(["meetingInfo"]),
+  //   userName() {
+  //     return this.meetingInfo.userName;
+  //   },
+  //   roomId() {
+  //     return this.meetingInfo.roomId;
+  //   },
+  // },
   created() {
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
+    console.log("크리에이티드1 : " + this.userName);
+    console.log("크리에이티드2 : " + this.roomId);
     this.connect();
   },
   methods: {
-    sendMessage(e) {
-      if (e.keyCode === 13 && this.userName !== "" && this.message !== "") {
+    sendMessage() {
+      if (this.userName !== "" && this.message !== "") {
         this.send();
         this.message = "";
+        this.$nextTick(() => {
+          this.scrollToBottom();
+        });
       }
+    },
+    scrollToBottom() {
+      this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
     },
     send() {
       console.log("Send message:" + this.message);
@@ -64,17 +113,18 @@ export default {
           userName: this.userName,
           content: this.message,
           // roomId: "djEjsdladmldmltptus",
-          roomId: this.roomSession,
+          roomId: this.roomId,
         };
         this.stompClient.send(
-          "/chatting/receive/" + this.roomSession,
+          "/chatting/receive/" + this.roomId,
           JSON.stringify(msg),
           {}
         );
       }
     },
     connect() {
-      const serverURL = "http://localhost:8080";
+      console.log("방 정보 : " + this.roomId);
+      const serverURL = "http://localhost:8081";
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
@@ -87,16 +137,15 @@ export default {
           console.log("소켓 연결 성공", frame);
           // 서버의 메시지 전송 endpoint를 구독합니다.
           // 이런형태를 pub sub 구조라고 합니다.
-          console.log("과연? : " + this.roomSession);
-          this.stompClient.subscribe(
-            "/chatting/send/" + this.roomSession,
-            (res) => {
-              console.log("구독으로 받은 메시지 입니다.", res.body);
+          this.stompClient.subscribe("/chatting/send/" + this.roomId, (res) => {
+            // console.log("구독으로 받은 메시지 입니다.", res.body);
 
-              // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-              this.recvList.push(JSON.parse(res.body));
-            }
-          );
+            // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+            this.recvList.push(JSON.parse(res.body));
+            this.$nextTick(() => {
+              this.scrollToBottom();
+            });
+          });
         },
         (error) => {
           // 소켓 연결 실패
@@ -104,6 +153,13 @@ export default {
           this.connected = false;
         }
       );
+    },
+  },
+  watch: {
+    messages() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
     },
   },
 };
