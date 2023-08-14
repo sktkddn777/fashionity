@@ -164,6 +164,8 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "./components/UserVideo";
 // import { mapState } from "vuex";
 import router from "@/router";
+import Stomp from "webstomp-client";
+import SockJS from "sockjs-client";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -190,6 +192,7 @@ export default {
       showStyleDiv: false,
       selectedImage: null,
       selectedImageVisible: false,
+      selectedIndex: null,
       color_images: [
         { url: "spring_warm.png", alt: "봄웜" },
         { url: "summer_cool.png", alt: "여름쿨" },
@@ -219,6 +222,7 @@ export default {
   // },
   created() {
     this.joinSession();
+    this.connect();
   },
 
   methods: {
@@ -404,11 +408,72 @@ export default {
     },
     showImage(index) {
       if (index !== null) {
+        this.selectedIndex = index;
         this.selectedImage = this.color_images[index].url;
         this.selectedImageVisible = true;
+        this.send(this.selectedIndex);
       } else {
         this.selectedImageVisible = false;
+        this.send(null);
       }
+    },
+    connect() {
+      console.log("방 정보 : " + this.roomId);
+      const serverURL = "http://localhost:8081";
+      //  + "/chatting/djEjsdladmldmltptus"
+      let socket = new SockJS(serverURL);
+      this.stompClient = Stomp.over(socket);
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+      this.stompClient.connect(
+        {},
+        (frame) => {
+          // 소켓 연결 성공
+          this.connected = true;
+          console.log("이미지 소켓 연결 성공", frame);
+          // 서버의 메시지 전송 endpoint를 구독합니다.
+          // 이런형태를 pub sub 구조라고 합니다.
+          this.stompClient.subscribe(
+            "/chatting/send/" + this.mySessionId,
+            (res) => {
+              // console.log("구독으로 받은 메시지 입니다.", res.body);
+
+              // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+              const receiveData = JSON.parse(res.body);
+              if (receiveData.type == "personal_color") {
+                console.log("받아온 이미지 인덱스 : " + receiveData.content);
+                this.selectedIndex = receiveData.content;
+              }
+            }
+          );
+        },
+        (error) => {
+          // 소켓 연결 실패
+          console.log("소켓 연결 실패", error);
+          this.connected = false;
+        }
+      );
+    },
+    send(index) {
+      console.log("보낼 이미지 인덱스 : " + index);
+      if (this.stompClient && this.stompClient.connected) {
+        const msg = {
+          userName: this.myUserName,
+          content: index,
+          // roomId: "djEjsdladmldmltptus",
+          roomId: this.mySessionId,
+          type: "personal_color",
+        };
+        this.stompClient.send(
+          "/chatting/receive/" + this.roomId,
+          JSON.stringify(msg)
+        );
+      }
+    },
+  },
+  watch: {
+    selectedIndex(newVal) {
+      console.log("새로운 값 : " + newVal);
+      this.showImage(newVal);
     },
   },
 };
