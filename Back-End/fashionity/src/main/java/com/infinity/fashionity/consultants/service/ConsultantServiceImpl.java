@@ -1,13 +1,16 @@
 package com.infinity.fashionity.consultants.service;
 
+import com.infinity.fashionity.comments.dto.CommentSaveDTO;
 import com.infinity.fashionity.consultants.dto.*;
 import com.infinity.fashionity.consultants.entity.*;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
 import com.infinity.fashionity.consultants.repository.ReservationRepository;
 import com.infinity.fashionity.consultants.repository.ReviewRepository;
+import com.infinity.fashionity.consultants.repository.ScheduleRepository;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final ReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
+    private final ScheduleRepository scheduleRepository;
 
     // [공통] 컨설턴트 목록 조회
     @Override
@@ -388,7 +393,42 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public ScheduleSaveDTO.Response saveSchedule(ScheduleSaveDTO.Request dto) {
+        Long memberSeq = dto.getMemberSeq();
 
+        //입력값 검증
+        if (memberSeq == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        //멤버 존재하는지 확인
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        //컨설턴트 인지 확인
+        ConsultantEntity consultant = consultantRepository.findByNickname(member.getNickname())
+                .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
+
+        // schedule entity 만들기
+        List<ScheduleEntity> scheduleEntities = new ArrayList<>();
+        for(int i=0; i<dto.getAvailableDateTimes().size(); i++){
+            ScheduleEntity entity = ScheduleEntity.builder()
+                    .availableDateTime(dto.getAvailableDateTimes().get(i))
+                    .consultant(consultant)
+                    .build();
+
+
+            scheduleEntities.add(entity);
+        }
+        scheduleRepository.saveAll(scheduleEntities);
+
+        return ScheduleSaveDTO.Response.builder()
+                .success(true)
+                .build();
+
+    }
 
 
 }

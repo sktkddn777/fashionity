@@ -142,11 +142,26 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("reservationSeq") Long reservationSeq,
             UserReservationInfoDTO.Request dto){
-            dto.setMemberSeq(auth.getSeq());
+//            dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
             dto.setReservationSeq(reservationSeq);
         UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
         return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
 
+    }
+
+
+    // 스케쥴 등록
+    @PostMapping("reservation/schedule")
+    public ResponseEntity<ScheduleSaveDTO.Response> saveSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody  ScheduleSaveDTO.Request dto){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        System.out.println(dto.toString());
+        ScheduleSaveDTO.Response scheculeSaveResponse = consultantService.saveSchedule(dto);
+
+        return new ResponseEntity<>(scheculeSaveResponse, HttpStatus.OK);
     }
 
 }

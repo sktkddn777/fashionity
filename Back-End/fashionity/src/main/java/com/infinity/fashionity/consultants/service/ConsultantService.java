@@ -43,5 +43,7 @@ public interface ConsultantService {
     @Transactional
     UserReservationInfoDTO.Response getUserReservationDetail(Long memberSeq, Long reservationSeq, UserReservationInfoDTO.Request dto);
 
+    @Transactional
+    ScheduleSaveDTO.Response saveSchedule(ScheduleSaveDTO.Request dto);
 }
 
