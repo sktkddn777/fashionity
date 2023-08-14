@@ -207,6 +207,11 @@ export default {
       commentContent: "",
     };
   },
+  watch: {
+    comments(newVal) {
+      this.comments = newVal;
+    },
+  },
   components: {
     TheComment,
     ReportModal,
@@ -229,21 +234,40 @@ export default {
       this.likeCount = this.post.likeCount;
     });
 
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
-      method: "get",
-    }).then((data) => {
-      this.comments = [...data.data.comments];
-      console.log(this.comments);
-    });
+    this.callCommentListApi();
+
+    // axios({
+    //   headers:
+    //     token === null
+    //       ? null
+    //       : {
+    //           Authorization: `Bearer ${token}`,
+    //         },
+    //   url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
+    //   method: "get",
+    // }).then((data) => {
+    //   this.comments = [...data.data.comments];
+    //   console.log(this.comments);
+    // });
   },
   methods: {
+    callCommentListApi() {
+      let token = sessionStorage.getItem("token");
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
+        method: "get",
+      }).then((data) => {
+        this.comments = [...data.data.comments];
+        console.log(this.comments);
+      });
+    },
+
     timeAgo(timestamp) {
       const currentTime = new Date();
       const targetTime = new Date(timestamp);
@@ -369,6 +393,10 @@ export default {
     },
     async submitComment() {
       await this.callCommentSaveAPI(this.commentContent);
+
+      this.callCommentListApi();
+      console.log(this.components);
+
       this.commentContent = "";
     },
     callCommentSaveAPI(content) {
