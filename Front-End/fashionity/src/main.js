@@ -14,7 +14,6 @@ import testStore from "./store/modules/testStore";
 // import "v-calendar/dist/style.css";
 // import VCalendar from "v-calendar";
 
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 
@@ -36,6 +35,9 @@ import { loadFonts } from "./fontAwesomeIcon";
 import "bootstrap/dist/css/bootstrap.css";
 // import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
 
+import VCalendar from "v-calendar";
+import "v-calendar/style.css";
+
 /* add icons to the library */
 library.add(faUserSecret);
 
@@ -50,6 +52,7 @@ createApp(App)
   .use(setupCalendar, {})
 
   .use(testStore)
+  .use(VCalendar, {})
 
   .component("font-awesome-icon", FontAwesomeIcon)
   .component("VCalendar", Calendar)

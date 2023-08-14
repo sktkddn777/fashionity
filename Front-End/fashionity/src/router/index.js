@@ -25,6 +25,12 @@ import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 
+import RConsultantMain from "../components/pages/consultant/consultantSide/RConsultantMain";
+import ConsultantVue from "../components/pages/consultant/Consultant";
+import RConsultantCheck from "../components/pages/consultant/consultantSide/RConsultantCheck";
+import RConsultantCheckDetail from "../components/pages/consultant/consultantSide/RConsultantCheckDetail";
+import RConsultantSet from "../components/pages/consultant/consultantSide/RConsultantSet";
+
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
   const checkToken = store.getters["memberStore/checkToken"];
@@ -170,6 +176,34 @@ const router = createRouter({
       children: [
         {
           path: "",
+          name: "ConsultantVue",
+          component: ConsultantVue,
+        },
+        {
+          path: "rc",
+          name: "RConsultantMain",
+          component: RConsultantMain,
+          children: [
+            {
+              path: "",
+              name: "RConsultantCheck",
+              component: RConsultantCheck,
+            },
+            {
+              path: "set",
+              name: "RConsultantSet",
+              component: RConsultantSet,
+            },
+            {
+              path: "/detail/:value",
+              name: "RConsultantCheckDetail",
+              component: RConsultantCheckDetail,
+              props: true,
+            },
+          ],
+        },
+        {
+          path: "rm",
           name: "consultantview",
           component: ConsultantList,
         },

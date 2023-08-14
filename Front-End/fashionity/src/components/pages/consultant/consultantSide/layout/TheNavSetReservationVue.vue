@@ -10,41 +10,31 @@
     "
   >
     <div class="col col-lg-2 header-tab">
-      <router-link to="/post" style="text-decoration: none; color: #424242"
-        >Home</router-link
-      >
-    </div>
-    <div class="col col-lg-2 header-tab">
       <router-link
-        v-if="isConsultant"
         to="/consultant/rc"
         style="text-decoration: none; color: #424242"
-        >Consultant</router-link
-      >
-
-      <router-link
-        v-else
-        to="/consultant"
-        style="text-decoration: none; color: #424242"
-        >Consultant</router-link
+        >예약확인</router-link
       >
     </div>
     <div class="col col-lg-2 header-tab point">
-      <router-link to="/profile" style="text-decoration: none; color: #424242"
-        >Mypage</router-link
+      <router-link
+        to="/consultant/rc/set"
+        style="text-decoration: none; color: #424242"
+        >예약설정</router-link
       >
     </div>
   </div>
 </template>
 <script>
 export default {
-  data() {
-    return {
-      isConsultant: true,
-    };
-  },
+  name: "TheNavSetReservationVue",
+  // components: {},
+  // props: {},
+  // data: () => ({}),
+  // methods: {},
 };
 </script>
+
 <style scoped>
 * {
   font-size: 25px;
