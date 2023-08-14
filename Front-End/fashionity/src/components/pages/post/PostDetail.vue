@@ -29,6 +29,16 @@
             <div v-else class="post-detail-header-modal align-self-center">
               <div v-if="!this.post.myPost" @click="toggleFollowing">
                 <button
+                  v-if="this.post.name !== myNickname"
+                  :class="
+                    this.post.following ? 'inactive-button' : 'active-button'
+                  "
+                  @click="toggleFollowing()"
+                >
+                  {{ this.post.following ? "팔로잉" : "팔로우" }}
+                </button>
+
+                <!-- <button
                   type="button"
                   class="btn btn-outline-dark"
                   style="min-width: 70px"
@@ -43,7 +53,7 @@
                   v-else
                 >
                   <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
-                </button>
+                </button> -->
               </div>
               <div v-else></div>
               <div>
@@ -198,6 +208,7 @@ export default {
       commentOpen: false,
       like: "",
       likeCount: "",
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
   components: {
@@ -412,5 +423,21 @@ export default {
 .post-detail-header-modal {
   display: flex;
   gap: 20px;
+}
+.active-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>
