@@ -106,7 +106,12 @@
             >
               취소
             </button>
-            <button type="button" class="btn btn-primary" @click="submitReport">
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="submitReport"
+              data-bs-dismiss="modal"
+            >
               신고
             </button>
           </div>
@@ -132,17 +137,12 @@ export default {
         category: this.category,
         content: this.content,
       };
-      console.log(
-        "버튼 눌렀을 때 : " + reportData.category + " / " + reportData.content
-      );
       await this.callPostReportAPI(reportData);
+      alert("신고가 접수되었습니다.");
     },
     async callPostReportAPI(reportData) {
       let token = sessionStorage.getItem("token");
       let seq = this.$route.params.seq;
-      console.log(
-        "API 들어왔을 때 : " + reportData.category + " / " + reportData.content
-      );
       await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${seq}/report`,
         headers:

@@ -4,31 +4,31 @@
     <div class="post-detail-header">
       <div class="post-detail-header-img">
         <img
-          src="../../../assets/img/hyeonwook.jpg"
-          alt=""
+          :src="comment.profileImg || '../img/unknown.e083a226.png'"
+          alt="profileImg"
           class="profile-comment"
         />
       </div>
       <!--댓글 내용-->
       <div>
-        <div class="fw-bold" style="text-align: left">hyeonwook_12</div>
+        <div class="fw-bold" style="text-align: left">
+          {{ comment.nickname }}
+        </div>
         <div v-if="!this.isChecked" style="text-align: left; font-size: 15px">
-          안녕하세요ㅎ 선팔하고 갑니다ㅎ
+          {{ comment.content }}
         </div>
         <div v-else class="post-detail-comment-submit">
-          <input
-            class="form-control"
-            type="text"
-            placeholder="원래 댓글내용 넣기."
-          />
-          <button type="button" class="btn btn-dark" style="min-width: 70px">
+          <input class="form-control" type="text" />
+          <button type="button" class="active-button">
             <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
           </button>
         </div>
       </div>
       <!--댓글 정보-->
       <div class="post-detail-comment-info">
-        <div style="color: grey; font-size: 13px">1시간 전</div>
+        <div style="color: grey; font-size: 13px">
+          {{ this.timeAgo(comment.createdAt) }}
+        </div>
         <div>
           <v-menu>
             <template v-slot:activator="{ props }">
@@ -136,10 +136,13 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <div class="post-detail-like-icon">
+          <div v-if="!isLogin" @click="loginAlert">
+            <font-awesome-icon :icon="['fas', 'heart']" style="color: grey" />
+          </div>
+          <div v-else class="post-detail-like-icon" @click="toggleLike">
             <font-awesome-icon
-              :icon="['far', 'heart']"
-              style="color: #999999"
+              :icon="['fas', 'heart']"
+              :color="comment.liked === true ? 'red' : 'grey'"
             />
           </div>
         </div>
@@ -149,19 +152,80 @@
 </template>
 <script>
 import ReportModal from "./ReportModal.vue";
+import axios from "axios";
+import { mapState } from "vuex";
+const memberStore = "memberStore";
 export default {
-  props: ["postSeq"],
+  props: ["comment"],
   components: {
     ReportModal,
   },
   data() {
     return {
       isChecked: false,
+      currComment: "",
+      like: "",
+      likeCnt: "",
     };
+  },
+  computed: {
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
+  },
+  mounted() {
+    this.currComment = this.comment;
   },
   methods: {
     modifyComment() {
       this.isChecked = !this.isChecked;
+    },
+    timeAgo(timestamp) {
+      const currentTime = new Date();
+      const targetTime = new Date(timestamp);
+      const elapsedMilliseconds = currentTime - targetTime;
+      const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+
+      if (elapsedSeconds < 60) {
+        return `${elapsedSeconds}초 전`;
+      } else if (elapsedSeconds < 3600) {
+        const minutes = Math.floor(elapsedSeconds / 60);
+        return `${minutes}분 전`;
+      } else if (elapsedSeconds < 86400) {
+        const hours = Math.floor(elapsedSeconds / 3600);
+        return `${hours}시간 전`;
+      } else {
+        const days = Math.floor(elapsedSeconds / 86400);
+        return `${days}일 전`;
+      }
+    },
+    loginAlert() {
+      alert("로그인해주세요.");
+    },
+    toggleLike() {
+      this.callLikeAPI(this.currComment.commentSeq);
+      this.currComment.liked = !this.currComment.liked;
+      this.currComment.liked
+        ? this.currComment.likeCount++
+        : this.currComment.likeCount--;
+    },
+    callLikeAPI(commentSeq) {
+      let token = sessionStorage.getItem("token");
+      let postSeq = this.$route.params.seq;
+      let body = {
+        commentSeq: commentSeq,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments/${commentSeq}/like`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "POST",
+        data: body,
+      }).then((data) => {
+        this.currComment.liked = data.data.like;
+      });
     },
   },
 };
@@ -211,5 +275,13 @@ export default {
 }
 .post-detail-comment-submit {
   display: flex;
+}
+.active-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
 }
 </style>

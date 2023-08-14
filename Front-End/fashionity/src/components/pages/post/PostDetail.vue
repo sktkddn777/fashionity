@@ -27,12 +27,12 @@
           <div class="post-detail-header-follow" style="margin-left: auto">
             <div v-if="!isLogin"></div>
             <div v-else class="post-detail-header-modal align-self-center">
-              <div v-if="!this.post.myPost">
+              <div v-if="!this.post.myPost" @click="toggleFollowing">
                 <button
                   type="button"
                   class="active-button"
                   style="min-width: 70px"
-                  v-if="this.post.following === true"
+                  v-if="this.post.following === false"
                 >
                   <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
                 </button>
@@ -131,7 +131,7 @@
           <div v-else class="post-detail-like-icon" @click="toggleLike">
             <font-awesome-icon
               :icon="['fas', 'heart']"
-              :color="post.liked === true ? 'red' : 'black'"
+              :color="post.liked === true ? 'red' : 'grey'"
             />
           </div>
           <div>
@@ -162,7 +162,7 @@
         </div>
 
         <div v-for="(comment, index) in comments" :key="index">
-          <the-comment></the-comment>
+          <the-comment :comment="comment"></the-comment>
         </div>
 
         <div class="post-detail-comment-submit">
