@@ -123,7 +123,7 @@ export default {
       seq: "",
       category: "slander",
       content: "",
-      showModal: "true",
+      showModal: true,
     };
   },
   methods: {
@@ -154,9 +154,11 @@ export default {
               },
         method: "POST",
         data: reportData,
-      }).then((data) => {
-        console.log(data.data.success);
-      });
+      })
+        .then((data) => {
+          console.log(data.data.success);
+        })
+        .catch((error) => console.log(error));
     },
   },
 };
