@@ -1,13 +1,8 @@
 <template lang="">
   <div class="container-fluid">
     <div class="row justify-content-start">
-      <div class="row justify-content-start" style="margin-top: 10px">
-        사진 등록
-      </div>
-      <div
-        class="row justify-content-start"
-        style="font-size: 10px; margin-top: 10px"
-      >
+      <div class="row justify-content-start" style="margin-top: 10px">사진 등록</div>
+      <div class="row justify-content-start" style="font-size: 10px; margin-top: 10px">
         * 최대 4장까지 사진 등록이 가능합니다.
       </div>
 
@@ -20,41 +15,21 @@
               <img :src="profileImage" />
               </div>-->
                 <label for="file">사진 등록</label>
-                <input
-                  type="file"
-                  id="file"
-                  ref="files"
-                  @change="imageUpload"
-                />
+                <input type="file" id="file" ref="files" @change="imageUpload" />
               </div>
             </div>
           </div>
         </div>
         <div v-else class="file-preview-content-container">
           <div class="file-preview-container">
-            <div
-              v-for="(file, index) in files"
-              :key="index"
-              class="file-preview-wrapper"
-            >
-              <div
-                class="file-close-button"
-                @click="fileDeleteButton"
-                :name="file.number"
-              >
-                x
-              </div>
+            <div v-for="(file, index) in files" :key="index" class="file-preview-wrapper">
+              <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div>
               <img :src="file.preview" />
             </div>
             <div v-if="files.length < 4">
               <div class="image-box">
                 <label for="file">추가 사진 등록</label>
-                <input
-                  type="file"
-                  id="file"
-                  ref="files"
-                  @change="imageUpload"
-                />
+                <input type="file" id="file" ref="files" @change="imageUpload" />
               </div>
               <!-- <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div> -->
             </div>
@@ -95,39 +70,49 @@ export default {
       uploadImageIndex: 0, // 이미지 업로드를 위한 변수
       img: "https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg",
       cropImgURL: "",
+      currImgList: [],
     };
   },
+  // props: {
+  //   imgList: [],
+  // },
   components: {
     Cropper,
   },
   methods: {
     makePreview() {
-      let num = -1;
       for (let i = 0; i < this.$refs.files.files.length; i++) {
+        console.log("안녕 난 for문이야");
         this.files = [
           ...this.files,
           //이미지 업로드
           {
             //실제 파일
-            file: this.$refs.files.files[i],
+            // file: this.$refs.files.files[i],
+            file: this.cropImgURL,
             //이미지 프리뷰
             // preview: URL.createObjectURL(this.$refs.files.files[i]),
             preview: this.cropImgURL,
             //삭제및 관리를 위한 number
-            number: i,
+            number: this.uploadImageIndex,
           },
         ];
-        num = i;
+        // num = i;
         //이미지 업로드용 프리뷰
-        // this.filesPreview = [
-        //   ...this.filesPreview,
-        //   { file: URL.createObjectURL(this.$refs.files.files[i]), number: i }
-        // ];
+        this.filesPreview = [
+          ...this.filesPreview,
+          { file: URL.createObjectURL(this.$refs.files.files[i]), number: this.uploadImageIndex },
+        ];
       }
-      this.uploadImageIndex = num + 1; //이미지 index의 마지막 값 + 1 저장
+      this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
+
+      // this.uploadImageIndex += 1;
       console.log(this.files);
+
+      console.log("프리뷰 입니당", this.filesPreview);
       // console.log(this.filesPreview);
       this.cropImgURL = "";
+      this.currImgList = this.filesPreview.map((row) => row.file);
     },
     imageUpload() {
       console.log("upload");
@@ -199,7 +184,9 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
       // console.log(this.files);
+      this.currImgList = this.filesPreview.map((row) => row.file);
     },
     uploadImage() {
       const { canvas } = this.$refs.cropper.getResult();
@@ -224,6 +211,7 @@ export default {
         // const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
 
         this.cropImgURL = canvas.toDataURL();
+
         this.makePreview();
       }
     },
@@ -235,6 +223,10 @@ export default {
     cropImgURL(newVal) {
       this.cropImgURL = newVal;
       console.log("watch", this.cropImgURL);
+    },
+    currImgList(newVal) {
+      this.currImgList = newVal;
+      this.$emit("updateImg", this.currImgList);
     },
   },
 };

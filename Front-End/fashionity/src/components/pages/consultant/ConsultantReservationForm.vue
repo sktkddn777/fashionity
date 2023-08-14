@@ -1,9 +1,6 @@
 <template lang="">
   <div id="reservation-form" class="container-fluid scroll">
-    <div
-      class="row justify-content-center detail-title"
-      style="margin-top: 5px"
-    >
+    <div class="row justify-content-center detail-title" style="margin-top: 5px">
       상세 예약 정보 등록
     </div>
     <!-- 불러오기 버튼 -->
@@ -72,13 +69,7 @@
             <v-select
               class="row"
               clearable
-              :items="[
-                '모름',
-                '봄 : 웜톤',
-                '여름 : 쿨톤',
-                '가을 : 웜톤',
-                '겨울 : 쿨톤',
-              ]"
+              :items="['모름', '봄 : 웜톤', '여름 : 쿨톤', '가을 : 웜톤', '겨울 : 쿨톤']"
               style="width: 15vw"
             ></v-select>
           </div>
@@ -88,7 +79,7 @@
         <!-- 평소 나의 스타일 등록 -->
         <div class="row justify-content-center">
           <div class="col-9">
-            <multi-image-upload></multi-image-upload>
+            <multi-image-upload @updateImg="updateImg"></multi-image-upload>
           </div>
         </div>
 
@@ -97,6 +88,14 @@
           <multi-image-upload></multi-image-upload>
         </div> -->
       </form>
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-3">
+          <router-link class="link" to="/consultant/reservation/confirm" @propChange="propChange"
+            ><button>NEXT</button></router-link
+          >
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -107,6 +106,7 @@ export default {
   data() {
     return {
       isValid: false,
+      imgList: [],
     };
   },
   components: {
@@ -121,10 +121,18 @@ export default {
         this.isValid = false;
       }
     },
+    updateImg(val) {
+      this.imgList = val;
+    },
   },
   created() {
     this.isVaild = false;
   },
+  // watch: {
+  //   imgList() {
+  //     console.log("이미지 바뀜", this.imgList);
+  //   },
+  // },
 };
 </script>
 <style scoped>
@@ -222,5 +230,44 @@ fieldset {
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+button {
+  background: black;
+  color: #fff;
+  border: none;
+  position: relative;
+  height: 40px;
+  font-size: 1.2em;
+  padding: 0 2em;
+  cursor: pointer;
+  transition: 800ms ease all;
+  outline: none;
+}
+button:hover {
+  background: #fff;
+  color: #424242;
+}
+button:before,
+button:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2px;
+  width: 0;
+  background: #424242;
+  transition: 400ms ease all;
+}
+button:after {
+  right: inherit;
+  top: inherit;
+  left: 0;
+  bottom: 0;
+}
+button:hover:before,
+button:hover:after {
+  width: 100%;
+  transition: 800ms ease all;
 }
 </style>
