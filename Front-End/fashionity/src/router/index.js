@@ -146,7 +146,7 @@ const router = createRouter({
           component: PostWrite,
         },
         {
-          path: "modify",
+          path: ":seq/modify",
           name: "postModify",
           component: PostModify,
         },
