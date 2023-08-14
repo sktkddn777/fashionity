@@ -10,4 +10,7 @@ public interface AlarmService {
     public void sendAlarm(AlarmSendDTO.Request dto);
 
     public List<AlarmDTO> findAll(Long memberSeq);
+
+    public Boolean readAlarm(Long ownerSeq,Long alarmSeq);
+    public Boolean deleteAlarm(Long ownerSeq,Long alarmSeq);
 }

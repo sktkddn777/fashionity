@@ -5,9 +5,11 @@ import com.infinity.fashionity.alarm.dto.AlarmDeleteDTO;
 import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
 import com.infinity.fashionity.alarm.entity.AlarmEntity;
 import com.infinity.fashionity.alarm.entity.AlarmType;
+import com.infinity.fashionity.alarm.exception.AlarmException;
 import com.infinity.fashionity.alarm.repository.AlarmRepository;
 import com.infinity.fashionity.comments.entity.CommentEntity;
 import com.infinity.fashionity.comments.repository.CommentRepository;
+import com.infinity.fashionity.global.exception.AccessDeniedException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.members.entity.MemberEntity;
@@ -110,6 +112,34 @@ public class AlarmServiceImpl implements AlarmService {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Boolean readAlarm(Long ownerSeq,Long alarmSeq) {
+        AlarmEntity alarmEntity = alarmRepository.findById(alarmSeq)
+                .orElseThrow(() -> new AlarmException(ErrorCode.ALARM_NOT_FOUND));
+
+        if(alarmEntity.getOwner().getSeq() != ownerSeq){
+            throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        alarmEntity.readAlarm();
+        return alarmEntity.isRead();
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteAlarm(Long ownerSeq,Long alarmSeq) {
+        AlarmEntity alarmEntity = alarmRepository.findById(alarmSeq)
+                .orElseThrow(() -> new AlarmException(ErrorCode.ALARM_NOT_FOUND));
+
+        if(alarmEntity.getOwner().getSeq() != ownerSeq){
+            throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        alarmRepository.delete(alarmEntity);
+        return true;
     }
 
 

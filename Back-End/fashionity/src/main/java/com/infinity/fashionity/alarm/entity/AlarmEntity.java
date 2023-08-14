@@ -51,4 +51,8 @@ public class AlarmEntity extends CUDEntity {
 
     @Enumerated(value=EnumType.STRING)
     private AlarmType alarmType;
+
+    public void readAlarm(){
+        this.read = true;
+    }
 }
