@@ -68,32 +68,29 @@
 <script>
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
+import { mapGetters } from "vuex";
 // import { mapState } from "vuex";
 
 export default {
   name: "TheChatting",
   data() {
     return {
-      userName: "태현",
+      userName: null,
       message: "",
       recvList: [],
-      roomId: "kth",
+      roomId: "djEjsdladmldmltptus",
+      userData: null,
     };
   },
-  // computed: {
-  //   ...mapState(["meetingInfo"]),
-  //   userName() {
-  //     return this.meetingInfo.userName;
-  //   },
-  //   roomId() {
-  //     return this.meetingInfo.roomId;
-  //   },
-  // },
+  computed: {
+    ...mapGetters("memberStore", ["checkLoginUser"]),
+  },
   created() {
+    this.userName = this.checkLoginUser.nickname;
+    this.userData = this.checkLoginUser;
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
-    console.log("크리에이티드1 : " + this.userName);
-    console.log("크리에이티드2 : " + this.roomId);
     this.connect();
+    console.log("채팅 연결됨");
   },
   methods: {
     sendMessage() {
@@ -116,11 +113,11 @@ export default {
           content: this.message,
           // roomId: "djEjsdladmldmltptus",
           roomId: this.roomId,
+          type: "message",
         };
         this.stompClient.send(
           "/chatting/receive/" + this.roomId,
-          JSON.stringify(msg),
-          {}
+          JSON.stringify(msg)
         );
       }
     },
@@ -136,17 +133,20 @@ export default {
         (frame) => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log("소켓 연결 성공", frame);
+          console.log("채팅 소켓 연결 성공", frame);
           // 서버의 메시지 전송 endpoint를 구독합니다.
           // 이런형태를 pub sub 구조라고 합니다.
           this.stompClient.subscribe("/chatting/send/" + this.roomId, (res) => {
             // console.log("구독으로 받은 메시지 입니다.", res.body);
 
             // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-            this.recvList.push(JSON.parse(res.body));
-            this.$nextTick(() => {
-              this.scrollToBottom();
-            });
+            const receiveData = JSON.parse(res.body);
+            if (receiveData.type == "message") {
+              this.recvList.push(receiveData);
+              this.$nextTick(() => {
+                this.scrollToBottom();
+              });
+            }
           });
         },
         (error) => {

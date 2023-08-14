@@ -25,17 +25,22 @@ public class SocketController {
     public SocketVO SocketHandler(SocketVO socketVO) {
         // vo에서 getter로 userName을 가져옵니다.
         String userName = socketVO.getUserName();
-//        System.out.println("보낸 사람 : " + socketVO.getUserName());
+        System.out.println("보낸 사람 : " + socketVO.getUserName());
 
         // vo에서 setter로 content를 가져옵니다.
         String content = socketVO.getContent();
-//        System.out.println("받은 문자 : " + socketVO.getContent());
+        System.out.println("받은 문자 : " + socketVO.getContent());
 
         String roomId = socketVO.getRoomId();
-//        System.out.println("현재 세션 : " + socketVO.getRoomId());
+        System.out.println("현재 세션 : " + socketVO.getRoomId());
+
+        String type = socketVO.getType();
+        System.out.println("받은 타입 : " + socketVO.getType());
+
+        System.out.println();
 
         // 생성자로 반환값을 생성합니다.
-        SocketVO result = new SocketVO(userName, content, roomId);
+        SocketVO result = new SocketVO(userName, content, roomId, type);
 
         sendToRoom(roomId,result);
         // 반환

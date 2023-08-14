@@ -1,7 +1,11 @@
 package com.infinity.fashionity.auth.dto;
 
 
+import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import lombok.*;
+
+import java.util.List;
 
 public class LoginDTO {
     @Builder
@@ -33,6 +37,7 @@ public class LoginDTO {
         private Long memberSeq;
         private String profileUri;
         private String nickname;
+        private List<MemberRole> memberRole;
 
         private String accessToken;
         private String refreshToken;

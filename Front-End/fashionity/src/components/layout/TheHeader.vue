@@ -43,12 +43,20 @@
                   </div>
                 </div>
                 <div class="col">
-                  <router-link to="/post/write" class="link">
+                  <div v-if="!isLogin" @click="loginAlert">
                     <font-awesome-icon
                       :icon="['fas', 'circle-plus']"
                       style="color: #bdbdbd"
                     />
-                  </router-link>
+                  </div>
+                  <div v-else>
+                    <router-link to="/post/write" class="link">
+                      <font-awesome-icon
+                        :icon="['fas', 'circle-plus']"
+                        style="color: #bdbdbd"
+                      />
+                    </router-link>
+                  </div>
                 </div>
                 <div class="col">
                   <font-awesome-icon
@@ -57,78 +65,8 @@
                     style="color: #bdbdbd"
                   />
                 </div>
-                <div class="col">
-                  <button
-                    type="button"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRight"
-                    aria-controls="offcanvasRight"
-                  >
-                    <font-awesome-icon
-                      :icon="['far', 'bell']"
-                      style="color: #bdbdbd"
-                      type="button"
-                    />
-                  </button>
-                  <div
-                    class="offcanvas offcanvas-end"
-                    tabindex="-1"
-                    id="offcanvasRight"
-                    aria-labelledby="offcanvasRightLabel"
-                  >
-                    <div class="offcanvas-header">
-                      <h5 class="offcanvas-title" id="offcanvasRightLabel">
-                        알림
-                      </h5>
-                      <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="offcanvas"
-                        aria-label="Close"
-                      ></button>
-                    </div>
-                    <div class="offcanvas-body">
-                      <div class="alert">
-                        <div class="alert-image">
-                          <img
-                            src="../../assets/img/hyeonwook.jpg"
-                            alt=""
-                            class="profile-comment"
-                          />
-                        </div>
-                        <div class="alert-content">
-                          <span class="fw-bold">hyeonwook12</span>
-                          님이 회원님의 게시글에 댓글을 작성했습니다.
-                        </div>
-                      </div>
-                      <div class="alert">
-                        <div class="alert-image">
-                          <img
-                            src="../../assets/img/hyeonwook.jpg"
-                            alt=""
-                            class="profile-comment"
-                          />
-                        </div>
-                        <div class="alert-content">
-                          누군가 회원님의 게시글을 스크랩했습니다.
-                        </div>
-                      </div>
-                      <div class="alert">
-                        <div class="alert-image">
-                          <img
-                            src="../../assets/img/hyeonwook.jpg"
-                            alt=""
-                            class="profile-comment"
-                          />
-                        </div>
-                        <div class="alert-content">
-                          <span class="fw-bold">2_kyeong</span>
-                          님이 회원님을 팔로우했습니다.
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <!-- 여기부터 알람 -->
+                <the-alarm></the-alarm>
 
                 <div class="col">
                   <div v-if="!isLogin" class="row">
@@ -153,6 +91,8 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
 import router from "@/router";
+// import axios from "axios";
+import TheAlarm from "../pages/alarm/TheAlarm.vue";
 const memberStore = "memberStore";
 export default {
   setup() {},
@@ -163,9 +103,12 @@ export default {
   data() {
     return {
       keyword: "",
+      alarms: [],
     };
   },
-  components: {},
+  components: {
+    TheAlarm,
+  },
   methods: {
     ...mapActions(memberStore, ["logoutAction"]),
 
@@ -180,6 +123,9 @@ export default {
     },
     meeting() {
       router.push({ name: "ConsultingPage" });
+    },
+    loginAlert() {
+      alert("로그인해주세요.");
     },
   },
 };
@@ -204,19 +150,9 @@ export default {
   border-radius: 100%;
   object-fit: cover;
 }
-.alert {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 0;
-  padding: 13px;
-  gap: 10px;
-}
 .profile-comment {
   height: 5vh;
   border-radius: 100%;
   object-fit: contain;
-}
-.alert-content {
-  text-align: left;
 }
 </style>
