@@ -21,6 +21,9 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     @Query("select m.seq from MemberEntity m where m.nickname = :nickname ")
     Long findSeqByNickname(String nickname);
+
+    @Query("select m from MemberEntity m where m.seq = :seq ")
+    MemberEntity findBySeq(Long seq);
 }
 
 

@@ -10,6 +10,7 @@ public class ProfileDTO {
     @NoArgsConstructor
     @Builder
     @Setter
+    @ToString
     public static class Request {
         private MultipartFile profileImage;
         private String nickname;
@@ -50,6 +51,8 @@ public class ProfileDTO {
         private String profileUrl;
         private String nickname;
         private String profileIntro;
+        private String id;
+        private String email;
     }
 
     @Getter

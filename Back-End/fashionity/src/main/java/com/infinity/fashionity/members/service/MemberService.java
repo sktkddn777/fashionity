@@ -3,6 +3,7 @@ package com.infinity.fashionity.members.service;
 import com.infinity.fashionity.members.dto.MemberFollowDTO;
 import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
+import com.infinity.fashionity.posts.dto.MemberDeleteDTO;
 
 public interface MemberService {
     ProfileDTO.MyProfileResponse getMyProfileInfo(Long seq);
@@ -14,5 +15,6 @@ public interface MemberService {
     MemberFollowDTO.FollowingResponse getFollowings(Long seq, String nickname);
     MemberFollowDTO.FollowerResponse getFollowers(Long seq, String nickname);
 
+    MemberDeleteDTO.Response deleteMember(Long seq);
 
 }

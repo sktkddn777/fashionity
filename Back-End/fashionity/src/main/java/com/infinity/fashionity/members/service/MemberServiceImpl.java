@@ -4,6 +4,8 @@ import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
+import com.infinity.fashionity.global.exception.ErrorCode;
+import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.utils.RegexUtil;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
@@ -17,6 +19,7 @@ import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 
+import com.infinity.fashionity.posts.dto.MemberDeleteDTO;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.entity.PostImageEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
@@ -59,6 +62,8 @@ public class MemberServiceImpl implements MemberService {
                 .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .profileIntro(member.getProfileIntro())
+                .id(member.getId())
+                .email(member.getEmail())
                 .build();
     }
 
@@ -162,7 +167,9 @@ public class MemberServiceImpl implements MemberService {
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
-
+        log.info(profile.toString());
+        log.info(profile.getNickname());
+        log.info("boolean = " + RegexUtil.checkNicknameRegex(profile.getNickname()));
         //닉네임 유효성 검사
         boolean blank = StringUtils.isBlank(profile.getNickname());
         if (StringUtils.isBlank(profile.getNickname()) || !RegexUtil.checkNicknameRegex(profile.getNickname()))
@@ -276,5 +283,22 @@ public class MemberServiceImpl implements MemberService {
         return MemberFollowDTO.FollowerResponse.builder()
                 .followers(followerList)
                 .build();
+    }
+
+    @Override
+    public MemberDeleteDTO.Response deleteMember(Long seq){
+        MemberEntity member = memberRepository.findBySeq(seq);
+
+        log.info("================으앙1==================");
+        log.info("member {}", member);
+        memberRepository.delete(member);
+
+        log.info("================으앙2==================");
+        log.info("member {}", memberRepository.findBySeq(seq));
+
+        return MemberDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+
     }
 }

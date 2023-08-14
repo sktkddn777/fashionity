@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 public class RegexUtil {
 
     private static final String ID_REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{6,20}$";
-    private static final String NICKNAME_REGEX = "^[a-zA-Z가-힣0-9]{4,12}$";
+    private static final String NICKNAME_REGEX = "^[a-zA-Z가-힣]{4,12}$";
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     private static final String PW_REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$";
 

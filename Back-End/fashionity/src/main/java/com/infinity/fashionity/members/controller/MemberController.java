@@ -5,6 +5,7 @@ import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.dto.ProfilePost;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.service.MemberService;
+import com.infinity.fashionity.posts.dto.MemberDeleteDTO;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +62,13 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/edit")
+    @PostMapping("/edit")
     public ResponseEntity<ProfileDTO.Response> editMyProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
-            ProfileDTO.Request dto
+            @RequestBody ProfileDTO.Request dto
     ) {
+        log.info("editMyProfile start");
+        log.info("dto: " + dto);
         ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -94,6 +97,14 @@ public class MemberController {
             @PathVariable String nickname
     ) {
         MemberFollowDTO.FollowerResponse response = memberService.getFollowers(auth.getSeq(), nickname);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<MemberDeleteDTO.Response> deleteMember(
+            @AuthenticationPrincipal JwtAuthentication auth
+    ){
+        MemberDeleteDTO.Response response = memberService.deleteMember(auth.getSeq());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
