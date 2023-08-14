@@ -1,6 +1,6 @@
 <template>
   <v-app class="first">
-    <div>
+    <div class="total-body">
       <!-- <img alt="Test Image" src="./assets/img/testImage.jpeg"> -->
       <the-header></the-header>
 

@@ -1,5 +1,8 @@
 package com.infinity.fashionity.posts.service;
 
+import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
+import com.infinity.fashionity.alarm.entity.AlarmType;
+import com.infinity.fashionity.alarm.service.AlarmService;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
@@ -45,6 +48,7 @@ public class PostServiceImpl implements PostService {
     private final PostImageRepository postImageRepository;
     private final FollowRepository followRepository;
     private final ImageService imageService;
+    private final AlarmService alarmService;
 
     // 게시글 전체 조회
     @Override
@@ -236,6 +240,8 @@ public class PostServiceImpl implements PostService {
         //모두 영속화
         postHashtagRepository.saveAll(hashtagEntities);
 
+        System.out.println("서비스으으ㅡ으ㅡ으 : " + images.size());
+
         //먼저 이미지를 저장소에 저장
         ImageSaveDTO.Response savedImage = imageService.save(ImageSaveDTO.Request.builder()
                 .images(images)
@@ -243,6 +249,7 @@ public class PostServiceImpl implements PostService {
 
         // 이미지 정보를 DB에 저장
         List<ImageDTO> imageDTOList = savedImage.getImageInfos();
+        System.out.println("왜여기서는1개만들어가냐고 "+imageDTOList.size());
         for (int i = 0; i < imageDTOList.size(); i++) {
             PostImageEntity image = PostImageEntity.builder()
                     .url(imageDTOList.get(i).getFileUrl())
@@ -251,6 +258,8 @@ public class PostServiceImpl implements PostService {
                     .build();
             postImageRepository.save(image);
         }
+
+        System.out.println("서비스으으이미지디티오: " + imageDTOList.size());
 
         return PostSaveDTO.Response.builder()
                 .success(true)
@@ -438,6 +447,20 @@ public class PostServiceImpl implements PostService {
                     .member(member)
                     .build());
             like = true;
+        }
+
+
+        //owner에게 알람 보내기 or 지우기
+        if(like) {
+            alarmService.sendAlarm(AlarmSendDTO.Request.builder()
+                    .ownerSeq(post.getMember().getSeq())
+                    .publisherSeq(member.getSeq())
+                    .type(AlarmType.POST_LIKE)
+                    .postSeq(post.getSeq())
+                    .build());
+        }
+        else{
+
         }
         return PostLikeDTO.Response.builder()
                 .like(like)
