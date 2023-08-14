@@ -52,7 +52,7 @@
             >
               <img src="@/assets/img/naver.png" style="height: 30px" />
               <a
-                href="http://localhost:8080/oauth2/authorization/naver?redirect_uri=http://localhost:3333/oauth2/redirect"
+                :href="getNaverLoginUrl()"
                 style="padding-left: 53px; padding-right: 73px"
                 >네이버로 로그인</a
               >
@@ -61,7 +61,7 @@
             <v-btn color="#FFE812" block style="margin-bottom: 10px">
               <img src="@/assets/img/kakao.png" style="height: 30px" />
               <a
-                href="http://localhost:8080/oauth2/authorization/kakao?redirect_uri=http://localhost:3333/oauth2/redirect"
+                :href="getKakaoLoginUrl()"
                 style="padding-left: 53px; padding-right: 73px"
                 >카카오로 로그인</a
               >
@@ -69,7 +69,7 @@
             <v-btn color="#FFFFFF" block>
               <img src="@/assets/img/google.png" style="height: 25px" />
               <a
-                href="http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3333/oauth2/redirect"
+                :href="getGoogleLoginUrl()"
                 style="padding-left: 65px; padding-right: 75px"
                 >구글로 로그인</a
               >
@@ -89,9 +89,11 @@ const memberStore = "memberStore";
 
 export default {
   name: "UserLogin",
+
   setup() {
     const store = useStore();
     const loginUser = computed(() => store.state.loginUser);
+
     return {
       loginUser,
     };
@@ -100,10 +102,26 @@ export default {
   data: () => ({
     id: "",
     password: "",
+    host: "",
+    redirectUri: "",
   }),
+
+  beforeMount() {
+    this.host = process.env.VUE_APP_API_URL;
+    this.redirectUri = process.env.VUE_APP_REDIRECT_URL;
+  },
 
   methods: {
     ...mapActions(memberStore, ["loginAction"]),
+    getGoogleLoginUrl() {
+      return `${this.host}/oauth2/authorization/google?redirect_uri=${this.redirectUri}`;
+    },
+    getKakaoLoginUrl() {
+      return `${this.host}/oauth2/authorization/kakao?redirect_uri=${this.redirectUri}`;
+    },
+    getNaverLoginUrl() {
+      return `${this.host}/oauth2/authorization/naver?redirect_uri=${this.redirectUri}`;
+    },
     async login() {
       const user = {
         id: this.id,

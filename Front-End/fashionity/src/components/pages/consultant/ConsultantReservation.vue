@@ -1,7 +1,7 @@
 <template lang="">
-  <div class="container-fliud" style="height: 75vh">
+  <div class="container-fliud" style="height: 85vh">
     <div class="row">
-      <div class="col-3" style="height: 75vh; margin-left: 5vw">
+      <div class="col-3" style="height: 85vh; margin-left: 5vw">
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
@@ -57,7 +57,7 @@ export default {
 
 .review {
   overflow: scroll;
-  height: 300px;
+  height: 350px;
 }
 
 /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */

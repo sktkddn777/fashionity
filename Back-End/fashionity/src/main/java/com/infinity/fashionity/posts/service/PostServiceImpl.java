@@ -52,14 +52,28 @@ public class PostServiceImpl implements PostService {
         int page = dto.getPage();
         int size = dto.getSize();
         String s = dto.getS();
+        String h = dto.getH();
         Long memberSeq = dto.getMemberSeq();
+
+
         // s 기준으로 paging처리 (s 기본값 popular)
         Pageable pageable = PageRequest.of(page, size);
         Page<Object[]> result = null;
-        if (s.equals("popular")) {
-            result = postRepository.findPostsOrderByLikesDesc(pageable);
-        } else {
-            result = postRepository.findPostsOrderByCreatedAt(pageable);
+
+        //해시태그를 기준으로 정렬
+        if(!StringUtils.isBlank(h)) {
+            if (s.equals("popular")) {
+                result = postRepository.findAllWithHashtagOrderByLikeCount(h,pageable);
+            } else {
+                result = postRepository.findAllWithHashtagOrderByCreatedAt(h,pageable);
+            }
+        }
+        else {
+            if (s.equals("popular")) {
+                result = postRepository.findPostsOrderByLikesDesc(pageable);
+            } else {
+                result = postRepository.findPostsOrderByCreatedAt(pageable);
+            }
         }
         // page, size에 맞게 게시물 목록 가져오기
         List<PostListDTO.Post> posts = result.getContent().stream()
@@ -112,7 +126,20 @@ public class PostServiceImpl implements PostService {
                 .map(postImageEntity -> postImageEntity.getUrl())
                 .collect(Collectors.toList());
 
-        // 좋아요 여부
+        // 좋아요
+
+        MemberEntity member = null;
+        //인증정보가 들어오면 찾음
+        if(memberSeq != null){
+            member = memberRepository.findById(memberSeq).orElseThrow(()->new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        }
+        //아니라면 미인증 사용자기 떄문에 liked 상태를 false로 만들기 위해 존재하지 않는 값으로 만듬
+        else{
+            member = MemberEntity.builder()
+                    .seq(-1l)
+                    .build();
+        }
+
         // 게시글 좋아요 복합키 생성
         PostLikeKey likeKey = PostLikeKey.builder()
                 .post(postSeq)
@@ -138,6 +165,12 @@ public class PostServiceImpl implements PostService {
             isFollow = true;
         }
 
+        // 내가 쓴 글인지 확인
+        boolean isMyPost = false;
+        if(memberSeq == post.getMember().getSeq()){
+            isMyPost = true;
+        }
+
         // 게시글 만들기
         PostDetailDTO.Post postDetail = PostDetailDTO.Post.builder()
                 .name(post.getMember().getNickname())
@@ -148,6 +181,7 @@ public class PostServiceImpl implements PostService {
                 .hashtags(post.getPostHashtags().stream().map(hashtag->hashtag.getHashtag().getName()).collect(Collectors.toList()))
                 .liked(isLike)
                 .following(isFollow)
+                .isMyPost(isMyPost)
                 .commentCount(post.getCommentCount())
                 .likeCount(post.getLikeCount())
                 .createdAt(post.getCreatedAt())

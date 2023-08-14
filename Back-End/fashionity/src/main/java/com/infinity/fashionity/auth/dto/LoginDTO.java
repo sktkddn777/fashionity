@@ -31,7 +31,11 @@ public class LoginDTO {
     public static class Response{
 
         private Long memberSeq;
+        private String profileUri;
+        private String nickname;
+
         private String accessToken;
         private String refreshToken;
+
     }
 }

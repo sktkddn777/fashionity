@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -21,6 +22,14 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+
+    @GetMapping
+    public ResponseEntity<ProfileDTO.MyProfileResponse> getMyProfileInfo(
+            @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        ProfileDTO.MyProfileResponse response = memberService.getMyProfileInfo(auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/{nickname}")
     public ResponseEntity<ProfileDTO.Response> getMemberProfile(
@@ -52,12 +61,12 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/edit")
+    @PutMapping("/edit")
     public ResponseEntity<ProfileDTO.Response> editMyProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @RequestBody ProfileDTO.Request profile
+            ProfileDTO.Request dto
     ) {
-        ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), profile);
+        ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

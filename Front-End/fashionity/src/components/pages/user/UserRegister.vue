@@ -19,6 +19,7 @@
             @keyup="validate"
             v-model="password"
             :counter="20"
+            type="password"
             :rules="passwordRules"
             label="비밀번호를 입력하시오"
             required
@@ -175,7 +176,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: process.env.VUE_APP_API_URL + "/api/v1/auth/check/id",
+          url: `${process.env.VUE_APP_API_URL}/api/v1/auth/check/id`,
           method: "GET",
           params: {
             id: this.id,
@@ -190,7 +191,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: process.env.VUE_APP_API_URL + "/api/v1/auth/check/email",
+          url: `${process.env.VUE_APP_API_URL}/api/v1/auth/check/email`,
           method: "GET",
           params: {
             email: this.email,
@@ -204,7 +205,7 @@ export default {
       const validate = await this.$refs.form.validate();
       if (validate.valid) {
         return axios({
-          url: process.env.VUE_APP_API_URL + "/api/v1/auth/check/nickname",
+          url: `${process.env.VUE_APP_API_URL}/api/v1/auth/check/nickname`,
           method: "GET",
           params: {
             nickname: this.nickname,
