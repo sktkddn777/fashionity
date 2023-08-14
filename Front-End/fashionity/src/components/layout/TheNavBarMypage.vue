@@ -39,10 +39,14 @@
 <script>
 export default {
   data() {
-    const roles = this.$store.getters["memberStore/checkLoginUser"].memberRole;
     let isConsultant = false;
-    for (let i = 0; i < roles.length; i++) {
-      if (roles[i] === "CONSULTANT") isConsultant = true;
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      const roles =
+        this.$store.getters["memberStore/checkLoginUser"].memberRole;
+
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i] === "CONSULTANT") isConsultant = true;
+      }
     }
     return {
       isConsultant: isConsultant,
