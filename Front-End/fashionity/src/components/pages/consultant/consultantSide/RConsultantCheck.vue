@@ -61,8 +61,12 @@ export default {
           this.attributes.push(attribute);
         }
       })
-      .catch((response) => {
-        console.log(response);
+      .catch(({ response }) => {
+        if (response.data.code === "C003") {
+          alert(response.data.message);
+          router.push({ name: "main" });
+        }
+        console.log("[error] = {}", response);
       });
   },
   data() {
@@ -77,6 +81,8 @@ export default {
       // Do something with the clicked date, like displaying details or performing an action
 
       // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
+
+      if (data.attributes.length === 0) return;
       const reservationSeq = data.attributes[0].reservationSeq;
       router.push({
         name: "RConsultantCheckDetail",

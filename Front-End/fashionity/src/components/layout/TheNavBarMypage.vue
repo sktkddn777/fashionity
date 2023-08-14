@@ -39,8 +39,13 @@
 <script>
 export default {
   data() {
+    const roles = this.$store.getters["memberStore/checkLoginUser"].memberRole;
+    let isConsultant = false;
+    for (let i = 0; i < roles.length; i++) {
+      if (roles[i] === "CONSULTANT") isConsultant = true;
+    }
     return {
-      isConsultant: true,
+      isConsultant: isConsultant,
     };
   },
 };
