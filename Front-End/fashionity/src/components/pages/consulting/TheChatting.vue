@@ -68,28 +68,26 @@
 <script>
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
+import { mapGetters } from "vuex";
 // import { mapState } from "vuex";
 
 export default {
   name: "TheChatting",
   data() {
     return {
-      userName: "태현",
+      userName: null,
       message: "",
       recvList: [],
       roomId: "djEjsdladmldmltptus",
+      userData: null,
     };
   },
-  // computed: {
-  //   ...mapState(["meetingInfo"]),
-  //   userName() {
-  //     return this.meetingInfo.userName;
-  //   },
-  //   roomId() {
-  //     return this.meetingInfo.roomId;
-  //   },
-  // },
+  computed: {
+    ...mapGetters("memberStore", ["checkLoginUser"]),
+  },
   created() {
+    this.userName = this.checkLoginUser.nickname;
+    this.userData = this.checkLoginUser;
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
     this.connect();
     console.log("채팅 연결됨");

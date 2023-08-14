@@ -162,10 +162,10 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "./components/UserVideo";
-// import { mapState } from "vuex";
 import router from "@/router";
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
+import { mapGetters } from "vuex";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -187,12 +187,13 @@ export default {
       publisher: undefined,
       subscribers: [],
       mySessionId: "djEjsdladmldmltptus",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      myUserName: null,
       showColorDiv: false,
       showStyleDiv: false,
       selectedImage: null,
       selectedImageVisible: false,
       selectedIndex: null,
+      userData: null,
       color_images: [
         { url: "spring_warm.png", alt: "봄웜" },
         { url: "summer_cool.png", alt: "여름쿨" },
@@ -211,16 +212,15 @@ export default {
       ],
     };
   },
-  // computed: {
-  //   ...mapState(["meetingInfo"]),
-  //   myUserName() {
-  //     return this.meetingInfo.userName;
-  //   },
-  //   mySessionId() {
-  //     return this.meetingInfo.roomId;
-  //   },
-  // },
+  computed: {
+    ...mapGetters("memberStore", ["checkLoginUser"]),
+  },
   created() {
+    this.myUserName = this.checkLoginUser.nickname;
+    this.userData = this.checkLoginUser;
+    console.log("유저 정보 : " + this.userData.nickname);
+    console.log("유저 정보 : " + this.userData.memberRole);
+    console.log("유저 정보 : " + this.userData.memberSeq);
     this.joinSession();
     this.connect();
   },
