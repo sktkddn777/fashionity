@@ -7,22 +7,34 @@
     <div class="alert" :class="{ 'is-readed': this.alarm.is_readed }">
       <!-- 팔로잉 알람 -->
       <div class="alert-content" v-if="this.alarm.type === 'FOLLOW'">
-        <span class="fw-bold">{{ this.alarm.publisher_nickname }}</span>
-        님이 회원님을 팔로우 합니다.
+        <div class="title">
+          <span class="fw-bold">{{ this.alarm.publisher_nickname }}</span>
+          님이 회원님을 팔로우 합니다.
+        </div>
       </div>
       <!-- 게시글 좋아요 알람 -->
-      <div class="alert-content" v-else-if="this.alarm.type === 'POST_LIKE'">
-        {{ this.alarm.title }}
+      <div
+        class="col alert-content"
+        v-else-if="this.alarm.type === 'POST_LIKE'"
+      >
+        <div class="title">{{ this.alarm.title }}</div>
+        <div class="content">{{ this.alarm.content }}</div>
       </div>
       <!-- 댓글 좋아요 알람 -->
       <div class="alert-content" v-else-if="this.alarm.type === 'COMMENT_LIKE'">
-        {{ this.alarm.title }}<br />
-        {{ this.alarm.content }}
+        <div class="title">{{ this.alarm.title }}</div>
+        <div class="content">
+          {{ this.alarm.content }}
+        </div>
       </div>
       <!-- 게시글에 댓글 등록 알람 -->
       <div class="alert-content" v-else-if="this.alarm.type === 'COMMENT_POST'">
-        {{ this.alarm.title }}<br />
-        {{ this.alarm.content }}
+        <div class="title">
+          {{ this.alarm.title }}
+        </div>
+        <div class="content">
+          {{ this.alarm.content }}
+        </div>
       </div>
       <div class="alert-image">
         <img
@@ -89,5 +101,14 @@ export default {
 }
 .alert-content {
   text-align: left;
+}
+
+.title {
+  font-weight: 500;
+}
+
+.content {
+  font-size: 13px;
+  color: rgba(66, 66, 66, 0.7);
 }
 </style>

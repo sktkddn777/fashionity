@@ -1,5 +1,5 @@
 <template>
-  <div class="col" id="a">
+  <div class="col">
     <button
       type="button"
       data-bs-toggle="offcanvas"
@@ -119,21 +119,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-/* .profile {
-  padding-top: 1px;
-  width: 20px;
-  height: 20px;
-  border-radius: 100%;
-  object-fit: cover;
-}
-.profile-comment {
-  height: 5vh;
-  border-radius: 100%;
-  object-fit: contain;
-}
-.alert-body {
-  margin: 0px;
-  padding: 0px;
-} */
-</style>
+<style scoped></style>
