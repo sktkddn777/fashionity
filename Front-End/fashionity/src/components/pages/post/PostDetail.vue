@@ -233,39 +233,50 @@ export default {
     TheComment,
     ReportModal,
   },
-  async mounted() {
-    let token = sessionStorage.getItem("token");
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
-      method: "get",
-    }).then((data) => {
-      this.post = data.data.post;
-      console.log(this.post);
-      this.like = this.post.liked;
-      this.likeCount = this.post.likeCount;
-    });
-
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
-      method: "get",
-    }).then((data) => {
-      this.comments = [...data.data.comments];
-      console.log(this.comments);
-    });
+  mounted() {
+    this.callDetailAPI(this.seq);
+  },
+  watch: {
+    seq: {
+      handler(newSeq) {
+        this.callDetailAPI(newSeq);
+      },
+      deep: true, // 객체의 내부 변경도 감지
+    },
   },
   methods: {
+    callDetailAPI(seq) {
+      let token = sessionStorage.getItem("token");
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${seq}`,
+        method: "get",
+      }).then((data) => {
+        this.post = data.data.post;
+        console.log(this.post);
+        this.like = this.post.liked;
+        this.likeCount = this.post.likeCount;
+      });
+
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
+        method: "get",
+      }).then((data) => {
+        this.comments = [...data.data.comments];
+        console.log(this.comments);
+      });
+    },
     timeAgo(timestamp) {
       const currentTime = new Date();
       const targetTime = new Date(timestamp);
