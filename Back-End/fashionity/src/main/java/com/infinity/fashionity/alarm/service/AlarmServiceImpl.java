@@ -101,6 +101,7 @@ public class AlarmServiceImpl implements AlarmService {
                     AlarmType alarmType = entity.getAlarmType();
 
                     return AlarmDTO.builder()
+                            .alarmSeq(entity.getSeq())
                             .imageUrl(alarmType.equals(AlarmType.FOLLOW)
                                     ? entity.getPublisher().getProfileUrl()
                                     : entity.getPost().getPostImages().get(0).getUrl())
@@ -109,6 +110,7 @@ public class AlarmServiceImpl implements AlarmService {
                             .publisherNickname(entity.getPublisher().getNickname())
                             .postSeq(entity.getPost() != null ? entity.getPost().getSeq() : null)
                             .type(alarmType)
+                            .isReaded(entity.isRead())
                             .build();
                 })
                 .collect(Collectors.toList());

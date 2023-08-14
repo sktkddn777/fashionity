@@ -27,7 +27,7 @@ public class AlarmController {
         return new ResponseEntity<>(alarmService.findAll(seq), HttpStatus.OK);
     }
 
-    @PostMapping("/{alarmSeq}")
+    @PatchMapping("/{alarmSeq}")
     public ResponseEntity<Boolean> readAlarm(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("alarmSeq") Long alarmSeq
