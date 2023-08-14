@@ -455,11 +455,13 @@ public class PostServiceImpl implements PostService {
     public PostReportDTO.Response reportPost(PostReportDTO.Request dto) {
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
-        String type = dto.getType();
+        String category = dto.getCategory();
         String content = dto.getContent();
 
+        System.out.println("서비스 입니다 : " + postSeq +" / "+ memberSeq + " / " + category + " / " + content);
+
         // 입력값 검증
-        if (postSeq == null || memberSeq == null || StringUtils.isBlank(type)) {
+        if (postSeq == null || memberSeq == null || StringUtils.isBlank(category)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -486,7 +488,7 @@ public class PostServiceImpl implements PostService {
         PostReportEntity report = PostReportEntity.builder()
                 .post(post)
                 .member(member)
-                .category(type)
+                .category(category)
                 .content(content)
                 .build();
 
