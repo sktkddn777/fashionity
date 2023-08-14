@@ -1,5 +1,6 @@
 package com.infinity.fashionity.consultants.service;
 
+import com.infinity.fashionity.comments.dto.CommentDeleteDTO;
 import com.infinity.fashionity.comments.dto.CommentSaveDTO;
 import com.infinity.fashionity.consultants.dto.*;
 import com.infinity.fashionity.consultants.entity.*;
@@ -7,10 +8,12 @@ import com.infinity.fashionity.consultants.repository.ConsultantRepository;
 import com.infinity.fashionity.consultants.repository.ReservationRepository;
 import com.infinity.fashionity.consultants.repository.ReviewRepository;
 import com.infinity.fashionity.consultants.repository.ScheduleRepository;
+import com.infinity.fashionity.global.exception.AccessDeniedException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
 import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -430,6 +433,37 @@ public class ConsultantServiceImpl implements ConsultantService {
 
     }
 
+    @Override
+    @Transactional
+    public ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq) {
+        Long memberSeq = dto.getMemberSeq();
+
+        //입력값 검증
+        if (memberSeq == null || scheduleSeq == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        //멤버 존재하는지 확인
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleSeq)
+                .orElseThrow(() ->new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        //자신의 스케쥴이 아니거나 권한이 존재하지 않으면 삭제 불가
+        if (member.getSeq() != scheduleEntity.getConsultant().getMember().getSeq()
+                && !member.getMemberRoles().contains(MemberRole.ADMIN)) {
+            throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+
+        //삭제
+        scheduleRepository.delete(scheduleEntity);
+
+        return ScheduleDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+    }
 
 }
 
