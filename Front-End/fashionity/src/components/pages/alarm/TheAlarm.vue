@@ -22,7 +22,7 @@
       <div class="offcanvas-header">
         <button
           type="button"
-          class="btn-close"
+          class="btn btn-close-custom"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         >
@@ -106,7 +106,7 @@ export default {
     },
     closeOffcanvas() {
       // 오프캔버스 닫기
-      const closeBtn = document.querySelector(".btn-close");
+      const closeBtn = document.querySelector(".btn-close-custom");
       closeBtn.click();
       // if (this.offcanvasInstance) {
       // this.offcanvasInstance.hide();
