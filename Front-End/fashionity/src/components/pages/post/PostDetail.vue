@@ -167,11 +167,17 @@
 
         <div class="post-detail-comment-submit">
           <input
+            v-model="commentContent"
             class="form-control"
             type="text"
             placeholder="댓글을 입력해주세요."
           />
-          <button type="button" class="btn btn-dark" style="min-width: 70px">
+          <button
+            type="button"
+            class="btn btn-dark"
+            style="min-width: 70px"
+            @click="submitComment"
+          >
             <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
           </button>
         </div>
@@ -198,6 +204,7 @@ export default {
       commentOpen: false,
       like: "",
       likeCount: "",
+      commentContent: "",
     };
   },
   components: {
@@ -346,7 +353,6 @@ export default {
       this.$router.push("/post");
     },
     callDeleteAPI() {
-      console.log("callDeleteAPI");
       let token = sessionStorage.getItem("token");
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.post.postSeq}`,
@@ -357,6 +363,32 @@ export default {
                 Authorization: `Bearer ${token}`,
               },
         method: "DELETE",
+      }).then((data) => {
+        console.log(data);
+      });
+    },
+    async submitComment() {
+      await this.callCommentSaveAPI(this.commentContent);
+      this.commentContent = "";
+    },
+    callCommentSaveAPI(content) {
+      let token = sessionStorage.getItem("token");
+      let postSeq = this.$route.params.seq;
+      console.log(content);
+      const body = {
+        content: content,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+        method: "POST",
+        data: body,
       }).then((data) => {
         console.log(data);
       });
