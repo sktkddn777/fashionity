@@ -31,10 +31,10 @@
               <input
                 class="form-check-input"
                 type="radio"
-                name="type"
+                name="category"
                 id="slander"
                 value="slander"
-                v-model="type"
+                v-model="category"
                 checked
               />
               <label class="form-check-label" for="slander">
@@ -45,10 +45,10 @@
               <input
                 class="form-check-input"
                 type="radio"
-                name="type"
+                name="category"
                 id="spam"
                 value="spam"
-                v-model="type"
+                v-model="category"
               />
               <label class="form-check-label" for="spam">
                 성희롱 / 음란물
@@ -58,10 +58,10 @@
               <input
                 class="form-check-input"
                 type="radio"
-                name="type"
+                name="category"
                 id="ad"
                 value="ad"
-                v-model="type"
+                v-model="category"
               />
               <label class="form-check-label" for="ad"> 상업 목적 광고 </label>
             </div>
@@ -69,10 +69,10 @@
               <input
                 class="form-check-input"
                 type="radio"
-                name="type"
+                name="category"
                 id="pirate"
                 value="pirate"
-                v-model="type"
+                v-model="category"
               />
               <label class="form-check-label" for="pirate"> 사진 도용 </label>
             </div>
@@ -80,10 +80,10 @@
               <input
                 class="form-check-input"
                 type="radio"
-                name="type"
+                name="category"
                 id="etc"
                 value="etc"
-                v-model="type"
+                v-model="category"
               />
               <label class="form-check-label" for="etc"> 기타 </label>
             </div>
@@ -121,7 +121,7 @@ export default {
   data() {
     return {
       seq: "",
-      type: "",
+      category: "slander",
       content: "",
       showModal: "true",
     };
@@ -129,16 +129,22 @@ export default {
   methods: {
     async submitReport() {
       const reportData = {
-        type: this.type,
+        category: this.category,
         content: this.content,
       };
+      console.log(
+        "버튼 눌렀을 때 : " + reportData.category + " / " + reportData.content
+      );
       await this.callPostReportAPI(reportData);
       this.showModal = false;
     },
     async callPostReportAPI(reportData) {
       let token = sessionStorage.getItem("token");
       let seq = this.$route.params.seq;
-      axios({
+      console.log(
+        "API 들어왔을 때 : " + reportData.category + " / " + reportData.content
+      );
+      await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${seq}/report`,
         headers:
           token === null
