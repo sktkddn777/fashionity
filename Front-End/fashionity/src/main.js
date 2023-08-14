@@ -10,7 +10,6 @@ import "v-calendar/dist/style.css";
 import { setupCalendar, Calendar, DatePicker } from "v-calendar";
 import "v-calendar/style.css";
 
-import testStore from "./store/modules/testStore";
 // import "v-calendar/dist/style.css";
 // import VCalendar from "v-calendar";
 
@@ -48,12 +47,8 @@ createApp(App)
   .use(store)
   .use(vuetify)
   .use(Toast)
-
   .use(setupCalendar, {})
-
-  .use(testStore)
   .use(VCalendar, {})
-
   .component("font-awesome-icon", FontAwesomeIcon)
   .component("VCalendar", Calendar)
   .component("VDatePicker", DatePicker)

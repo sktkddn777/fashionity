@@ -16,4 +16,7 @@ public class SocketVO {
 
     // 메세지를 보낼 곳
     private String roomId;
+
+    //소켓으로 들어온 데이터 유형
+    private String type;
 }
