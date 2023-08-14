@@ -27,7 +27,7 @@
           <div class="post-detail-header-follow" style="margin-left: auto">
             <div v-if="!isLogin"></div>
             <div v-else class="post-detail-header-modal align-self-center">
-              <div v-if="!this.post.myPost" @click="toggleFollowing">
+              <div v-if="!this.post.myPost">
                 <button
                   type="button"
                   class="active-button"
@@ -256,15 +256,14 @@ export default {
         return `${days}일 전`;
       }
     },
-    toggleFollowing() {
+    async toggleFollowing() {
       if (this.post.following === true) {
-        this.callUnFollowingAPI(this.post.name);
+        await this.callUnFollowingAPI(this.post.name);
       } else {
-        this.callFollowingAPI(this.post.name);
+        await this.callFollowingAPI(this.post.name);
       }
-      this.post.following = !this.post.following;
     },
-    callFollowingAPI(name) {
+    async callFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
       let body = {
         nickname: name,
@@ -278,10 +277,11 @@ export default {
         method: "POST",
         data: body,
       }).then((data) => {
-        this.following = data.data.success;
+        this.success = data.data.success;
+        this.post.following = !this.post.following;
       });
     },
-    callUnFollowingAPI(name) {
+    async callUnFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
       let body = {
         nickname: name,
@@ -295,7 +295,8 @@ export default {
         method: "DELETE",
         data: body,
       }).then((data) => {
-        this.following = data.data.success;
+        this.success = data.data.success;
+        this.post.following = !this.post.following;
       });
     },
     toggleLike() {

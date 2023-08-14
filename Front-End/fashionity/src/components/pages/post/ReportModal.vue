@@ -8,6 +8,7 @@
     >
     <!-- report Modal -->
     <div
+      v-if="showModal"
       class="modal fade"
       id="reportModal"
       tabindex="-1"
@@ -122,6 +123,7 @@ export default {
       seq: "",
       category: "slander",
       content: "",
+      showModal: true,
     };
   },
   methods: {
@@ -134,8 +136,6 @@ export default {
         "버튼 눌렀을 때 : " + reportData.category + " / " + reportData.content
       );
       await this.callPostReportAPI(reportData);
-      alert("신고되었습니다.");
-      this.navigateToMain();
     },
     async callPostReportAPI(reportData) {
       let token = sessionStorage.getItem("token");
@@ -153,12 +153,11 @@ export default {
               },
         method: "POST",
         data: reportData,
-      }).then((data) => {
-        console.log(data.data.success);
-      });
-    },
-    navigateToMain() {
-      this.$router.push("/post");
+      })
+        .then((data) => {
+          console.log(data.data.success);
+        })
+        .catch((error) => console.log(error));
     },
   },
 };
