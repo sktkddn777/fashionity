@@ -154,11 +154,6 @@ export default {
   border-radius: 100%;
   object-fit: contain;
 }
-.post-detail-profile {
-  height: 7vh;
-  border-radius: 100%;
-  object-fit: contain;
-}
 .profile-comment {
   height: 5vh;
   border-radius: 100%;
@@ -170,12 +165,6 @@ export default {
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-}
-.post-detail-image {
-  margin-bottom: 10px;
-}
-.content {
-  margin-top: 10px;
 }
 .post-detail-like {
   display: flex;

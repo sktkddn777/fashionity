@@ -136,7 +136,6 @@ export default {
         "버튼 눌렀을 때 : " + reportData.category + " / " + reportData.content
       );
       await this.callPostReportAPI(reportData);
-      this.showModal = false;
     },
     async callPostReportAPI(reportData) {
       let token = sessionStorage.getItem("token");
