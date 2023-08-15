@@ -53,10 +53,23 @@
       </div>
       <!-- 비디오 -->
       <div id="video-container" class="video-container" style="display: flex">
-        <user-video
-          :stream-manager="publisher"
-          @click="updateMainVideoStreamManager(publisher)"
-        />
+        <div class="user-video">
+          <user-video
+            :stream-manager="publisher"
+            @click="updateMainVideoStreamManager(publisher)"
+          />
+          <!-- 일반 유저의 비디오에 띄어질 퍼스널컬러 이미지 -->
+          <div v-if="userData.memberRole[1] !== 'CONSALTANT'">
+            <img
+              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              alt="Selected Image"
+              v-if="selectedImageVisible_personal"
+              @click="showImage_personal(null)"
+              class="personal_color"
+            />
+          </div>
+        </div>
+        <!-- 컨설턴트가 유저에게 띄우는 퍼스널컬러 이미지 -->
         <div class="user-video">
           <user-video
             v-for="sub in subscribers"
@@ -65,17 +78,19 @@
             @click="updateMainVideoStreamManager(sub)"
             class="user-video-container"
           />
-          <img
-            :src="require(`@/assets/img/${selectedImage}`)"
-            alt="Selected Image"
-            v-if="selectedImageVisible"
-            @click="showImage(null)"
-            class="personal_color"
-          />
+          <div v-if="userData.memberRole[1] === 'CONSALTANT'">
+            <img
+              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              alt="Selected Image"
+              v-if="selectedImageVisible_personal"
+              @click="showImage_personal(null)"
+              class="personal_color"
+            />
+          </div>
         </div>
       </div>
       <!-- 이미지 div -->
-      <div>
+      <div v-if="userData.memberRole[1] === 'CONSULTANT'">
         <button @click="toggleDiv('colorDiv')" class="image-button">
           퍼스널 컬러
         </button>
@@ -93,7 +108,7 @@
               :src="require(`@/assets/img/${image.url}`)"
               :alt="image.alt"
               class="image"
-              @click="showImage(index)"
+              @click="showImage_personal(index)"
             />
           </div>
         </div>
@@ -107,10 +122,24 @@
             <img
               :src="require(`@/assets/img/${image.url}`)"
               :alt="image.alt"
-              class="image"
+              :class="['image', { highlighted: selectedIndex_image === index }]"
+              @click="showImage_image(index)"
             />
           </div>
         </div>
+        <button @click="showImage_image(null)" class="image-button">
+          사진 닫기
+        </button>
+      </div>
+      <!-- 일반유저가 보는 이미지 화면 -->
+      <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
+        여기에 일반유저가 볼 수 있는 이미지!
+        <img
+          :src="require(`@/assets/img/${selectedImage_image}`)"
+          alt="Selected Image"
+          v-if="selectedImageVisible_image"
+          class="image"
+        />
       </div>
     </div>
   </div>
@@ -120,34 +149,35 @@
 .image-list {
   display: flex;
   max-width: 60vw;
-  overflow-x: auto; /* 가로 스크롤을 생성합니다. */
+  overflow-x: auto;
 }
 
 .image-item {
   border: 1px solid #ccc;
   flex: 0 0 auto;
-  margin-right: 10px; /* 이미지 간 간격을 조정합니다. */
+  margin-right: 10px;
 }
 .image {
-  max-width: 40vh;
-  max-height: 40vh;
+  max-width: 25vh;
+  max-height: 25vh;
 }
 
 .user-video {
-  position: relative; /* 부모 컨테이너를 상대 위치로 설정 */
+  position: relative;
 }
 
 .user-video-container {
   display: block;
-  width: 100%; /* 큰 이미지의 가로 너비를 100%로 설정 */
-  height: auto; /* 이미지 높이에 따라 조정 */
+  width: 100%;
+  height: auto;
 }
 
+/* 퍼스널 컬러 이미지를 비디오의 가운데에 놓기위한 style */
 .personal_color {
-  position: absolute; /* 작은 이미지를 절대 위치로 설정 */
-  top: 50%; /* 부모 컨테이너의 50% 위치에 배치 */
-  left: 50%; /* 부모 컨테이너의 50% 위치에 배치 */
-  transform: translate(-50%, -50%); /* 이미지의 중심을 정중앙으로 이동 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .image-button {
@@ -156,6 +186,10 @@
   border-radius: 10px;
   padding: 10px;
   margin: 5px;
+}
+
+.highlighted {
+  border: 2px solid red;
 }
 </style>
 <script>
@@ -190,9 +224,12 @@ export default {
       myUserName: null,
       showColorDiv: false,
       showStyleDiv: false,
-      selectedImage: null,
-      selectedImageVisible: false,
-      selectedIndex: null,
+      selectedImage_personal: null,
+      selectedImage_image: null,
+      selectedImageVisible_personal: false,
+      selectedImageVisible_image: false,
+      selectedIndex_personal: null,
+      selectedIndex_image: null,
       userData: null,
       color_images: [
         { url: "spring_warm.png", alt: "봄웜" },
@@ -218,22 +255,21 @@ export default {
   created() {
     this.myUserName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
-    console.log("유저 정보 : " + this.userData.nickname);
-    console.log("유저 정보 : " + this.userData.memberRole);
-    console.log("유저 정보 : " + this.userData.memberSeq);
+    console.log("유저 닉네임 : " + this.userData.nickname);
+    console.log("유저 권한 : " + this.userData.memberRole);
+    console.log("유저 권한 : " + this.userData.memberRole[1]);
     this.joinSession();
     this.connect();
   },
 
   methods: {
     joinSession() {
-      console.log("---------------------joinSession1 : " + this.session);
       // --- Get an OpenVidu object ---
       this.OV = new OpenVidu();
 
       // --- Init a session ---
       this.session = this.OV.initSession();
-      console.log("---------------------joinSession2 : " + this.session);
+      console.log("---------------------접속한 세션 : " + this.session);
       // const testJson = JSON.stringify(this.session);
       // console.log(testJson);
       console.log(Object.entries(this.session));
@@ -377,7 +413,6 @@ export default {
       });
     },
 
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
     createToken(sessionId) {
       console.log("---------------------createToken : " + sessionId);
       return new Promise((resolve, reject) => {
@@ -397,6 +432,8 @@ export default {
           .catch((error) => reject(error.response));
       });
     },
+
+    // 컨설턴트만 보이는 버튼
     toggleDiv(divType) {
       if (divType === "colorDiv") {
         this.showColorDiv = !this.showColorDiv;
@@ -406,17 +443,34 @@ export default {
         this.showColorDiv = false;
       }
     },
-    showImage(index) {
+
+    // 컨설턴트가 퍼스널컬러 이미지 클릭 시 보이게
+    showImage_personal(index) {
       if (index !== null) {
-        this.selectedIndex = index;
-        this.selectedImage = this.color_images[index].url;
-        this.selectedImageVisible = true;
-        this.send(this.selectedIndex);
+        this.selectedIndex_personal = index;
+        this.selectedImage_personal = this.color_images[index].url;
+        this.selectedImageVisible_personal = true;
+        this.send(this.selectedIndex_personal, "personal");
       } else {
-        this.selectedImageVisible = false;
-        this.send(null);
+        this.selectedImageVisible_personal = false;
+        this.send(null, "personal");
       }
     },
+
+    // 컨설턴트가 등록된 이미지 클릭 시 보이게
+    showImage_image(index) {
+      if (index !== null) {
+        this.selectedIndex_image = index;
+        this.selectedImage_image = this.style_images[index].url;
+        this.selectedImageVisible_image = true;
+        this.send(this.selectedIndex_image, "image");
+      } else {
+        this.selectedImageVisible_image = false;
+        this.send(null, "image");
+      }
+    },
+
+    // 소켓 연결
     connect() {
       console.log("방 정보 : " + this.roomId);
       const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
@@ -430,18 +484,20 @@ export default {
           // 소켓 연결 성공
           this.connected = true;
           console.log("이미지 소켓 연결 성공", frame);
-          // 서버의 메시지 전송 endpoint를 구독합니다.
-          // 이런형태를 pub sub 구조라고 합니다.
           this.stompClient.subscribe(
             `/chatting/send/${this.mySessionId}`,
             (res) => {
-              // console.log("구독으로 받은 메시지 입니다.", res.body);
-
-              // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
               const receiveData = JSON.parse(res.body);
-              if (receiveData.type == "personal_color") {
-                console.log("받아온 이미지 인덱스 : " + receiveData.content);
-                this.selectedIndex = receiveData.content;
+              if (receiveData.type == "personal") {
+                console.log(
+                  "받아온 이미지 인덱스 퍼스널 : " + receiveData.content
+                );
+                this.selectedIndex_personal = receiveData.content;
+              } else if (receiveData.type == "image") {
+                console.log(
+                  "받아온 이미지 인덱스 이미지 : " + receiveData.content
+                );
+                this.selectedIndex_image = receiveData.content;
               }
             }
           );
@@ -453,16 +509,19 @@ export default {
         }
       );
     },
-    send(index) {
-      console.log("보낼 이미지 인덱스 : " + index);
+
+    // 소켓으로 메세지 보내기
+    send(index, type) {
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
           userName: this.myUserName,
           content: index,
           // roomId: "djEjsdladmldmltptus",
           roomId: this.mySessionId,
-          type: "personal_color",
+          type: type,
         };
+        console.log("소켓으로 보낼 데이터 : ");
+        console.log(msg);
         this.stompClient.send(
           `/chatting/send/${this.mySessionId}`,
           JSON.stringify(msg)
@@ -470,10 +529,16 @@ export default {
       }
     },
   },
+
+  // 소켓에서 content가 올 때 변경이 될 수 있도록
   watch: {
-    selectedIndex(newVal) {
-      console.log("새로운 값 : " + newVal);
-      this.showImage(newVal);
+    selectedIndex_personal(newVal) {
+      console.log("퍼스널 새로운 값 : " + newVal);
+      this.showImage_personal(newVal);
+    },
+    selectedIndex_image(newVal) {
+      console.log("이미지 새로운 값 : " + newVal);
+      this.showImage_image(newVal);
     },
   },
 };
