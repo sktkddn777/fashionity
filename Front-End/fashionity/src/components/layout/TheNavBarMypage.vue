@@ -24,7 +24,7 @@
 
       <router-link
         v-else
-        to="/consultant"
+        to="/consultant/rm"
         style="text-decoration: none; color: #424242"
         >Consultant</router-link
       >
