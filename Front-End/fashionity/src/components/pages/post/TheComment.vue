@@ -14,13 +14,13 @@
         <div class="fw-bold" style="text-align: left">
           {{ comment.nickname }}
         </div>
-        <div v-if="!this.isChecked" style="text-align: left; font-size: 15px">
+        <div v-if="!isChecked" style="text-align: left; font-size: 15px">
           {{ comment.content }}
         </div>
         <div v-else class="post-detail-comment-submit">
-          <input class="form-control" type="text" />
-          <button type="button" class="active-button">
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+          <input v-model="content" class="form-control" type="text" />
+          <button type="button" class="active-button" @click="modifyComment">
+            <span style="font-size: smaller">&nbsp;수정&nbsp;</span>
           </button>
         </div>
       </div>
@@ -50,7 +50,7 @@
 
           <v-list>
             <v-list-item v-if="comment.myComment">
-              <v-list-item-title type="button" @click="modifyComment"
+              <v-list-item-title type="button" @click="toggleInput"
                 >수정</v-list-item-title
               >
               <v-list-item-title
@@ -119,6 +119,7 @@ export default {
     return {
       isChecked: false,
       currComment: "",
+      content: "",
       like: "",
       likeCnt: "",
     };
@@ -128,11 +129,42 @@ export default {
   },
   mounted() {
     this.currComment = this.comment;
+    this.content = this.comment.content;
     console.log(this.comment);
   },
   methods: {
-    modifyComment() {
+    toggleInput() {
       this.isChecked = !this.isChecked;
+    },
+    modifyComment() {
+      if (this.content === null || this.content.trim() === "") {
+        alert("댓글을 입력해주세요.");
+      } else {
+        this.callCommentModifyAPI(this.content);
+      }
+    },
+    callCommentModifyAPI(content) {
+      let token = sessionStorage.getItem("token");
+      let postSeq = this.$route.params.seq;
+      let body = {
+        commentSeq: this.comment.commentSeq,
+        content: content,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments/${body.commentSeq}`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "PUT",
+        data: body,
+      }).then((data) => {
+        console.log(data);
+        this.currComment.content = content;
+        this.toggleInput();
+      });
     },
     timeAgo(timestamp) {
       const currentTime = new Date();
@@ -233,7 +265,7 @@ export default {
   display: flex;
 }
 .active-button {
-  width: 100px;
+  width: 60px;
   height: 40px;
   flex-shrink: 0;
   border-radius: 10px;

@@ -150,7 +150,7 @@
               :key="i"
               style="color: skyblue"
             >
-              {{ tag }} &nbsp;
+              #{{ tag }} &nbsp;
             </a>
           </div>
         </div>
@@ -174,7 +174,7 @@
           />
           <button
             type="button"
-            class="btn btn-dark"
+            class="active-button"
             style="min-width: 70px"
             @click="submitComment"
           >
