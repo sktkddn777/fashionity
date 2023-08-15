@@ -68,6 +68,7 @@ public class ConsultantServiceImpl implements ConsultantService {
                     .level(entity.getLevel())
                     .avgGrade(consultantRepository.avgGrade(entity.getNickname()))
                     .totalCnt(consultantRepository.totalCnt(entity.getNickname()))
+                    .profileIntro(entity.getMember().getProfileIntro())
                     .build();
             consultantSummaries.add(consultantSummary);
         });
