@@ -190,14 +190,14 @@ export default {
         console.error("댓글 삭제 실패", error);
       }
     },
-    callDeleteCommentAPI() {
+    async callDeleteCommentAPI() {
       let token = sessionStorage.getItem("token");
       let postSeq = this.$route.params.seq;
       let body = {
         commentSeq: this.comment.commentSeq,
       };
       console.log(body.commentSeq);
-      axios({
+      await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments/${body.commentSeq}`,
         headers:
           token === null

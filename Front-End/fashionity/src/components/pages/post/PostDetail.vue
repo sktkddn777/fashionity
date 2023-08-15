@@ -253,6 +253,8 @@ export default {
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
         method: "get",
       }).then((data) => {
+        console.log(data.data.comments);
+
         this.comments = [...data.data.comments];
       });
     },
@@ -419,6 +421,7 @@ export default {
       });
     },
     updateCommentInfo() {
+      console.log("오냐");
       this.commentCount--;
       this.callCommentListApi();
     },
