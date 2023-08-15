@@ -11,7 +11,7 @@
                 class="profileImg-buttons"
                 style="display: flex; justify-content: center; flex-direction: row"
               >
-                <div class="profile-main-photo">
+                <div class="profile-main-photo" v-if="!files.length">
                   <img
                     v-if = "selectedImage === null"
                     class="image-box"
@@ -21,23 +21,42 @@
                     alt=""
                     ref = "profileImage"
                   />
-                  <img
-                    class="image-box"
-                    v-else
-                    width="200"
-                    height="200"
-                    :src="selectedImagePreview"
-                    alt=""
-                    ref="croppingImage"
-                  />
+                </div>
+                <div v-else class="file-preview-content-container">
+                  <div class="file-preview-container">
+                    <div v-for="(file, index) in files" :key="index" class="file-preview-wrapper">
+                      <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div>
+                      <img :src="file.preview" />
+                    </div>
+                  </div>
+                </div>
+                <div v-if="cropImgURL" class="row justify-content-start">
+                  <div class="col">
+                    <cropper
+                      class="cropper"
+                      ref="cropper"
+                      :auto-zoom="true"
+                      :stencil-size="{
+                        width: 280,
+                        height: 280,
+                      }"
+                      image-restriction="stencil"
+                      :stencil-props="{
+                        aspectRatio: 1 / 1,
+                      }"
+                      :src="cropImgURL"
+                    />
+                  </div>
+                  <div class="col" @click="uploadImage">upload</div>
                 </div>
                 <div class="buttons" style="display: flex; align-items: flex-end">
                   <div class = "filebox">
-                    <!-- <button class="active-button" style="margin-right: 0.3rem"> -->
-                      <label for="upload">사진 변경</label>
-                      <input type="file" id = "upload" ref = "uploadInput" @change="handleImageChange">
+                    <!-- <button class="active-button" style="margin-right: 0.3rem" @click = "showImageUpload"> -->
+                      <label for="file">사진 변경</label>
+                      <input type="file" id = "upload" ref = "uploadInput" @change="imageUpload"/>
                     <!-- </button> -->
                   </div>
+                  
                   <button class="inactive-button" style="margin-right: 0.3rem">
                     사진 삭제
                   </button>
@@ -93,6 +112,8 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
 // import FormData from "form-data";
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import memberStore from "@/store/modules/memberStore";
@@ -103,6 +124,7 @@ export default {
   name: "ProfileEdit",
   components: {
     TheNavBarMypage,
+    Cropper
   },
   data() {
     return {
@@ -112,6 +134,14 @@ export default {
       email: "",
       profileIntro: "",
       selectedImage:null,
+      displayProfileImageUpload: false,
+      files: [], //업로드용 파일
+      filesPreview: [],
+      uploadImageIndex: 0, // 이미지 업로드를 위한 변수
+      img: "https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg",
+      cropImgURL: "",
+      currImgList: [],
+      currFileList: [],
     };
   },
   created() {
@@ -161,6 +191,115 @@ export default {
       await this.logout();
       this.$router.push("/")
     },
+    makePreview(blobData) {
+      for (let i = 0; i < this.$refs.files.files.length; i++) {
+        console.log("안녕 난 for문이야");
+        this.files = [
+          ...this.files,
+          //이미지 업로드
+          {
+            //실제 파일
+            // file: this.$refs.files.files[i],
+            file: this.cropImgURL,
+            //이미지 프리뷰
+            // preview: URL.createObjectURL(this.$refs.files.files[i]),
+            preview: this.cropImgURL,
+            //삭제및 관리를 위한 number
+            number: this.uploadImageIndex,
+          },
+        ];
+        // num = i;
+        //이미지 업로드용 프리뷰
+        this.filesPreview = [
+          ...this.filesPreview,
+          {
+            file: URL.createObjectURL(this.$refs.files.files[i]),
+            number: this.uploadImageIndex,
+            binaryFile: blobData,
+          },
+        ];
+      }
+      this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
+
+      // this.uploadImageIndex += 1;
+      console.log(this.files);
+
+      console.log("프리뷰 입니당", this.filesPreview);
+      // console.log(this.filesPreview);
+      this.cropImgURL = "";
+      this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
+    },
+    imageUpload() {
+      console.log("upload");
+      console.log(this.$refs.files.files);
+
+      console.log(this.$refs.files.files[this.$refs.files.files.length - 1]);
+      this.cropImgURL = URL.createObjectURL(
+        this.$refs.files.files[this.$refs.files.files.length - 1]
+      );
+      console.log("url입니당", this.cropImgURL);
+    },
+
+    fileDeleteButton(e) {
+      const name = e.target.getAttribute("name");
+      this.files = this.files.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
+      // console.log(this.files);
+      this.currImgList = this.filesPreview.map((row) => row.file);
+      this.currFileList = this.filesPreview.map((row) => row.binaryFile);
+    },
+    uploadImage() {
+      const { canvas } = this.$refs.cropper.getResult();
+      console.log(canvas);
+      if (canvas) {
+        // const form = new FormData();
+        // canvas.toBlob((blob) => {
+        //   form.append("file", blob);
+        //   // You can use axios, superagent and other libraries instead here
+        //   // fetch("http://example.com/upload/", {
+        //   //   method: "POST",
+        //   //   body: form,
+        //   // });
+        //   // Perhaps you should add the setting appropriate file format here
+        // }, "image/jpeg");
+        // const url = window.URL.createObjectURL(form);
+        var blobData = "";
+        canvas.toBlob((blob) => {
+          console.log("blob", blob);
+          this.cropImgURL = canvas.toDataURL();
+
+          this.makePreview(blob);
+          blobData = blob;
+        });
+
+        console.log("blob 후", canvas.toDataURL());
+        console.log(blobData);
+        // let blob = new Blob([new ArrayBuffer(canvas.toDataURL())], {
+        //   type: "image/png",
+        // });
+        // const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
+
+        // this.cropImgURL = canvas.toDataURL();
+
+        // this.makePreview(blobData);
+      }
+    },
+  },
+  change({ coordinates, canvas }) {
+    console.log(coordinates, canvas);
+  },
+  watch: {
+    cropImgURL(newVal) {
+      this.cropImgURL = newVal;
+      console.log("watch", this.cropImgURL);
+    },
+    currFileList(newVal) {
+      this.currFileList = newVal;
+      console.log("newval", newVal);
+      this.$emit("updateImg", this.currFileList);
+    },
+  },
     // async fetchImageAsFile(profileUrl) {
     //   if(profileUrl !== null){
     //     const response = await fetch(profileUrl);
@@ -234,7 +373,6 @@ export default {
     //   this.$refs.uploadInput.value = "";
     // },
 
-  },
 };
 </script>
 <style>
@@ -296,5 +434,10 @@ export default {
   width: 0;
   height: 0;
   opacity: 0;
+}
+.cropper {
+  max-height: 300px;
+  max-width: 300px;
+  background: #ddd;
 }
 </style>
