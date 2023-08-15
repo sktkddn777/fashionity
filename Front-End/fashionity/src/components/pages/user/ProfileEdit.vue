@@ -1,45 +1,59 @@
 <template>
   <div class="container-fluid">
     <the-nav-bar-mypage></the-nav-bar-mypage>
-    <div>
-      <div
-        class="profileImg-buttons"
-        style="display: flex; justify-content: center; flex-direction: row"
-      >
-        <div class="profile-main-photo">
-          <img
-            class="image-box"
-            width="200"
-            height="200"
-            :src="profileUrl"
-            alt=""
-          />
-        </div>
-        <div class="buttons" style="display: flex; align-items: flex-end">
-          <button class="active-button" style="margin-right: 0.3rem">
-            사진 변경
-          </button>
-          <button class="inactive-button" style="margin-right: 0.3rem">
-            사진 삭제
-          </button>
-          <!-- <button class="change-password-button" style="margin-right: 0.3rem">
-            비밀번호 변경
-          </button> -->
-        </div>
-      </div>
-    </div>
     <div class="block" style="height: 3rem"></div>
     <div class="container" style="flex-direction: column">
       <div class="edit-info row" style="justify-content: center" align="left">
         <div class="row">
           <form v-on:submit.prevent="editProfile">
+            <div>
+              <div
+                class="profileImg-buttons"
+                style="display: flex; justify-content: center; flex-direction: row"
+              >
+                <div class="profile-main-photo">
+                  <img
+                    v-if = "selectedImage === null"
+                    class="image-box"
+                    width="200"
+                    height="200"
+                    :src="profileUrl"
+                    alt=""
+                    ref = "profileImage"
+                  />
+                  <img
+                    class="image-box"
+                    v-else
+                    width="200"
+                    height="200"
+                    :src="selectedImagePreview"
+                    alt=""
+                    ref="croppingImage"
+                  />
+                </div>
+                <div class="buttons" style="display: flex; align-items: flex-end">
+                  <div class = "filebox">
+                    <!-- <button class="active-button" style="margin-right: 0.3rem"> -->
+                      <label for="upload">사진 변경</label>
+                      <input type="file" id = "upload" ref = "uploadInput" @change="handleImageChange">
+                    <!-- </button> -->
+                  </div>
+                  <button class="inactive-button" style="margin-right: 0.3rem">
+                    사진 삭제
+                  </button>
+                  <!-- <button class="change-password-button" style="margin-right: 0.3rem">
+                    비밀번호 변경
+                  </button> -->
+                </div>
+              </div>
+            </div>
+            <div style = "height:5rem"></div>
             <h5><b>아이디</b></h5>
             <div>{{ id }}</div>
             <hr />
             <h5><b>이메일</b></h5>
             <div>{{ email }}</div>
             <hr />
-
             <div>
               <h5>
                 <label for="nickname"><b>닉네임</b></label>
@@ -58,40 +72,30 @@
                 style="width: 500px"
               />
               <hr />
+            </div><br>
+            <div style = "display:flex; justify-content: flex-end;">
+              <button
+                class="active-button"
+                style="margin-right: 0.3rem"
+              ><input type = "submit" value = "수정하기">
+              </button>
+              <button class="delete-button" @click="delteProfileAndLogout">탈퇴하기</button>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <div class="container-fluid">
-      <div class="row" style="width: 85vw">
-        <!-- <div class="p" style="background-color: red"></div> -->
-        <div class="p-2 justify-content-end" style="text-align: end">
-          <button
-            class="active-button"
-            style="margin-right: 0.3rem"
-            @click="editProfile"
-          >
-            수정하기
-          </button>
-          <button class="delete-button" @click="deleteProfile">탈퇴하기</button>
-        </div>
-        <div class="p-2 d-flex justify-content-start">
-          <!-- <button class="delete-button">탈퇴하기</button> -->
-        </div>
-      </div>
 
-      <!-- <div class="buttons col" style="align-items: flex-end" align="right">
-          
-        </div> -->
-    </div>
   </div>
   <div class=" " style="height: 2rem"></div>
 </template>
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
+// import FormData from "form-data";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
+import memberStore from "@/store/modules/memberStore";
 
 let token = sessionStorage.getItem("token");
 
@@ -107,13 +111,28 @@ export default {
       nickname: "",
       email: "",
       profileIntro: "",
+      selectedImage:null,
     };
   },
   created() {
     this.getProfile();
   },
+  computed: {
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
+    ...mapGetters(["checkUserInfo"]),
+    // selectedImagePreview(){
+    //   if (this.selectedImage){
+    //     return URL.createObjectURL(this.selectedImage)
+    //   }
+    //   return "";
+    // }
+  },
   methods: {
-    async submitProfile() {},
+    ...mapActions(memberStore, ["logoutAction"]),
+
+    logout() {
+      this.logoutAction;
+    },
     getProfile() {
       axios({
         method: "get",
@@ -128,35 +147,93 @@ export default {
         console.log(data);
       });
     },
-    async editProfile() {
-      const updatedProfile = {
-        profileImage: this.profileUrl,
-        nickname: this.nickname,
-        profileIntro: this.profileIntro,
-      };
-      axios({
-        method: "post",
-        url: `${process.env.VUE_APP_API_URL}/api/v1/members/edit`,
-        data: updatedProfile,
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((data) => {
-          console.log(data);
-          console.log("Profile updated successfully!");
-        })
-        .catch((error) => {
-          console.log(updatedProfile);
-          console.log(error);
-        });
-    },
     async deleteProfile() {
-      alert("삭제됩니다");
+      alert("계정이 삭제됩니다.");
       axios({
-        method: "delete",
+        method: "put",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/delete`,
         headers: { Authorization: `Bearer ${token}` },
-      }).then((data) => console.log(data.success));
+      })
+      .then((data) => console.log(data.data.success));
     },
+    async delteProfileAndLogout(){
+      await this.deleteProfile();
+      await this.logout();
+      this.$router.push("/")
+    },
+    // async fetchImageAsFile(profileUrl) {
+    //   if(profileUrl !== null){
+    //     const response = await fetch(profileUrl);
+    //     const data = await response.blob();
+    //     const ext = profileUrl.split("/").pop();
+    //     const filename = profileUrl.split("/").pop()
+    //     const metadata = {type:`image/${ext}`}
+    //     return new File([data],filename, metadata);
+        
+    //   }
+    // },
+    // async editProfile() {
+    //   // const updatedProfile = {
+    //   //   profileImage: this.selectedImage,
+    //   //   nickname: this.nickname,
+    //   //   profileIntro: this.profileIntro,
+    //   // };
+    //   const formData = new FormData();
+    //   if (this.selectedImage !== null) {
+    //     formData.append("profileImage", this.selectedImage, this.selectedImage.name);
+    //   }
+    //   else { 
+    //     const file = await this.fetchImageAsFile(this.profileUrl)
+    //     formData.append("profileImage", file)}
+    //   // formData.append("profileImage", this.selectedImage);
+    //   formData.append("nickname", this.nickname);
+    //   formData.append("profileIntro", this.profileIntro);
+    //   console.log(this.selectedImage)
+    //   console.log(this.nickname)
+    //   console.log(this.profileIntro)
+      
+    //   for (let key of formData.keys()){
+    //     console.log(key)
+    //   }
+    //   for (let value of formData.values()){
+    //     console.log(value)
+    //   }
+
+    //   axios({
+    //     method: "post",
+    //     url: `${process.env.VUE_APP_API_URL}/api/v1/members/edit`,
+    //     data: formData,
+    //     headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"},
+    //   })
+    //     .then((data) => {
+    //       console.log("=======성공성공========");
+    //       console.log(data);
+    //       console.log("Profile updated successfully!");
+    //     })
+    //     .catch((error) => {
+    //       // console.log(formData)
+    //       console.log("=======에러에러========");
+    //       console.log(error);
+    //     });
+    // },
+
+    // handleImageChange(event) {
+    //   this.selectedImage = event.target.files[0];
+
+    //   if (this.selectedImage) {
+    //     const reader = new FileReader();
+
+    //     reader.onload = (event) => {
+    //       this.profileUrl = event.target.result;
+    //     };
+
+    //     reader.readAsDataURL(this.selectedImage);
+    //   }
+
+    //   // Clear the input value to allow selecting the same image again
+    //   this.$refs.uploadInput.value = "";
+    // },
+
   },
 };
 </script>
@@ -203,5 +280,21 @@ export default {
   border-radius: 10px;
   background: #ed4141;
   color: #ffffff;
+}
+.filebox label {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+  margin-right: 0.3rem;
+  text-align:center;
+  line-height: 40px;
+}
+.filebox input[type="file"]{
+  width: 0;
+  height: 0;
+  opacity: 0;
 }
 </style>
