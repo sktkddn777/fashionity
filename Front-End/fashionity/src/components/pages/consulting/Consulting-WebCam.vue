@@ -464,7 +464,7 @@ export default {
           type: "personal_color",
         };
         this.stompClient.send(
-          `/chatting/send/${this.roomId}`,
+          `/chatting/send/${this.mySessionId}`,
           JSON.stringify(msg)
         );
       }
