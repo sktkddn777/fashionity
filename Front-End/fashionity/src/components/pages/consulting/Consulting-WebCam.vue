@@ -53,10 +53,22 @@
       </div>
       <!-- 비디오 -->
       <div id="video-container" class="video-container" style="display: flex">
-        <user-video
-          :stream-manager="publisher"
-          @click="updateMainVideoStreamManager(publisher)"
-        />
+        <div class="user-video">
+          <user-video
+            :stream-manager="publisher"
+            @click="updateMainVideoStreamManager(publisher)"
+          />
+          <div v-if="userData.memberRole[1] !== 'CONSALTANT'">
+            <img
+              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              alt="Selected Image"
+              v-if="selectedImageVisible_personal"
+              @click="showImage_personal(null)"
+              class="personal_color"
+            />
+          </div>
+        </div>
+        <!-- 컨설턴트가 유저에게 띄우는 퍼스널컬러 이미지 -->
         <div class="user-video">
           <user-video
             v-for="sub in subscribers"
@@ -65,17 +77,19 @@
             @click="updateMainVideoStreamManager(sub)"
             class="user-video-container"
           />
-          <img
-            :src="require(`@/assets/img/${selectedImage}`)"
-            alt="Selected Image"
-            v-if="selectedImageVisible"
-            @click="showImage(null)"
-            class="personal_color"
-          />
+          <div v-if="userData.memberRole[1] === 'CONSALTANT'">
+            <img
+              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              alt="Selected Image"
+              v-if="selectedImageVisible_personal"
+              @click="showImage_personal(null)"
+              class="personal_color"
+            />
+          </div>
         </div>
       </div>
       <!-- 이미지 div -->
-      <div>
+      <div v-if="userData.memberRole[1] === 'CONSULTANT'">
         <button @click="toggleDiv('colorDiv')" class="image-button">
           퍼스널 컬러
         </button>
@@ -93,7 +107,7 @@
               :src="require(`@/assets/img/${image.url}`)"
               :alt="image.alt"
               class="image"
-              @click="showImage(index)"
+              @click="showImage_personal(index)"
             />
           </div>
         </div>
@@ -107,10 +121,24 @@
             <img
               :src="require(`@/assets/img/${image.url}`)"
               :alt="image.alt"
-              class="image"
+              :class="['image', { highlighted: selectedIndex_image === index }]"
+              @click="showImage_image(index)"
             />
           </div>
         </div>
+        <button @click="showImage_image(null)" class="image-button">
+          사진 닫기
+        </button>
+      </div>
+      <!-- 일반유저가 보는 이미지 화면 -->
+      <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
+        여기에 일반유저가 볼 수 있는 이미지!
+        <img
+          :src="require(`@/assets/img/${selectedImage_image}`)"
+          alt="Selected Image"
+          v-if="selectedImageVisible_image"
+          class="image"
+        />
       </div>
     </div>
   </div>
@@ -129,8 +157,8 @@
   margin-right: 10px; /* 이미지 간 간격을 조정합니다. */
 }
 .image {
-  max-width: 40vh;
-  max-height: 40vh;
+  max-width: 25vh;
+  max-height: 25vh;
 }
 
 .user-video {
@@ -156,6 +184,10 @@
   border-radius: 10px;
   padding: 10px;
   margin: 5px;
+}
+
+.highlighted {
+  border: 2px solid red; /* 빨간색 선 스타일을 적용 */
 }
 </style>
 <script>
@@ -190,9 +222,12 @@ export default {
       myUserName: null,
       showColorDiv: false,
       showStyleDiv: false,
-      selectedImage: null,
-      selectedImageVisible: false,
-      selectedIndex: null,
+      selectedImage_personal: null,
+      selectedImage_image: null,
+      selectedImageVisible_personal: false,
+      selectedImageVisible_image: false,
+      selectedIndex_personal: null,
+      selectedIndex_image: null,
       userData: null,
       color_images: [
         { url: "spring_warm.png", alt: "봄웜" },
@@ -218,9 +253,9 @@ export default {
   created() {
     this.myUserName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
-    console.log("유저 정보 : " + this.userData.nickname);
-    console.log("유저 정보 : " + this.userData.memberRole);
-    console.log("유저 정보 : " + this.userData.memberSeq);
+    console.log("유저 닉네임 : " + this.userData.nickname);
+    console.log("유저 권한 : " + this.userData.memberRole);
+    console.log("유저 권한 : " + this.userData.memberRole[1]);
     this.joinSession();
     this.connect();
   },
@@ -406,15 +441,26 @@ export default {
         this.showColorDiv = false;
       }
     },
-    showImage(index) {
+    showImage_personal(index) {
       if (index !== null) {
-        this.selectedIndex = index;
-        this.selectedImage = this.color_images[index].url;
-        this.selectedImageVisible = true;
-        this.send(this.selectedIndex);
+        this.selectedIndex_personal = index;
+        this.selectedImage_personal = this.color_images[index].url;
+        this.selectedImageVisible_personal = true;
+        this.send(this.selectedIndex_personal, "personal");
       } else {
-        this.selectedImageVisible = false;
-        this.send(null);
+        this.selectedImageVisible_personal = false;
+        this.send(null, "personal");
+      }
+    },
+    showImage_image(index) {
+      if (index !== null) {
+        this.selectedIndex_image = index;
+        this.selectedImage_image = this.style_images[index].url;
+        this.selectedImageVisible_image = true;
+        this.send(this.selectedIndex_image, "image");
+      } else {
+        this.selectedImageVisible_image = false;
+        this.send(null, "image");
       }
     },
     connect() {
@@ -439,9 +485,16 @@ export default {
 
               // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
               const receiveData = JSON.parse(res.body);
-              if (receiveData.type == "personal_color") {
-                console.log("받아온 이미지 인덱스 : " + receiveData.content);
-                this.selectedIndex = receiveData.content;
+              if (receiveData.type == "personal") {
+                console.log(
+                  "받아온 이미지 인덱스 퍼스널 : " + receiveData.content
+                );
+                this.selectedIndex_personal = receiveData.content;
+              } else if (receiveData.type == "image") {
+                console.log(
+                  "받아온 이미지 인덱스 이미지 : " + receiveData.content
+                );
+                this.selectedIndex_image = receiveData.content;
               }
             }
           );
@@ -453,16 +506,17 @@ export default {
         }
       );
     },
-    send(index) {
-      console.log("보낼 이미지 인덱스 : " + index);
+    send(index, type) {
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
           userName: this.myUserName,
           content: index,
           // roomId: "djEjsdladmldmltptus",
           roomId: this.mySessionId,
-          type: "personal_color",
+          type: type,
         };
+        console.log("소켓으로 보낼 데이터 : ");
+        console.log(msg);
         this.stompClient.send(
           `/chatting/send/${this.mySessionId}`,
           JSON.stringify(msg)
@@ -471,9 +525,13 @@ export default {
     },
   },
   watch: {
-    selectedIndex(newVal) {
-      console.log("새로운 값 : " + newVal);
-      this.showImage(newVal);
+    selectedIndex_personal(newVal) {
+      console.log("퍼스널 새로운 값 : " + newVal);
+      this.showImage_personal(newVal);
+    },
+    selectedIndex_image(newVal) {
+      console.log("이미지 새로운 값 : " + newVal);
+      this.showImage_image(newVal);
     },
   },
 };
