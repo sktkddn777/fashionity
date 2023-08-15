@@ -53,48 +53,9 @@
               <v-list-item-title type="button" @click="toggleInput"
                 >수정</v-list-item-title
               >
-              <v-list-item-title
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#deleteModal"
+              <v-list-item-title type="button" @click="deleteConfirm"
                 >삭제</v-list-item-title
               >
-              <!-- delete Modal -->
-              <div
-                class="modal fade"
-                id="deleteModal"
-                tabindex="-1"
-                aria-labelledby="deleteModalLabel"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      ></button>
-                    </div>
-                    <div class="modal-body" style="text-align: center">
-                      정말 삭제하시겠습니까?
-                    </div>
-                    <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        아니오
-                      </button>
-                      <button type="button" class="btn btn-primary">
-                        &nbsp;&nbsp;네&nbsp;&nbsp;
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </v-list-item>
             <v-list-item v-else>
               <report-modal></report-modal>
@@ -213,6 +174,58 @@ export default {
         data: body,
       }).then((data) => {
         this.currComment.liked = data.data.like;
+      });
+    },
+    deleteConfirm() {
+      if (confirm("삭제하시겠습니까?")) {
+        this.deleteComment();
+      }
+    },
+    async deleteComment() {
+      try {
+        await this.callDeleteCommentAPI();
+        this.$emit("commentDeleted");
+        alert("삭제되었습니다.");
+      } catch (error) {
+        console.error("댓글 삭제 실패", error);
+      }
+    },
+    callDeleteCommentAPI() {
+      let token = sessionStorage.getItem("token");
+      let postSeq = this.$route.params.seq;
+      let body = {
+        commentSeq: this.comment.commentSeq,
+      };
+      console.log(body.commentSeq);
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments/${body.commentSeq}`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "DELETE",
+        data: body,
+      }).then((data) => {
+        console.log(data);
+        this.callCommentListApi();
+      });
+    },
+    callCommentListApi() {
+      let token = sessionStorage.getItem("token");
+      let postSeq = this.$route.params.seq;
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments`,
+        method: "get",
+      }).then((data) => {
+        this.comments = [...data.data.comments];
       });
     },
   },

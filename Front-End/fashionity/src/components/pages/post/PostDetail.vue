@@ -157,12 +157,15 @@
         <!-- 댓글 -->
         <div class="post-detail-comment-cnt">
           <span>댓글&nbsp;</span>
-          <span class="fw-bold">{{ post.commentCount }}</span>
+          <span class="fw-bold">{{ commentCount }}</span>
           <span>개</span>
         </div>
 
         <div v-for="(comment, index) in comments" :key="index">
-          <the-comment :comment="comment"></the-comment>
+          <the-comment
+            :comment="comment"
+            @commentDeleted="updateCommentInfo"
+          ></the-comment>
         </div>
 
         <div class="post-detail-comment-submit">
@@ -205,6 +208,7 @@ export default {
       like: "",
       likeCount: "",
       commentContent: "",
+      commentCount: "",
     };
   },
   watch: {
@@ -232,6 +236,7 @@ export default {
       console.log(this.post);
       this.like = this.post.liked;
       this.likeCount = this.post.likeCount;
+      this.commentCount = this.post.commentCount;
     });
     this.callCommentListApi();
   },
@@ -383,7 +388,6 @@ export default {
           alert("댓글을 입력해주세요.");
         } else {
           await this.callCommentSaveAPI(this.commentContent);
-          this.callCommentListApi();
           this.commentContent = "";
         }
       }
@@ -410,7 +414,13 @@ export default {
         data: body,
       }).then((data) => {
         console.log(data);
+        this.callCommentListApi();
+        this.commentCount++;
       });
+    },
+    updateCommentInfo() {
+      this.commentCount--;
+      this.callCommentListApi();
     },
   },
 };
