@@ -233,22 +233,7 @@ export default {
       this.like = this.post.liked;
       this.likeCount = this.post.likeCount;
     });
-
     this.callCommentListApi();
-
-    // axios({
-    //   headers:
-    //     token === null
-    //       ? null
-    //       : {
-    //           Authorization: `Bearer ${token}`,
-    //         },
-    //   url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
-    //   method: "get",
-    // }).then((data) => {
-    //   this.comments = [...data.data.comments];
-    //   console.log(this.comments);
-    // });
   },
   methods: {
     callCommentListApi() {
@@ -264,7 +249,6 @@ export default {
         method: "get",
       }).then((data) => {
         this.comments = [...data.data.comments];
-        console.log(this.comments);
       });
     },
 
@@ -364,7 +348,6 @@ export default {
       }
     },
     async deletePost() {
-      console.log("deletePost");
       try {
         await this.callDeleteAPI();
         alert("삭제되었습니다.");
@@ -392,17 +375,25 @@ export default {
       });
     },
     async submitComment() {
-      await this.callCommentSaveAPI(this.commentContent);
-
-      this.callCommentListApi();
-      console.log(this.components);
-
-      this.commentContent = "";
+      if (!this.isLogin) {
+        this.loginAlert();
+      } else {
+        let isBlank = this.isBlank(this.commentContent);
+        if (isBlank) {
+          alert("댓글을 입력해주세요.");
+        } else {
+          await this.callCommentSaveAPI(this.commentContent);
+          this.callCommentListApi();
+          this.commentContent = "";
+        }
+      }
+    },
+    isBlank(commentContent) {
+      return commentContent === null || commentContent.trim() === "";
     },
     callCommentSaveAPI(content) {
       let token = sessionStorage.getItem("token");
       let postSeq = this.$route.params.seq;
-      console.log(content);
       const body = {
         content: content,
       };
