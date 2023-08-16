@@ -4,12 +4,7 @@
       <div class="col-3" style="height: 85vh; margin-left: 5vw">
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
-            <img
-              src="../../../assets/img/imgtemp.jpg"
-              alt=""
-              class="profile"
-              style="width: 50%"
-            />
+            <img src="../../../assets/img/imgtemp.jpg" alt="" class="profile" style="width: 50%" />
           </div>
         </div>
         <div class="row" style="height: 30px"></div>
@@ -36,33 +31,35 @@
 </template>
 <script>
 import ConsultantReview from "@/components/pages/consultant/ConsultantReview.vue";
+import axios from "axios";
 export default {
   data() {
     return {
-      // propInfo: "",
+      nickname: "sangu", // 임시로 사용할 예정 나중에 list 부분 수정되면 수정하자
+      consultantInfo: {},
     };
   },
   components: {
     ConsultantReview,
   },
   props: {},
-  // methods: {
-  //   propChange(prop) {
-  //     console.log("AAAAAAAAAAAAAAAAAA");
-  //     this.propInfo = prop;
-  //     console.log("mount 후", this.propInfo);
-  //   },
-  // },
-  // mounted() {
-  //   this.propInfo = "date";
-  //   console.log(this.propInfo);
-  // },
-  // watch: {
-  //   propInfo(newVal) {
-  //     this.propInfo = newVal;
-  //     console.log("watch", this.propInfo);
-  //   },
-  // },
+  async mounted() {
+    let token = sessionStorage.getItem("token");
+
+    axios({
+      url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/${this.nickname}`,
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
+      method: "GET",
+    }).then((data) => {
+      this.consultantInfo = data.data.consultant;
+      console.log(this.consultantInfo);
+    });
+  },
 };
 </script>
 <style scoped>

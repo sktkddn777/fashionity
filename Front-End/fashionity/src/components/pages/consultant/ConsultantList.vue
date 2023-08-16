@@ -2,12 +2,7 @@
   <div class="container-fluid">
     <div class="row justify-content-space-around tools" ref="toolsContainer">
       <div class="col-3 search">
-        <input
-          type="text"
-          id="search"
-          name="search"
-          placeholder="검색어를 입력하세요"
-        />
+        <input type="text" id="search" name="search" placeholder="검색어를 입력하세요" />
       </div>
       <div class="col"></div>
       <div class="col-3">
@@ -78,13 +73,10 @@
           v-for="(arr, index) in postRow"
           :key="index"
         >
-          <div
-            class="col"
-            v-for="post in arr"
-            :key="post.post_seq"
-            style="margin-bottom: 20px"
-          >
-            <consultant-block-vue :post="post"></consultant-block-vue>
+          <div class="col" v-for="post in arr" :key="post.post_seq" style="margin-bottom: 20px">
+            <router-link to="reservation"
+              ><consultant-block-vue :post="post"></consultant-block-vue
+            ></router-link>
           </div>
         </div>
       </div>
