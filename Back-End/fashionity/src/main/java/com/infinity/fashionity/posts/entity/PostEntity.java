@@ -1,5 +1,6 @@
 package com.infinity.fashionity.posts.entity;
 
+import com.infinity.fashionity.comments.entity.CommentEntity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.ValidationException;
@@ -47,6 +48,10 @@ public class PostEntity extends CUDEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     @Builder.Default
     private List<PostHashtagEntity> postHashtags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private List<CommentEntity> comments = new ArrayList<>();
 
     //댓글 개수
     @Formula("(SELECT count(*) FROM comments c WHERE c.post_seq = post_seq AND c.deleted_at IS NULL)")
