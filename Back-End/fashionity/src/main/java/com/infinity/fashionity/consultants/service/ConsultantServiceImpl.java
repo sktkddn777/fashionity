@@ -59,7 +59,14 @@ public class ConsultantServiceImpl implements ConsultantService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         // 최신순으로 컨설턴트 가져오기
-        Page<ConsultantEntity> result = consultantRepository.findAll(pageable);
+        // 닉네임이 blank면 일반 조회
+        Page<ConsultantEntity> result = null;
+        if(StringUtils.isBlank(dto.getNickname())) {
+            result = consultantRepository.findAll(pageable);
+        }
+        else{
+            result = consultantRepository.findAllWithNickname(dto.getNickname(),pageable);
+        }
 
 
         result.stream().forEach(entity -> {
