@@ -194,18 +194,24 @@ export default {
       console.log(this.nickname);
       this.$router.push(`/profile/${this.nickname}`);
     },
-    async urlToFile(profileUrl) {
-      if (profileUrl !== null) {
-        const response = await fetch(profileUrl);
-        const data = await response.blob();
-        const ext = profileUrl.split(".").pop();
-        const filename = profileUrl.split("/").pop();
-        const metadata = { type: `image/${ext}` };
-        return new File([data], filename, metadata);
-      }
-    },
+    // async urlToFile(profileUrl) {
+    //   console.log("===========호출댐!!!1")
+    //   if (profileUrl !== null) {
+    //     const response = await fetch(profileUrl);
+    //     console.log("===========response", response)
+    //     const data = await response.blob();
+    //     console.log("===========data", data)
+    //     const ext = await profileUrl.split(".").pop();
+    //     console.log("===========ext", ext)
+    //     const filename = await profileUrl.split("/").pop();
+    //     console.log("===========filename", filename)
+    //     const metadata = { type: `image/${ext}` };
+    //     return response, data, ext, filename, metadata, new File([data], filename, metadata);
+    //   }
+    // },
     async editProfile() {
-      console.log("fileList = ", this.fileList);
+
+      console.log("profile url 들어는 오니?" + this.profileUrl)
       const updatedProfile = {
         images: this.fileList,
         nickname: this.nickname,
@@ -218,6 +224,7 @@ export default {
       let formData = new FormData();
       formData.append("nickname", updatedProfile.nickname);
       formData.append("profileIntro", updatedProfile.profileIntro);
+
       // 이미지 업로드 처리
       if (updatedProfile.images.length >= 1) {
         for (let i = 0; i < updatedProfile.images.length; i++) {
@@ -227,14 +234,16 @@ export default {
           );
           formData.append("profileImage", updatedProfile.images[i]);
         }
+        console.log("이미지 바꿀 때")
+        console.log(updatedProfile.images[0])
       }
       // else {
+      //   console.log('=====으앙=====', this.urlToFile(this.profileUrl))
       //   formData.append("profileImage", this.urlToFile(this.profileUrl));
+      //   console.log("이미지 안 바꿀 때")
+      //   console.log("반환하삼!!!" + this.urlToFile(this.profileUrl))
+      //   console.log("반환했삼!!!!!!")
       // }
-
-      for (let { key, value } of (formData.keys(), formData.values())) {
-        console.log({ key, value });
-      }
 
       let token = sessionStorage.getItem("token");
       await axios({
