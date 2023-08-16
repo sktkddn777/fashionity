@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="notFound === false">
     <!-- 팔로워 모달창 -->
     <div class="black-bg" v-if="followersPop === true" style="z-index: 1050">
       <div class="fmodal">
@@ -45,7 +45,7 @@
             <!-- 사용자 프로필 사진 -->
             <div class="profile-main-photo">
               <img
-                :src="profileUrl"
+                :src="profileUrl || require('@/assets/img/unknown.png')"
                 class="image-box"
                 width="200"
                 height="200"
@@ -59,7 +59,7 @@
                 style="display: flex; flex-direction: row"
               >
                 <div
-                  class="profile-main-form-text-nickname point"
+                  class="profile-main-form-text-nickname"
                   style="
                     display: flex;
                     justify-self: start;
@@ -96,20 +96,21 @@
               <!-- 게시글 수, 팔로워 수, 팔로잉 수 정보 -->
               <div class="posts-followers-followings-cnt" style="display: flex">
                 <div
-                  class="posts-cnt point"
+                  class="posts-cnt open"
+                  @click="$router.push(`/profile/${nickname}`)"
                   style="margin-right: 2rem; font-size: 1.2rem"
                 >
                   {{ postsCnt }} Posts
                 </div>
                 <button
-                  class="followers-cnt open point"
+                  class="followers-cnt open"
                   @click="showFollowers()"
                   style="float: left; margin-right: 2rem; font-size: 1.2rem"
                 >
                   {{ followersCnt }} Followers
                 </button>
                 <button
-                  class="followings-cnt open point"
+                  class="followings-cnt open"
                   @click="showFollowings()"
                   style="float: left; margin-right: 2rem; font-size: 1.2rem"
                 >
@@ -152,17 +153,16 @@
       <my-post-list />
     </div>
   </div>
+  <div v-else><not-found /></div>
 </template>
 
 <script>
-// import { onMounted } from "vue";
-// import { reactive } from "vue";
-
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
 import MyPostList from "@/components/pages/user/MyPostList.vue";
+import NotFound from "./NotFound.vue";
 
 export default {
   name: "ProfilePage",
@@ -171,28 +171,8 @@ export default {
     FollowersList,
     FollowingsList,
     MyPostList,
+    NotFound,
   },
-  // setup() {
-  //   // const router = useRouter();
-  //   const state = reactive({
-  //     model: null,
-  //     nickname: "",
-  //     profileIntro: "",
-  //   });
-  //   // const store = useStore(); -> vuex
-
-  //   // 초기화면 세팅
-  //   onMounted(() => {
-  //     const previews = document.querySelectorAll(".image-box");
-  //     state.nickname = "uzu_munzi";
-  //     state.profileIntro = "우주먼지의 데일리룩 기록들";
-  //     previews[0].src = require(`@/assets/img/panda.png`);
-  //   });
-
-  //   return {
-  //     state,
-  //   };
-  // },
   data() {
     return {
       nickname: "",
@@ -206,22 +186,19 @@ export default {
       followersPop: false,
       followingsPop: false,
       myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
+      notFound: false,
     };
   },
   created() {
     this.getProfile();
   },
   methods: {
-    toLiked() {
-      this.$router.push({ name: "likedPosts" });
-    },
     routeToEdit() {
       this.$router.push(`/profile/${this.nickname}/edit`);
     },
     getProfile() {
       let token = sessionStorage.getItem("token");
       const nickname = this.$route.params.nickname;
-      console.log("const nickname = " + nickname);
       axios({
         method: "get",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/${nickname}`,
@@ -242,6 +219,11 @@ export default {
         })
         .catch((e) => {
           console.log(e);
+          console.log(e.response);
+          console.log(e.response.status);
+          if (e.response.status === 404) {
+            this.notFound = true;
+          }
         });
     },
     async toggleFollow() {
@@ -444,5 +426,8 @@ input[type="file"] {
 }
 .open:hover {
   color: #2191ff;
+}
+.point {
+  font-weight: bold;
 }
 </style>

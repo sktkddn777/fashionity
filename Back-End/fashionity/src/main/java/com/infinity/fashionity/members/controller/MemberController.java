@@ -63,14 +63,14 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/edit")
+    @PatchMapping ("/edit")
     public ResponseEntity<ProfileDTO.Response> editMyProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
             ProfileDTO.Request dto
     ) {
         log.info("editMyProfile start");
         log.info("dto: " + dto);
-        ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), dto);
+        ProfileDTO.Response response = memberService.editMyProfile(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

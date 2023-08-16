@@ -1,36 +1,56 @@
 <template lang="">
   <div class="container-fluid">
-    <div style = "height:2rem"></div>
+    <div style="height: 2rem"></div>
     <div class="row justify-content-center">
-      <div class="row" >
+      <div class="row">
         <div v-if="!files.length" class="row">
-          <div class="row" >
+          <div class="row">
             <div class="col">
               <div class="image-box">
-                <button class = "active-button" style = "margin-right:0.3rem">
+                <button class="active-button" style="margin-right: 0.3rem">
                   <label for="file">사진 선택</label>
-                  <input type="file" id="file" ref="files" @change="imageUpload" />
+                  <input
+                    type="file"
+                    id="file"
+                    ref="files"
+                    @change="imageUpload"
+                  />
                 </button>
-                <button class="inactive-button" style="margin-right: 0.3rem">
-                    사진 삭제
-                  </button>
+                <button
+                  class="inactive-button"
+                  style="margin-right: 0.3rem"
+                  @click="cancelImageUpload"
+                >
+                  취소
+                </button>
               </div>
             </div>
           </div>
         </div>
         <div v-else class="file-preview-content-container">
           <div class="file-preview-container">
-            <div v-for="(file, index) in files" :key="index" class="file-preview-wrapper">
-              <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div>
+            <div
+              v-for="(file, index) in files"
+              :key="index"
+              class="file-preview-wrapper"
+            >
+              <div
+                class="file-close-button"
+                @click="fileDeleteButton"
+                :name="file.number"
+              >
+                x
+              </div>
               <img :src="file.preview" />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class = "crop" v-if="cropImgURL">
-      <div class="col" style="justify-content:center">
-        <cropper style="justify-content:center"
+    <div class="crop" v-if="cropImgURL">
+      <div class="col" style="justify-content: center">
+        <cropper
+          style="justify-content: center"
           class="cropper"
           ref="cropper"
           :auto-zoom="true"
@@ -45,11 +65,9 @@
           :src="cropImgURL"
         />
       </div>
-      <br>
-      <div class = "button" style = "display:flex; justify-content:flex-end">
-        <button class = "active-button" @click = "uploadImage">
-          저장
-        </button>
+      <br />
+      <div class="button" style="display: flex; justify-content: flex-end">
+        <button class="active-button" @click="uploadImage">저장</button>
       </div>
     </div>
   </div>
@@ -70,9 +88,6 @@ export default {
       currFileList: [],
     };
   },
-  // props: {
-  //   imgList: [],
-  // },
   components: {
     Cropper,
   },
@@ -130,7 +145,9 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
-      this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter(
+        (data) => data.number !== Number(name)
+      );
       // console.log(this.files);
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);
@@ -170,6 +187,9 @@ export default {
 
         // this.makePreview(blobData);
       }
+    },
+    cancelImageUpload() {
+      this.$emit("cancel-upload");
     },
   },
   change({ coordinates, canvas }) {
@@ -350,7 +370,7 @@ export default {
 }
 
 .file-preview-content-container {
-  height:100%
+  height: 100%;
 }
 
 .room-file-upload-example-container {
@@ -484,13 +504,12 @@ width: 100%; */
   background: #cecece;
   color: #ffffff;
 }
-.crop{
+.crop {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   margin-top: auto;
-  margin-bottom: auto; 
+  margin-bottom: auto;
 }
-
 </style>

@@ -170,7 +170,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public ProfileDTO.Response editMemberProfile(Long seq, ProfileDTO.Request profile) {
+    public ProfileDTO.Response editMyProfile(Long seq, ProfileDTO.Request profile) {
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
