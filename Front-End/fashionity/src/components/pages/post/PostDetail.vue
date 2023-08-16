@@ -14,7 +14,6 @@
           </div>
           <div class="post-detail-header-info">
             <div class="post-detail-header-info-nickname fw-bold">
-              <!-- hyeonwook_12 -->
               {{ this.post.name }}
             </div>
             <div

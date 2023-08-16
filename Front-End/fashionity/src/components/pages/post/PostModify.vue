@@ -7,7 +7,7 @@
         <div class="post-detail-header">
           <div class="post-detail-header-img">
             <img
-              :src="myProfileImg || '../img/unknown.e083a226.png'"
+              :src="getProfileUrl() || '../img/unknown.e083a226.png'"
               alt="profileImg"
               class="profile"
             />
@@ -70,6 +70,8 @@
 <script>
 import axios from "axios";
 import MultiImageUpload from "../shared/MultiImageUpload.vue";
+import { mapState } from "vuex";
+const memberStore = "memberStore";
 export default {
   data() {
     return {
@@ -87,11 +89,15 @@ export default {
     seq() {
       return this.$route.params.seq;
     },
+    ...mapState(memberStore, ["loginUser"]),
   },
   components: {
     MultiImageUpload,
   },
   methods: {
+    getProfileUrl() {
+      return this.loginUser.profileUri;
+    },
     addTag() {
       if (this.tagInput) {
         this.tagList.push(this.tagInput.substr(0, this.tagInput.length - 1));
