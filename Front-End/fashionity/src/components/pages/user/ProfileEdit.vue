@@ -3,25 +3,12 @@
     <the-nav-bar-mypage></the-nav-bar-mypage>
     <div class="block" style="height: 3rem"></div>
     <div class="container" style="flex-direction: column">
-      <div
-        class="black-bg"
-        v-if="displayProfileImageUpload"
-        style="z-index: 1050"
-      >
-        <div class="imodal">
-          <div>
-            <button id="followingsbtn" class="close" @click="showImageUpload">
-              ×
-            </button>
-            <profile-image-updated-vue />
-          </div>
-        </div>
-      </div>
       <div class="edit-info row" style="justify-content: center" align="left">
         <div class="row">
           <form v-on:submit.prevent="editProfile">
             <div>
               <div
+                v-if="!displayProfileImageUpload"
                 class="profileImg-buttons"
                 style="
                   display: flex;
@@ -29,15 +16,12 @@
                   flex-direction: row;
                 "
               >
-                <div
-                  class="profile-main-photo"
-                  v-if="!displayProfileImageUpload"
-                >
+                <div class="profile-main-photo">
                   <img
                     class="image-box"
                     width="200"
                     height="200"
-                    :src="profileUrl"
+                    :src="profileUrl || require('@/assets/img/unknown.png')"
                     alt=""
                     ref="profileImage"
                   />
@@ -57,7 +41,11 @@
                       <input type="file" id = "upload" ref = "uploadInput" @change="handleImageChange"> -->
                     </button>
                   </div>
-                  <button class="inactive-button" style="margin-right: 0.3rem">
+                  <button
+                    class="inactive-button"
+                    style="margin-right: 0.3rem"
+                    @click="deleteProfileImage"
+                  >
                     사진 삭제
                   </button>
                   <!-- <button class="change-password-button" style="margin-right: 0.3rem">
@@ -65,6 +53,13 @@
                   </button> -->
                 </div>
               </div>
+            </div>
+            <div v-if="displayProfileImageUpload">
+              <!-- <profile-image-updated-vue /> -->
+              <profile-image-updated-vue
+                @updateImg="updateImg"
+                @cancel-upload="showImageUpload"
+              />
             </div>
             <div style="height: 5rem"></div>
             <h5><b>아이디</b></h5>
@@ -95,7 +90,7 @@
             <br />
             <div style="display: flex; justify-content: flex-end">
               <button class="active-button" style="margin-right: 0.3rem">
-                <input type="submit" value="수정하기" />
+                <input type="submit" value="수정하기" @click="editProfile" />
               </button>
               <button class="delete-button" @click="delteProfileAndLogout">
                 탈퇴하기
@@ -111,7 +106,6 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import { useCookies } from "vue3-cookies";
-// import FormData from "form-data";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import memberStore from "@/store/modules/memberStore";
@@ -134,6 +128,8 @@ export default {
       email: "",
       profileIntro: "",
       displayProfileImageUpload: false,
+      profileImage: "",
+      fileList: [],
     };
   },
   created() {
@@ -182,80 +178,63 @@ export default {
       this.$router.push("/");
     },
     showImageUpload() {
+      console.log("before: " + this.displayProfileImageUpload);
       this.displayProfileImageUpload = !this.displayProfileImageUpload;
+      console.log("after: " + this.displayProfileImageUpload);
     },
-    // async fetchImageAsFile(profileUrl) {
-    //   if(profileUrl !== null){
-    //     const response = await fetch(profileUrl);
-    //     const data = await response.blob();
-    //     const ext = profileUrl.split("/").pop();
-    //     const filename = profileUrl.split("/").pop()
-    //     const metadata = {type:`image/${ext}`}
-    //     return new File([data],filename, metadata);
-
-    //   }
-    // },
-    // async editProfile() {
-    //   // const updatedProfile = {
-    //   //   profileImage: this.selectedImage,
-    //   //   nickname: this.nickname,
-    //   //   profileIntro: this.profileIntro,
-    //   // };
-    //   const formData = new FormData();
-    //   if (this.selectedImage !== null) {
-    //     formData.append("profileImage", this.selectedImage, this.selectedImage.name);
-    //   }
-    //   else {
-    //     const file = await this.fetchImageAsFile(this.profileUrl)
-    //     formData.append("profileImage", file)}
-    //   // formData.append("profileImage", this.selectedImage);
-    //   formData.append("nickname", this.nickname);
-    //   formData.append("profileIntro", this.profileIntro);
-    //   console.log(this.selectedImage)
-    //   console.log(this.nickname)
-    //   console.log(this.profileIntro)
-
-    //   for (let key of formData.keys()){
-    //     console.log(key)
-    //   }
-    //   for (let value of formData.values()){
-    //     console.log(value)
-    //   }
-
-    //   axios({
-    //     method: "post",
-    //     url: `${process.env.VUE_APP_API_URL}/api/v1/members/edit`,
-    //     data: formData,
-    //     headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data"},
-    //   })
-    //     .then((data) => {
-    //       console.log("=======성공성공========");
-    //       console.log(data);
-    //       console.log("Profile updated successfully!");
-    //     })
-    //     .catch((error) => {
-    //       // console.log(formData)
-    //       console.log("=======에러에러========");
-    //       console.log(error);
-    //     });
-    // },
-
-    // handleImageChange(event) {
-    //   this.selectedImage = event.target.files[0];
-
-    //   if (this.selectedImage) {
-    //     const reader = new FileReader();
-
-    //     reader.onload = (event) => {
-    //       this.profileUrl = event.target.result;
-    //     };
-
-    //     reader.readAsDataURL(this.selectedImage);
-    //   }
-
-    //   // Clear the input value to allow selecting the same image again
-    //   this.$refs.uploadInput.value = "";
-    // },
+    deleteProfileImage() {
+      this.profileImage = "@/assets/img/unknown.png";
+      this.profileUrl = null;
+    },
+    updateImg(file) {
+      this.fileList = file;
+      console.log("파일임당", file);
+    },
+    navigateToProfile() {
+      this.$router.push(`/profile/${this.nickname}/edit`);
+    },
+    async editProfile() {
+      console.log("fileList = ", this.fileList);
+      const updatedProfile = {
+        images: this.fileList,
+        nickname: this.nickname,
+        profileIntro: this.profileIntro,
+      };
+      await this.callProfileEditAPI(updatedProfile);
+      this.navigateToProfile();
+    },
+    async callProfileEditAPI(updatedProfile) {
+      let formData = new FormData();
+      formData.append("nickname", updatedProfile.nickname);
+      formData.append("profileIntro", updatedProfile.profileIntro);
+      // 이미지 업로드 처리
+      for (let i = 0; i < updatedProfile.images.length; i++) {
+        console.log(
+          "포문 안에 있는 postData images 입니다 : " + updatedProfile.images[i]
+        );
+        formData.append("profileImage", updatedProfile.images[i]);
+      }
+      let token = sessionStorage.getItem("token");
+      await axios({
+        method: "patch",
+        url: `${process.env.VUE_APP_API_URL}/api/v1/members/edit`,
+        data: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+        .then((data) => {
+          console.log("=======성공성공========");
+          console.log(data);
+          console.log("Profile updated successfully!");
+        })
+        .catch((error) => {
+          // console.log(formData)
+          console.log("=======에러에러========");
+          console.log(error);
+        });
+    },
   },
 };
 </script>

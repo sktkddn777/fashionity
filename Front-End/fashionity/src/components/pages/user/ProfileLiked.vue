@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="notFound === false">
     <!-- 팔로워 모달창 -->
     <div class="black-bg" v-if="followersPop === true" style="z-index: 1050">
       <div class="fmodal">
@@ -44,7 +44,12 @@
           >
             <!-- 사용자 프로필 사진 -->
             <div class="profile-main-photo">
-              <img class="image-box" width="200" height="200" />
+              <img
+                :src="profileUrl || require('@/assets/img/unknown.png')"
+                class="image-box"
+                width="200"
+                height="200"
+              />
             </div>
             <!-- 사용자 정보 -->
             <div class="infos" style="display: flex; flex-direction: column">
@@ -54,7 +59,7 @@
                 style="display: flex; flex-direction: row"
               >
                 <div
-                  class="profile-main-form-text-nickname point"
+                  class="profile-main-form-text-nickname"
                   style="
                     display: flex;
                     justify-self: start;
@@ -66,19 +71,20 @@
                 </div>
 
                 <button
+                  v-if="nickname !== myNickname"
                   id="followbtn"
                   :class="isFollowed ? 'inactive-button' : 'active-button'"
                   @click="toggleFollow()"
                   style="margin-left: 0.5rem"
                 >
-                  팔로우
+                  {{ isFollowed ? "팔로잉" : "팔로우" }}
                 </button>
                 <button
                   v-if="nickname === myNickname"
-                  class="inactive-button"
+                  class="active-button"
                   style="margin-left: 0.5rem"
+                  @click="routeToEdit"
                 >
-                  <router-link :to="`/profile/${nickname}/edit`"></router-link>
                   프로필 수정
                 </button>
               </div>
@@ -90,21 +96,21 @@
               <!-- 게시글 수, 팔로워 수, 팔로잉 수 정보 -->
               <div class="posts-followers-followings-cnt" style="display: flex">
                 <div
-                  class="posts-cnt point"
+                  class="posts-cnt open"
+                  @click="$router.push(`/profile/${nickname}`)"
                   style="margin-right: 2rem; font-size: 1.2rem"
                 >
-                  <router-link :to="`/profile/${nickname}`"></router-link>
                   {{ postsCnt }} Posts
                 </div>
                 <button
-                  class="followers-cnt open point"
+                  class="followers-cnt open"
                   @click="showFollowers()"
                   style="float: left; margin-right: 2rem; font-size: 1.2rem"
                 >
                   {{ followersCnt }} Followers
                 </button>
                 <button
-                  class="followings-cnt open point"
+                  class="followings-cnt open"
                   @click="showFollowings()"
                   style="float: left; margin-right: 2rem; font-size: 1.2rem"
                 >
@@ -127,14 +133,14 @@
           border-color: white white #bdbdbd white;
         "
       >
-        <div class="col col-lg-2 header-tab point">
+        <div class="col col-lg-2 header-tab">
           <router-link
             :to="`/profile/${nickname}`"
             style="text-decoration: none; color: #424242; font-size: 1.2rem"
             >Posts</router-link
           >
         </div>
-        <div class="col col-lg-2 header-tab">
+        <div class="col col-lg-2 header-tab point">
           <router-link
             :to="`/profile/${nickname}/liked`"
             style="text-decoration: none; color: #424242; font-size: 1.2rem"
@@ -147,17 +153,16 @@
       <liked-post-list />
     </div>
   </div>
+  <div v-else><not-found /></div>
 </template>
 
 <script>
-// import { onMounted } from "vue";
-// import { reactive } from "vue";
-
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
 import LikedPostList from "@/components/pages/user/LikedPostList.vue";
+import NotFound from "./NotFound.vue";
 
 export default {
   name: "ProfilePage",
@@ -166,6 +171,7 @@ export default {
     FollowersList,
     FollowingsList,
     LikedPostList,
+    NotFound,
   },
   // setup() {
   //   // const router = useRouter();
@@ -201,14 +207,15 @@ export default {
       followersPop: false,
       followingsPop: false,
       myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
+      notFound: false,
     };
   },
   created() {
     this.getProfile();
   },
   methods: {
-    toLiked() {
-      this.$router.push({ name: "likedPosts" });
+    routeToEdit() {
+      this.$router.push(`/profile/${this.nickname}/edit`);
     },
     getProfile() {
       let token = sessionStorage.getItem("token");
@@ -219,29 +226,26 @@ export default {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }).then(({ data }) => {
-        console.log(data);
-        this.nickname = data.nickname;
-        this.postsCnt = data.postsCnt;
-        this.followersCnt = data.followerCnt;
-        this.followingsCnt = data.followingCnt;
-        this.isFollowed = data.isFollowed;
-        this.myProfile = data.myProfile;
-        this.profileIntro = data.profileIntro;
-        this.profileUrl = data.profileUrl;
-
-        const followbtn = document.querySelector("#followbtn");
-        if (this.isFollowed === true) {
-          followbtn.innerText = "팔로잉";
-        } else if (
-          this.nickname ===
-          this.$store.getters["memberStore/checkLoginUser"].nickname
-        ) {
-          followbtn.style.display = "none";
-        } else {
-          followbtn.innerText = "팔로우";
-        }
-      });
+      })
+        .then(({ data }) => {
+          this.nickname = data.nickname;
+          this.postsCnt = data.postsCnt;
+          this.followersCnt = data.followerCnt;
+          this.followingsCnt = data.followingCnt;
+          this.isFollowed = data.isFollowed;
+          this.myProfile = data.myProfile;
+          this.profileIntro = data.profileIntro;
+          this.profileUrl = data.profileUrl;
+          console.log(data);
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log(e.response);
+          console.log(e.response.status);
+          if (e.response.status === 404) {
+            this.notFound = true;
+          }
+        });
     },
     async toggleFollow() {
       if (!this.isFollowed) {
@@ -251,13 +255,6 @@ export default {
       }
       this.isFollowed = !this.isFollowed;
       this.isFollowed ? this.followersCnt++ : this.followersCnt--;
-
-      const followbtn = document.querySelector("#followbtn");
-      if (this.isFollowed === true) {
-        followbtn.innerText = "팔로잉";
-      } else {
-        followbtn.innerText = "팔로우";
-      }
     },
     async followAPI(nickname) {
       let token = sessionStorage.getItem("token");
@@ -450,5 +447,8 @@ input[type="file"] {
 }
 .open:hover {
   color: #2191ff;
+}
+.point {
+  font-weight: bolder;
 }
 </style>
