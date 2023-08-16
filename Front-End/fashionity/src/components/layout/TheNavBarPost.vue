@@ -21,14 +21,31 @@
       >
     </div>
     <div class="col col-lg-2 header-tab">
-      <router-link to="/profile" style="text-decoration: none; color: #424242"
+      <router-link
+        :to="profileLink"
+        style="text-decoration: none; color: #424242"
         >Mypage</router-link
       >
     </div>
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      myNickname: null,
+    };
+  },
+  computed: {
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    this.myNickname =
+      this.$store.getters["memberStore/checkLoginUser"].nickname;
+  },
+};
 </script>
 <style scoped>
 * {

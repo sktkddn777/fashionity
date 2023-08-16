@@ -83,6 +83,7 @@ const router = createRouter({
         {
           path: ":nickname/edit",
           name: "profileEdit",
+          beforeEnter: onlyAuthUser,
           component: ProfileEdit,
         },
       ],

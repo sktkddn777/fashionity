@@ -3,13 +3,17 @@
     <the-nav-bar-mypage></the-nav-bar-mypage>
     <div class="block" style="height: 3rem"></div>
     <div class="container" style="flex-direction: column">
-      <div class = "black-bg" v-if= "displayProfileImageUpload" style = "z-index: 1050;">
-        <div class ="imodal">
+      <div
+        class="black-bg"
+        v-if="displayProfileImageUpload"
+        style="z-index: 1050"
+      >
+        <div class="imodal">
           <div>
             <button id="followingsbtn" class="close" @click="showImageUpload">
-            ×
+              ×
             </button>
-            <profile-image-updated-vue/>
+            <profile-image-updated-vue />
           </div>
         </div>
       </div>
@@ -19,21 +23,35 @@
             <div>
               <div
                 class="profileImg-buttons"
-                style="display: flex; justify-content: center; flex-direction: row"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  flex-direction: row;
+                "
               >
-                <div class="profile-main-photo" v-if = "!displayProfileImageUpload">
+                <div
+                  class="profile-main-photo"
+                  v-if="!displayProfileImageUpload"
+                >
                   <img
                     class="image-box"
                     width="200"
                     height="200"
                     :src="profileUrl"
                     alt=""
-                    ref = "profileImage"
+                    ref="profileImage"
                   />
                 </div>
-                <div class="buttons" style="display: flex; align-items: flex-end">
-                  <div class = "filebox">
-                    <button class="active-button" style="margin-right: 0.3rem" @click = "showImageUpload" >
+                <div
+                  class="buttons"
+                  style="display: flex; align-items: flex-end"
+                >
+                  <div class="filebox">
+                    <button
+                      class="active-button"
+                      style="margin-right: 0.3rem"
+                      @click="showImageUpload"
+                    >
                       사진 변경
                       <!-- <label for="upload">사진 변경</label>
                       <input type="file" id = "upload" ref = "uploadInput" @change="handleImageChange"> -->
@@ -48,7 +66,7 @@
                 </div>
               </div>
             </div>
-            <div style = "height:5rem"></div>
+            <div style="height: 5rem"></div>
             <h5><b>아이디</b></h5>
             <div>{{ id }}</div>
             <hr />
@@ -73,39 +91,42 @@
                 style="width: 500px"
               />
               <hr />
-            </div><br>
-            <div style = "display:flex; justify-content: flex-end;">
-              <button
-                class="active-button"
-                style="margin-right: 0.3rem"
-              ><input type = "submit" value = "수정하기">
+            </div>
+            <br />
+            <div style="display: flex; justify-content: flex-end">
+              <button class="active-button" style="margin-right: 0.3rem">
+                <input type="submit" value="수정하기" />
               </button>
-              <button class="delete-button" @click="delteProfileAndLogout">탈퇴하기</button>
+              <button class="delete-button" @click="delteProfileAndLogout">
+                탈퇴하기
+              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-
-
   </div>
   <div class=" " style="height: 2rem"></div>
 </template>
 <script>
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters } from "vuex";
+import { useCookies } from "vue3-cookies";
 // import FormData from "form-data";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import memberStore from "@/store/modules/memberStore";
-import ProfileImageUpdatedVue from "@/components/pages/shared/ProfileImageUpload.vue"
+import ProfileImageUpdatedVue from "@/components/pages/shared/ProfileImageUpload.vue";
+import store from "@/store";
 
 let token = sessionStorage.getItem("token");
+
+const { cookies } = useCookies();
 
 export default {
   name: "ProfileEdit",
   components: {
     TheNavBarMypage,
-    ProfileImageUpdatedVue
+    ProfileImageUpdatedVue,
   },
   data() {
     return {
@@ -131,11 +152,6 @@ export default {
     // }
   },
   methods: {
-    ...mapActions(memberStore, ["logoutAction"]),
-
-    logout() {
-      this.logoutAction;
-    },
     getProfile() {
       axios({
         method: "get",
@@ -156,17 +172,18 @@ export default {
         method: "put",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/delete`,
         headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((data) => console.log(data.data.success));
+      }).then((data) => console.log(data.data.success));
     },
-    async delteProfileAndLogout(){
+    async delteProfileAndLogout() {
       await this.deleteProfile();
-      await this.logout();
-      this.$router.push("/")
+      store.commit("memberStore/LOGOUT");
+      store.commit("memberStore/SET_IS_VALID_TOKEN", false);
+      cookies.remove("refreshToken");
+      this.$router.push("/");
     },
-    showImageUpload(){
+    showImageUpload() {
       this.displayProfileImageUpload = !this.displayProfileImageUpload;
-    }
+    },
     // async fetchImageAsFile(profileUrl) {
     //   if(profileUrl !== null){
     //     const response = await fetch(profileUrl);
@@ -175,7 +192,7 @@ export default {
     //     const filename = profileUrl.split("/").pop()
     //     const metadata = {type:`image/${ext}`}
     //     return new File([data],filename, metadata);
-        
+
     //   }
     // },
     // async editProfile() {
@@ -188,7 +205,7 @@ export default {
     //   if (this.selectedImage !== null) {
     //     formData.append("profileImage", this.selectedImage, this.selectedImage.name);
     //   }
-    //   else { 
+    //   else {
     //     const file = await this.fetchImageAsFile(this.profileUrl)
     //     formData.append("profileImage", file)}
     //   // formData.append("profileImage", this.selectedImage);
@@ -197,7 +214,7 @@ export default {
     //   console.log(this.selectedImage)
     //   console.log(this.nickname)
     //   console.log(this.profileIntro)
-      
+
     //   for (let key of formData.keys()){
     //     console.log(key)
     //   }
@@ -239,7 +256,6 @@ export default {
     //   // Clear the input value to allow selecting the same image again
     //   this.$refs.uploadInput.value = "";
     // },
-
   },
 };
 </script>
@@ -295,10 +311,10 @@ export default {
   background: #2191ff;
   color: #ffffff;
   margin-right: 0.3rem;
-  text-align:center;
+  text-align: center;
   line-height: 40px;
 }
-.filebox input[type="file"]{
+.filebox input[type="file"] {
   width: 0;
   height: 0;
   opacity: 0;

@@ -28,7 +28,22 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      myNickname: null,
+    };
+  },
+  computed: {
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    this.myNickname =
+      this.$store.getters["memberStore/checkLoginUser"].nickname;
+  },
+};
 </script>
 <style scoped>
 * {
