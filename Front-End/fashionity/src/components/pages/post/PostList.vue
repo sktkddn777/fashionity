@@ -190,7 +190,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .tools {
   margin-bottom: 30px;
 }

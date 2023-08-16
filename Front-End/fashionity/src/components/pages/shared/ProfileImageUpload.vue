@@ -130,7 +130,9 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
-      this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
+      this.filesPreview = this.filesPreview.filter(
+        (data) => data.number !== Number(name)
+      );
       // console.log(this.files);
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);
@@ -350,7 +352,7 @@ export default {
 }
 
 .file-preview-content-container {
-  height:100%
+  height: 100%;
 }
 
 .room-file-upload-example-container {
@@ -484,13 +486,12 @@ width: 100%; */
   background: #cecece;
   color: #ffffff;
 }
-.crop{
+.crop {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   margin-top: auto;
-  margin-bottom: auto; 
+  margin-bottom: auto;
 }
-
 </style>
