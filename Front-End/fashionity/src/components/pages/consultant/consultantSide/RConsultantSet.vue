@@ -4,6 +4,7 @@
       :attributes="attributes"
       @dayclick="handleDateClick"
       style="width: 100vh"
+      class="calendar"
     />
 
     <reservation-list-vue class="rlist" :reservations="reservationData" />
@@ -34,6 +35,17 @@
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+}
+
+.calendar {
+  flex: 2;
+}
+
+.rlist {
+  flex: 1;
+}
 </style>
 
 <script>
