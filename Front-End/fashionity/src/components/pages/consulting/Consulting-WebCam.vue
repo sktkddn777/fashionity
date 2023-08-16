@@ -61,7 +61,7 @@
           <!-- 일반 유저의 비디오에 띄어질 퍼스널컬러 이미지 -->
           <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
             <img
-              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              :src="require(`@/assets/img/personal/${selectedImage_personal}`)"
               alt="Selected Image"
               v-if="selectedImageVisible_personal"
               @click="showImage_personal(null)"
@@ -80,7 +80,7 @@
           />
           <div v-if="userData.memberRole[1] === 'CONSULTANT'">
             <img
-              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              :src="require(`@/assets/img/personal/${selectedImage_personal}`)"
               alt="Selected Image"
               v-if="selectedImageVisible_personal"
               @click="showImage_personal(null)"
@@ -105,7 +105,7 @@
             :key="index"
           >
             <img
-              :src="require(`@/assets/img/${image.url}`)"
+              :src="require(`@/assets/img/personal/${image.url}`)"
               :alt="image.alt"
               class="image"
               @click="showImage_personal(index)"
@@ -186,6 +186,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  border-radius: 20px;
 }
 
 /* 퍼스널 컬러 이미지를 비디오의 가운데에 놓기위한 style */
@@ -194,6 +195,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  border-radius: 20px;
 }
 
 .image-button {
@@ -248,10 +250,18 @@ export default {
       selectedIndex_image: null,
       userData: null,
       color_images: [
-        { url: "spring_warm.png", alt: "봄웜" },
-        { url: "summer_cool.png", alt: "여름쿨" },
-        { url: "fall_warm.png", alt: "가을웜" },
-        { url: "winter_cool.png", alt: "겨울쿨" },
+        { url: "autumn_deep.png", alt: "autumn_deep" },
+        { url: "autumn_muted.png", alt: "autumn_muted" },
+        { url: "autumn_warm.png", alt: "autumn_warm" },
+        { url: "spinrg_warm.png", alt: "spinrg_warm" },
+        { url: "spring_bright.png", alt: "spring_bright" },
+        { url: "spring_light.png", alt: "spring_light" },
+        { url: "summer_cool.png", alt: "summer_cool" },
+        { url: "summer_light.png", alt: "summer_light" },
+        { url: "summer_muted.png", alt: "summer_muted" },
+        { url: "winter_bright.png", alt: "winter_bright" },
+        { url: "winter_cool.png", alt: "winter_cool" },
+        { url: "winter_deep.png", alt: "winter_deep" },
       ],
       style_images: [
         { url: "hyeonwook.jpg", alt: "현욱1" },
