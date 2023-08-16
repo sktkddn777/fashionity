@@ -1,7 +1,10 @@
 package com.infinity.fashionity.members.dto;
 
+import com.infinity.fashionity.members.data.MemberRole;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class ProfileDTO {
 
@@ -50,6 +53,7 @@ public class ProfileDTO {
         private String profileUrl;
         private String nickname;
         private String profileIntro;
+        private List<MemberRole> memberRole;
     }
 
     @Getter

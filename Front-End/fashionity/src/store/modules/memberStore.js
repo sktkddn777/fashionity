@@ -63,8 +63,6 @@ const memberStore = {
       await login(
         user,
         ({ data }) => {
-          console.log("login success");
-          console.log(data)
           if (!data.profileUri)
             data.profileUri =
               "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Front-Facing%20Baby%20Chick.png";
