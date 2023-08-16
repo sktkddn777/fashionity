@@ -58,7 +58,10 @@
               >
             </v-list-item>
             <v-list-item v-else>
-              <report-modal></report-modal>
+              <report-modal-comment
+                :commentSeq="comment.commentSeq"
+                :seq="comment.postSeq"
+              ></report-modal-comment>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -67,14 +70,14 @@
   </div>
 </template>
 <script>
-import ReportModal from "./ReportModal.vue";
 import axios from "axios";
 import { mapState } from "vuex";
+import ReportModalComment from "./ReportModalComment .vue";
 const memberStore = "memberStore";
 export default {
   props: ["comment"],
   components: {
-    ReportModal,
+    ReportModalComment,
   },
   data() {
     return {
