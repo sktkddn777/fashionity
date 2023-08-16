@@ -143,7 +143,9 @@
           </div>
         </div>
         <div class="post-detail-content">
-          <div style="text-align: left">{{ post.content }}</div>
+          <div style="text-align: left">
+            {{ post.content }}
+          </div>
           <div class="post-detail-content-hashtag">
             <a
               v-for="(tag, i) in post.hashtags"
@@ -152,6 +154,13 @@
             >
               #{{ tag }} &nbsp;
             </a>
+          </div>
+          <br />
+          <div
+            v-if="post.updatedAt !== post.createdAt"
+            style="color: grey; font-size: 13px; text-align: left"
+          >
+            (수정됨)
           </div>
         </div>
         <!-- 댓글 -->
@@ -174,6 +183,7 @@
             class="form-control"
             type="text"
             placeholder="댓글을 입력해주세요."
+            @keydown.enter="submitComment"
           />
           <button
             type="button"
@@ -420,7 +430,6 @@ export default {
       });
     },
     updateCommentInfo() {
-      console.log("오냐");
       this.commentCount--;
       this.callCommentListApi();
     },

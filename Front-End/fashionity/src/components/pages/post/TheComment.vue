@@ -26,6 +26,12 @@
       </div>
       <!--댓글 정보-->
       <div class="post-detail-comment-info">
+        <div
+          v-if="comment.updatedAt !== comment.createdAt"
+          style="color: grey; font-size: 13px; text-align: left"
+        >
+          (수정됨)
+        </div>
         <div style="color: grey; font-size: 13px">
           {{ this.timeAgo(comment.createdAt) }}
         </div>
