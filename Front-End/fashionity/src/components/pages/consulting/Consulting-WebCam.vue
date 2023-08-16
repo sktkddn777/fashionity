@@ -53,24 +53,24 @@
       </div>
       <!-- 비디오 -->
       <div id="video-container" class="video-container" style="display: flex">
-        <div class="user-video">
+        <div class="user-video-publisher">
           <user-video
             :stream-manager="publisher"
             @click="updateMainVideoStreamManager(publisher)"
           />
           <!-- 일반 유저의 비디오에 띄어질 퍼스널컬러 이미지 -->
-          <div v-if="userData.memberRole[1] !== 'CONSALTANT'">
+          <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
             <img
-              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              :src="require(`@/assets/img/personal/${selectedImage_personal}`)"
               alt="Selected Image"
               v-if="selectedImageVisible_personal"
               @click="showImage_personal(null)"
-              class="personal_color"
+              class="personal_color_publisher"
             />
           </div>
         </div>
         <!-- 컨설턴트가 유저에게 띄우는 퍼스널컬러 이미지 -->
-        <div class="user-video">
+        <div class="user-video-subscribers">
           <user-video
             v-for="sub in subscribers"
             :key="sub.stream.connection.connectionId"
@@ -78,13 +78,13 @@
             @click="updateMainVideoStreamManager(sub)"
             class="user-video-container"
           />
-          <div v-if="userData.memberRole[1] === 'CONSALTANT'">
+          <div v-if="userData.memberRole[1] === 'CONSULTANT'">
             <img
-              :src="require(`@/assets/img/${selectedImage_personal}`)"
+              :src="require(`@/assets/img/personal/${selectedImage_personal}`)"
               alt="Selected Image"
               v-if="selectedImageVisible_personal"
               @click="showImage_personal(null)"
-              class="personal_color"
+              class="personal_color_subscribers"
             />
           </div>
         </div>
@@ -105,7 +105,7 @@
             :key="index"
           >
             <img
-              :src="require(`@/assets/img/${image.url}`)"
+              :src="require(`@/assets/img/personal/${image.url}`)"
               :alt="image.alt"
               class="image"
               @click="showImage_personal(index)"
@@ -133,12 +133,11 @@
       </div>
       <!-- 일반유저가 보는 이미지 화면 -->
       <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
-        여기에 일반유저가 볼 수 있는 이미지!
         <img
           :src="require(`@/assets/img/${selectedImage_image}`)"
           alt="Selected Image"
           v-if="selectedImageVisible_image"
-          class="image"
+          class="image_for_user"
         />
       </div>
     </div>
@@ -162,7 +161,16 @@
   max-height: 25vh;
 }
 
-.user-video {
+.image_for_user {
+  max-width: 40vh;
+  max-height: 40vh;
+}
+
+.user-video-subscribers {
+  position: relative;
+}
+
+.user-video-publisher {
   position: relative;
 }
 
@@ -173,11 +181,21 @@
 }
 
 /* 퍼스널 컬러 이미지를 비디오의 가운데에 놓기위한 style */
-.personal_color {
+.personal_color_publisher {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  border-radius: 20px;
+}
+
+/* 퍼스널 컬러 이미지를 비디오의 가운데에 놓기위한 style */
+.personal_color_subscribers {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
 }
 
 .image-button {
@@ -232,10 +250,18 @@ export default {
       selectedIndex_image: null,
       userData: null,
       color_images: [
-        { url: "spring_warm.png", alt: "봄웜" },
-        { url: "summer_cool.png", alt: "여름쿨" },
-        { url: "fall_warm.png", alt: "가을웜" },
-        { url: "winter_cool.png", alt: "겨울쿨" },
+        { url: "autumn_deep.png", alt: "autumn_deep" },
+        { url: "autumn_muted.png", alt: "autumn_muted" },
+        { url: "autumn_warm.png", alt: "autumn_warm" },
+        { url: "spinrg_warm.png", alt: "spinrg_warm" },
+        { url: "spring_bright.png", alt: "spring_bright" },
+        { url: "spring_light.png", alt: "spring_light" },
+        { url: "summer_cool.png", alt: "summer_cool" },
+        { url: "summer_light.png", alt: "summer_light" },
+        { url: "summer_muted.png", alt: "summer_muted" },
+        { url: "winter_bright.png", alt: "winter_bright" },
+        { url: "winter_cool.png", alt: "winter_cool" },
+        { url: "winter_deep.png", alt: "winter_deep" },
       ],
       style_images: [
         { url: "hyeonwook.jpg", alt: "현욱1" },
