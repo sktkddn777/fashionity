@@ -151,13 +151,14 @@ public class ConsultantController {
 
     // 스케쥴 등록
     @PostMapping("reservation/schedule")
-    public ResponseEntity<ScheduleSaveDTO.Response> saveSchedule(
+    public ResponseEntity<ScheduleDTO.Response> saveSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody  ScheduleSaveDTO.Request dto){
 
+        log.info("start");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
-        ScheduleSaveDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
-
+        ScheduleDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
+        log.info(" = {}",scheduleSaveResponse);
         return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
     }
 

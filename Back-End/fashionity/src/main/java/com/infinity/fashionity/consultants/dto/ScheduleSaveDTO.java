@@ -32,5 +32,6 @@ public class ScheduleSaveDTO {
     public static class Response{
         private Boolean success;
 
+
     }
 }
