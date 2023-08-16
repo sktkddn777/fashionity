@@ -44,7 +44,12 @@
           >
             <!-- 사용자 프로필 사진 -->
             <div class="profile-main-photo">
-              <img :src = "profileUrl" class="image-box" width="200" height="200" />
+              <img
+                :src="profileUrl"
+                class="image-box"
+                width="200"
+                height="200"
+              />
             </div>
             <!-- 사용자 정보 -->
             <div class="infos" style="display: flex; flex-direction: column">
@@ -66,15 +71,19 @@
                 </div>
 
                 <button
-                  v-if = "nickname !== myNickname"
+                  v-if="nickname !== myNickname"
                   id="followbtn"
                   :class="isFollowed ? 'inactive-button' : 'active-button'"
                   @click="toggleFollow()"
                   style="margin-left: 0.5rem"
                 >
-                  {{isFollowed ? '팔로잉':'팔로우'}}
+                  {{ isFollowed ? "팔로잉" : "팔로우" }}
                 </button>
-                <button v-if = "nickname === myNickname" class="inactive-button" style="margin-left: 0.5rem">
+                <button
+                  v-if="nickname === myNickname"
+                  class="inactive-button"
+                  style="margin-left: 0.5rem"
+                >
                   <router-link :to="`/profile/${nickname}/edit`"></router-link>
                   프로필 수정
                 </button>
@@ -140,8 +149,7 @@
       </div>
 
       <!-- 게시글 영역 -->
-      <my-post-list/>
-
+      <my-post-list />
     </div>
   </div>
 </template>
@@ -154,9 +162,7 @@ import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
-import MyPostList from "@/components/pages/user/MyPostList.vue"
-
-let token = sessionStorage.getItem("token");
+import MyPostList from "@/components/pages/user/MyPostList.vue";
 
 export default {
   name: "ProfilePage",
@@ -199,7 +205,7 @@ export default {
       profileUrl: "",
       followersPop: false,
       followingsPop: false,
-      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
   created() {
@@ -210,23 +216,29 @@ export default {
       this.$router.push({ name: "likedPosts" });
     },
     getProfile() {
+      let token = sessionStorage.getItem("token");
       const nickname = this.$route.params.nickname;
+      console.log("token = " + token);
       axios({
         method: "get",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/${nickname}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }).then(({ data }) => {
-        this.nickname = data.nickname;
-        this.postsCnt = data.postsCnt;
-        this.followersCnt = data.followerCnt;
-        this.followingsCnt = data.followingCnt;
-        this.isFollowed = data.isFollowed;
-        this.myProfile = data.myProfile;
-        this.profileIntro = data.profileIntro;
-        this.profileUrl = data.profileUrl;
-      });
+      })
+        .then(({ data }) => {
+          this.nickname = data.nickname;
+          this.postsCnt = data.postsCnt;
+          this.followersCnt = data.followerCnt;
+          this.followingsCnt = data.followingCnt;
+          this.isFollowed = data.isFollowed;
+          this.myProfile = data.myProfile;
+          this.profileIntro = data.profileIntro;
+          this.profileUrl = data.profileUrl;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
     async toggleFollow() {
       if (!this.isFollowed) {
@@ -238,6 +250,7 @@ export default {
       this.isFollowed ? this.followersCnt++ : this.followersCnt--;
     },
     async followAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "post",
@@ -251,6 +264,7 @@ export default {
         .catch((e) => console.log(e));
     },
     async unfollowAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "delete",
