@@ -3,6 +3,7 @@ package com.infinity.fashionity.members.repository;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -20,7 +21,12 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
 
     @Query("select m from MemberEntity m join fetch m.memberRoles where m.email = :email")
-    MemberEntity findByEmailWithRole(String email);
+    MemberEntity findByEmailWithRole(@Param("email") String email);
+
+    @Query("select m.seq from MemberEntity m where m.nickname = :nickname ")
+    Long findSeqByNickname(@Param("nickname") String nickname);
+
+    MemberEntity findBySeq(Long seq);
 }
 
 

@@ -30,14 +30,16 @@
 
       <router-link
         v-else
-        to="/consultant"
+        to="/consultant/rm"
         style="text-decoration: none; color: #424242"
         >Consultant</router-link
       >
     </div>
 
     <div class="col col-lg-2 header-tab">
-      <router-link to="/profile" style="text-decoration: none; color: #424242"
+      <router-link
+        :to="profileLink"
+        style="text-decoration: none; color: #424242"
         >Mypage</router-link
       >
     </div>
@@ -55,9 +57,22 @@ export default {
         if (roles[i] === "CONSULTANT") isConsultant = true;
       }
     }
+
     return {
       isConsultant: isConsultant,
+      myNickname: null,
     };
+  },
+  computed: {
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      this.myNickname =
+        this.$store.getters["memberStore/checkLoginUser"].nickname;
+    }
   },
 };
 </script>

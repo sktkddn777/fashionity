@@ -103,7 +103,6 @@ export default {
     })
       .then((data) => {
         this.posts = data.data.posts;
-        console.log(this.posts);
         this.dataLoaded = true;
         this.page++;
       })
@@ -191,7 +190,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .tools {
   margin-bottom: 30px;
 }

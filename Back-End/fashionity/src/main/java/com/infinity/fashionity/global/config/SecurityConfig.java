@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .antMatchers(allowedUrls).permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/consultants/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

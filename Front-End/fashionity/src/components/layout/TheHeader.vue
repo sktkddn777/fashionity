@@ -1,5 +1,5 @@
 <template lang="">
-  <div>
+  <div class="header">
     <div class="container-fluid" style="background-color: white">
       <div class="row" style="margin-top: 20px">
         <div class="col-3" id="logo">
@@ -13,11 +13,11 @@
               background-color: white;
               margin-top: 20px;
             "
-            >fashionity</router-link
+            >Fashionity</router-link
           >
         </div>
         <div class="col">
-          <div class="row justify-content-end" style="margin-top: -20px">
+          <div class="row justify-content-end">
             <div class="col-8"></div>
             <div class="col">
               <div class="row justify-content-end">
@@ -75,7 +75,7 @@
                     /></router-link>
                   </div>
                   <div v-else class="row">
-                    <router-link to="/profile" class="link">
+                    <router-link :to="profileLink">
                       <img class="profile" :src="getProfileUrl()"
                     /></router-link>
                   </div>
@@ -99,6 +99,15 @@ export default {
   computed: {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      this.myNickname =
+        this.$store.getters["memberStore/checkLoginUser"].nickname;
+    }
   },
   data() {
     return {
@@ -131,6 +140,9 @@ export default {
 };
 </script>
 <style scoped>
+.header {
+  margin-bottom: 50px;
+}
 .header-tab {
   font-style: normal;
   font-size: 25px;
@@ -141,6 +153,9 @@ export default {
 #logo {
   font-style: normal;
   font-size: 50px;
+  font-family: "IBM Plex Sans KR";
+  color: #424242;
+  font-weight: 600;
 }
 
 .profile {

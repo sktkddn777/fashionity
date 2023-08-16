@@ -21,7 +21,9 @@ export default {
         const oauthUserInfo = {
           accessToken: token,
           memberSeq: user.id,
+          nickname: data.nickname,
           profileUri: data.profileUrl,
+          memberRole: data.memberRole,
         };
         store.commit("memberStore/LOGIN", oauthUserInfo);
         store.commit("memberStore/SET_IS_VALID_TOKEN", true);

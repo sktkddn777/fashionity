@@ -1,7 +1,10 @@
 package com.infinity.fashionity.members.dto;
 
+import com.infinity.fashionity.members.data.MemberRole;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class ProfileDTO {
 
@@ -10,6 +13,7 @@ public class ProfileDTO {
     @NoArgsConstructor
     @Builder
     @Setter
+    @ToString
     public static class Request {
         private MultipartFile profileImage;
         private String nickname;
@@ -50,6 +54,9 @@ public class ProfileDTO {
         private String profileUrl;
         private String nickname;
         private String profileIntro;
+        private List<MemberRole> memberRole;
+        private String id;
+        private String email;
     }
 
     @Getter

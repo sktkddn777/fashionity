@@ -72,7 +72,6 @@ export default {
       const textContainers = document.querySelectorAll(".post-font");
       for (var i = 0; i < textContainers.length; i++) {
         const textContainer = textContainers[i];
-        console.log(`${i}번째 container = ${textContainer}`);
         if (textContainer.scrollWidth > textContainer.clientWidth) {
           while (textContainer.scrollWidth > textContainer.clientWidth) {
             textContainer.textContent = textContainer.textContent.slice(0, -1);

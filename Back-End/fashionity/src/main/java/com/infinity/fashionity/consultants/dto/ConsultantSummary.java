@@ -21,4 +21,5 @@ public class ConsultantSummary {
     private Integer totalCnt;
     private String nickname; // 컨설턴트 닉네임
     private Level level;
+    private String profileIntro;
 }

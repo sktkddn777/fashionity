@@ -28,6 +28,7 @@ const memberStore = {
       state.isLogin = true;
       sessionStorage.setItem("token", data.accessToken);
       sessionStorage.setItem("memberSeq", data.memberSeq);
+      sessionStorage.setItem("loginNickname", data.nickname);
     },
     LOGOUT(state) {
       sessionStorage.removeItem("token");
@@ -43,6 +44,10 @@ const memberStore = {
     },
   },
   actions: {
+    async getUserNickname() {
+      console.log("실행됨");
+      return this.state.loginUser.nickname;
+    },
     async loginAction({ commit }, user) {
       if (!user.id) {
         toast.error("아이디가 비었따!!", {
@@ -63,8 +68,6 @@ const memberStore = {
       await login(
         user,
         ({ data }) => {
-          console.log("login success");
-          console.log(data)
           if (!data.profileUri)
             data.profileUri =
               "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Front-Facing%20Baby%20Chick.png";
@@ -147,7 +150,6 @@ const memberStore = {
           await dispatch("tokenRegeneration");
         });
     },
-
     async tokenRegeneration({ commit }) {
       const reissueRequest = {
         accessToken: sessionStorage.getItem("token"),
