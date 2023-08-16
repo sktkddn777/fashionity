@@ -33,7 +33,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             "left join res.schedule s " +
             "left join s.consultant c " +
             "where c.nickname = :consultantNickname and res.seq = :reservationSeq")
-    List<ConsultantReservationDetail> findConsultantReservation(@Param("consultantNickname") String consultantNickname, Long reservationSeq);
+    List<ConsultantReservationDetail> findConsultantReservation(@Param("consultantNickname") String consultantNickname, @Param("reservationSeq") Long reservationSeq);
 
     @Query("select new com.infinity.fashionity.consultants.dto.UserReservationDetail(res.seq, c.nickname, res.date, res.detail) " +
             "from ReservationEntity res " +

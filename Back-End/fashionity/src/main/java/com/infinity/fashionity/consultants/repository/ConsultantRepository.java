@@ -26,6 +26,10 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
     // 전체 컨설턴트 조회
     Page<ConsultantEntity> findAll(Pageable pageable);
 
+    @Query("select c from ConsultantEntity c " +
+            "where c.nickname like %:nickname%")
+    Page<ConsultantEntity> findAllWithNickname(@Param("nickname") String nickname,Pageable pageable);
+
     // 평균 별점
     @Query("select coalesce(avg(r.grade),0) " +
             "from ReviewEntity r " +

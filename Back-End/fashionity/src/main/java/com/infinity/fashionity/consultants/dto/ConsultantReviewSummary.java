@@ -23,13 +23,4 @@ public class ConsultantReviewSummary {
     // 리뷰 작성자
     private String memberNickname;
 
-    public ConsultantReviewSummary(Long reservationSeq, Long reviewSeq, LocalDateTime reviewCreatedAt, LocalDateTime reviewUpdatedAt, Float reviewGrade, String reviewContent, String memberNickname) {
-        this.reservationSeq = reservationSeq;
-        this.reviewSeq = reviewSeq;
-        this.reviewCreatedAt = reviewCreatedAt;
-        this.reviewUpdatedAt = reviewUpdatedAt;
-        this.reviewGrade = reviewGrade;
-        this.reviewContent = reviewContent;
-        this.memberNickname = memberNickname;
-    }
 }
