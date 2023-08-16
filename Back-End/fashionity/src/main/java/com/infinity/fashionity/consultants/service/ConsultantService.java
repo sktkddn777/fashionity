@@ -48,5 +48,11 @@ public interface ConsultantService {
 
     @Transactional
     ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq);
+
+    @Transactional(readOnly = true)
+    ScheduleDTO.Response getSchedule(String dateTime, Long memberSeq);
+
+    @Transactional
+    Boolean deleteSchedule(Long scheduleSeq);
 }
 

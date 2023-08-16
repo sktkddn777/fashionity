@@ -4,6 +4,7 @@
       :attributes="attributes"
       @dayclick="handleDateClick"
       style="width: 100vh"
+      class="calendar"
     />
 
     <reservation-list-vue class="rlist" :reservations="reservationData" />
@@ -34,6 +35,17 @@
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+}
+
+.calendar {
+  flex: 2;
+}
+
+.rlist {
+  flex: 1;
+}
 </style>
 
 <script>
@@ -76,46 +88,46 @@ export default {
   data() {
     return {
       selectedDate: null,
-      reservationData: [
-        {
-          id: 1,
-          profileImage: "profile1.jpg",
-          time: "10:00 AM",
-        },
-        {
-          id: 2,
-          profileImage: "profile2.jpg",
-          time: "2:00 PM",
-        },
-        {
-          id: 1,
-          profileImage: "profile1.jpg",
-          time: "10:00 AM",
-        },
-        {
-          id: 2,
-          profileImage: "profile2.jpg",
-          time: "2:00 PM",
-        },
-        {
-          id: 1,
-          profileImage: "profile1.jpg",
-          time: "10:00 AM",
-        },
-        {
-          id: 2,
-          profileImage: "profile2.jpg",
-          time: "2:00 PM",
-        },
-      ],
+      reservationData: [],
     };
   },
   methods: {
     handleDateClick({ date }) {
+      this.reservationData = [];
       // Do something with the clicked date, like displaying details or performing an action
 
       // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
       this.selectedDate = date;
+      let token = sessionStorage.getItem("token");
+
+      let month = date.getMonth() + 1;
+      if (month < 10) month = "0" + month.toString();
+
+      const dateTime = `${date.getFullYear()}-${month}-${date.getDate()}`;
+
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation/myschedule`,
+        headers: { Authorization: `Bearer ${token}` },
+        method: "GET",
+        params: {
+          dateTime: dateTime,
+        },
+      })
+        .then(({ data }) => {
+          console.log(data);
+          for (let i = 0; i < data.unAvailableDateTimes.length; i++) {
+            let time = data.unAvailableDateTimes[i].unAvailableDateTime;
+
+            this.reservationData.push({
+              id: data.unAvailableDateTimes[i].scheduleSeq,
+              time: `${time[0]}-${time[1]}-${time[2]} ${time[3]}:00:00`,
+              profileImage: "@/assets/img/hyeonwook.jpg",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     saveConsultantSchedule() {
@@ -166,4 +178,3 @@ export default {
   },
 };
 </script>
-
