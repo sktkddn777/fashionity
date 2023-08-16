@@ -372,7 +372,11 @@ export default {
       this.OV = undefined;
 
       window.removeEventListener("beforeunload", this.leaveSession);
-      router.push({ name: "consultant-myreservation" });
+      if (this.userData.memberRole[1] === "CONSULTANT") {
+        router.push({ name: "RConsultantCheck" });
+      } else {
+        router.push({ name: "consultant-myreservation" });
+      }
     },
 
     updateMainVideoStreamManager(stream) {

@@ -59,21 +59,27 @@
     <div class="row" style="font-size: 15px">담당 컨설턴트 : 아이바오</div>
   </div>
   <div class="col">
-    <button class="consultant-mylist-modify-review">후기 수정</button>
+    <button class="consultant-mylist-modify-review" @click="openModal">후기 수정</button>
   </div>
 </div>
   </div>
+  <review-modal-vue :show-modal="showModal" @close="closeModal"></review-modal-vue>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 import router from "@/router";
+import ReviewModalVue from "./components/ReviewModal.vue";
 
 export default {
+  components: {
+    ReviewModalVue,
+  },
   data() {
     return {
       userName: "태현",
       roomId: "kth",
+      showModal: false,
     };
   },
   methods: {
@@ -85,6 +91,12 @@ export default {
       };
       this.updateMeetingInfo(meetingInfo);
       router.push({ name: "Consulting-WebCam-View" });
+    },
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
     },
   },
 };
