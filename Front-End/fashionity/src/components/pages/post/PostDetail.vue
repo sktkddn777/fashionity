@@ -57,57 +57,14 @@
                   </template>
                   <v-list>
                     <v-list-item v-if="!this.post.myPost">
-                      <v-list-item-title
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#reportModal"
-                        >신고</v-list-item-title
-                      >
-                      <!-- report Modal -->
-                      <div
-                        class="modal fade"
-                        id="reportModal"
-                        tabindex="-1"
-                        aria-labelledby="reportModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1
-                                class="modal-title fs-5"
-                                id="reportModalLabel"
-                              >
-                                신고
-                              </h1>
-                              <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div class="modal-body">
-                              <report-modal></report-modal>
-                            </div>
-                            <div class="modal-footer">
-                              <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal"
-                              >
-                                취소
-                              </button>
-                              <button type="button" class="btn btn-primary">
-                                신고
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <!-- 신고 모달 -->
+                      <report-modal :seq="this.post.postSeq"></report-modal>
                     </v-list-item>
                     <v-list-item v-else>
-                      <router-link to="/post/modify" class="link">
+                      <router-link
+                        :to="{ path: `/post/${seq}/modify` }"
+                        class="link"
+                      >
                         <v-list-item-title type="button"
                           >수정</v-list-item-title
                         >
@@ -261,7 +218,7 @@ const memberStore = "memberStore";
 export default {
   props: ["seq"],
   computed: {
-    ...mapState(memberStore, ["isLogin"]),
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
   },
   data() {
     return {
@@ -276,39 +233,50 @@ export default {
     TheComment,
     ReportModal,
   },
-  async mounted() {
-    let token = sessionStorage.getItem("token");
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
-      method: "get",
-    }).then((data) => {
-      this.post = data.data.post;
-      console.log(this.post);
-      this.like = this.post.liked;
-      this.likeCount = this.post.likeCount;
-    });
-
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
-      method: "get",
-    }).then((data) => {
-      this.comments = [...data.data.comments];
-      console.log(this.comments);
-    });
+  mounted() {
+    this.callDetailAPI(this.seq);
+  },
+  watch: {
+    seq: {
+      handler(newSeq) {
+        this.callDetailAPI(newSeq);
+      },
+      deep: true, // 객체의 내부 변경도 감지
+    },
   },
   methods: {
+    callDetailAPI(seq) {
+      let token = sessionStorage.getItem("token");
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${seq}`,
+        method: "get",
+      }).then((data) => {
+        this.post = data.data.post;
+        console.log(this.post);
+        this.like = this.post.liked;
+        this.likeCount = this.post.likeCount;
+      });
+
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
+        method: "get",
+      }).then((data) => {
+        this.comments = [...data.data.comments];
+        console.log(this.comments);
+      });
+    },
     timeAgo(timestamp) {
       const currentTime = new Date();
       const targetTime = new Date(timestamp);
@@ -400,10 +368,11 @@ export default {
     },
     deleteConfirm() {
       if (confirm("삭제하시겠습니까?")) {
-        this.deletePost;
+        this.deletePost();
       }
     },
     async deletePost() {
+      console.log("deletePost");
       try {
         await this.callDeleteAPI();
         alert("삭제되었습니다.");
@@ -413,9 +382,10 @@ export default {
       }
     },
     navigateToMain() {
-      this.$router.push("/");
+      this.$router.push("/post");
     },
     callDeleteAPI() {
+      console.log("callDeleteAPI");
       let token = sessionStorage.getItem("token");
       axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.post.postSeq}`,

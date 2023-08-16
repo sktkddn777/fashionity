@@ -8,11 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 
 @Slf4j
@@ -144,20 +141,38 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("reservationSeq") Long reservationSeq,
             UserReservationInfoDTO.Request dto){
-            dto.setMemberSeq(auth.getSeq());
+//            dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
             dto.setReservationSeq(reservationSeq);
         UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
         return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
 
     }
 
-    @PostMapping(value = "/reservations", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ConsultantReservationSaveDto.Response> postReservation(
+
+    // 스케쥴 등록
+    @PostMapping("reservation/schedule")
+    public ResponseEntity<ScheduleSaveDTO.Response> saveSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
-            ConsultantReservationSaveDto.Request dto){
+            @RequestBody  ScheduleSaveDTO.Request dto){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        ScheduleSaveDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
+
+        return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("reservation/schedule/{schedule_seq}")
+    public ResponseEntity<ScheduleDeleteDTO.Response> deleteSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody ScheduleDeleteDTO.Request dto,
+            @PathVariable("schedule_seq") Long scheduleSeq){
+
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
-        return new ResponseEntity<>(consultantService.saveReservation(dto), HttpStatus.OK);
+        ScheduleDeleteDTO.Response scheduleDeleteResponse = consultantService.deleteSchedule(dto, scheduleSeq);
+
+        return new ResponseEntity<>(scheduleDeleteResponse, HttpStatus.OK);
 
     }
 

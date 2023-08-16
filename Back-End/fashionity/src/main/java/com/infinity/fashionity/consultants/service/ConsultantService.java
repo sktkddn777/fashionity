@@ -44,6 +44,9 @@ public interface ConsultantService {
     UserReservationInfoDTO.Response getUserReservationDetail(Long memberSeq, Long reservationSeq, UserReservationInfoDTO.Request dto);
 
     @Transactional
-    ConsultantReservationSaveDto.Response saveReservation(ConsultantReservationSaveDto.Request dto);
+    ScheduleSaveDTO.Response saveSchedule(ScheduleSaveDTO.Request dto);
+
+    @Transactional
+    ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq);
 }
 

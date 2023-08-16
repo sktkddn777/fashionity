@@ -2,10 +2,7 @@ package com.infinity.fashionity.consultants.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.infinity.fashionity.global.entity.CEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -21,6 +18,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude={"reservations","consultant"})
 public class ScheduleEntity extends CEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +29,7 @@ public class ScheduleEntity extends CEntity {
     private LocalDateTime availableDateTime;
 
     @ColumnDefault("true")
-    @Column(name="is_available", unique = false, nullable = false)
+    @Column(name="is_available", unique = false, nullable = true)
     private Boolean isAvailable;
 
     @Column(name = "canceled_at", unique = false, nullable = true)
@@ -41,12 +39,10 @@ public class ScheduleEntity extends CEntity {
     private String cancelReason;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "schedule")
-    @Builder.Default
-    private ReservationEntity reservations = new ReservationEntity();
+    private ReservationEntity reservations;
 
     @JoinColumn(name="consultant_info_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private ConsultantEntity consultant;
-
 
 }
