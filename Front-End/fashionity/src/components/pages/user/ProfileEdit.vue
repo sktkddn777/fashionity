@@ -314,7 +314,7 @@ export default {
 }
 .imodal {
   width: 35%;
-  height: 60%;
+  height: 50%;
   background: white;
   border-radius: 10px;
   padding: 20px;
