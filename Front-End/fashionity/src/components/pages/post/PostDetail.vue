@@ -180,7 +180,7 @@
           ></the-comment>
         </div>
 
-        <div>
+        <div v-if="showCommentSubmit">
           <div class="post-detail-comment-submit">
             <input
               v-model="commentContent"
@@ -223,6 +223,7 @@ export default {
       commentCount: "",
       visibleComments: [],
       showMoreButton: false,
+      showCommentSubmit: true,
     };
   },
   watch: {
