@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img :src="postThumbnailImage" alt="" class = "fixed-image-size">
+    <img :src="postThumbnailImage" alt="" class="fixed-image-size" />
   </div>
 </template>
 <script>
@@ -10,16 +10,15 @@ export default {
     return {
       postSeq: this.post.postSeq,
       postThumbnailImage: this.post.postThumbnailImage,
-      
     };
   },
 };
 </script>
-<style>
+<style scoped>
 .fixed-image-size {
   width: 300px;
-  height: 300px; 
-  object-fit: cover; 
+  height: 300px;
+  object-fit: cover;
 }
 </style>
 

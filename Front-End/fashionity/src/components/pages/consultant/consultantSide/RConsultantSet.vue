@@ -34,11 +34,6 @@
 </template>
 
 <style scoped>
-.container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 10px;
-}
 </style>
 
 <script>
