@@ -8,14 +8,14 @@
       <img src="@/assets/img/hyeonwook.jpg" alt="Profile" />
       <div class="reservation-info">
         <p>{{ reservation.time }}</p>
-        <button @click="cancelReservation(reservation.id)">취소</button>
+        <button @click="cancelReservation(reservation.id)">확인</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import router from "@/router";
 
 export default {
   name: "ReservationList",
@@ -23,27 +23,11 @@ export default {
     reservations: Array,
   },
   methods: {
-    cancelReservation(scheduleSeq) {
-      let token = sessionStorage.getItem("token");
-
-      axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation/myschedule`,
-        headers: { Authorization: `Bearer ${token}` },
-        method: "DELETE",
-        params: {
-          scheduleSeq: scheduleSeq,
-        },
-      })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch(({ response }) => {
-          if (response.data.code === "SCH001")
-            alert("존재하지 않는 스케줄입니다.");
-          if (response.data.code === "C007")
-            alert("이미 예약이 걸려있는 스케줄입니다. 예약부터 취소하세요");
-        });
-      // 예약 취소 로직
+    cancelReservation(reservationSeq) {
+      router.push({
+        name: "RConsultantCheckDetail",
+        params: { value: reservationSeq },
+      });
     },
   },
 };
