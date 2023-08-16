@@ -49,7 +49,7 @@ public class PostEntity extends CUDEntity {
     private List<PostHashtagEntity> postHashtags = new ArrayList<>();
 
     //댓글 개수
-    @Formula("(SELECT count(1) FROM comments c WHERE c.post_seq = post_seq AND c.deleted_at IS NULL)")
+    @Formula("(SELECT count(*) FROM comments c WHERE c.post_seq = post_seq AND c.deleted_at IS NULL)")
     private int commentCount;
 
     //좋아요 개수
