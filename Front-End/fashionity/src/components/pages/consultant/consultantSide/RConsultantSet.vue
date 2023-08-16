@@ -1,47 +1,55 @@
 <template>
-  <div>
-    <h2>예약 가능일자 등록</h2>
-    <h2>수정 못하니까 똑띠 생각하세요</h2>
-  </div>
-
-  <VCalendar
-    :attributes="attributes"
-    @dayclick="handleDateClick"
-    style="width: 1000px"
-  />
-
-  <div>
-    <label for="time-picker">시작시간:</label>
-    <input
-      type="time"
-      id="time-picker"
-      v-model="startTime"
-      @input="handleStartTimeChange"
+  <div class="container">
+    <VCalendar
+      :attributes="attributes"
+      @dayclick="handleDateClick"
+      style="width: 100vh"
     />
+
+    <reservation-list-vue class="rlist" :reservations="reservationData" />
   </div>
-  <div>
-    <label for="time-picker">종료시간:</label>
-    <input
-      type="time"
-      id="time-picker"
-      v-model="endTime"
-      @input="handleEndTimeChange"
-    />
-  </div>
-  <div>
-    <v-btn @click="saveConsultantSchedule">등록하기</v-btn>
+  <div class="time-input-wrapper">
+    <div>
+      <label for="time-picker">시작시간:</label>
+      <input
+        type="time"
+        id="time-picker"
+        v-model="startTime"
+        @input="handleStartTimeChange"
+      />
+    </div>
+    <div>
+      <label for="time-picker">종료시간:</label>
+      <input
+        type="time"
+        id="time-picker"
+        v-model="endTime"
+        @input="handleEndTimeChange"
+      />
+    </div>
+    <div>
+      <v-btn @click="saveConsultantSchedule">등록하기</v-btn>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+}
+</style>
 
 <script>
 import axios from "axios";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
+import ReservationListVue from "./layout/ReservationList.vue";
 
 const toast = useToast();
 
 export default {
-  components: {},
   setup() {
     const startTime = ref("");
     const endTime = ref("");
@@ -66,10 +74,45 @@ export default {
     };
   },
   name: "RConsultantSet",
+  components: {
+    ReservationListVue,
+  },
   created() {},
   data() {
     return {
       selectedDate: null,
+      reservationData: [
+        {
+          id: 1,
+          profileImage: "profile1.jpg",
+          time: "10:00 AM",
+        },
+        {
+          id: 2,
+          profileImage: "profile2.jpg",
+          time: "2:00 PM",
+        },
+        {
+          id: 1,
+          profileImage: "profile1.jpg",
+          time: "10:00 AM",
+        },
+        {
+          id: 2,
+          profileImage: "profile2.jpg",
+          time: "2:00 PM",
+        },
+        {
+          id: 1,
+          profileImage: "profile1.jpg",
+          time: "10:00 AM",
+        },
+        {
+          id: 2,
+          profileImage: "profile2.jpg",
+          time: "2:00 PM",
+        },
+      ],
     };
   },
   methods: {
@@ -128,4 +171,4 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+

@@ -1,6 +1,6 @@
 <template>
   <the-nav-check-reservation></the-nav-check-reservation>
-  <div>
+  <div class="container">
     <router-view></router-view>
   </div>
 </template>
@@ -19,4 +19,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.container {
+  display: flex;
+}
+</style>
