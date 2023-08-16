@@ -56,7 +56,7 @@ public class MemberController {
     public ResponseEntity<ProfilePostDTO.Response> getMemberProfileLikedPost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable String nickname,
-            @RequestBody ProfilePostDTO.Request dto
+            ProfilePostDTO.Request dto
     ) {
         dto.setNickname(nickname);
         ProfilePostDTO.Response response = memberService.getMemberProfileLikedPost(auth.getSeq(), dto);
