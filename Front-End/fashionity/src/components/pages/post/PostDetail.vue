@@ -222,7 +222,7 @@ export default {
   },
   async mounted() {
     let token = sessionStorage.getItem("token");
-    axios({
+    await axios({
       headers:
         token === null
           ? null
@@ -254,7 +254,6 @@ export default {
         method: "get",
       }).then((data) => {
         console.log(data.data.comments);
-
         this.comments = [...data.data.comments];
       });
     },
