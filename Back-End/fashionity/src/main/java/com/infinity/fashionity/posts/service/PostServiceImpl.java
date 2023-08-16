@@ -268,12 +268,10 @@ public class PostServiceImpl implements PostService {
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
         String content = dto.getContent();
-        List<MultipartFile> images = dto.getImages();
         List<String> hashtags = dto.getHashtag();
 
         // 입력값 검증
-        if (memberSeq == null || postSeq == null || StringUtils.isBlank(content)
-                || images.isEmpty() || images.size() > 4) {
+        if (memberSeq == null || postSeq == null || StringUtils.isBlank(content)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -293,39 +291,39 @@ public class PostServiceImpl implements PostService {
         //기존 image, hashtags를 삭제
 
         // 이미지들을 물리 저장소에서 삭제
-        List<ImageDTO> imageInfos = post.getPostImages().stream()
-                .map(image -> ImageDTO.builder()
-                        .fileName(image.getName())
-                        .fileUrl(image.getUrl())
-                        .build())
-                .collect(Collectors.toList());
-        ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
-                .images(imageInfos)
-                .build());
-
-        //이미지 정보들을 삭제
-        postImageRepository.deleteByPostSeq(postSeq);
-
-        //물리저장소에서 삭제가 성공했으면 db에서도 지움
-        postImageRepository.deleteByPostSeq(postSeq);
+//        List<ImageDTO> imageInfos = post.getPostImages().stream()
+//                .map(image -> ImageDTO.builder()
+//                        .fileName(image.getName())
+//                        .fileUrl(image.getUrl())
+//                        .build())
+//                .collect(Collectors.toList());
+//        ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
+//                .images(imageInfos)
+//                .build());
+//
+//        //이미지 정보들을 삭제
+//        postImageRepository.deleteByPostSeq(postSeq);
+//
+//        //물리저장소에서 삭제가 성공했으면 db에서도 지움
+//        postImageRepository.deleteByPostSeq(postSeq);
 
         //해시태그들 삭제
         postHashtagRepository.deleteByPostSeq(postSeq);
 
         //이미지를 물리저장소에 저장
-        ImageSaveDTO.Response savedImages = imageService.save(ImageSaveDTO.Request.builder()
-                .images(images)
-                .build());
+//        ImageSaveDTO.Response savedImages = imageService.save(ImageSaveDTO.Request.builder()
+//                .images(images)
+//                .build());
 
         //저장된 정보를 db에 저장
-        List<PostImageEntity> collect = savedImages.getImageInfos().stream()
-                .map(imageInfo -> PostImageEntity.builder()
-                        .name(imageInfo.getFileName())
-                        .url(imageInfo.getFileUrl())
-                        .post(post)
-                        .build())
-                .collect(Collectors.toList());
-        postImageRepository.saveAll(collect);
+//        List<PostImageEntity> collect = savedImages.getImageInfos().stream()
+//                .map(imageInfo -> PostImageEntity.builder()
+//                        .name(imageInfo.getFileName())
+//                        .url(imageInfo.getFileUrl())
+//                        .post(post)
+//                        .build())
+//                .collect(Collectors.toList());
+//        postImageRepository.saveAll(collect);
 
         //해시태그 저장
         List<PostHashtagEntity> hashtagEntities = new ArrayList<>();
