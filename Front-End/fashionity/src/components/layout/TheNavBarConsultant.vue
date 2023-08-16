@@ -70,7 +70,7 @@ export default {
   created() {
     if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
       this.myNickname =
-          this.$store.getters["memberStore/checkLoginUser"].nickname;
+        this.$store.getters["memberStore/checkLoginUser"].nickname;
     }
   },
 };
