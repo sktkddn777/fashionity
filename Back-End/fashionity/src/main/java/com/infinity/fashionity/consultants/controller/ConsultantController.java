@@ -24,9 +24,8 @@ public class ConsultantController {
     // [공통] 전체 컨설턴트 목록 조회
     @GetMapping
     public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(
-            @AuthenticationPrincipal JwtAuthentication auth,
             ConsultantListDTO.Request dto) {
-        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(auth.getSeq(), dto);
+        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(dto);
         return new ResponseEntity<>(consultantListResponse, HttpStatus.OK);
     }
 

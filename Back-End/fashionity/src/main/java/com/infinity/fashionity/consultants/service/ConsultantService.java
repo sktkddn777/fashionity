@@ -10,7 +10,7 @@ public interface ConsultantService {
 
     // [공통] 컨설턴트 목록 조회
     @Transactional(readOnly = true)
-    ConsultantListDTO.Response getAllConsultants(Long memberSeq, ConsultantListDTO.Request dto);
+    ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto);
 
     // [공통] 컨설턴트 상세 정보 조회
     @Transactional(readOnly = true)

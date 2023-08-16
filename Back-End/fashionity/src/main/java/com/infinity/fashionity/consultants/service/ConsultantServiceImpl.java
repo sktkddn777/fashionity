@@ -47,7 +47,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     // [공통] 컨설턴트 목록 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantListDTO.Response getAllConsultants(Long memberSeq, ConsultantListDTO.Request dto) {
+    public ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto) {
 
         int page = dto.getPage();
         int size = dto.getSize();
