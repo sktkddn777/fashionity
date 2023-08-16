@@ -19,7 +19,6 @@
           </div>
         </div>
         <!-- 이미지 -->
-        <multi-image-upload @updateImg="updateImg"></multi-image-upload>
         <br />
         <div style="text-align: left">
           <textarea
@@ -69,20 +68,15 @@
 </template>
 <script>
 import axios from "axios";
-import MultiImageUpload from "../shared/MultiImageUpload.vue";
 import { mapState } from "vuex";
 const memberStore = "memberStore";
 export default {
   data() {
     return {
       myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
-      myProfileImg:
-        this.$store.getters["memberStore/checkLoginUser"].profileImage,
       tagInput: "",
       tagList: [],
       contentInput: "",
-      imgList: [],
-      fileList: [],
     };
   },
   computed: {
@@ -90,9 +84,6 @@ export default {
       return this.$route.params.seq;
     },
     ...mapState(memberStore, ["loginUser"]),
-  },
-  components: {
-    MultiImageUpload,
   },
   methods: {
     getProfileUrl() {
@@ -105,31 +96,26 @@ export default {
       }
     },
     async submitPost() {
-      if (this.fileList.length == 0) {
-        alert("이미지를 등록해주세요.");
-      } else if (!this.contentInput || this.contentInput.trim() === "") {
+      if (!this.contentInput || this.contentInput.trim() === "") {
         alert("내용을 입력해주세요.");
       } else {
         const postData = {
-          images: this.fileList,
           content: this.contentInput,
           hashtag: this.tagList,
         };
+        console.log(postData.content);
+        console.log(postData.hashtag);
         await this.callPostUpdateAPI(postData);
         this.navigateToDetail();
       }
     },
     async callPostUpdateAPI(postData) {
       let postSeq = this.$route.params.seq;
-      let formData = new FormData();
-      formData.append("content", postData.content);
-      for (let i = 0; i < postData.images.length; i++) {
-        formData.append("images", postData.images[i]);
-      }
-      for (let i = 0; i < postData.hashtag.length; i++) {
-        formData.append("hashtag", postData.hashtag[i]);
-      }
       var token = sessionStorage.getItem("token");
+      const body = {
+        content: postData.content,
+        hashtag: postData.hashtag,
+      };
       await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}`,
         headers:
@@ -137,21 +123,18 @@ export default {
             ? null
             : {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
               },
         method: "PUT",
-        data: formData,
+        data: body,
       })
         .then((data) => {
+          console.log(data);
           console.log("callPostUpdateAPI " + data.data.success);
           alert("수정되었습니다.");
         })
         .catch(() => {
           alert("실패!");
         });
-    },
-    updateImg(file) {
-      this.fileList = file;
     },
     navigateToDetail() {
       const postSeq = this.$route.params.seq;
