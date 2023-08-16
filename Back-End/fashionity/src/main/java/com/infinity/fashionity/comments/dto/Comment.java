@@ -38,4 +38,6 @@ public class Comment {
     private int likeCnt;
 
     private boolean liked;
+
+    private boolean isMyComment;
 }

@@ -102,7 +102,7 @@ public class AlarmServiceImpl implements AlarmService {
 
                     return AlarmDTO.builder()
                             .alarmSeq(entity.getSeq())
-                            .imageUrl(alarmType.equals(AlarmType.FOLLOW)
+                            .imageUrl(alarmType.equals(FOLLOW)
                                     ? entity.getPublisher().getProfileUrl()
                                     : entity.getPost().getPostImages().get(0).getUrl())
                             .title(getTitle(entity))
