@@ -175,5 +175,17 @@ public class ConsultantController {
 
     }
 
+    @PostMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody ConsultantReservationSaveDTO.Request dto){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveReservation(dto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
 

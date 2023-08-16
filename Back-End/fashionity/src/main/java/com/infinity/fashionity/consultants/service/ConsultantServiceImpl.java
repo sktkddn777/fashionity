@@ -466,6 +466,35 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public ConsultantReservationSaveDTO.Response saveReservation(ConsultantReservationSaveDTO.Request dto) {
+        Long memberSeq = dto.getMemberSeq();
+
+        //입력값 검증
+        if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
+        dto.getGender() == null || dto.getHeight() == null || dto.getWidth() == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        //멤버 존재하는지 확인
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        //컨설턴트 인지 확인
+        ConsultantEntity consultant = consultantRepository.findByNickname(member.getNickname())
+                .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
+
+        // 예약에 변경한 정보가 member 테이블에 저장된 값과 다르면 업데이트 시켜야한다
+        if(member.getAge() != dto.getAge() || member.getGender() != dto.getGender() ||
+                member.getHeight() !=  dto.getHeight() || member.getPersonalcolor() != dto.getPersonalColor()){
+            member.updateReservationInfo(dto);
+        }
+
+
+        return null;
+    }
+
 }
 
 

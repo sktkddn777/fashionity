@@ -48,5 +48,8 @@ public interface ConsultantService {
 
     @Transactional
     ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq);
+
+    @Transactional
+    ConsultantReservationSaveDTO.Response saveReservation(ConsultantReservationSaveDTO.Request dto);
 }
 

@@ -2,6 +2,7 @@ package com.infinity.fashionity.members.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.infinity.fashionity.consultants.dto.ConsultantReservationSaveDTO;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
 
 import com.infinity.fashionity.follows.entity.FollowEntity;
@@ -130,5 +131,13 @@ public class MemberEntity extends CUDEntity {
     public void updateProfile(ProfileDTO.Request profile) {
         this.profileIntro = profile.getProfileIntro();
         this.nickname = profile.getNickname();
+    }
+
+    public void updateReservationInfo(ConsultantReservationSaveDTO.Request reservation){
+        this.weight = reservation.getWidth();
+        this.height = reservation.getHeight();
+        this.personalcolor = reservation.getPersonalColor();
+        this.gender = reservation.getGender();
+
     }
 }
