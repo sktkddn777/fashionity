@@ -118,8 +118,6 @@ import memberStore from "@/store/modules/memberStore";
 import ProfileImageUpdatedVue from "@/components/pages/shared/ProfileImageUpload.vue";
 import store from "@/store";
 
-let token = sessionStorage.getItem("token");
-
 const { cookies } = useCookies();
 
 export default {
@@ -153,6 +151,7 @@ export default {
   },
   methods: {
     getProfile() {
+      let token = sessionStorage.getItem("token");
       axios({
         method: "get",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members`,
@@ -167,6 +166,7 @@ export default {
       });
     },
     async deleteProfile() {
+      let token = sessionStorage.getItem("token");
       alert("계정이 삭제됩니다.");
       axios({
         method: "put",
