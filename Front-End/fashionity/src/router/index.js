@@ -201,6 +201,7 @@ const router = createRouter({
               path: "set",
               name: "RConsultantSet",
               component: RConsultantSet,
+              beforeEnter: optionalAuthUser,
             },
             {
               path: "/detail/:value",
