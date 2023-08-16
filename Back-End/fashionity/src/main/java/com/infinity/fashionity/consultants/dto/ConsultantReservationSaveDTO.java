@@ -36,7 +36,7 @@ public class ConsultantReservationSaveDTO {
 
         private Float height;
 
-        private Float width;
+        private Float weight;
 
         private Integer age;
 

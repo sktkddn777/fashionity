@@ -55,10 +55,15 @@ public class ReservationEntity extends CUDEntity {
     @Column(name = "reservation_price", unique = false, nullable = true)
     private Integer price;
 
-    // 예약 사진
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation")
+    // 컨설턴트 예약 사진
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<ImageEntity> images = new ArrayList<>();
+    private List<ImageEntity> consultantImages = new ArrayList<>();
+
+    // 유저 예약 사진
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<ImageEntity> memberImages = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "reservation")
     private ReviewEntity review;

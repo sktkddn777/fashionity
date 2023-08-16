@@ -32,4 +32,19 @@ public class UserReservationInfoDTO {
         @Builder.Default
         private List<UserReservationDetail> userReservationDetails = new ArrayList<>();
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ReservationEnterResponse{
+
+        private String consultantNickname;
+        private String memberNickname;
+        private String roomNumber;
+
+        private List<String> consultantImages;
+        private List<String> memberImages;
+    }
 }

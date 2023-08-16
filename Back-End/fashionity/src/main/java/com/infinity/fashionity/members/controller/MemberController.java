@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
 
 
 @Slf4j
@@ -63,13 +60,19 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/bodyInfo")
+    public ResponseEntity<ProfileDTO.MyProfileBodyInfoResponse> getMyBodyInfo(
+            @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        ProfileDTO.MyProfileBodyInfoResponse response = memberService.getMyBodyInfo(auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PatchMapping ("/edit")
     public ResponseEntity<ProfileDTO.Response> editMyProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
             ProfileDTO.Request dto
     ) {
-        log.info("editMyProfile start");
-        log.info("dto: " + dto);
         ProfileDTO.Response response = memberService.editMyProfile(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

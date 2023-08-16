@@ -175,6 +175,9 @@ public class ConsultantController {
 
     }
 
+    /**
+     * 유저가 예약을 하는데, 입력한 정보를 바탕으로 유저 정보 추가 업데이트 및 사진 등록
+     */
     @PostMapping("reservation")
     public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
             @AuthenticationPrincipal JwtAuthentication auth,
@@ -187,5 +190,13 @@ public class ConsultantController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("reservation/enter")
+    public ResponseEntity<UserReservationInfoDTO.ReservationEnterResponse> getReservationEnterInfo(
+          @AuthenticationPrincipal JwtAuthentication auth,
+          @RequestParam Long reservationSeq
+    ) {
+        UserReservationInfoDTO.ReservationEnterResponse response = consultantService.getReservationEnterInfo(auth.getSeq(), reservationSeq);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
 

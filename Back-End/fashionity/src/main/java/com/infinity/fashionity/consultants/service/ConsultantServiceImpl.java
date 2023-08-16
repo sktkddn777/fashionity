@@ -12,10 +12,14 @@ import com.infinity.fashionity.global.exception.AccessDeniedException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.HashUtil;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.entity.MemberRoleEntity;
+import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
+import com.infinity.fashionity.members.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,6 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.infinity.fashionity.global.exception.ErrorCode.RESERVATION_NOT_FOUND;
 
 
 @Slf4j
@@ -306,7 +313,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         // 회원 검증
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         // 존재하는 리뷰인지 확인
         ReviewEntity review = reviewRepository.findById(reviewSeq)
@@ -338,7 +345,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         // 회원 검증
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         // 존재하는 리뷰인지 확인
         ReviewEntity review = reviewRepository.findById(reviewSeq)
@@ -409,7 +416,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         //멤버 존재하는지 확인
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         //컨설턴트 인지 확인
         ConsultantEntity consultant = consultantRepository.findByNickname(member.getNickname())
@@ -446,7 +453,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         //멤버 존재하는지 확인
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleSeq)
                 .orElseThrow(() ->new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
@@ -469,30 +476,75 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Override
     @Transactional
     public ConsultantReservationSaveDTO.Response saveReservation(ConsultantReservationSaveDTO.Request dto) {
+
+        /**
+         * 1. 유저가 비어있는 컨설턴트 스케줄에 맞춰 예약을 한다
+         * 2. 예약을 함과 동시에 사진을 넣는다.
+         * 3. 컨설턴트는 예약이 잡히면 본인이 컨설팅 해줄 사진을 넣는다
+         *
+         * 이 순서 맞을까..? (맞다면 isConsultant 빼고해도 될듯?)
+         * 추가로 컨설턴트 이미지, 유저 이미지를 분리해야할거 같아 ReservationEntity에서 이미지를 2개로 나누었다.
+         */
+
         Long memberSeq = dto.getMemberSeq();
 
-        //입력값 검증
+        // 입력값 검증
+        // 퍼스널 컬러는 없을 수도 있으니까 제외!
         if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
-        dto.getGender() == null || dto.getHeight() == null || dto.getWidth() == null) {
+        dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
-        //멤버 존재하는지 확인
+        // 멤버 존재하는지 확인
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
-        //컨설턴트 인지 확인
-        ConsultantEntity consultant = consultantRepository.findByNickname(member.getNickname())
+        // 컨설턴트 존재하는지 확인
+        ConsultantEntity consultant = consultantRepository.findByNickname(dto.getConsultantNickname())
                 .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
 
-        // 예약에 변경한 정보가 member 테이블에 저장된 값과 다르면 업데이트 시켜야한다
-        if(member.getAge() != dto.getAge() || member.getGender() != dto.getGender() ||
-                member.getHeight() !=  dto.getHeight() || member.getPersonalcolor() != dto.getPersonalColor()){
-            member.updateReservationInfo(dto);
+        // 유저가 입력한 정보 기반으로 업데이트 진행
+        member.updateReservationInfo(dto);
+
+        boolean isConsultant = false;
+        for (MemberRoleEntity role : member.getMemberRoles()) {
+            if (role.getMemberRole().equals(MemberRole.CONSULTANT))
+                isConsultant = true;
         }
 
+        // 사진이랑 세부정보는 예약에 저장
+        // 예약 save 하는 로직
+        ReservationEntity.ReservationEntityBuilder reservationEntityBuilder = ReservationEntity.builder()
+                .schedule(null) // TODO: 컨설턴트의 어느 스케줄을 썼는지 어떻게 보내줄까
+                .member(member)
+                .date(dto.getAvailableDateTime())
+                .detail(dto.getDetail())
+                .roomNumber(HashUtil.makeRoomNumber());
 
+        if (isConsultant) {
+            // TODO: consultantImages에 사진을 넣어라
+        } else {
+            // TODO: memberImages에 사진을 넣어라
+        }
         return null;
+    }
+
+    @Override
+    public UserReservationInfoDTO.ReservationEnterResponse getReservationEnterInfo(Long memberSeq, Long reservationSeq) {
+
+        memberRepository.findById(memberSeq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq).orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
+
+        List<String> consultantImages = reservation.getConsultantImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
+        List<String> memberImages = reservation.getMemberImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
+
+        return UserReservationInfoDTO.ReservationEnterResponse.builder()
+                .roomNumber(reservation.getRoomNumber())
+                .consultantNickname(reservation.getSchedule().getConsultant().getNickname()) // 와... 망해따..
+                .memberNickname(reservation.getMember().getNickname())
+                .consultantImages(consultantImages)
+                .memberImages(memberImages)
+                .build();
     }
 
 }

@@ -134,10 +134,10 @@ public class MemberEntity extends CUDEntity {
     }
 
     public void updateReservationInfo(ConsultantReservationSaveDTO.Request reservation){
-        this.weight = reservation.getWidth();
+        this.weight = reservation.getWeight();
         this.height = reservation.getHeight();
-        this.personalcolor = reservation.getPersonalColor();
+        if (reservation.getPersonalColor() != null)
+            this.personalcolor = reservation.getPersonalColor();
         this.gender = reservation.getGender();
-
     }
 }
