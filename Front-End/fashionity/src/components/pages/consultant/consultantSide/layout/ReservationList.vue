@@ -36,10 +36,12 @@ export default {
 }
 
 .reservation-item {
+  margin: 5px;
   display: flex;
   align-items: center;
   padding: 10px;
   border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
 img {
