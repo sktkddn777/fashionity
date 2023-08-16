@@ -52,7 +52,9 @@ export default {
       return star <= this.selectedStar ? "fa-star" : "fa-star-o";
     },
     submitReview() {
+      //이거는 선택한 별 만큰 점수 주는거!! => this.selectedStar
       console.log("줄 점수 : " + this.selectedStar);
+      //이거는 작성한 내용!! => this.reviewText
       console.log(this.reviewText);
       // 여기에 리뷰 작성 api 넣어줘!!!
       this.closeModal();

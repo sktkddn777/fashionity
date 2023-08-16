@@ -43,7 +43,7 @@
     <div class="row" style="font-size: 15px">담당 컨설턴트 : 푸바오</div>
   </div>
   <div class="col">
-    <button class="consultant-mylist-write-review">후기 작성</button>
+    <button class="consultant-mylist-write-review" @click="openModal">후기 작성</button>
   </div>
 </div>
 <div class="row align-items-center block">
@@ -77,8 +77,6 @@ export default {
   },
   data() {
     return {
-      userName: "태현",
-      roomId: "kth",
       showModal: false,
     };
   },
