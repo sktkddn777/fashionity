@@ -114,4 +114,6 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "from ConsultantEntity c " +
             "where c.nickname = :consultantNickname")
     Optional<ConsultantEntity> findByNickname(String consultantNickname) ;
+
+    Optional<ConsultantEntity> findByMemberSeq(Long MemberSeq);
 }
