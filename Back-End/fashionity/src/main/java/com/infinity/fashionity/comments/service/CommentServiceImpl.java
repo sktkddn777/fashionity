@@ -1,5 +1,8 @@
 package com.infinity.fashionity.comments.service;
 
+import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
+import com.infinity.fashionity.alarm.entity.AlarmType;
+import com.infinity.fashionity.alarm.service.AlarmService;
 import com.infinity.fashionity.comments.dto.*;
 import com.infinity.fashionity.comments.entity.*;
 import com.infinity.fashionity.global.exception.*;
@@ -32,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final CommentReportRepository reportRepository;
     private final CommentLikeRepository likeRepository;
+    private final AlarmService alarmService;
 
     @Override
     @Transactional(readOnly = true)
@@ -128,6 +132,15 @@ public class CommentServiceImpl implements CommentService {
 
         //영속화
         commentRepository.save(comment);
+
+        //alarm 보내기
+        alarmService.sendAlarm(AlarmSendDTO.Request.builder()
+                .ownerSeq(post.getMember().getSeq())
+                .publisherSeq(member.getSeq())
+                .commentSeq(comment.getSeq())
+                .type(AlarmType.COMMENT_POST)
+                .postSeq(post.getSeq())
+                .build());
 
         //Response 리턴
         return CommentSaveDTO.Response.builder()
@@ -244,7 +257,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
         //post가 존재하는지 확인
-        postRepository.findById(postSeq)
+        PostEntity post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         //comment가 존재하는지 확인
@@ -270,6 +283,13 @@ public class CommentServiceImpl implements CommentService {
                     .member(member)
                     .build());
             like = true;
+            alarmService.sendAlarm(AlarmSendDTO.Request.builder()
+                    .ownerSeq(post.getMember().getSeq())
+                    .publisherSeq(member.getSeq())
+                    .type(AlarmType.COMMENT_LIKE)
+                    .postSeq(post.getSeq())
+                    .commentSeq(comment.getSeq())
+                    .build());
         }
         return CommentLikeDTO.Response.builder()
                 .like(like)

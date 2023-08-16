@@ -16,12 +16,26 @@
       >
     </div>
     <div class="col col-lg-2 header-tab">
-      <router-link
+      <!-- <router-link
         to="/consultant"
+        style="text-decoration: none; color: #424242"
+        >Consultant</router-link
+      > -->
+      <router-link
+        v-if="isConsultant"
+        to="/consultant/rc"
+        style="text-decoration: none; color: #424242"
+        >Consultant</router-link
+      >
+
+      <router-link
+        v-else
+        to="/consultant/rm"
         style="text-decoration: none; color: #424242"
         >Consultant</router-link
       >
     </div>
+
     <div class="col col-lg-2 header-tab">
       <router-link to="/profile" style="text-decoration: none; color: #424242"
         >Mypage</router-link
@@ -30,7 +44,22 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    let isConsultant = false;
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      const roles =
+        this.$store.getters["memberStore/checkLoginUser"].memberRole;
+
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i] === "CONSULTANT") isConsultant = true;
+      }
+    }
+    return {
+      isConsultant: isConsultant,
+    };
+  },
+};
 </script>
 <style scoped>
 * {

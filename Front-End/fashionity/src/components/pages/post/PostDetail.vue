@@ -180,7 +180,7 @@
           ></the-comment>
         </div>
 
-        <div v-if="showCommentSubmit">
+        <div>
           <div class="post-detail-comment-submit">
             <input
               v-model="commentContent"
@@ -223,7 +223,6 @@ export default {
       commentCount: "",
       visibleComments: [],
       showMoreButton: false,
-      showCommentSubmit: true,
     };
   },
   watch: {
@@ -232,12 +231,16 @@ export default {
       if (this.comments.length > 2) {
         this.showMoreButton = true;
         this.visibleComments = this.comments.slice(0, 2);
-        this.showCommentSubmit = false;
       } else {
         this.showMoreButton = false;
         this.visibleComments = [...this.comments];
-        this.showCommentSubmit = true;
       }
+    },
+    seq: {
+      handler(newSeq) {
+        this.callDetailAPI(newSeq);
+      },
+      deep: true, // 객체의 내부 변경도 감지
     },
   },
   components: {
@@ -247,37 +250,39 @@ export default {
   computed: {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
   },
-  async mounted() {
-    let token = sessionStorage.getItem("token");
-
-    await axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
-      method: "GET",
-    }).then((data) => {
-      this.post = data.data.post;
-      console.log(this.post);
-      this.like = this.post.liked;
-      this.likeCount = this.post.likeCount;
-      this.commentCount = this.post.commentCount;
-
-      if (this.commentCount > 2) {
-        this.showMore = true;
-      }
-    });
-    this.callCommentListApi();
+  mounted() {
+    this.callDetailAPI(this.seq);
   },
 
   methods: {
+    callDetailAPI() {
+      let token = sessionStorage.getItem("token");
+
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
+        method: "GET",
+      }).then((data) => {
+        this.post = data.data.post;
+        console.log(this.post);
+        this.like = this.post.liked;
+        this.likeCount = this.post.likeCount;
+        this.commentCount = this.post.commentCount;
+
+        if (this.commentCount > 2) {
+          this.showMore = true;
+        }
+      });
+      this.callCommentListApi();
+    },
     showMoreComments() {
       this.visibleComments = [...this.comments];
       this.showMoreButton = false;
-      this.showCommentSubmit = true;
     },
     callCommentListApi() {
       let token = sessionStorage.getItem("token");

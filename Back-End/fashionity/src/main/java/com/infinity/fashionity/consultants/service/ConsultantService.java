@@ -10,7 +10,7 @@ public interface ConsultantService {
 
     // [공통] 컨설턴트 목록 조회
     @Transactional(readOnly = true)
-    ConsultantListDTO.Response getAllConsultants(Long memberSeq, ConsultantListDTO.Request dto);
+    ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto);
 
     // [공통] 컨설턴트 상세 정보 조회
     @Transactional(readOnly = true)
@@ -43,5 +43,10 @@ public interface ConsultantService {
     @Transactional
     UserReservationInfoDTO.Response getUserReservationDetail(Long memberSeq, Long reservationSeq, UserReservationInfoDTO.Request dto);
 
+    @Transactional
+    ScheduleSaveDTO.Response saveSchedule(ScheduleSaveDTO.Request dto);
+
+    @Transactional
+    ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq);
 }
 
