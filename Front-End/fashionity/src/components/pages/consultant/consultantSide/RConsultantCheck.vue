@@ -1,18 +1,26 @@
 <template>
-  <VCalendar
-    :attributes="attributes"
-    @dayclick="handleDateClick"
-    v-model="selectedDate"
-    style="width: 1000px"
-  />
+  <div class="container">
+    <VCalendar
+      :attributes="attributes"
+      @dayclick="handleDateClick"
+      v-model="selectedDate"
+      style="width: 100vh"
+      class="calendar"
+    />
+    <reservation-list-vue class="rlist" :reservations="reservationData" />
+  </div>
 </template>
 
 <script>
 import router from "@/router";
 import axios from "axios";
+import ReservationListVue from "./layout/ReservationList.vue";
 
 export default {
   name: "RConsultantCheck",
+  components: {
+    ReservationListVue,
+  },
   created() {
     const nickname = this.$store.getters["memberStore/checkLoginUser"].nickname;
     let token = sessionStorage.getItem("token");
@@ -23,12 +31,13 @@ export default {
       method: "GET",
     })
       .then(({ data }) => {
+        console.log(data);
         let reservationInfo = {
           color: "blue",
           dates: "",
           isComplete: false,
+          memberNickname: "",
         };
-        console.log("data :" + data.consultantReservationSummaries);
         for (let i = 0; i < data.consultantReservationSummaries.length; i++) {
           let attribute = {
             reservationSeq: "",
@@ -51,7 +60,9 @@ export default {
           attribute.dates = new Date(time[0], time[1] - 1, time[2]);
           attribute.reservationSeq =
             data.consultantReservationSummaries[i].reservationSeq;
-          reservationInfo.dates = time[3] + ":" + time[4];
+          reservationInfo.dates = `${time[1]}-${time[2]} ${time[3]}:00:00`;
+          reservationInfo.memberNickname =
+            data.consultantReservationSummaries[i].memberNickname;
 
           attribute.popover.label =
             data.consultantReservationSummaries[i].memberNickname +
@@ -78,18 +89,31 @@ export default {
   },
   methods: {
     handleDateClick(data) {
-      // Do something with the clicked date, like displaying details or performing an action
+      console.log(data);
+      this.reservationData = [];
+      this.selectedDate = data.date;
 
-      // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
-
-      if (data.attributes.length === 0) return;
-      const reservationSeq = data.attributes[0].reservationSeq;
-      router.push({
-        name: "RConsultantCheckDetail",
-        params: { value: reservationSeq },
-      });
+      for (let i = 0; i < data.attributes.length; i++) {
+        this.reservationData.push({
+          id: data.attributes[i].reservationSeq,
+          time: data.attributes[i].customData.dates,
+          profileImage: "@/assets/img/hyeonwook.jpg",
+        });
+      }
     },
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.container {
+  display: flex;
+}
+
+.calendar {
+  flex: 2;
+}
+
+.rlist {
+  flex: 1;
+}
+</style>
