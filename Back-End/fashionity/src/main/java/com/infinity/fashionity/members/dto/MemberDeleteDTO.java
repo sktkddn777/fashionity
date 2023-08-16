@@ -1,4 +1,4 @@
-package com.infinity.fashionity.posts.dto;
+package com.infinity.fashionity.members.dto;
 
 import lombok.*;
 

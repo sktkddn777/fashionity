@@ -1,6 +1,7 @@
 package com.infinity.fashionity.global.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,6 +19,7 @@ abstract public class CUDEntity extends CEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Setter
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 }

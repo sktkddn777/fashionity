@@ -1,11 +1,8 @@
 package com.infinity.fashionity.members.service;
 
-import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
-import com.infinity.fashionity.global.exception.ErrorCode;
-import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.utils.RegexUtil;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
@@ -19,7 +16,7 @@ import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 
-import com.infinity.fashionity.posts.dto.MemberDeleteDTO;
+import com.infinity.fashionity.members.dto.MemberDeleteDTO;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.entity.PostImageEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
@@ -33,6 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -205,7 +204,6 @@ public class MemberServiceImpl implements MemberService {
         else{
             member.updateProfileImage(null);
         }
-
         member.updateProfile(profile);
 
         return ProfileDTO.Response.builder()
@@ -286,16 +284,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDeleteDTO.Response deleteMember(Long seq){
+    @Transactional
+    public MemberDeleteDTO.Response deleteMember(Long seq, HttpSession session){
+
         MemberEntity member = memberRepository.findBySeq(seq);
+        member.setDeletedAt(LocalDateTime.now());
 
-        log.info("================으앙1==================");
-        log.info("member {}", member);
-        memberRepository.delete(member);
-
-        log.info("================으앙2==================");
-        log.info("member {}", memberRepository.findBySeq(seq));
-
+        session.invalidate();
         return MemberDeleteDTO.Response.builder()
                 .success(true)
                 .build();
