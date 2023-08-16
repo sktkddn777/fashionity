@@ -221,7 +221,7 @@ export default {
           console.log(e);
           console.log(e.response);
           console.log(e.response.status);
-          if (e.response.status === 404) {
+          if (e.response.status !== 200) {
             this.notFound = true;
           }
         });

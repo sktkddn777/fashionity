@@ -75,7 +75,7 @@
                     /></router-link>
                   </div>
                   <div v-else class="row">
-                    <router-link to="/profile" class="link">
+                    <router-link :to="profileLink">
                       <img class="profile" :src="getProfileUrl()"
                     /></router-link>
                   </div>
@@ -99,6 +99,15 @@ export default {
   computed: {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      this.myNickname =
+        this.$store.getters["memberStore/checkLoginUser"].nickname;
+    }
   },
   data() {
     return {

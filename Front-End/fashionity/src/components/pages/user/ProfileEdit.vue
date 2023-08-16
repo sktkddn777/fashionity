@@ -5,7 +5,7 @@
     <div class="container" style="flex-direction: column">
       <div class="edit-info row" style="justify-content: center" align="left">
         <div class="row">
-          <form v-on:submit.prevent="editProfile">
+          <form v-on:submit.prevent>
             <div>
               <div
                 v-if="!displayProfileImageUpload"
@@ -191,7 +191,18 @@ export default {
       console.log("파일임당", file);
     },
     navigateToProfile() {
-      this.$router.push(`/profile/${this.nickname}/edit`);
+      console.log(this.nickname);
+      this.$router.push(`/profile/${this.nickname}`);
+    },
+    async urlToFile(profileUrl) {
+      if (profileUrl !== null) {
+        const response = await fetch(profileUrl);
+        const data = await response.blob();
+        const ext = profileUrl.split(".").pop();
+        const filename = profileUrl.split("/").pop();
+        const metadata = { type: `image/${ext}` };
+        return new File([data], filename, metadata);
+      }
     },
     async editProfile() {
       console.log("fileList = ", this.fileList);
@@ -208,12 +219,23 @@ export default {
       formData.append("nickname", updatedProfile.nickname);
       formData.append("profileIntro", updatedProfile.profileIntro);
       // 이미지 업로드 처리
-      for (let i = 0; i < updatedProfile.images.length; i++) {
-        console.log(
-          "포문 안에 있는 postData images 입니다 : " + updatedProfile.images[i]
-        );
-        formData.append("profileImage", updatedProfile.images[i]);
+      if (updatedProfile.images.length >= 1) {
+        for (let i = 0; i < updatedProfile.images.length; i++) {
+          console.log(
+            "포문 안에 있는 postData images 입니다 : " +
+              updatedProfile.images[i]
+          );
+          formData.append("profileImage", updatedProfile.images[i]);
+        }
       }
+      // else {
+      //   formData.append("profileImage", this.urlToFile(this.profileUrl));
+      // }
+
+      for (let { key, value } of (formData.keys(), formData.values())) {
+        console.log({ key, value });
+      }
+
       let token = sessionStorage.getItem("token");
       await axios({
         method: "patch",
