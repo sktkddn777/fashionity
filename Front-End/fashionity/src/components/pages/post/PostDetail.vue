@@ -167,32 +167,37 @@
         <div class="post-detail-comment-cnt">
           <span>댓글&nbsp;</span>
           <span class="fw-bold">{{ commentCount }}</span>
-          <span>개</span>
+          <span>개</span>&nbsp;
+          <span v-if="showMoreButton">
+            <a @click="showMoreComments">더보기</a>
+          </span>
         </div>
 
-        <div v-for="(comment, index) in comments" :key="index">
+        <div v-for="comment in visibleComments" :key="comment.comment_seq">
           <the-comment
             :comment="comment"
             @commentDeleted="updateCommentInfo"
           ></the-comment>
         </div>
 
-        <div class="post-detail-comment-submit">
-          <input
-            v-model="commentContent"
-            class="form-control"
-            type="text"
-            placeholder="댓글을 입력해주세요."
-            @keydown.enter="submitComment"
-          />
-          <button
-            type="button"
-            class="active-button"
-            style="min-width: 70px"
-            @click="submitComment"
-          >
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
-          </button>
+        <div v-if="showCommentSubmit">
+          <div class="post-detail-comment-submit">
+            <input
+              v-model="commentContent"
+              class="form-control"
+              type="text"
+              placeholder="댓글을 입력해주세요."
+              @keydown.enter="submitComment"
+            />
+            <button
+              type="button"
+              class="active-button"
+              style="min-width: 70px"
+              @click="submitComment"
+            >
+              <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="col"></div>
@@ -207,9 +212,6 @@ import ReportModal from "./ReportModal.vue";
 const memberStore = "memberStore";
 export default {
   props: ["seq"],
-  computed: {
-    ...mapState(memberStore, ["isLogin", "loginUser"]),
-  },
   data() {
     return {
       post: {},
@@ -219,19 +221,35 @@ export default {
       likeCount: "",
       commentContent: "",
       commentCount: "",
+      visibleComments: [],
+      showMoreButton: false,
+      showCommentSubmit: true,
     };
   },
   watch: {
     comments(newVal) {
       this.comments = newVal;
+      if (this.comments.length > 2) {
+        this.showMoreButton = true;
+        this.visibleComments = this.comments.slice(0, 2);
+        this.showCommentSubmit = false;
+      } else {
+        this.showMoreButton = false;
+        this.visibleComments = [...this.comments];
+        this.showCommentSubmit = true;
+      }
     },
   },
   components: {
     TheComment,
     ReportModal,
   },
+  computed: {
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
+  },
   async mounted() {
     let token = sessionStorage.getItem("token");
+
     await axios({
       headers:
         token === null
@@ -240,17 +258,27 @@ export default {
               Authorization: `Bearer ${token}`,
             },
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
-      method: "get",
+      method: "GET",
     }).then((data) => {
       this.post = data.data.post;
       console.log(this.post);
       this.like = this.post.liked;
       this.likeCount = this.post.likeCount;
       this.commentCount = this.post.commentCount;
+
+      if (this.commentCount > 2) {
+        this.showMore = true;
+      }
     });
     this.callCommentListApi();
   },
+
   methods: {
+    showMoreComments() {
+      this.visibleComments = [...this.comments];
+      this.showMoreButton = false;
+      this.showCommentSubmit = true;
+    },
     callCommentListApi() {
       let token = sessionStorage.getItem("token");
       axios({
@@ -261,7 +289,7 @@ export default {
                 Authorization: `Bearer ${token}`,
               },
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
-        method: "get",
+        method: "GET",
       }).then((data) => {
         console.log(data.data.comments);
         this.comments = [...data.data.comments];
@@ -470,6 +498,7 @@ export default {
   color: grey;
   text-align: left;
   margin-bottom: 10px;
+  gap: 10px;
 }
 .post-detail-comment-content {
   display: flex;

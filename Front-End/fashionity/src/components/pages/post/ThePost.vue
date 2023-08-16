@@ -157,9 +157,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.profile {
-}
 .post-detail-font {
   font-size: 12px;
   font-weight: 800;
@@ -183,8 +180,6 @@ export default {
   justify-content: right;
   padding-right: 10px;
   align-items: center;
-}
-.post-detail-like-icon {
 }
 .post-detail-like > span {
   font-size: 12px;
