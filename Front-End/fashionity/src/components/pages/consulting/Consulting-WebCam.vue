@@ -53,24 +53,24 @@
       </div>
       <!-- 비디오 -->
       <div id="video-container" class="video-container" style="display: flex">
-        <div class="user-video">
+        <div class="user-video-publisher">
           <user-video
             :stream-manager="publisher"
             @click="updateMainVideoStreamManager(publisher)"
           />
           <!-- 일반 유저의 비디오에 띄어질 퍼스널컬러 이미지 -->
-          <div v-if="userData.memberRole[1] !== 'CONSALTANT'">
+          <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
             <img
               :src="require(`@/assets/img/${selectedImage_personal}`)"
               alt="Selected Image"
               v-if="selectedImageVisible_personal"
               @click="showImage_personal(null)"
-              class="personal_color"
+              class="personal_color_publisher"
             />
           </div>
         </div>
         <!-- 컨설턴트가 유저에게 띄우는 퍼스널컬러 이미지 -->
-        <div class="user-video">
+        <div class="user-video-subscribers">
           <user-video
             v-for="sub in subscribers"
             :key="sub.stream.connection.connectionId"
@@ -78,13 +78,13 @@
             @click="updateMainVideoStreamManager(sub)"
             class="user-video-container"
           />
-          <div v-if="userData.memberRole[1] === 'CONSALTANT'">
+          <div v-if="userData.memberRole[1] === 'CONSULTANT'">
             <img
               :src="require(`@/assets/img/${selectedImage_personal}`)"
               alt="Selected Image"
               v-if="selectedImageVisible_personal"
               @click="showImage_personal(null)"
-              class="personal_color"
+              class="personal_color_subscribers"
             />
           </div>
         </div>
@@ -133,12 +133,11 @@
       </div>
       <!-- 일반유저가 보는 이미지 화면 -->
       <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
-        여기에 일반유저가 볼 수 있는 이미지!
         <img
           :src="require(`@/assets/img/${selectedImage_image}`)"
           alt="Selected Image"
           v-if="selectedImageVisible_image"
-          class="image"
+          class="image_for_user"
         />
       </div>
     </div>
@@ -162,7 +161,16 @@
   max-height: 25vh;
 }
 
-.user-video {
+.image_for_user {
+  max-width: 40vh;
+  max-height: 40vh;
+}
+
+.user-video-subscribers {
+  position: relative;
+}
+
+.user-video-publisher {
   position: relative;
 }
 
@@ -173,7 +181,15 @@
 }
 
 /* 퍼스널 컬러 이미지를 비디오의 가운데에 놓기위한 style */
-.personal_color {
+.personal_color_publisher {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 퍼스널 컬러 이미지를 비디오의 가운데에 놓기위한 style */
+.personal_color_subscribers {
   position: absolute;
   top: 50%;
   left: 50%;
