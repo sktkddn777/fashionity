@@ -81,10 +81,10 @@
                 </button>
                 <button
                   v-if="nickname === myNickname"
-                  class="inactive-button"
+                  class="active-button"
                   style="margin-left: 0.5rem"
+                  @click="routeToEdit"
                 >
-                  <router-link :to="`/profile/${nickname}/edit`"></router-link>
                   프로필 수정
                 </button>
               </div>
@@ -215,10 +215,13 @@ export default {
     toLiked() {
       this.$router.push({ name: "likedPosts" });
     },
+    routeToEdit() {
+      this.$router.push(`/profile/${this.nickname}/edit`);
+    },
     getProfile() {
       let token = sessionStorage.getItem("token");
       const nickname = this.$route.params.nickname;
-      console.log("token = " + token);
+      console.log("const nickname = " + nickname);
       axios({
         method: "get",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/${nickname}`,
@@ -235,6 +238,7 @@ export default {
           this.myProfile = data.myProfile;
           this.profileIntro = data.profileIntro;
           this.profileUrl = data.profileUrl;
+          console.log(data);
         })
         .catch((e) => {
           console.log(e);

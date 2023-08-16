@@ -73,7 +73,11 @@
                 >
                   팔로우
                 </button>
-                <button v-if = "nickname === myNickname" class="inactive-button" style="margin-left: 0.5rem">
+                <button
+                  v-if="nickname === myNickname"
+                  class="inactive-button"
+                  style="margin-left: 0.5rem"
+                >
                   <router-link :to="`/profile/${nickname}/edit`"></router-link>
                   프로필 수정
                 </button>
@@ -140,8 +144,7 @@
       </div>
 
       <!-- 게시글 영역 -->
-      <liked-post-list/>
-
+      <liked-post-list />
     </div>
   </div>
 </template>
@@ -154,9 +157,7 @@ import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
 import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
-import LikedPostList from "@/components/pages/user/LikedPostList.vue"
-
-let token = sessionStorage.getItem("token");
+import LikedPostList from "@/components/pages/user/LikedPostList.vue";
 
 export default {
   name: "ProfilePage",
@@ -164,7 +165,7 @@ export default {
     TheNavBarMypage,
     FollowersList,
     FollowingsList,
-    LikedPostList
+    LikedPostList,
   },
   // setup() {
   //   // const router = useRouter();
@@ -199,7 +200,7 @@ export default {
       profileUrl: "",
       followersPop: false,
       followingsPop: false,
-      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
   created() {
@@ -210,6 +211,7 @@ export default {
       this.$router.push({ name: "likedPosts" });
     },
     getProfile() {
+      let token = sessionStorage.getItem("token");
       const nickname = this.$route.params.nickname;
       axios({
         method: "get",
@@ -229,9 +231,16 @@ export default {
         this.profileUrl = data.profileUrl;
 
         const followbtn = document.querySelector("#followbtn");
-        if (this.isFollowed === true) {followbtn.innerText = "팔로잉";} 
-        else if (this.nickname === this.$store.getters["memberStore/checkLoginUser"].nickname) {followbtn.style.display = "none"}
-        else {followbtn.innerText = "팔로우";}
+        if (this.isFollowed === true) {
+          followbtn.innerText = "팔로잉";
+        } else if (
+          this.nickname ===
+          this.$store.getters["memberStore/checkLoginUser"].nickname
+        ) {
+          followbtn.style.display = "none";
+        } else {
+          followbtn.innerText = "팔로우";
+        }
       });
     },
     async toggleFollow() {
@@ -251,6 +260,7 @@ export default {
       }
     },
     async followAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "post",
@@ -264,6 +274,7 @@ export default {
         .catch((e) => console.log(e));
     },
     async unfollowAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "delete",
