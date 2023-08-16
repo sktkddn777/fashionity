@@ -50,7 +50,19 @@ export default {
     }
     return {
       isConsultant: isConsultant,
+      myNickname: null,
     };
+  },
+  computed: {
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      this.myNickname =
+          this.$store.getters["memberStore/checkLoginUser"].nickname;
+    }
   },
 };
 </script>

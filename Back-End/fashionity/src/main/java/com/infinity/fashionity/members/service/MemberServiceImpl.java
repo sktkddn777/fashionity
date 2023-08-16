@@ -1,6 +1,5 @@
 package com.infinity.fashionity.members.service;
 
-import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
@@ -19,6 +18,7 @@ import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 
+import com.infinity.fashionity.members.dto.MemberDeleteDTO;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.entity.PostImageEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
@@ -32,6 +32,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +68,8 @@ public class MemberServiceImpl implements MemberService {
                 .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .profileIntro(member.getProfileIntro())
+                .id(member.getId())
+                .email(member.getEmail())
                 .memberRole(roles)
                 .build();
     }
@@ -206,7 +210,6 @@ public class MemberServiceImpl implements MemberService {
         else{
             member.updateProfileImage(null);
         }
-
         member.updateProfile(profile);
 
         return ProfileDTO.Response.builder()
@@ -284,5 +287,18 @@ public class MemberServiceImpl implements MemberService {
         return MemberFollowDTO.FollowerResponse.builder()
                 .followers(followerList)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public MemberDeleteDTO.Response deleteMember(Long seq){
+
+        MemberEntity member = memberRepository.findBySeq(seq);
+        member.setDeletedAt(LocalDateTime.now());
+
+        return MemberDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+
     }
 }

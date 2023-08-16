@@ -24,6 +24,8 @@ import store from "@/store";
 import ConsultingPage from "../components/pages/consulting/Consulting-WebCam.vue";
 import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
+import ProfileEdit from "@/components/pages/user/ProfileEdit";
+import ProfileLiked from "@/components/pages/user/ProfileLiked";
 
 import RConsultantMain from "../components/pages/consultant/consultantSide/RConsultantMain";
 import ConsultantVue from "../components/pages/consultant/Consultant";
@@ -81,9 +83,15 @@ const router = createRouter({
           component: ProfilePage,
         },
         {
-          path: "/liked",
-          name: "likedList",
-          // component: ,
+          path: ":nickname/liked",
+          name: "profileLiked",
+          component: ProfileLiked,
+        },
+        {
+          path: ":nickname/edit",
+          name: "profileEdit",
+          beforeEnter: onlyAuthUser,
+          component: ProfileEdit,
         },
       ],
     },

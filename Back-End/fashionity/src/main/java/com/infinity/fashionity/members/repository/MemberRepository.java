@@ -21,6 +21,11 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     @Query("select m from MemberEntity m join fetch m.memberRoles where m.email = :email")
     MemberEntity findByEmailWithRole(String email);
+
+    @Query("select m.seq from MemberEntity m where m.nickname = :nickname ")
+    Long findSeqByNickname(String nickname);
+
+    MemberEntity findBySeq(Long seq);
 }
 
 
