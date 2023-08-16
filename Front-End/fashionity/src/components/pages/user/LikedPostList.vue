@@ -20,7 +20,7 @@
 import MyPost from "@/components/pages/user/MyPost.vue";
 import axios from "axios";
 
-let token = sessionStorage.getItem("token");
+
 
 export default {
   data() {
@@ -49,8 +49,9 @@ export default {
     // 스크롤 이벤트 리스너 추가
     window.addEventListener("scroll", this.handleScroll);
     axios({
+      
       url: `${process.env.VUE_APP_API_URL}/api/v1/members/${this.$route.params.nickname}/liked?page=${this.page}`,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       method: "GET",
     })
       .then(({ data }) => {
@@ -84,6 +85,8 @@ export default {
       this.loadNextPage();
     },
     async loadNextPage() {
+      let token = sessionStorage.getItem("token");
+
       if (this.loadingNextPage) return;
       this.loadingNextPage = true;
       axios({

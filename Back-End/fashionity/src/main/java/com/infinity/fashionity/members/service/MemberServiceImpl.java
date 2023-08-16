@@ -207,9 +207,6 @@ public class MemberServiceImpl implements MemberService {
             ImageDTO savedImageInfo = imageInfos.get(0);
             member.updateProfileImage(savedImageInfo);
         }
-        else{
-            member.updateProfileImage(null);
-        }
         member.updateProfile(profile);
 
         return ProfileDTO.Response.builder()
