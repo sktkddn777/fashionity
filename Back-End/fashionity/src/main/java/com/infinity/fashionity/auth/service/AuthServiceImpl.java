@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.*;
@@ -63,10 +65,16 @@ public class AuthServiceImpl implements AuthService{
         String refreshToken = jwtProvider.createRefreshToken();
         // TODO: redis 에 저장
 
+        List<MemberRole> roles = new ArrayList<>();
+        MemberEntity byEmailWithRole = memberRepository.findByEmailWithRole(member.getEmail());
+        for (MemberRoleEntity mr : byEmailWithRole.getMemberRoles())
+            roles.add(mr.getMemberRole());
+
         return LoginDTO.Response.builder()
                 .memberSeq(member.getSeq())
                 .profileUri(member.getProfileUrl())
                 .nickname(member.getNickname())
+                .memberRole(roles)
                 .accessToken(jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles()))
                 .refreshToken(refreshToken)
                 .build();

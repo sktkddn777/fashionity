@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="container">
+  <div class="container-fluid">
     <!-- 이용 예정 예약 -->
     <div class="row justify-content-center block">
       <div class="col-4" style="font-weight: bold">이용 예정</div>
@@ -84,7 +84,7 @@ export default {
         roomId: this.roomId,
       };
       this.updateMeetingInfo(meetingInfo);
-      router.push({ name: "ConsultingPage" });
+      router.push({ name: "Consulting-WebCam-View" });
     },
   },
 };

@@ -103,10 +103,9 @@ public class MemberController {
 
     @PutMapping("/delete")
     public ResponseEntity<MemberDeleteDTO.Response> deleteMember(
-            @AuthenticationPrincipal JwtAuthentication auth,
-            HttpSession session
+            @AuthenticationPrincipal JwtAuthentication auth
     ){
-        MemberDeleteDTO.Response response = memberService.deleteMember(auth.getSeq(),session);
+        MemberDeleteDTO.Response response = memberService.deleteMember(auth.getSeq());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

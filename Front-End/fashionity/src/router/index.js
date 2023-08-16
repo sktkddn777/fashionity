@@ -15,6 +15,7 @@ import ConsultantView from "@/components/pages/consultant/ConsultantView";
 import ConsultantReservationTime from "@/components/pages/consultant/ConsultantReservationTime";
 import ConsultantReservationForm from "@/components/pages/consultant/ConsultantReservationForm";
 import ConsultantMyList from "@/components/pages/consultant/ConsultantMyList";
+import ConsultantReservationSubmit from "@/components/pages/consultant/ConsultantReservationSubmit";
 import PostList from "../components/pages/post/PostList.vue";
 import PostDetail from "../components/pages/post/PostDetail.vue";
 import PostWrite from "../components/pages/post/PostWrite.vue";
@@ -25,6 +26,12 @@ import ConsultingView from "../views/Consulting-WebCam-View.vue";
 import ChattingPage from "../components/pages/consulting/TheChatting.vue";
 import ProfileEdit from "@/components/pages/user/ProfileEdit";
 import ProfileLiked from "@/components/pages/user/ProfileLiked";
+
+import RConsultantMain from "../components/pages/consultant/consultantSide/RConsultantMain";
+import ConsultantVue from "../components/pages/consultant/Consultant";
+import RConsultantCheck from "../components/pages/consultant/consultantSide/RConsultantCheck";
+import RConsultantCheckDetail from "../components/pages/consultant/consultantSide/RConsultantCheckDetail";
+import RConsultantSet from "../components/pages/consultant/consultantSide/RConsultantSet";
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -136,9 +143,10 @@ const router = createRouter({
           component: PostList,
         },
         {
-          path: "detail",
+          path: ":seq",
           name: "postDetail",
           component: PostDetail,
+          props: true,
         },
         {
           path: "write",
@@ -146,7 +154,7 @@ const router = createRouter({
           component: PostWrite,
         },
         {
-          path: "modify",
+          path: ":seq/modify",
           name: "postModify",
           component: PostModify,
         },
@@ -176,6 +184,34 @@ const router = createRouter({
       children: [
         {
           path: "",
+          name: "ConsultantVue",
+          component: ConsultantVue,
+        },
+        {
+          path: "rc",
+          name: "RConsultantMain",
+          component: RConsultantMain,
+          children: [
+            {
+              path: "",
+              name: "RConsultantCheck",
+              component: RConsultantCheck,
+            },
+            {
+              path: "set",
+              name: "RConsultantSet",
+              component: RConsultantSet,
+            },
+            {
+              path: "/detail/:value",
+              name: "RConsultantCheckDetail",
+              component: RConsultantCheckDetail,
+              props: true,
+            },
+          ],
+        },
+        {
+          path: "rm",
           name: "consultantview",
           component: ConsultantList,
         },
@@ -198,6 +234,11 @@ const router = createRouter({
               path: "detail",
               name: "consultantDetail",
               component: ConsultantReservationForm,
+            },
+            {
+              path: "confirm",
+              name: "sumbit",
+              component: ConsultantReservationSubmit,
             },
           ],
         },

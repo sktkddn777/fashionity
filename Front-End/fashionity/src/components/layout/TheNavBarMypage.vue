@@ -5,6 +5,7 @@
       margin-bottom: 30px;
       border-style: solid;
       border-width: 1px;
+      margin-top: -20px;
       border-color: white white #bdbdbd white;
     "
   >
@@ -15,7 +16,15 @@
     </div>
     <div class="col col-lg-2 header-tab">
       <router-link
-        to="/consultant"
+        v-if="isConsultant"
+        to="/consultant/rc"
+        style="text-decoration: none; color: #424242"
+        >Consultant</router-link
+      >
+
+      <router-link
+        v-else
+        to="/consultant/rm"
         style="text-decoration: none; color: #424242"
         >Consultant</router-link
       >
@@ -30,7 +39,17 @@
 <script>
 export default {
   data() {
+    let isConsultant = false;
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      const roles =
+        this.$store.getters["memberStore/checkLoginUser"].memberRole;
+
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i] === "CONSULTANT") isConsultant = true;
+      }
+    }
     return {
+      isConsultant: isConsultant,
       myNickname: null,
     };
   },
@@ -40,8 +59,10 @@ export default {
     },
   },
   created() {
-    this.myNickname =
-      this.$store.getters["memberStore/checkLoginUser"].nickname;
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      this.myNickname =
+          this.$store.getters["memberStore/checkLoginUser"].nickname;
+    }
   },
 };
 </script>

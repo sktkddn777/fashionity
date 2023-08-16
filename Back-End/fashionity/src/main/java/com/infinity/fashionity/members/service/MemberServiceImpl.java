@@ -9,8 +9,10 @@ import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.image.dto.ImageDeleteDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
 import com.infinity.fashionity.image.service.ImageService;
+import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.dto.*;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.exception.CustomValidationException;
 import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
@@ -54,15 +56,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ProfileDTO.MyProfileResponse getMyProfileInfo(Long seq) {
-        log.info("getMyProfileInfo start");
+
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
-        log.info("MEMBER = " + member.toString());
+
+        List<MemberRole> roles = new ArrayList<>();
+        MemberEntity byEmailWithRole = memberRepository.findByEmailWithRole(member.getEmail());
+        for (MemberRoleEntity mr : byEmailWithRole.getMemberRoles())
+            roles.add(mr.getMemberRole());
+
         return ProfileDTO.MyProfileResponse.builder()
                 .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .profileIntro(member.getProfileIntro())
                 .id(member.getId())
                 .email(member.getEmail())
+                .memberRole(roles)
                 .build();
     }
 
@@ -166,9 +174,7 @@ public class MemberServiceImpl implements MemberService {
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
-        log.info(profile.toString());
-        log.info(profile.getNickname());
-        log.info("boolean = " + RegexUtil.checkNicknameRegex(profile.getNickname()));
+
         //닉네임 유효성 검사
         boolean blank = StringUtils.isBlank(profile.getNickname());
         if (StringUtils.isBlank(profile.getNickname()) || !RegexUtil.checkNicknameRegex(profile.getNickname()))
@@ -285,12 +291,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberDeleteDTO.Response deleteMember(Long seq, HttpSession session){
+    public MemberDeleteDTO.Response deleteMember(Long seq){
 
         MemberEntity member = memberRepository.findBySeq(seq);
         member.setDeletedAt(LocalDateTime.now());
 
-        session.invalidate();
         return MemberDeleteDTO.Response.builder()
                 .success(true)
                 .build();

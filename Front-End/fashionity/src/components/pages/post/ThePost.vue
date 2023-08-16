@@ -69,14 +69,16 @@ export default {
   },
   methods: {
     cutText() {
-      const textContainer = document.querySelector(".post-font");
-
-      if (textContainer.scrollWidth > textContainer.clientWidth) {
-        while (textContainer.scrollWidth > textContainer.clientWidth) {
-          textContainer.textContent = textContainer.textContent.slice(0, -1);
+      const textContainers = document.querySelectorAll(".post-font");
+      for (var i = 0; i < textContainers.length; i++) {
+        const textContainer = textContainers[i];
+        if (textContainer.scrollWidth > textContainer.clientWidth) {
+          while (textContainer.scrollWidth > textContainer.clientWidth) {
+            textContainer.textContent = textContainer.textContent.slice(0, -1);
+          }
+          textContainer.textContent =
+            textContainer.textContent.slice(0, -3) + "...";
         }
-        textContainer.textContent =
-          textContainer.textContent.slice(0, -3) + "...";
       }
     },
     toggleLike() {
@@ -112,6 +114,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 #post_outer {
   border: 1px solid rgba(189, 189, 189, 0.3);
@@ -143,8 +146,8 @@ export default {
 }
 
 .post-font {
-  font-size: 11px;
-  color: #bdbdbd;
+  font-size: 14px;
+  color: rgba(66, 66, 66, 0.8);
   height: 45px;
   padding: 5px 15px;
   display: flex;
