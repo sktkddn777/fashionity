@@ -31,8 +31,6 @@
       </div>
     </div>
 
-    <!-- <div class="row" style="height: 30px"></div> -->
-
     <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div

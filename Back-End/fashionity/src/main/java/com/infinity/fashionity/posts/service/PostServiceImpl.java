@@ -240,8 +240,6 @@ public class PostServiceImpl implements PostService {
         //모두 영속화
         postHashtagRepository.saveAll(hashtagEntities);
 
-        System.out.println("서비스으으ㅡ으ㅡ으 : " + images.size());
-
         //먼저 이미지를 저장소에 저장
         ImageSaveDTO.Response savedImage = imageService.save(ImageSaveDTO.Request.builder()
                 .images(images)
@@ -249,7 +247,6 @@ public class PostServiceImpl implements PostService {
 
         // 이미지 정보를 DB에 저장
         List<ImageDTO> imageDTOList = savedImage.getImageInfos();
-        System.out.println("왜여기서는1개만들어가냐고 "+imageDTOList.size());
         for (int i = 0; i < imageDTOList.size(); i++) {
             PostImageEntity image = PostImageEntity.builder()
                     .url(imageDTOList.get(i).getFileUrl())
@@ -258,9 +255,6 @@ public class PostServiceImpl implements PostService {
                     .build();
             postImageRepository.save(image);
         }
-
-        System.out.println("서비스으으이미지디티오: " + imageDTOList.size());
-
         return PostSaveDTO.Response.builder()
                 .success(true)
                 .postSeq(post.getSeq())
@@ -473,11 +467,11 @@ public class PostServiceImpl implements PostService {
     public PostReportDTO.Response reportPost(PostReportDTO.Request dto) {
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
-        String type = dto.getType();
+        String category = dto.getCategory();
         String content = dto.getContent();
 
         // 입력값 검증
-        if (postSeq == null || memberSeq == null || StringUtils.isBlank(type)) {
+        if (postSeq == null || memberSeq == null || StringUtils.isBlank(category)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -504,7 +498,7 @@ public class PostServiceImpl implements PostService {
         PostReportEntity report = PostReportEntity.builder()
                 .post(post)
                 .member(member)
-                .category(type)
+                .category(category)
                 .content(content)
                 .build();
 

@@ -99,13 +99,19 @@ export default {
       }
     },
     async submitPost() {
-      const postData = {
-        images: this.fileList,
-        content: this.contentInput,
-        hashtag: this.tagList,
-      };
-      await this.callPostUpdateAPI(postData);
-      this.navigateToDetail();
+      if (this.fileList.length == 0) {
+        alert("이미지를 등록해주세요.");
+      } else if (!this.contentInput || this.contentInput.trim() === "") {
+        alert("내용을 입력해주세요.");
+      } else {
+        const postData = {
+          images: this.fileList,
+          content: this.contentInput,
+          hashtag: this.tagList,
+        };
+        await this.callPostUpdateAPI(postData);
+        this.navigateToDetail();
+      }
     },
     async callPostUpdateAPI(postData) {
       let postSeq = this.$route.params.seq;
@@ -132,6 +138,7 @@ export default {
       })
         .then((data) => {
           console.log("callPostUpdateAPI " + data.data.success);
+          alert("수정되었습니다.");
         })
         .catch(() => {
           alert("실패!");
@@ -139,7 +146,6 @@ export default {
     },
     updateImg(file) {
       this.fileList = file;
-      console.log("파일임당", file);
     },
     navigateToDetail() {
       const postSeq = this.$route.params.seq;
@@ -150,11 +156,6 @@ export default {
 </script>
 <style scoped>
 .profile {
-  height: 7vh;
-  border-radius: 100%;
-  object-fit: contain;
-}
-.post-detail-profile {
   height: 7vh;
   border-radius: 100%;
   object-fit: contain;
@@ -170,12 +171,6 @@ export default {
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-}
-.post-detail-image {
-  margin-bottom: 10px;
-}
-.content {
-  margin-top: 10px;
 }
 .post-detail-like {
   display: flex;

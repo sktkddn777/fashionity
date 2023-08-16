@@ -49,7 +49,7 @@ public class CommentEntity extends CUDEntity {
     @JoinColumn(name = "post_seq", nullable = false, updatable = false)
     private PostEntity post;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CommentLikeEntity> likes = new ArrayList<>();
 
