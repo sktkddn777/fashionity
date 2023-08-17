@@ -96,6 +96,13 @@ export default {
     this.connect();
     console.log("채팅 연결됨");
   },
+
+  mounted() {
+    this.scrollToBottom();
+  },
+  updated() {
+    this.scrollToBottom();
+  },
   methods: {
     // 소켓으로 메세지 전송
     sendMessage() {
@@ -110,7 +117,12 @@ export default {
 
     // 메세지가 많이 와서 스크롤이 생성될 때 항상 최신 메세지를 보여주도록
     scrollToBottom() {
-      this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
+      this.$nextTick(() => {
+        const messageList = this.$refs.messageList;
+        if (messageList) {
+          messageList.scrollTop = messageList.scrollHeight;
+        }
+      });
     },
 
     // 메세지 전송
@@ -148,9 +160,6 @@ export default {
             const receiveData = JSON.parse(res.body);
             if (receiveData.type == "message") {
               this.recvList.push(receiveData);
-              this.$nextTick(() => {
-                this.scrollToBottom();
-              });
             }
           });
         },

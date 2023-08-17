@@ -107,6 +107,7 @@ export default {
   },
   methods: {
     makePreview(blobData) {
+      console.log("프리뷰");
       for (let i = 0; i < this.$refs.files.files.length; i++) {
         console.log("안녕 난 for문이야");
         this.files = [

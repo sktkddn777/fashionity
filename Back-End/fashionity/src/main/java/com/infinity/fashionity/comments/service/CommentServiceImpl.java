@@ -284,7 +284,7 @@ public class CommentServiceImpl implements CommentService {
                     .build());
             like = true;
             alarmService.sendAlarm(AlarmSendDTO.Request.builder()
-                    .ownerSeq(post.getMember().getSeq())
+                    .ownerSeq(comment.getMember().getSeq())
                     .publisherSeq(member.getSeq())
                     .type(AlarmType.COMMENT_LIKE)
                     .postSeq(post.getSeq())

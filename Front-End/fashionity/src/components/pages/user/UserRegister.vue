@@ -45,8 +45,8 @@
           <v-checkbox
             @keyup="validate"
             v-model="checkbox"
-            :rules="[(v) => !!v || '이용약관에 동의해주세요']"
-            label="[필수] 만 14세 이상이며 모두 동의합니다."
+            :rules="[(v) => !!v || '로봇인가요?']"
+            label="[필수] 로봇이 아닙니다."
             required
           ></v-checkbox>
           <div class="d-flex flex-column">

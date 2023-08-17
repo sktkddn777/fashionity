@@ -49,6 +49,7 @@
             type="button"
             class="btn btn-outline-dark"
             style="min-width: 70px"
+            @click="navigateToDetail"
           >
             <span style="font-size: smaller">&nbsp;취소&nbsp;</span>
           </button>
