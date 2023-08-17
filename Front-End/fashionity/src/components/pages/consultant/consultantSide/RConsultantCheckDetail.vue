@@ -54,7 +54,7 @@
       <div>
         <h4 style="margin-top: 10px"><b>예약자가 등록한 이미지</b></h4>
         <div class="reservation-bottom">
-          <div class="image-list" v-if="memberImages.length > 1">
+          <div class="image-list" v-if="memberImages.length >= 1">
             <div
               class="image-item"
               v-for="(image, index) in memberImages"
@@ -235,6 +235,7 @@ export default {
         this.reservationDateTime = `${dateTime[0]}년 ${dateTime[1]}월 ${dateTime[2]}일 ${dateTime[3]}시`;
         this.memberImages = details.memberImages;
         this.consultantImages = details.consultantImages;
+        console.log("멤버 이미지들 : ", this.memberImages);
         console.log("컨설턴트 이미지들 : ", this.consultantImages);
       })
       .catch((error) => {
@@ -262,10 +263,13 @@ export default {
   methods: {
     startMeeting() {
       const sessionId = this.reservationSeq + 73576;
+      const imageList = [...this.memberImages, ...this.consultantImages];
       console.log("비밀 번호 : " + sessionId);
+      console.log(imageList);
+      console.log(this.memberImages[0].object);
       this.$router.push({
         name: "Consulting-WebCam-View",
-        query: { sessionId },
+        query: { sessionId, imageList },
       });
     },
     async submitPost() {

@@ -233,6 +233,7 @@ export default {
 
   props: {
     reservationSeq: null,
+    imageList: null,
   },
 
   data() {
@@ -290,6 +291,8 @@ export default {
     console.log("유저 닉네임 : " + this.userData.nickname);
     console.log("유저 권한 : " + this.userData.memberRole);
     console.log("유저 권한 : " + this.userData.memberRole[1]);
+    console.log("이미지 리스트");
+    console.log(this.imageList);
     this.joinSession();
     this.connect();
   },

@@ -110,19 +110,21 @@ export default {
       })
         .then((response) => {
           const reservations = response.data.userReservationSummaries;
-          for (let i = 0; i < reservations.length; i++) {
-            const givenDate = reservations[i].reservationDateTime;
-            const reservattionDate = new Date(
-              givenDate[0],
-              givenDate[1] - 1,
-              givenDate[2],
-              givenDate[3],
-              givenDate[4]
-            );
-            if (reservattionDate >= currentDate) {
-              this.reservationList_before.push(reservations[i]);
-            } else {
-              this.reservationList_after.push(reservations[i]);
+          if (reservations[0].reservationSeq !== null) {
+            for (let i = 0; i < reservations.length; i++) {
+              const givenDate = reservations[i].reservationDateTime;
+              const reservattionDate = new Date(
+                givenDate[0],
+                givenDate[1] - 1,
+                givenDate[2],
+                givenDate[3],
+                givenDate[4]
+              );
+              if (reservattionDate >= currentDate) {
+                this.reservationList_before.push(reservations[i]);
+              } else {
+                this.reservationList_after.push(reservations[i]);
+              }
             }
           }
         })
