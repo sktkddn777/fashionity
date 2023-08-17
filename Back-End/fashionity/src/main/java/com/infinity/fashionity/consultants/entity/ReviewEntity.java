@@ -15,7 +15,7 @@ import javax.validation.constraints.Min;
 
 @Entity
 @Table(name="reviews")
-@SQLDelete(sql = "UPDATE Reviews SET deleted_at = now() WHERE review_seq = ?")
+@SQLDelete(sql = "UPDATE reviews SET deleted_at = now() WHERE review_seq = ?")
 @Where(clause = "deleted_at is null")
 @Getter
 @Builder

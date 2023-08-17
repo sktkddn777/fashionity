@@ -1,18 +1,26 @@
 <template>
-  <VCalendar
-    :attributes="attributes"
-    @dayclick="handleDateClick"
-    v-model="selectedDate"
-    style="width: 1000px"
-  />
+  <div class="container">
+    <VCalendar
+      :attributes="attributes"
+      @dayclick="handleDateClick"
+      v-model="selectedDate"
+      style="width: 100vh"
+      class="calendar"
+    />
+    <reservation-list-vue class="rlist" :reservations="reservationData" />
+  </div>
 </template>
 
 <script>
 import router from "@/router";
 import axios from "axios";
+import ReservationListVue from "./layout/ReservationList.vue";
 
 export default {
   name: "RConsultantCheck",
+  components: {
+    ReservationListVue,
+  },
   created() {
     const nickname = this.$store.getters["memberStore/checkLoginUser"].nickname;
     let token = sessionStorage.getItem("token");
@@ -23,25 +31,21 @@ export default {
       method: "GET",
     })
       .then(({ data }) => {
+        console.log(data);
         let reservationInfo = {
           color: "blue",
           dates: "",
           isComplete: false,
+          memberNickname: "",
         };
-        console.log("data :" + data.consultantReservationSummaries);
         for (let i = 0; i < data.consultantReservationSummaries.length; i++) {
           let attribute = {
             reservationSeq: "",
-            // Attribute type definitions
-            content: "blue", // Boolean, String, Object
-            dot: true, // Boolean, String, Object
+            content: "blue",
+            dot: true,
 
             customData: null,
-            // We also need some dates to know where to display the attribute
-            // We use a single date here, but it could also be an array of dates,
-            //  a date range or a complex date pattern.
             dates: null,
-            // Think of `order` like `z-index`
             order: 0,
             popover: {
               label: "",
@@ -51,7 +55,9 @@ export default {
           attribute.dates = new Date(time[0], time[1] - 1, time[2]);
           attribute.reservationSeq =
             data.consultantReservationSummaries[i].reservationSeq;
-          reservationInfo.dates = time[3] + ":" + time[4];
+          reservationInfo.dates = `${time[1]}-${time[2]} ${time[3]}:00:00`;
+          reservationInfo.memberNickname =
+            data.consultantReservationSummaries[i].memberNickname;
 
           attribute.popover.label =
             data.consultantReservationSummaries[i].memberNickname +
@@ -78,18 +84,32 @@ export default {
   },
   methods: {
     handleDateClick(data) {
-      // Do something with the clicked date, like displaying details or performing an action
+      this.reservationData = [];
+      this.selectedDate = new Date(data.date);
 
-      // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
+      for (let i = 0; i < data.attributes.length; i++) {
+        this.reservationData.push({
+          id: data.attributes[i].reservationSeq,
+          time: `${this.selectedDate.getHours()}:00:00`,
+          profileImage: "@/assets/img/hyeonwook.jpg",
+        });
+      }
 
-      if (data.attributes.length === 0) return;
-      const reservationSeq = data.attributes[0].reservationSeq;
-      router.push({
-        name: "RConsultantCheckDetail",
-        params: { value: reservationSeq },
-      });
+      console.log(this.reservationData);
     },
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.container {
+  display: flex;
+}
+
+.calendar {
+  flex: 2;
+}
+
+.rlist {
+  flex: 1;
+}
+</style>

@@ -16,9 +16,7 @@ public class Image {
     @JsonAlias(value = "image_url")
     private String imageUrl;
 
-//    // 예약 아이디
-//    @JsonAlias(value = "reservation_seq")
-//    private Long reservationSeq;
-
-
+    // 예약 아이디
+    @JsonAlias(value = "reservation_seq")
+    private Long reservationSeq;
 }
