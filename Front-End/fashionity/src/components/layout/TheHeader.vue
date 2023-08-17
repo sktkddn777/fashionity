@@ -58,13 +58,6 @@
                     </router-link>
                   </div>
                 </div>
-                <div class="col">
-                  <font-awesome-icon
-                    :icon="['fas', 'video']"
-                    @click="meeting"
-                    style="color: #bdbdbd"
-                  />
-                </div>
                 <!-- 여기부터 알람 -->
                 <the-alarm></the-alarm>
 

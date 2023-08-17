@@ -64,14 +64,13 @@ public class PostController {
     }
 
     //게시글 수정
-    @PutMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostUpdateDTO.Response> updatePost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            PostUpdateDTO.Request dto) {
+            @RequestBody PostUpdateDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
-
         PostUpdateDTO.Response success = postService.updatePost(dto);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }

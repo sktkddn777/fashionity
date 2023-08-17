@@ -13,25 +13,28 @@
       style="display: flex; flex-direction: row; align-items: center"
     >
       <div class="profile-photo" style="margin-right: 1.2rem">
-        <img :src = "profileUrl" class="image-box" width="60" height="60" />
+        <img
+          :src="profileUrl || require('@/assets/img/unknown.png')"
+          class="image-box"
+          width="60"
+          height="60"
+        />
       </div>
       <div>{{ follower.nickname }}</div>
     </div>
     <button
-      v-if = "nickname !== myNickname"
+      v-if="nickname !== myNickname"
       id="followbtn"
       :class="isFollowed ? 'inactive-button' : 'active-button'"
       @click="toggleFollow()"
     >
-      {{ isFollowed ? '팔로잉' : '팔로우' }}
+      {{ isFollowed ? "팔로잉" : "팔로우" }}
     </button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-
-let token = sessionStorage.getItem("token");
 
 export default {
   props: ["follower"],
@@ -41,10 +44,10 @@ export default {
       nickname: this.follower.nickname,
       isFollowing: this.follower.isFollowing,
       isFollowed: this.follower.isFollowed, // 로그인한 유저가 팔로우하는지
-      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
-  
+
   methods: {
     async toggleFollow() {
       if (!this.isFollowed) {
@@ -54,22 +57,30 @@ export default {
       }
     },
     async followAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "post",
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed});
+      }).then((res) => {
+        this.success = res.data.success;
+        this.isFollowed = !this.isFollowed;
+      });
     },
     async unfollowAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "delete",
         url: `${process.env.VUE_APP_API_URL}/api/v1/follows`,
         headers: { Authorization: `Bearer ${token}` },
         data: body,
-      }).then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed});
+      }).then((res) => {
+        this.success = res.data.success;
+        this.isFollowed = !this.isFollowed;
+      });
     },
   },
 };
