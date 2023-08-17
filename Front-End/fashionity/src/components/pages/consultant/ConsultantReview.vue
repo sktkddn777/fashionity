@@ -8,7 +8,7 @@
             <font-awesome-icon :icon="['fas', 'star']" style="color: #424242" />
           </div>
           <div class="col-1">
-            <span>4.0/5.0</span>
+            <span>{{ this.review.reviewGrade }}/5.0</span>
           </div>
           <div class="col"></div>
         </div>
@@ -32,17 +32,32 @@
     <!-- 작성자 -->
     <div class="row">
       <div class="col" style="text-align: left">
-        <span>작성자 : rlaxogus123</span>
+        <span>작성자 : {{ this.review.memberNickName }}</span>
       </div>
 
-      <div class="col" style="text-align: right; color: #bdbdbd">
-        <span>23.07.31</span>
+      <div
+        v-if="this.review.updateaAt"
+        class="col"
+        style="text-align: right; color: #bdbdbd"
+      >
+        <span>{{ this.review.updateaAt }}</span>
+      </div>
+
+      <div v-else class="col" style="text-align: right; color: #bdbdbd">
+        <span>{{ this.review.createAt }}</span>
       </div>
     </div>
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {};
+  },
+  props: {
+    review: [],
+  },
+};
 </script>
 <style>
 #consultant-reservation {
