@@ -4,10 +4,8 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-3">
-        <button @click="buttonClick">NEXT</button>
-
-        <!-- <div>{{ this.scheduleList }}</div> -->
-        <!-- <div>{{ this.date }}</div> -->
+        <button v-if = "date" class = "active-button" style = "font-size:1rem" @click="buttonClick">다음</button>
+        <button v-else class = "inactive-button" style = "font-size:1rem">다음</button>
       </div>
     </div>
   </div>
@@ -40,7 +38,7 @@ export default {
 };
 </script>
 <style scoped>
-button {
+/* button {
   background: black;
   color: #fff;
   border: none;
@@ -77,5 +75,21 @@ button:hover:before,
 button:hover:after {
   width: 100%;
   transition: 800ms ease all;
+} */
+.active-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>

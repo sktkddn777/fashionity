@@ -5,7 +5,7 @@
   >
     <div class="row" style="height: 55vh; width: 80%">
       <!-- 오전 -->
-      <div class="row">오전</div>
+      <div class="row" align = "left"><h5><b>오전</b></h5></div>
       <div class="row d-flex">
         <div
           class="col-2 d-flex align-items-center justify-content-center"
@@ -34,8 +34,9 @@
           <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
+      <div style = "height:2rem"></div>
       <!-- 오후 -->
-      <div class="row">오후</div>
+      <div class="row" align = "left"><h5><b>오후</b></h5></div>
       <div class="row d-flex">
         <div
           class="col-2 d-flex align-items-center justify-content-center"
@@ -196,18 +197,27 @@ export default {
 </script>
 <style scoped>
 .time-block {
-  background-color: #3399ff;
+  border-radius: 4px;
+  background-color: #2190ff;
   height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   margin-right: 10px;
   width: 6vw;
+  color:white;
   /* padding-top: 10px; */
 }
 
 .time-non-block {
-  background-color: gray;
+  border-radius: 4px;
+  background-color: #cecece;
   height: 5vh;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 10px;
   width: 6vw;
   /* padding-top: 10px; */
