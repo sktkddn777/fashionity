@@ -12,11 +12,13 @@
         />
       </div>
       <div class="col"></div>
-      <div class="col-3">
-        <router-link to="/consultant/myreservation/list" class="link"
-          ><div>내 예약 바로가기</div></router-link
-        >
-      </div>
+      <button class="inactive-button">
+        <router-link to="/consultant/myreservation/list" class="link">
+          <div style ="color:white">
+          내 예약
+          </div>
+        </router-link>
+      </button>
     </div>
 
     <div class="row" style="height: 30px"></div>
@@ -212,5 +214,13 @@ export default {
 .highlighted {
   color: #424242;
   font-weight: bold; /* 원하는 스타일로 변경 */
+}
+.inactive-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>
