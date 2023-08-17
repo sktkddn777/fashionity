@@ -41,16 +41,11 @@ export default {
         for (let i = 0; i < data.consultantReservationSummaries.length; i++) {
           let attribute = {
             reservationSeq: "",
-            // Attribute type definitions
-            content: "blue", // Boolean, String, Object
-            dot: true, // Boolean, String, Object
+            content: "blue",
+            dot: true,
 
             customData: null,
-            // We also need some dates to know where to display the attribute
-            // We use a single date here, but it could also be an array of dates,
-            //  a date range or a complex date pattern.
             dates: null,
-            // Think of `order` like `z-index`
             order: 0,
             popover: {
               label: "",
@@ -89,17 +84,18 @@ export default {
   },
   methods: {
     handleDateClick(data) {
-      console.log(data);
       this.reservationData = [];
-      this.selectedDate = data.date;
+      this.selectedDate = new Date(data.date);
 
       for (let i = 0; i < data.attributes.length; i++) {
         this.reservationData.push({
           id: data.attributes[i].reservationSeq,
-          time: data.attributes[i].customData.dates,
+          time: `${this.selectedDate.getHours()}:00:00`,
           profileImage: "@/assets/img/hyeonwook.jpg",
         });
       }
+
+      console.log(this.reservationData);
     },
   },
 };
