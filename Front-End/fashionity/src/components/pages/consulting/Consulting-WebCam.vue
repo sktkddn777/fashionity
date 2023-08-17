@@ -38,7 +38,6 @@
     <!-- 세션 종료 버튼 -->
     <div id="session" v-if="session">
       <div id="session-header">
-        <h1 id="session-title">{{ mySessionId }}</h1>
         <input
           class="btn btn-large btn-danger"
           type="button"
@@ -133,7 +132,6 @@
       </div>
       <!-- 일반유저가 보는 이미지 화면 -->
       <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
-        여기야 여기!!
         <img
           :src="selectedImage_image"
           alt="Selected Image"
