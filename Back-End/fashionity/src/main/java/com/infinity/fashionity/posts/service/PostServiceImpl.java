@@ -389,13 +389,6 @@ public class PostServiceImpl implements PostService {
                 .images(imageInfos)
                 .build());
 
-        //db에서 정보들을 삭제
-        postImageRepository.deleteByPostSeq(postSeq);
-
-        //db에서 연결된 해시태그를 삭제
-        postHashtagRepository.deleteByPostSeq(postSeq);
-
-        //db에서 post관련 정보 삭제
         postRepository.delete(post);
 
         return PostDeleteDTO.Response.builder()
