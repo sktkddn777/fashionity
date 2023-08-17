@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET,"/api/v1/follows/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/alarms/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/members/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

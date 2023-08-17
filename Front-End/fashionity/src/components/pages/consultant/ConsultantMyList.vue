@@ -109,25 +109,32 @@ export default {
         method: "GET",
       })
         .then((response) => {
+          console.log("여기욤");
+          console.log(response);
           const reservations = response.data.userReservationSummaries;
-          for (let i = 0; i < reservations.length; i++) {
-            const givenDate = reservations[i].reservationDateTime;
-            const reservattionDate = new Date(
-              givenDate[0],
-              givenDate[1] - 1,
-              givenDate[2],
-              givenDate[3],
-              givenDate[4]
-            );
-            if (reservattionDate >= currentDate) {
-              this.reservationList_before.push(reservations[i]);
-            } else {
-              this.reservationList_after.push(reservations[i]);
+          if (reservations[0].reservationSeq != null) {
+            for (let i = 0; i < reservations.length; i++) {
+              const givenDate = reservations[i].reservationDateTime;
+              const reservattionDate = new Date(
+                givenDate[0],
+                givenDate[1] - 1,
+                givenDate[2],
+                givenDate[3],
+                givenDate[4]
+              );
+              if (reservattionDate >= currentDate) {
+                this.reservationList_before.push(reservations[i]);
+              } else {
+                this.reservationList_after.push(reservations[i]);
+              }
             }
           }
         })
         .catch((exception) => {
           let data = exception.response;
+          console.log("이거야!!!");
+          console.log(exception);
+          console.log(exception.response);
           if (data.status === 401) {
             //유효기간이 다 된 토큰이면 일단 보여주셈
             axios({
