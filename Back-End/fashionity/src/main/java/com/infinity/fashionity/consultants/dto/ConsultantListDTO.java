@@ -23,6 +23,8 @@ public class ConsultantListDTO {
         @Builder.Default
         private int size = 12;
 
+        @Builder.Default
+        private String nickname="";
     }
 
     @Builder

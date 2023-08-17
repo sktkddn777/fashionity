@@ -1,6 +1,5 @@
 package com.infinity.fashionity.members.service;
 
-import com.infinity.fashionity.consultants.entity.ImageEntity;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
@@ -10,13 +9,16 @@ import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.image.dto.ImageDeleteDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
 import com.infinity.fashionity.image.service.ImageService;
+import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.dto.*;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.exception.CustomValidationException;
 import com.infinity.fashionity.members.exception.IdOrPasswordNotMatchedException;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 
+import com.infinity.fashionity.members.dto.MemberDeleteDTO;
 import com.infinity.fashionity.posts.entity.PostEntity;
 import com.infinity.fashionity.posts.entity.PostImageEntity;
 import com.infinity.fashionity.posts.repository.PostRepository;
@@ -30,6 +32,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,13 +56,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public ProfileDTO.MyProfileResponse getMyProfileInfo(Long seq) {
-        log.info("getMyProfileInfo start");
+
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
-        log.info("MEMBER = " + member.toString());
+
+        List<MemberRole> roles = new ArrayList<>();
+        MemberEntity byEmailWithRole = memberRepository.findByEmailWithRole(member.getEmail());
+        for (MemberRoleEntity mr : byEmailWithRole.getMemberRoles())
+            roles.add(mr.getMemberRole());
+
         return ProfileDTO.MyProfileResponse.builder()
                 .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .profileIntro(member.getProfileIntro())
+                .id(member.getId())
+                .email(member.getEmail())
+                .memberRole(roles)
                 .build();
     }
 
@@ -148,6 +160,19 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
+    @Override
+    public ProfileDTO.MyProfileBodyInfoResponse getMyBodyInfo(Long seq) {
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+
+        return ProfileDTO.MyProfileBodyInfoResponse.builder()
+                .age(member.getAge())
+                .height(member.getHeight())
+                .weight(member.getWeight())
+                .gender(member.getGender())
+                .personalColor(member.getPersonalcolor())
+                .build();
+    }
+
     private String getThumbnail(PostEntity postEntity) {
         List<PostImageEntity> postImages = postEntity.getPostImages();
         if (postImages.size() == 0)
@@ -158,7 +183,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public ProfileDTO.Response editMemberProfile(Long seq, ProfileDTO.Request profile) {
+    public ProfileDTO.Response editMyProfile(Long seq, ProfileDTO.Request profile) {
         MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
         List<FollowEntity> followingList = followRepository.findByMember(member);
         List<FollowEntity> followedList = followRepository.findByFollowedMember(member);
@@ -195,10 +220,6 @@ public class MemberServiceImpl implements MemberService {
             ImageDTO savedImageInfo = imageInfos.get(0);
             member.updateProfileImage(savedImageInfo);
         }
-        else{
-            member.updateProfileImage(null);
-        }
-
         member.updateProfile(profile);
 
         return ProfileDTO.Response.builder()
@@ -276,5 +297,18 @@ public class MemberServiceImpl implements MemberService {
         return MemberFollowDTO.FollowerResponse.builder()
                 .followers(followerList)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public MemberDeleteDTO.Response deleteMember(Long seq){
+
+        MemberEntity member = memberRepository.findBySeq(seq);
+        member.setDeletedAt(LocalDateTime.now());
+
+        return MemberDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+
     }
 }

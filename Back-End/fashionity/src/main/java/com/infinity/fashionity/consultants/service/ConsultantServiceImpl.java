@@ -5,10 +5,20 @@ import com.infinity.fashionity.consultants.entity.*;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
 import com.infinity.fashionity.consultants.repository.ReservationRepository;
 import com.infinity.fashionity.consultants.repository.ReviewRepository;
+import com.infinity.fashionity.consultants.repository.ScheduleRepository;
+import com.infinity.fashionity.global.exception.AccessDeniedException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.image.dto.ImageDTO;
+import com.infinity.fashionity.image.dto.ImageSaveDTO;
+import com.infinity.fashionity.image.service.ImageService;
+import com.infinity.fashionity.members.data.Gender;
+import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.data.PersonalColor;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +28,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.infinity.fashionity.global.exception.ErrorCode.RESERVATION_NOT_FOUND;
 
 
 @Slf4j
@@ -35,11 +47,13 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final ReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ImageService imageService;
 
     // [공통] 컨설턴트 목록 조회
     @Override
     @Transactional(readOnly = true)
-    public ConsultantListDTO.Response getAllConsultants(Long memberSeq, ConsultantListDTO.Request dto) {
+    public ConsultantListDTO.Response getAllConsultants(ConsultantListDTO.Request dto) {
 
         int page = dto.getPage();
         int size = dto.getSize();
@@ -49,7 +63,14 @@ public class ConsultantServiceImpl implements ConsultantService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         // 최신순으로 컨설턴트 가져오기
-        Page<ConsultantEntity> result = consultantRepository.findAll(pageable);
+        // 닉네임이 blank면 일반 조회
+        Page<ConsultantEntity> result = null;
+        if(StringUtils.isBlank(dto.getNickname())) {
+            result = consultantRepository.findAll(pageable);
+        }
+        else{
+            result = consultantRepository.findAllWithNickname(dto.getNickname(),pageable);
+        }
 
 
         result.stream().forEach(entity -> {
@@ -60,6 +81,7 @@ public class ConsultantServiceImpl implements ConsultantService {
                     .level(entity.getLevel())
                     .avgGrade(consultantRepository.avgGrade(entity.getNickname()))
                     .totalCnt(consultantRepository.totalCnt(entity.getNickname()))
+                    .profileIntro(entity.getMember().getProfileIntro())
                     .build();
             consultantSummaries.add(consultantSummary);
         });
@@ -186,12 +208,11 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = reservationRepository.findById(reservationSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
 
-
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
         List<ConsultantReservationDetail> details = result.stream().map(entity -> {
-            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
-            List<Image> images = imageEntities.stream().map(e->{
+            List<MemberImageEntity> memberImageEntities = reservationRepository.findReservationMemberImages(entity.getReservationSeq());
+            List<Image> memeberImages = memberImageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
                 String imageUrl = e.getUrl();
                 return Image.builder()
@@ -199,12 +220,33 @@ public class ConsultantServiceImpl implements ConsultantService {
                         .imageUrl(imageUrl)
                         .build();
             }).collect(Collectors.toList());
+            List<ConsultantImageEntity> consultantImageEntities = reservationRepository.findReservationConsultantImages(entity.getReservationSeq());
+            List<Image> consultantImages = consultantImageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+            PersonalColor personalColor = entity.getPersonalColor();
+            Gender gender = entity.getGender();
+            Float height = entity.getHeight();
+            Float weight = entity.getWeight();
+            Integer age = entity.getAge();
             return ConsultantReservationDetail.builder()
                     .reservationSeq(entity.getReservationSeq())
+                    .consultantNickname(dto.getConsultantNickname())
                     .memberNickname(entity.getMemberNickname())
+                    .personalColor(personalColor)
+                    .gender(gender)
+                    .height(height)
+                    .weight(weight)
+                    .age(age)
                     .reservationDateTime(entity.getReservationDateTime())
                     .reservationDetail(entity.getReservationDetail())
-                    .images(images)
+                    .memberImages(memeberImages)
+                    .consultantImages(consultantImages)
                     .build();
         }).collect(Collectors.toList());
 
@@ -228,27 +270,27 @@ public class ConsultantServiceImpl implements ConsultantService {
     };
 
      //[컨설턴트] 평점 통계, 수익 조회
-    @Override
-    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
-        memberSeq = dto.getMemberSeq();
-        consultantNickname = dto.getConsultantNickname();
-
-        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
-
-        if (!Objects.equals(checkSeq, memberSeq)){
-            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
-        }
-
-
-        return ConsultantStatisticsDTO.Response.builder()
-                .avgGrade(consultantRepository.avgGrade(consultantNickname))
-                .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
-                .totalUndeletedReviewCnt(consultantRepository.totalUndeletedReviewCnt(consultantNickname))
-                .totalDeletedReviewCnt(consultantRepository.totalDeletedReviewCnt(consultantNickname))
-                .totalSalary(consultantRepository.totalSalary(consultantNickname))
-                .build();
-
-    }
+//    @Override
+//    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
+//        memberSeq = dto.getMemberSeq();
+//        consultantNickname = dto.getConsultantNickname();
+//
+//        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
+//
+//        if (!Objects.equals(checkSeq, memberSeq)){
+//            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+//        }
+//
+//
+//        return ConsultantStatisticsDTO.Response.builder()
+//                .avgGrade(consultantRepository.avgGrade(consultantNickname))
+//                .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
+//                .totalUndeletedReviewCnt(consultantRepository.totalUndeletedReviewCnt(consultantNickname))
+//                .totalDeletedReviewCnt(consultantRepository.totalDeletedReviewCnt(consultantNickname))
+//                .totalSalary(consultantRepository.totalSalary(consultantNickname))
+//                .build();
+//
+//    }
 
     // [공통] 리뷰 작성
     @Override
@@ -297,7 +339,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         // 회원 검증
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         // 존재하는 리뷰인지 확인
         ReviewEntity review = reviewRepository.findById(reviewSeq)
@@ -329,7 +371,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
         // 회원 검증
         MemberEntity member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         // 존재하는 리뷰인지 확인
         ReviewEntity review = reviewRepository.findById(reviewSeq)
@@ -357,13 +399,29 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = reservationRepository.findById(reservationSeq)
                 .orElseThrow(() -> new ValidationException(ErrorCode.RESERVATION_NOT_FOUND));
 
+        MemberEntity member = memberRepository.findByseq(memberSeq);
+
+        PersonalColor personalColor = member.getPersonalcolor();
+        Gender gender = member.getGender();
+        Float height = member.getHeight();
+        Float weight = member.getWeight();
+        Integer age = member.getAge();
+
 
         List<UserReservationDetail> result = reservationRepository.findUserReservation(memberSeq, reservationSeq);
 
         List<UserReservationDetail> details = result.stream().map(entity -> {
-            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
-
-            List<Image> images = imageEntities.stream().map(e->{
+            List<MemberImageEntity> memberImageEntities = reservationRepository.findReservationMemberImages(entity.getReservationSeq());
+            List<Image> memeberImages = memberImageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+            List<ConsultantImageEntity> consultantImageEntities = reservationRepository.findReservationConsultantImages(entity.getReservationSeq());
+            List<Image> consultantImages = consultantImageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
                 String imageUrl = e.getUrl();
                 return Image.builder()
@@ -375,9 +433,16 @@ public class ConsultantServiceImpl implements ConsultantService {
             return UserReservationDetail.builder()
                     .reservationSeq(entity.getReservationSeq())
                     .consultantNickname(entity.getConsultantNickname())
+                    .memberNickname(entity.getMemberNickname())
+                    .personalColor(personalColor)
+                    .gender(gender)
+                    .height(height)
+                    .weight(weight)
+                    .age(age)
                     .reservationDateTime(entity.getReservationDateTime())
                     .reservationDetail(entity.getReservationDetail())
-                    .images(images)
+                    .memberImages(memeberImages)
+                    .consultantImages(consultantImages)
                     .build();
         }).collect(Collectors.toList());
 
@@ -388,9 +453,217 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public ScheduleDTO.Response saveSchedule(ScheduleSaveDTO.Request dto) {
+        Long memberSeq = dto.getMemberSeq();
+
+        //입력값 검증
+        if (memberSeq == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        //멤버 존재하는지 확인
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
+
+        //컨설턴트 인지 확인
+        ConsultantEntity consultant = consultantRepository.findByNickname(member.getNickname())
+                .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
+
+        // schedule entity 만들기
+        List<ScheduleEntity> scheduleEntities = new ArrayList<>();
+        for(int i=0; i<dto.getAvailableDateTimes().size(); i++){
+            ScheduleEntity entity = ScheduleEntity.builder()
+                    .availableDateTime(dto.getAvailableDateTimes().get(i))
+                    .consultant(consultant)
+                    .build();
 
 
+            scheduleEntities.add(entity);
+        }
+        List<ScheduleEntity> schedules = scheduleRepository.saveAll(scheduleEntities);
 
+        List<ScheduleSummary> scheduleSummaries = schedules.stream().map(obj -> {
+            return ScheduleSummary.builder()
+                    .scheduleSeq(obj.getSeq())
+                    .unAvailableDateTime(obj.getAvailableDateTime())
+                    .build();
+        })
+                .collect(Collectors.toList());
+
+        return ScheduleDTO.Response.builder()
+                .unAvailableDateTimes(scheduleSummaries)
+                .build();
+
+    }
+
+    @Override
+    @Transactional
+    public ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq) {
+        Long memberSeq = dto.getMemberSeq();
+
+        //입력값 검증
+        if (memberSeq == null || scheduleSeq == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        //멤버 존재하는지 확인
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
+
+        ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleSeq)
+                .orElseThrow(() ->new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        //자신의 스케쥴이 아니거나 권한이 존재하지 않으면 삭제 불가
+        if (member.getSeq() != scheduleEntity.getConsultant().getMember().getSeq()
+                && !member.getMemberRoles().contains(MemberRole.ADMIN)) {
+            throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
+        }
+
+        //삭제
+        scheduleRepository.delete(scheduleEntity);
+
+        return ScheduleDeleteDTO.Response.builder()
+                .success(true)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ConsultantReservationSaveDTO.Response saveReservation(ConsultantReservationSaveDTO.Request dto) {
+
+        // [1] 예외 처리
+        // 1-1 컨설턴트 스케쥴이 비어있지 않으면 예약이 불가능하다
+        Long scheduleSeq = dto.getScheduleSeq();
+        ScheduleEntity schedule = scheduleRepository.findBySeq(scheduleSeq);
+        if (!schedule.getIsAvailable())
+            throw new ValidationException(ErrorCode.SCHEDULE_UNAVAILABLE);
+
+        // 1-2 멤버 존재하는지 확인
+        Long memberSeq = dto.getMemberSeq();
+        MemberEntity member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
+
+        // 1-3 컨설턴트 존재하는지 확인
+        ConsultantEntity consultant = consultantRepository.findByNickname(dto.getConsultantNickname())
+                .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
+
+        // 1-4 멤버 신체 정보 입력값 검증 : 퍼스널 컬러는 없을 수도 있으니까 제외!
+        if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
+                dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // 1-5 유저가 입력한 정보 기반으로 업데이트 진행
+        member.updateReservationInfo(dto);
+
+        // 1-6 사진 제외 세부정보 예약에 저장
+        ReservationEntity reservation = ReservationEntity.builder()
+                .schedule(schedule)
+                .member(member)
+                .date(dto.getAvailableDateTime())
+                .detail(dto.getDetail())
+                .build();
+
+
+        // 1-7 예약 저장
+        ReservationEntity reservationEntity = reservationRepository.save(reservation);
+        // [2] 유저 사진 등록
+        // 2-1 사진 등록
+        ImageSaveDTO.Response savedImage = saveImage(dto.getImages());
+        List<ImageDTO> imageInfos = savedImage.getImageInfos();
+        List<MemberImageEntity> images = new ArrayList<>();
+        for (ImageDTO image : imageInfos)
+            images.add(MemberImageEntity.builder()
+                    .reservation(reservationEntity)
+                    .url(image.getFileUrl())
+                    .build());
+
+        // 2-2 사진을 예약에 등록
+        reservationEntity.setMemberImages(images);
+
+        // [3] build
+        return ConsultantReservationSaveDTO.Response.builder()
+                .success(true)
+                .reservationSeq(reservationEntity.getSeq())
+                .build();
+    }
+
+    @Override
+    public UserReservationInfoDTO.ReservationEnterResponse getReservationEnterInfo(Long memberSeq, Long reservationSeq) {
+
+        memberRepository.findById(memberSeq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+        ReservationEntity reservation = reservationRepository.findById(reservationSeq).orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
+
+        List<String> consultantImages = reservation.getConsultantImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
+        List<String> memberImages = reservation.getMemberImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
+
+
+        return UserReservationInfoDTO.ReservationEnterResponse.builder()
+                .consultantNickname(reservation.getSchedule().getConsultant().getNickname()) // 와... 망해따..
+                .memberNickname(reservation.getMember().getNickname())
+                .consultantImages(consultantImages)
+                .memberImages(memberImages)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ConsultantReservationSaveDTO.Response saveConsultantImages(ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto) {
+
+        ReservationEntity reservationEntity = reservationRepository.findById(dto.getReservationSeq()).orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
+        ImageSaveDTO.Response savedImage = saveImage(dto.getImages());
+
+        List<ImageDTO> imageInfos = savedImage.getImageInfos();
+        List<ConsultantImageEntity> imageEntities  = new ArrayList<>();
+        for (ImageDTO image : imageInfos) {
+            imageEntities.add(ConsultantImageEntity.builder()
+                    .reservation(reservationEntity)
+                    .url(image.getFileUrl())
+                    .build());
+        }
+
+        reservationEntity.setConsultantImages(imageEntities);
+        return ConsultantReservationSaveDTO.Response.builder()
+                .reservationSeq(reservationEntity.getSeq())
+                .success(true)
+                .build();
+    }
+
+    private ImageSaveDTO.Response saveImage(List<MultipartFile> images) {
+        return imageService.save(ImageSaveDTO.Request.builder()
+                .images(images)
+                .build());
+    }
+
+    public ScheduleDTO.Response getSchedule(String dateTime, Long memberSeq) {
+        log.info("get Schedule service start");
+        ConsultantEntity consultantEntity = consultantRepository.findByMemberSeq(memberSeq).orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        log.info("1");
+        Optional<List<ScheduleEntity>> byDate = scheduleRepository.findByDate(dateTime, consultantEntity.getSeq());
+        log.info("2");
+        List<ScheduleSummary> unAvailableDateTimes = new ArrayList<>();
+        if (byDate.isPresent())
+            unAvailableDateTimes = byDate.get().stream().map(obj -> {
+                return ScheduleSummary.builder()
+                        .unAvailableDateTime(obj.getAvailableDateTime())
+                        .scheduleSeq(obj.getSeq())
+                        .build();
+            }).collect(Collectors.toList());
+        return ScheduleDTO.Response.builder()
+                .unAvailableDateTimes(unAvailableDateTimes).build();
+    }
+
+
+    @Override
+    @Transactional
+    public Boolean deleteSchedule(Long scheduleSeq) {
+        ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleSeq).orElseThrow(() -> new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        scheduleRepository.delete(scheduleEntity);
+        return true;
+    }
 }
 
 

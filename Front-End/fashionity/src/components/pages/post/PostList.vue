@@ -31,8 +31,6 @@
       </div>
     </div>
 
-    <!-- <div class="row" style="height: 30px"></div> -->
-
     <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div
@@ -103,7 +101,6 @@ export default {
     })
       .then((data) => {
         this.posts = data.data.posts;
-        console.log(this.posts);
         this.dataLoaded = true;
         this.page++;
       })
@@ -191,7 +188,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .tools {
   margin-bottom: 30px;
 }

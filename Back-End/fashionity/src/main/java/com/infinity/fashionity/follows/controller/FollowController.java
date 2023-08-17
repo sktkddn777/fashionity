@@ -1,5 +1,6 @@
 package com.infinity.fashionity.follows.controller;
 
+import com.infinity.fashionity.follows.dto.CheckDTO;
 import com.infinity.fashionity.follows.dto.FollowDTO;
 import com.infinity.fashionity.follows.service.FollowService;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
@@ -33,6 +34,14 @@ public class FollowController {
             @RequestBody FollowDTO.Request body
     ) {
         FollowDTO.Response response = followService.unFollow(auth.getSeq(), body.getNickname());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{nickname}")
+    public ResponseEntity<CheckDTO.Response> checkFollow(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @PathVariable String nickname) {
+        CheckDTO.Response response = followService.checkFollow(auth.getSeq(), nickname);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

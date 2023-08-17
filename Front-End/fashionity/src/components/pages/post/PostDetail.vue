@@ -6,15 +6,16 @@
         <!-- 작성자 정보 -->
         <div class="post-detail-header">
           <div class="post-detail-header-img">
-            <img
-              :src="this.post.profileImg || '../img/unknown.e083a226.png'"
-              alt="profileImg"
-              class="post-detail-profile"
-            />
+            <router-link :to="`../profile/${post.name}`">
+              <img
+                :src="this.post.profileImg || '../img/unknown.e083a226.png'"
+                alt="profileImg"
+                class="post-detail-profile"
+              />
+            </router-link>
           </div>
           <div class="post-detail-header-info">
             <div class="post-detail-header-info-nickname fw-bold">
-              <!-- hyeonwook_12 -->
               {{ this.post.name }}
             </div>
             <div
@@ -30,15 +31,15 @@
               <div v-if="!this.post.myPost" @click="toggleFollowing">
                 <button
                   type="button"
-                  class="btn btn-outline-dark"
+                  class="active-button"
                   style="min-width: 70px"
-                  v-if="this.post.following === true"
+                  v-if="this.post.following === false"
                 >
                   <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
                 </button>
                 <button
                   type="button"
-                  class="btn btn-dark"
+                  class="inactive-button"
                   style="min-width: 70px"
                   v-else
                 >
@@ -57,57 +58,14 @@
                   </template>
                   <v-list>
                     <v-list-item v-if="!this.post.myPost">
-                      <v-list-item-title
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#reportModal"
-                        >신고</v-list-item-title
-                      >
-                      <!-- report Modal -->
-                      <div
-                        class="modal fade"
-                        id="reportModal"
-                        tabindex="-1"
-                        aria-labelledby="reportModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1
-                                class="modal-title fs-5"
-                                id="reportModalLabel"
-                              >
-                                신고
-                              </h1>
-                              <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div class="modal-body">
-                              <report-modal></report-modal>
-                            </div>
-                            <div class="modal-footer">
-                              <button
-                                type="button"
-                                class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal"
-                              >
-                                취소
-                              </button>
-                              <button type="button" class="btn btn-primary">
-                                신고
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <!-- 신고 모달 -->
+                      <report-modal :seq="this.post.postSeq"></report-modal>
                     </v-list-item>
                     <v-list-item v-else>
-                      <router-link to="/post/modify" class="link">
+                      <router-link
+                        :to="{ path: `/post/${seq}/modify` }"
+                        class="link"
+                      >
                         <v-list-item-title type="button"
                           >수정</v-list-item-title
                         >
@@ -125,42 +83,12 @@
         <!-- 이미지 -->
         <div class="row post-detail-image">
           <div id="carouselExampleIndicators" class="carousel slide">
-            <div class="carousel-indicators">
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="0"
-                class="active"
-                aria-current="true"
-                aria-label="Slide 1"
-              ></button>
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="1"
-                aria-label="Slide 2"
-              ></button>
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="2"
-                aria-label="Slide 3"
-              ></button>
-            </div>
-            <div
-              class="carousel-inner"
-              v-for="(item, i) in this.post.images"
-              :key="i"
-            >
-              <div v-if="i == 0" class="carousel-item active">
-                <img
-                  :src="item"
-                  class="d-block w-100"
-                  alt="첫 번째 사진"
-                  style="aspect-ratio: 1 / 1"
-                />
-              </div>
-              <div v-else class="carousel-item">
+            <div class="carousel-inner">
+              <div
+                v-for="(item, i) in this.post.images"
+                :key="i"
+                :class="['carousel-item', i === 0 ? 'active' : '']"
+              >
                 <img
                   :src="item"
                   class="d-block w-100"
@@ -195,6 +123,7 @@
             </button>
           </div>
         </div>
+
         <!-- 본문 내용 -->
         <div class="post-detail-like">
           <div v-if="!isLogin" @click="loginAlert">
@@ -203,7 +132,7 @@
           <div v-else class="post-detail-like-icon" @click="toggleLike">
             <font-awesome-icon
               :icon="['fas', 'heart']"
-              :color="post.liked === true ? 'red' : 'black'"
+              :color="post.liked === true ? 'red' : 'grey'"
             />
           </div>
           <div>
@@ -215,37 +144,61 @@
           </div>
         </div>
         <div class="post-detail-content">
-          <div style="text-align: left">{{ post.content }}</div>
+          <div style="text-align: left">
+            {{ post.content }}
+          </div>
           <div class="post-detail-content-hashtag">
             <a
               v-for="(tag, i) in post.hashtags"
               :key="i"
               style="color: skyblue"
             >
-              {{ tag }} &nbsp;
+              #{{ tag }} &nbsp;
             </a>
+          </div>
+          <br />
+          <div
+            v-if="post.updatedAt !== post.createdAt"
+            style="color: grey; font-size: 13px; text-align: left"
+          >
+            (수정됨)
           </div>
         </div>
         <!-- 댓글 -->
         <div class="post-detail-comment-cnt">
           <span>댓글&nbsp;</span>
-          <span class="fw-bold">{{ post.commentCount }}</span>
-          <span>개</span>
+          <span class="fw-bold">{{ commentCount }}</span>
+          <span>개</span>&nbsp;
+          <span v-if="showMoreButton">
+            <a @click="showMoreComments">더보기</a>
+          </span>
         </div>
 
-        <div v-for="(comment, index) in comments" :key="index">
-          <the-comment></the-comment>
+        <div v-for="comment in visibleComments" :key="comment.comment_seq">
+          <the-comment
+            :comment="comment"
+            @commentDeleted="updateCommentInfo"
+          ></the-comment>
         </div>
 
-        <div class="post-detail-comment-submit">
-          <input
-            class="form-control"
-            type="text"
-            placeholder="댓글을 입력해주세요."
-          />
-          <button type="button" class="btn btn-dark" style="min-width: 70px">
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
-          </button>
+        <div v-if="showCommentSubmit">
+          <div class="post-detail-comment-submit">
+            <input
+              v-model="commentContent"
+              class="form-control"
+              type="text"
+              placeholder="댓글을 입력해주세요."
+              @keydown.enter="submitComment"
+            />
+            <button
+              type="button"
+              class="active-button"
+              style="min-width: 70px"
+              @click="submitComment"
+            >
+              <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="col"></div>
@@ -260,9 +213,6 @@ import ReportModal from "./ReportModal.vue";
 const memberStore = "memberStore";
 export default {
   props: ["seq"],
-  computed: {
-    ...mapState(memberStore, ["isLogin"]),
-  },
   data() {
     return {
       post: {},
@@ -270,45 +220,89 @@ export default {
       commentOpen: false,
       like: "",
       likeCount: "",
+      commentContent: "",
+      commentCount: "",
+      visibleComments: [],
+      showMoreButton: false,
+      showCommentSubmit: true,
     };
+  },
+  watch: {
+    comments(newVal) {
+      this.comments = newVal;
+      if (this.comments.length > 2) {
+        this.showMoreButton = true;
+        this.visibleComments = this.comments.slice(0, 2);
+      } else {
+        this.showMoreButton = false;
+        this.visibleComments = [...this.comments];
+      }
+    },
+    seq: {
+      handler(newSeq) {
+        this.callDetailAPI(newSeq);
+      },
+      deep: true, // 객체의 내부 변경도 감지
+    },
   },
   components: {
     TheComment,
     ReportModal,
   },
-  async mounted() {
-    let token = sessionStorage.getItem("token");
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
-      method: "get",
-    }).then((data) => {
-      this.post = data.data.post;
-      console.log(this.post);
-      this.like = this.post.liked;
-      this.likeCount = this.post.likeCount;
-    });
-
-    axios({
-      headers:
-        token === null
-          ? null
-          : {
-              Authorization: `Bearer ${token}`,
-            },
-      url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
-      method: "get",
-    }).then((data) => {
-      this.comments = [...data.data.comments];
-      console.log(this.comments);
-    });
+  computed: {
+    ...mapState(memberStore, ["isLogin", "loginUser"]),
   },
+  mounted() {
+    this.callDetailAPI(this.seq);
+  },
+
   methods: {
+    callDetailAPI() {
+      let token = sessionStorage.getItem("token");
+
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}`,
+        method: "GET",
+      }).then((data) => {
+        this.post = data.data.post;
+        console.log(this.post);
+        this.like = this.post.liked;
+        this.likeCount = this.post.likeCount;
+        this.commentCount = this.post.commentCount;
+
+        if (this.commentCount > 2) {
+          this.showMore = true;
+        }
+      });
+      this.callCommentListApi();
+    },
+    showMoreComments() {
+      this.visibleComments = [...this.comments];
+      this.showMoreButton = false;
+    },
+    callCommentListApi() {
+      let token = sessionStorage.getItem("token");
+      axios({
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
+        method: "GET",
+      }).then((data) => {
+        console.log(data.data.comments);
+        this.comments = [...data.data.comments];
+      });
+    },
+
     timeAgo(timestamp) {
       const currentTime = new Date();
       const targetTime = new Date(timestamp);
@@ -328,15 +322,14 @@ export default {
         return `${days}일 전`;
       }
     },
-    toggleFollowing() {
+    async toggleFollowing() {
       if (this.post.following === true) {
-        this.callUnFollowingAPI(this.post.name);
+        await this.callUnFollowingAPI(this.post.name);
       } else {
-        this.callFollowingAPI(this.post.name);
+        await this.callFollowingAPI(this.post.name);
       }
-      this.post.following = !this.post.following;
     },
-    callFollowingAPI(name) {
+    async callFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
       let body = {
         nickname: name,
@@ -350,10 +343,11 @@ export default {
         method: "POST",
         data: body,
       }).then((data) => {
-        this.following = data.data.success;
+        this.success = data.data.success;
+        this.post.following = !this.post.following;
       });
     },
-    callUnFollowingAPI(name) {
+    async callUnFollowingAPI(name) {
       let token = sessionStorage.getItem("token");
       let body = {
         nickname: name,
@@ -367,7 +361,8 @@ export default {
         method: "DELETE",
         data: body,
       }).then((data) => {
-        this.following = data.data.success;
+        this.success = data.data.success;
+        this.post.following = !this.post.following;
       });
     },
     toggleLike() {
@@ -400,7 +395,7 @@ export default {
     },
     deleteConfirm() {
       if (confirm("삭제하시겠습니까?")) {
-        this.deletePost;
+        this.deletePost();
       }
     },
     async deletePost() {
@@ -413,7 +408,7 @@ export default {
       }
     },
     navigateToMain() {
-      this.$router.push("/");
+      this.$router.push("/post");
     },
     callDeleteAPI() {
       let token = sessionStorage.getItem("token");
@@ -429,6 +424,49 @@ export default {
       }).then((data) => {
         console.log(data);
       });
+    },
+    async submitComment() {
+      if (!this.isLogin) {
+        this.loginAlert();
+      } else {
+        let isBlank = this.isBlank(this.commentContent);
+        if (isBlank) {
+          alert("댓글을 입력해주세요.");
+        } else {
+          await this.callCommentSaveAPI(this.commentContent);
+          this.commentContent = "";
+        }
+      }
+    },
+    isBlank(commentContent) {
+      return commentContent === null || commentContent.trim() === "";
+    },
+    callCommentSaveAPI(content) {
+      let token = sessionStorage.getItem("token");
+      let postSeq = this.$route.params.seq;
+      const body = {
+        content: content,
+      };
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+        method: "POST",
+        data: body,
+      }).then((data) => {
+        console.log(data);
+        this.callCommentListApi();
+        this.commentCount++;
+      });
+    },
+    updateCommentInfo() {
+      this.commentCount--;
+      this.callCommentListApi();
     },
   },
 };
@@ -467,6 +505,7 @@ export default {
   color: grey;
   text-align: left;
   margin-bottom: 10px;
+  gap: 10px;
 }
 .post-detail-comment-content {
   display: flex;
@@ -482,5 +521,21 @@ export default {
 .post-detail-header-modal {
   display: flex;
   gap: 20px;
+}
+.active-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,9 +24,8 @@ public class ConsultantController {
     // [공통] 전체 컨설턴트 목록 조회
     @GetMapping
     public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(
-            @AuthenticationPrincipal JwtAuthentication auth,
             ConsultantListDTO.Request dto) {
-        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(auth.getSeq(), dto);
+        ConsultantListDTO.Response consultantListResponse = consultantService.getAllConsultants(dto);
         return new ResponseEntity<>(consultantListResponse, HttpStatus.OK);
     }
 
@@ -65,7 +63,7 @@ public class ConsultantController {
         return new ResponseEntity<>(consultantReservationsListResponse, HttpStatus.OK);
     }
 
-    // [컨설턴트] 상세 예약 정보 조회
+    // [컨설턴트] 상세 예약 정보 조회 -> 로직이 유저 상세 예약 정보와 거의 동일하게 변경되어 나중에 리팩토링 시 두 api 를 통합해도 될듯
     @GetMapping(value = "/{consultantNickname}/reservations/{reservationSeq}")
     public ResponseEntity<ConsultantReservationInfoDTO.Response> getConsultantReservationDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
@@ -90,16 +88,16 @@ public class ConsultantController {
 
 
     // [컨설턴트] 평점 통계, 수익 조회
-    @GetMapping(value = "/{consultantNickname}/statistics")
-    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
-            @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname,
-            ConsultantStatisticsDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
-        dto.setConsultantNickname(consultantNickname);
-        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
-        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/{consultantNickname}/statistics")
+//    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
+//            @AuthenticationPrincipal JwtAuthentication auth,
+//            @PathVariable("consultantNickname") String consultantNickname,
+//            ConsultantStatisticsDTO.Request dto) {
+//        dto.setMemberSeq(auth.getSeq());
+//        dto.setConsultantNickname(consultantNickname);
+//        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
+//        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
+//    }
 
     // [공통] 리뷰 작성
     @PostMapping(value = "{reservationSeq}/review")
@@ -142,12 +140,92 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("reservationSeq") Long reservationSeq,
             UserReservationInfoDTO.Request dto){
-            dto.setMemberSeq(auth.getSeq());
+//            dto.setMemberSeq(auth.getSeq());
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
             dto.setReservationSeq(reservationSeq);
         UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
         return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
 
     }
 
+
+    // 스케쥴 등록
+    @PostMapping("reservation/schedule")
+    public ResponseEntity<ScheduleDTO.Response> saveSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody  ScheduleSaveDTO.Request dto){
+
+        log.info("start");
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+        ScheduleDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
+        log.info(" = {}",scheduleSaveResponse);
+        return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("reservation/schedule/{schedule_seq}")
+    public ResponseEntity<ScheduleDeleteDTO.Response> deleteSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody ScheduleDeleteDTO.Request dto,
+            @PathVariable("schedule_seq") Long scheduleSeq){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ScheduleDeleteDTO.Response scheduleDeleteResponse = consultantService.deleteSchedule(dto, scheduleSeq);
+
+        return new ResponseEntity<>(scheduleDeleteResponse, HttpStatus.OK);
+
+    }
+
+    /**
+     * 유저가 예약을 하는데, 입력한 정보를 바탕으로 유저 정보 추가 업데이트 및 사진 등록
+     */
+    @PostMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantReservationSaveDTO.Request dto){
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveReservation(dto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("reservation/enter")
+    public ResponseEntity<UserReservationInfoDTO.ReservationEnterResponse> getReservationEnterInfo(
+          @AuthenticationPrincipal JwtAuthentication auth,
+          @RequestParam Long reservationSeq
+    ) {
+        UserReservationInfoDTO.ReservationEnterResponse response = consultantService.getReservationEnterInfo(auth.getSeq(), reservationSeq);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveConsultantImagesInReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto) {
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveConsultantImages(dto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/reservation/myschedule")
+    public ResponseEntity<ScheduleDTO.Response> getConsultantScheduleByDate(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestParam String dateTime
+    ) {
+        ScheduleDTO.Response response = consultantService.getSchedule(dateTime, auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/reservation/myschedule")
+    public ResponseEntity<Boolean> deleteConsultantSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestParam Long scheduleSeq
+            ) {
+        consultantService.deleteSchedule(scheduleSeq);
+        return ResponseEntity.ok(true);
+    }
 }
 

@@ -2,9 +2,9 @@ package com.infinity.fashionity.members.controller;
 
 import com.infinity.fashionity.members.dto.MemberFollowDTO;
 import com.infinity.fashionity.members.dto.ProfileDTO;
-import com.infinity.fashionity.members.dto.ProfilePost;
 import com.infinity.fashionity.members.dto.ProfilePostDTO;
 import com.infinity.fashionity.members.service.MemberService;
+import com.infinity.fashionity.members.dto.MemberDeleteDTO;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -54,19 +53,27 @@ public class MemberController {
     public ResponseEntity<ProfilePostDTO.Response> getMemberProfileLikedPost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable String nickname,
-            @RequestBody ProfilePostDTO.Request dto
+            ProfilePostDTO.Request dto
     ) {
         dto.setNickname(nickname);
         ProfilePostDTO.Response response = memberService.getMemberProfileLikedPost(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/edit")
+    @GetMapping("/bodyInfo")
+    public ResponseEntity<ProfileDTO.MyProfileBodyInfoResponse> getMyBodyInfo(
+            @AuthenticationPrincipal JwtAuthentication auth
+    ) {
+        ProfileDTO.MyProfileBodyInfoResponse response = memberService.getMyBodyInfo(auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping ("/edit")
     public ResponseEntity<ProfileDTO.Response> editMyProfile(
             @AuthenticationPrincipal JwtAuthentication auth,
             ProfileDTO.Request dto
     ) {
-        ProfileDTO.Response response = memberService.editMemberProfile(auth.getSeq(), dto);
+        ProfileDTO.Response response = memberService.editMyProfile(auth.getSeq(), dto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -94,6 +101,14 @@ public class MemberController {
             @PathVariable String nickname
     ) {
         MemberFollowDTO.FollowerResponse response = memberService.getFollowers(auth.getSeq(), nickname);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/delete")
+    public ResponseEntity<MemberDeleteDTO.Response> deleteMember(
+            @AuthenticationPrincipal JwtAuthentication auth
+    ){
+        MemberDeleteDTO.Response response = memberService.deleteMember(auth.getSeq());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

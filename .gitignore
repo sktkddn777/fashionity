@@ -3,3 +3,6 @@
 docker-compose.yml
 up.sh
 /Back-End/fashionity/src/main/resources/application.properties
+/Back-End/socketserver/Dockerfile
+/Back-End/sockerserver/gradlew
+*.DS_Store

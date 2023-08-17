@@ -1,7 +1,12 @@
 package com.infinity.fashionity.members.dto;
 
+import com.infinity.fashionity.members.data.Gender;
+import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.data.PersonalColor;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class ProfileDTO {
 
@@ -10,6 +15,7 @@ public class ProfileDTO {
     @NoArgsConstructor
     @Builder
     @Setter
+    @ToString
     public static class Request {
         private MultipartFile profileImage;
         private String nickname;
@@ -50,6 +56,9 @@ public class ProfileDTO {
         private String profileUrl;
         private String nickname;
         private String profileIntro;
+        private List<MemberRole> memberRole;
+        private String id;
+        private String email;
     }
 
     @Getter
@@ -58,5 +67,18 @@ public class ProfileDTO {
     @Builder
     public static class PwResponse {
         private boolean success;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @ToString
+    public static class MyProfileBodyInfoResponse {
+        private Integer age;
+        private Gender gender;
+        private Float height;
+        private Float weight;
+        private PersonalColor personalColor;
     }
 }

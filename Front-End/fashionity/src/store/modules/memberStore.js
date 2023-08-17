@@ -28,6 +28,7 @@ const memberStore = {
       state.isLogin = true;
       sessionStorage.setItem("token", data.accessToken);
       sessionStorage.setItem("memberSeq", data.memberSeq);
+      sessionStorage.setItem("loginNickname", data.nickname);
     },
     LOGOUT(state) {
       sessionStorage.removeItem("token");
@@ -43,6 +44,10 @@ const memberStore = {
     },
   },
   actions: {
+    async getUserNickname() {
+      console.log("실행됨");
+      return this.state.loginUser.nickname;
+    },
     async loginAction({ commit }, user) {
       if (!user.id) {
         toast.error("아이디가 비었따!!", {
@@ -63,7 +68,6 @@ const memberStore = {
       await login(
         user,
         ({ data }) => {
-          console.log("login success");
           if (!data.profileUri)
             data.profileUri =
               "https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Front-Facing%20Baby%20Chick.png";
@@ -146,7 +150,6 @@ const memberStore = {
           await dispatch("tokenRegeneration");
         });
     },
-
     async tokenRegeneration({ commit }) {
       const reissueRequest = {
         accessToken: sessionStorage.getItem("token"),
@@ -180,69 +183,6 @@ const memberStore = {
         }
       );
     },
-
-    // async userConfirm({ commit }, user) {
-    //   await login(
-    //     user,
-    //     ({ data }) => {
-    //       if (data.message === "success") {
-    //         let accessToken = data["access-token"];
-    //         let refreshToken = data["refresh-token"];
-    //         commit("SET_IS_LOGIN", true);
-    //         commit("SET_IS_LOGIN_ERROR", false);
-    //         commit("SET_IS_VALID_TOKEN", true);
-    //         sessionStorage.setItem("access-token", accessToken);
-    //         sessionStorage.setItem("refresh-token", refreshToken);
-    //       } else {
-    //         commit("SET_IS_LOGIN", false);
-    //         commit("SET_IS_LOGIN_ERROR", true);
-    //         commit("SET_IS_VALID_TOKEN", false);
-    //       }
-    //     },
-    //     (error) => {
-    //       console.log(error);
-    //     }
-    //   );
-    // },
-    // async getUserInfo({ commit, dispatch }, token) {
-    //   let decodeToken = jwtDecode(token);
-    //   await findById(
-    //     decodeToken.userid,
-    //     ({ data }) => {
-    //       if (data.message === "success") {
-    //         commit("SET_USER_INFO", data.userInfo);
-    //       } else {
-    //         console.log("유저 정보 없음!!!!");
-    //       }
-    //     },
-    //     async (error) => {
-    //       console.log(
-    //         "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
-    //         error.response.status
-    //       );
-    //       commit("SET_IS_VALID_TOKEN", false);
-    //       await dispatch("tokenRegeneration");
-    //     }
-    //   );
-    // },
-
-    // async userLogout({ commit }, userid) {
-    //   await logout(
-    //     userid,
-    //     ({ data }) => {
-    //       if (data.message === "success") {
-    //         commit("SET_IS_LOGIN", false);
-    //         commit("SET_USER_INFO", null);
-    //         commit("SET_IS_VALID_TOKEN", false);
-    //       } else {
-    //         console.log("유저 정보 없음!!!!");
-    //       }
-    //     },
-    //     (error) => {
-    //       console.log(error);
-    //     }
-    //   );
-    // },
   },
 };
 

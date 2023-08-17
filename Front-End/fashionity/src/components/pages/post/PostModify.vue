@@ -7,117 +7,42 @@
         <div class="post-detail-header">
           <div class="post-detail-header-img">
             <img
-              src="../../../assets/img/hyeonwook.jpg"
-              alt=""
-              class="post-detail-profile"
+              :src="getProfileUrl() || '../img/unknown.e083a226.png'"
+              alt="profileImg"
+              class="profile"
             />
           </div>
           <div class="post-detail-header-info">
             <div class="post-detail-header-info-nickname fw-bold">
-              hyeonwook_12
-            </div>
-            <div
-              class="post-detail-header-info-time fs-6"
-              style="text-align: left"
-            >
-              2시간 전
+              {{ this.myNickname }}
             </div>
           </div>
         </div>
         <!-- 이미지 -->
-        <div>
-          <v-file-input
-            label="File input"
-            variant="underlined"
-            multiple
-          ></v-file-input>
+        <br />
+        <div style="text-align: left">
+          <textarea
+            class="form-control"
+            rows="1"
+            placeholder="해시태그를 입력해주세요."
+            v-model="tagInput"
+            @keyup.enter="addTag"
+          ></textarea>
+          <span
+            v-for="(tag, index) in tagList"
+            :key="index"
+            class="tag"
+            style="color: skyblue"
+          >
+            #{{ tag }}&nbsp;
+          </span>
         </div>
-        <div class="row post-detail-image">
-          <div id="carouselExampleIndicators" class="carousel slide">
-            <div class="carousel-indicators">
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="0"
-                class="active"
-                aria-current="true"
-                aria-label="Slide 1"
-              ></button>
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="1"
-                aria-label="Slide 2"
-              ></button>
-              <button
-                type="button"
-                data-bs-target="#carouselExampleIndicators"
-                data-bs-slide-to="2"
-                aria-label="Slide 3"
-              ></button>
-            </div>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img
-                  src="../../../assets/img/hyeonwook.jpg"
-                  class="d-block w-100"
-                  alt="첫 번째 사진"
-                  style="aspect-ratio: 1 / 1"
-                />
-              </div>
-              <div class="carousel-item">
-                <img
-                  src="../../../assets/img/hyeonwook2.jpg"
-                  class="d-block w-100"
-                  alt="두 번째 사진"
-                  style="aspect-ratio: 1 / 1"
-                />
-              </div>
-              <div class="carousel-item">
-                <img
-                  src="../../../assets/img/hyeonwook3.jpg"
-                  class="d-block w-100"
-                  alt="세 번째 사진"
-                  style="aspect-ratio: 1 / 1"
-                />
-              </div>
-            </div>
-            <button
-              class="carousel-control-prev"
-              type="button"
-              data-bs-target="#carouselExampleIndicators"
-              data-bs-slide="prev"
-            >
-              <span
-                class="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button
-              class="carousel-control-next"
-              type="button"
-              data-bs-target="#carouselExampleIndicators"
-              data-bs-slide="next"
-            >
-              <span
-                class="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
-        <!-- 본문 내용 -->
-        <textarea
-          class="form-control"
-          rows="1"
-          placeholder="해시태그를 입력해주세요."
-        ></textarea>
+        <br />
         <textarea
           class="form-control content"
           rows="3"
           placeholder="내용을 입력해주세요."
+          v-model="contentInput"
         ></textarea>
         <div class="post-write-button">
           <button
@@ -127,7 +52,12 @@
           >
             <span style="font-size: smaller">&nbsp;취소&nbsp;</span>
           </button>
-          <button type="button" class="btn btn-dark" style="min-width: 70px">
+          <button
+            type="button"
+            class="btn btn-dark"
+            style="min-width: 70px"
+            @click="submitPost"
+          >
             <span style="font-size: smaller">&nbsp;수정&nbsp;</span>
           </button>
         </div>
@@ -137,14 +67,84 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import { mapState } from "vuex";
+const memberStore = "memberStore";
 export default {
   data() {
-    return {};
+    return {
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
+      tagInput: "",
+      tagList: [],
+      contentInput: "",
+    };
+  },
+  computed: {
+    seq() {
+      return this.$route.params.seq;
+    },
+    ...mapState(memberStore, ["loginUser"]),
+  },
+  methods: {
+    getProfileUrl() {
+      return this.loginUser.profileUri;
+    },
+    addTag() {
+      if (this.tagInput) {
+        this.tagList.push(this.tagInput.substr(0, this.tagInput.length - 1));
+        this.tagInput = "";
+      }
+    },
+    async submitPost() {
+      if (!this.contentInput || this.contentInput.trim() === "") {
+        alert("내용을 입력해주세요.");
+      } else {
+        const postData = {
+          content: this.contentInput,
+          hashtag: this.tagList,
+        };
+        console.log(postData.content);
+        console.log(postData.hashtag);
+        await this.callPostUpdateAPI(postData);
+        this.navigateToDetail();
+      }
+    },
+    async callPostUpdateAPI(postData) {
+      let postSeq = this.$route.params.seq;
+      var token = sessionStorage.getItem("token");
+      const body = {
+        content: postData.content,
+        hashtag: postData.hashtag,
+      };
+      await axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "PUT",
+        data: body,
+      })
+        .then((data) => {
+          console.log(data);
+          console.log("callPostUpdateAPI " + data.data.success);
+          alert("수정되었습니다.");
+        })
+        .catch(() => {
+          alert("실패!");
+        });
+    },
+    navigateToDetail() {
+      const postSeq = this.$route.params.seq;
+      this.$router.push(`/post/${postSeq}`);
+    },
   },
 };
 </script>
 <style scoped>
-.post-detail-profile {
+.profile {
   height: 7vh;
   border-radius: 100%;
   object-fit: contain;
@@ -160,12 +160,6 @@ export default {
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-}
-.post-detail-image {
-  margin-bottom: 10px;
-}
-.content {
-  margin-top: 10px;
 }
 .post-detail-like {
   display: flex;

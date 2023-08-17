@@ -59,8 +59,16 @@ public enum ErrorCode {
     // Reservation
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RES001", "존재하지 않는 예약입니다."),
 
+
+    //Schedule
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCH001", "존재하지 않는 스케쥴입니다."),
+    SCHEDULE_UNAVAILABLE(HttpStatus.BAD_REQUEST, "SCH002", "예약이 불가합니다."),
+
     // Review
-    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다.")
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다."),
+
+    // Alarm
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND,"ALARM001","존재하지 않는 알람입니다.")
     ;
 
     private final HttpStatus status;

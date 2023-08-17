@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
@@ -55,20 +56,21 @@ public class PostController {
     public ResponseEntity<PostSaveDTO.Response> savePost(
             @AuthenticationPrincipal JwtAuthentication auth,
             PostSaveDTO.Request dto) {
+        System.out.println(dto.getImages().size()+"만큼 들어옴");
+        dto.setHashtags(dto.getHashtags().stream().map(e->e.replaceAll("\"","")).collect(Collectors.toList()));
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
         return new ResponseEntity<>(postService.savePost(dto), HttpStatus.OK);
     }
 
     //게시글 수정
-    @PutMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE, consumes = MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{postSeq}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<PostUpdateDTO.Response> updatePost(
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
-            PostUpdateDTO.Request dto) {
+            @RequestBody PostUpdateDTO.Request dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
-
         PostUpdateDTO.Response success = postService.updatePost(dto);
         return new ResponseEntity<>(success, HttpStatus.OK);
     }

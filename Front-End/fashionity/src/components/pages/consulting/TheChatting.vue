@@ -22,12 +22,12 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 500px;
+  height: 80vh;
 }
 
 .message-list {
   flex: 1;
-  max-height: 500px;
+  max-height: 80vh;
   overflow-y: auto;
 }
 
@@ -35,6 +35,8 @@
   padding: 10px;
   border: 1px solid #ccc;
   display: flex;
+  margin: 5px;
+  border-radius: 20px;
 }
 
 .input-container {
@@ -65,35 +67,37 @@
 <script>
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
+import { mapGetters } from "vuex";
 // import { mapState } from "vuex";
 
 export default {
   name: "TheChatting",
+  props: {
+    reservationSeq: null,
+  },
   data() {
     return {
-      userName: "태현",
+      userName: null,
       message: "",
       recvList: [],
-      roomSession: "xogus",
-      roomId: "kth",
+      roomId: null,
+      userData: null,
     };
   },
-  // computed: {
-  //   ...mapState(["meetingInfo"]),
-  //   userName() {
-  //     return this.meetingInfo.userName;
-  //   },
-  //   roomId() {
-  //     return this.meetingInfo.roomId;
-  //   },
-  // },
+  computed: {
+    ...mapGetters("memberStore", ["checkLoginUser"]),
+  },
   created() {
+    this.roomId = this.reservationSeq;
+    this.userName = this.checkLoginUser.nickname;
+    this.userData = this.checkLoginUser;
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
-    console.log("크리에이티드1 : " + this.userName);
-    console.log("크리에이티드2 : " + this.roomId);
+    console.log("채팅 세션 : " + this.roomId);
     this.connect();
+    console.log("채팅 연결됨");
   },
   methods: {
+    // 소켓으로 메세지 전송
     sendMessage() {
       if (this.userName !== "" && this.message !== "") {
         this.send();
@@ -103,9 +107,13 @@ export default {
         });
       }
     },
+
+    // 메세지가 많이 와서 스크롤이 생성될 때 항상 최신 메세지를 보여주도록
     scrollToBottom() {
       this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
     },
+
+    // 메세지 전송
     send() {
       console.log("Send message:" + this.message);
       if (this.stompClient && this.stompClient.connected) {
@@ -114,18 +122,19 @@ export default {
           content: this.message,
           // roomId: "djEjsdladmldmltptus",
           roomId: this.roomId,
+          type: "message",
         };
         this.stompClient.send(
-          "/chatting/receive/" + this.roomId,
-          JSON.stringify(msg),
-          {}
+          `/chatting/send/${this.roomId}`,
+          JSON.stringify(msg)
         );
       }
     },
+
+    // 소켓 연결
     connect() {
       console.log("방 정보 : " + this.roomId);
-      const serverURL = "http://localhost:8081";
-      //  + "/chatting/djEjsdladmldmltptus"
+      const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
@@ -134,17 +143,15 @@ export default {
         (frame) => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log("소켓 연결 성공", frame);
-          // 서버의 메시지 전송 endpoint를 구독합니다.
-          // 이런형태를 pub sub 구조라고 합니다.
-          this.stompClient.subscribe("/chatting/send/" + this.roomId, (res) => {
-            // console.log("구독으로 받은 메시지 입니다.", res.body);
-
-            // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-            this.recvList.push(JSON.parse(res.body));
-            this.$nextTick(() => {
-              this.scrollToBottom();
-            });
+          console.log("채팅 소켓 연결 성공", frame);
+          this.stompClient.subscribe(`/chatting/send/${this.roomId}`, (res) => {
+            const receiveData = JSON.parse(res.body);
+            if (receiveData.type == "message") {
+              this.recvList.push(receiveData);
+              this.$nextTick(() => {
+                this.scrollToBottom();
+              });
+            }
           });
         },
         (error) => {

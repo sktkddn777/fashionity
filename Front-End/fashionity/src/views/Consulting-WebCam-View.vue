@@ -1,7 +1,13 @@
 <template>
   <div class="container">
-    <first-component class="compo"></first-component>
-    <second-component class="compo"></second-component>
+    <first-component
+      class="compo"
+      :reservation-seq="$route.query.sessionId"
+    ></first-component>
+    <second-component
+      class="compo"
+      :reservation-seq="$route.query.sessionId"
+    ></second-component>
   </div>
 </template>
 
@@ -14,6 +20,11 @@ export default {
     FirstComponent,
     SecondComponent,
   },
+  data() {
+    return {
+      reservationSeq: null,
+    };
+  },
 };
 </script>
 
@@ -23,9 +34,9 @@ export default {
 }
 
 .compo {
+  flex: 3;
+}
+.compo:nth-child(2) {
   flex: 1;
 }
-/* .compo:nth-child(2) {
-  flex: 1;
-} */
 </style>

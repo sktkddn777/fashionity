@@ -5,7 +5,14 @@
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
-              src="../../../assets/img/imgtemp.jpg"
+              v-if="this.consultantInfo.profileUrl"
+              src="this.consultantInfo.profileUrl"
+              alt=""
+              class="profile"
+              style="width: 50%"
+            />
+            <img
+              src="../../../assets/img/unknown.png"
               alt=""
               class="profile"
               style="width: 50%"
@@ -14,23 +21,28 @@
         </div>
         <div class="row" style="height: 30px"></div>
         <div class="row">
-          <div class="col review scroll">
+          <div
+            v-for="(review, index) in this.reviewList"
+            :key="index"
+            class="col review scroll"
+          >
+            <consultant-review :review="review"></consultant-review>
+            <!-- <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
+            <consultant-review></consultant-review> -->
           </div>
         </div>
       </div>
       <div class="col-8" style="height: 75vh">
-        <router-view></router-view>
-        <div class="row justify-content-end">
-          <div class="col-1">
-            <button>NEXT</button>
-          </div>
+        <router-view
+          :scheduleList="scheduleList"
+          :nickname="nickname"
+        ></router-view>
+        <div class="row">
+          <div class="col"></div>
         </div>
       </div>
     </div>
@@ -38,12 +50,40 @@
 </template>
 <script>
 import ConsultantReview from "@/components/pages/consultant/ConsultantReview.vue";
+import axios from "axios";
 export default {
   data() {
-    return {};
+    return {
+      nickname: "sangu", // 임시로 사용할 예정 나중에 list 부분 수정되면 수정하자
+      consultantInfo: {},
+      reviewList: [],
+      scheduleList: [],
+    };
   },
   components: {
     ConsultantReview,
+  },
+  props: {},
+  async mounted() {
+    let token = sessionStorage.getItem("token");
+
+    axios({
+      url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/${this.nickname}`,
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
+      method: "GET",
+    }).then((data) => {
+      this.consultantInfo = data.data.consultant[0];
+      // console.log(this.consultantInfo);
+      this.reviewList = this.consultantInfo.reviews;
+      this.scheduleList = this.consultantInfo.schedules;
+      // console.log("review : ", this.reviewList);
+      // console.log("schedule : ", this.scheculeList);
+    });
   },
 };
 </script>
@@ -68,44 +108,5 @@ export default {
 .scroll {
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
-}
-
-button {
-  background: #424242;
-  color: #fff;
-  border: none;
-  position: relative;
-  height: 60px;
-  font-size: 1.6em;
-  padding: 0 2em;
-  cursor: pointer;
-  transition: 800ms ease all;
-  outline: none;
-}
-button:hover {
-  background: #fff;
-  color: #424242;
-}
-button:before,
-button:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 2px;
-  width: 0;
-  background: #424242;
-  transition: 400ms ease all;
-}
-button:after {
-  right: inherit;
-  top: inherit;
-  left: 0;
-  bottom: 0;
-}
-button:hover:before,
-button:hover:after {
-  width: 100%;
-  transition: 800ms ease all;
 }
 </style>

@@ -1,5 +1,8 @@
 package com.infinity.fashionity.posts.service;
 
+import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
+import com.infinity.fashionity.alarm.entity.AlarmType;
+import com.infinity.fashionity.alarm.service.AlarmService;
 import com.infinity.fashionity.follows.entity.FollowEntity;
 import com.infinity.fashionity.follows.entity.FollowKey;
 import com.infinity.fashionity.follows.repository.FollowRepository;
@@ -45,6 +48,7 @@ public class PostServiceImpl implements PostService {
     private final PostImageRepository postImageRepository;
     private final FollowRepository followRepository;
     private final ImageService imageService;
+    private final AlarmService alarmService;
 
     // 게시글 전체 조회
     @Override
@@ -251,7 +255,6 @@ public class PostServiceImpl implements PostService {
                     .build();
             postImageRepository.save(image);
         }
-
         return PostSaveDTO.Response.builder()
                 .success(true)
                 .postSeq(post.getSeq())
@@ -265,12 +268,10 @@ public class PostServiceImpl implements PostService {
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
         String content = dto.getContent();
-        List<MultipartFile> images = dto.getImages();
         List<String> hashtags = dto.getHashtag();
 
         // 입력값 검증
-        if (memberSeq == null || postSeq == null || StringUtils.isBlank(content)
-                || images.isEmpty() || images.size() > 4) {
+        if (memberSeq == null || postSeq == null || StringUtils.isBlank(content)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -290,39 +291,39 @@ public class PostServiceImpl implements PostService {
         //기존 image, hashtags를 삭제
 
         // 이미지들을 물리 저장소에서 삭제
-        List<ImageDTO> imageInfos = post.getPostImages().stream()
-                .map(image -> ImageDTO.builder()
-                        .fileName(image.getName())
-                        .fileUrl(image.getUrl())
-                        .build())
-                .collect(Collectors.toList());
-        ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
-                .images(imageInfos)
-                .build());
-
-        //이미지 정보들을 삭제
-        postImageRepository.deleteByPostSeq(postSeq);
-
-        //물리저장소에서 삭제가 성공했으면 db에서도 지움
-        postImageRepository.deleteByPostSeq(postSeq);
+//        List<ImageDTO> imageInfos = post.getPostImages().stream()
+//                .map(image -> ImageDTO.builder()
+//                        .fileName(image.getName())
+//                        .fileUrl(image.getUrl())
+//                        .build())
+//                .collect(Collectors.toList());
+//        ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
+//                .images(imageInfos)
+//                .build());
+//
+//        //이미지 정보들을 삭제
+//        postImageRepository.deleteByPostSeq(postSeq);
+//
+//        //물리저장소에서 삭제가 성공했으면 db에서도 지움
+//        postImageRepository.deleteByPostSeq(postSeq);
 
         //해시태그들 삭제
         postHashtagRepository.deleteByPostSeq(postSeq);
 
         //이미지를 물리저장소에 저장
-        ImageSaveDTO.Response savedImages = imageService.save(ImageSaveDTO.Request.builder()
-                .images(images)
-                .build());
+//        ImageSaveDTO.Response savedImages = imageService.save(ImageSaveDTO.Request.builder()
+//                .images(images)
+//                .build());
 
         //저장된 정보를 db에 저장
-        List<PostImageEntity> collect = savedImages.getImageInfos().stream()
-                .map(imageInfo -> PostImageEntity.builder()
-                        .name(imageInfo.getFileName())
-                        .url(imageInfo.getFileUrl())
-                        .post(post)
-                        .build())
-                .collect(Collectors.toList());
-        postImageRepository.saveAll(collect);
+//        List<PostImageEntity> collect = savedImages.getImageInfos().stream()
+//                .map(imageInfo -> PostImageEntity.builder()
+//                        .name(imageInfo.getFileName())
+//                        .url(imageInfo.getFileUrl())
+//                        .post(post)
+//                        .build())
+//                .collect(Collectors.toList());
+//        postImageRepository.saveAll(collect);
 
         //해시태그 저장
         List<PostHashtagEntity> hashtagEntities = new ArrayList<>();
@@ -386,13 +387,6 @@ public class PostServiceImpl implements PostService {
                 .images(imageInfos)
                 .build());
 
-        //db에서 정보들을 삭제
-        postImageRepository.deleteByPostSeq(postSeq);
-
-        //db에서 연결된 해시태그를 삭제
-        postHashtagRepository.deleteByPostSeq(postSeq);
-
-        //db에서 post관련 정보 삭제
         postRepository.delete(post);
 
         return PostDeleteDTO.Response.builder()
@@ -439,6 +433,20 @@ public class PostServiceImpl implements PostService {
                     .build());
             like = true;
         }
+
+
+        //owner에게 알람 보내기 or 지우기
+        if(like) {
+            alarmService.sendAlarm(AlarmSendDTO.Request.builder()
+                    .ownerSeq(post.getMember().getSeq())
+                    .publisherSeq(member.getSeq())
+                    .type(AlarmType.POST_LIKE)
+                    .postSeq(post.getSeq())
+                    .build());
+        }
+        else{
+
+        }
         return PostLikeDTO.Response.builder()
                 .like(like)
                 .build();
@@ -450,11 +458,11 @@ public class PostServiceImpl implements PostService {
     public PostReportDTO.Response reportPost(PostReportDTO.Request dto) {
         Long postSeq = dto.getPostSeq();
         Long memberSeq = dto.getMemberSeq();
-        String type = dto.getType();
+        String category = dto.getCategory();
         String content = dto.getContent();
 
         // 입력값 검증
-        if (postSeq == null || memberSeq == null || StringUtils.isBlank(type)) {
+        if (postSeq == null || memberSeq == null || StringUtils.isBlank(category)) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
 
@@ -481,7 +489,7 @@ public class PostServiceImpl implements PostService {
         PostReportEntity report = PostReportEntity.builder()
                 .post(post)
                 .member(member)
-                .category(type)
+                .category(category)
                 .content(content)
                 .build();
 
