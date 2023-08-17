@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name="reservations")
-@SQLDelete(sql = "UPDATE Reservations SET deleted_at = now() WHERE reservation_seq = ?")
+@SQLDelete(sql = "UPDATE reservations SET deleted_at = now() WHERE reservation_seq = ?")
 @Where(clause = "deleted_at is null")
 @Getter
 @Builder
