@@ -23,13 +23,13 @@
     <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div
-          class="row"
-          style="justify-content: center"
+          class="row justify-content-start"
+          style="justify-content: start"
           v-for="(arr, index) in postRow"
           :key="index"
         >
           <div
-            class="col"
+            class="col justify-content-start"
             v-for="post in arr"
             :key="post.post_seq"
             style="margin-bottom: 20px"

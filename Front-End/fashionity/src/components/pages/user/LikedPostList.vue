@@ -1,8 +1,9 @@
 <template>
-  <div class="container">
+  <div class="container-fluid" style="width: 80vw">
     <div v-if="dataLoaded">
       <div
         class="row justify-content-start"
+        style="margin-bottom: 20px"
         v-for="(row, index) in postRow"
         :key="index"
       >
@@ -19,8 +20,6 @@
 <script>
 import MyPost from "@/components/pages/user/MyPost.vue";
 import axios from "axios";
-
-
 
 export default {
   data() {
@@ -49,7 +48,6 @@ export default {
     // 스크롤 이벤트 리스너 추가
     window.addEventListener("scroll", this.handleScroll);
     axios({
-      
       url: `${process.env.VUE_APP_API_URL}/api/v1/members/${this.$route.params.nickname}/liked?page=${this.page}`,
       headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       method: "GET",
@@ -137,7 +135,7 @@ export default {
 };
 </script>
 <style scoped>
-.container {
+/* .container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -145,5 +143,5 @@ export default {
 .row {
   display: flex;
   margin-bottom: 1.2rem;
-}
+} */
 </style>

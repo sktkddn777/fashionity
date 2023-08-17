@@ -6,7 +6,7 @@
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
               v-if="this.consultantInfo.profileUrl"
-              src="this.consultantInfo.profileUrl"
+              :src="this.consultantInfo.profileUrl"
               alt=""
               class="profile"
               style="width: 50%"
@@ -76,10 +76,11 @@ export default {
       method: "GET",
     }).then((data) => {
       this.consultantInfo = data.data.consultant[0];
-      // console.log(this.consultantInfo);
+      console.log(this.consultantInfo);
       this.reviewList = this.consultantInfo.reviews;
       this.scheduleList = this.consultantInfo.schedules;
       console.log("review : ", this.reviewList);
+      console.log(this.consultantInfo.profileUrl);
       // console.log("schedule : ", this.scheculeList);
     });
   },
