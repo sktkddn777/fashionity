@@ -100,9 +100,9 @@ export default {
             method: "GET",
           }).then((data) => {
             this.posts = data.data.consultants;
-            this.dataLoaded = true;
           });
         }
+        this.dataLoaded = true;
       });
   },
   methods: {
@@ -130,9 +130,11 @@ export default {
       })
         .then((response) => {
           const newPosts = response.data.consultants;
-          this.posts = [...this.posts, ...newPosts];
+          if (newPosts.length > 0) {
+            this.posts = [...this.posts, ...newPosts];
+            this.page++;
+          }
           this.loadingNextPage = false;
-          this.page++;
         })
         .catch((exception) => {
           let data = exception.response;
@@ -148,6 +150,7 @@ export default {
               this.page++;
             });
           }
+          this.loadingNextPage = false;
         });
     },
     handleScroll() {
@@ -159,7 +162,9 @@ export default {
       const fullHeight = document.documentElement.scrollHeight;
       // 뷰포트 하단에 도달했을 때 (여기서 200은 여유값을 의미합니다.)
       if (scrollY + viewportHeight >= fullHeight - 60) {
-        this.loadNextPage();
+        if (!this.loadingNextPage) {
+          this.loadNextPage();
+        }
       }
     },
     onclick(post) {

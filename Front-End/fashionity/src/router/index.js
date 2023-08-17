@@ -32,6 +32,7 @@ import ConsultantVue from "../components/pages/consultant/Consultant";
 import RConsultantCheck from "../components/pages/consultant/consultantSide/RConsultantCheck";
 import RConsultantCheckDetail from "../components/pages/consultant/consultantSide/RConsultantCheckDetail";
 import RConsultantSet from "../components/pages/consultant/consultantSide/RConsultantSet";
+import RUserCheckDetail from "../components/pages/consultant/consultantSide/RUserCheckDetail";
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -209,6 +210,12 @@ const router = createRouter({
               name: "RConsultantCheckDetail",
               component: RConsultantCheckDetail,
               beforeEnter: optionalAuthUser,
+              props: true,
+            },
+            {
+              path: "/udetail/:value",
+              name: "RUserCheckDetail",
+              component: RUserCheckDetail,
               props: true,
             },
           ],
