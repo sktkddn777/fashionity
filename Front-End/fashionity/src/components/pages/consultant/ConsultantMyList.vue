@@ -67,7 +67,8 @@
           </div>
         </div>
         <div class="col">
-          <button class="consultant-mylist-write-review" @click="openModal">후기 작성</button>
+          <!-- <button v-if = "reservation.reviewSeq !== null" class="consultant-mylist-write-review" @click="openRModal">후기 조회</button> -->
+          <button v-if = "reservatoin.reviewSeq === null" class="consultant-mylist-write-review" @click="openModal">후기 작성</button>
         </div>
       </div>
       <review-modal-vue
@@ -75,6 +76,7 @@
         @close="closeModal"
         :reservation-seq="reservation.reservationSeq"
       ></review-modal-vue>
+
     </div>
   </div>
 </template>
@@ -127,6 +129,7 @@ export default {
       })
         .then((response) => {
           const reservations = response.data.userReservationSummaries;
+          console.log(reservations)
           if (reservations[0].reservationSeq !== null) {
             for (let i = 0; i < reservations.length; i++) {
               const givenDate = reservations[i].reservationDateTime;
@@ -172,33 +175,42 @@ export default {
   margin-bottom: 15px;
 }
 .consultant-mylist-enter {
-  background-color: red;
-  color: white;
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
   border-radius: 10px;
-  padding: 10px;
+  background: #ed4141;
+  color: #ffffff;
+  margin-right:0.4rem
 }
 .consultant-mylist-cancel {
-  background-color: gray;
-  color: white;
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
   border-radius: 10px;
-  padding: 10px;
-  margin-left: 10px;
+  background: #cecece;
+  color: #ffffff;
+  margin-right:0.4rem
 }
 
 .consultant-mylist-write-review {
-  background-color: blue;
-  color: white;
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
   border-radius: 10px;
-  padding: 10px;
-  margin-left: 10px;
+  background: #2191ff;
+  color: #ffffff;
+  margin-right:0.4rem
 }
 
 .consultant-mylist-modify-review {
-  background-color: gray;
-  color: white;
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
   border-radius: 10px;
-  padding: 10px;
-  margin-left: 10px;
+  background: #cecece;
+  color: #ffffff;
+  margin-right:0.4rem
 }
 .profile {
   width: 90px;
