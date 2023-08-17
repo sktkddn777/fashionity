@@ -61,7 +61,7 @@
         </div>
       </div>
     </div>
-
+    <br />
     <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
     <div v-if="style_images.length !== 0" class="image-list">
       <multi-image-upload></multi-image-upload>
