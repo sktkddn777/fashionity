@@ -50,14 +50,10 @@
       <div class="image-list">
         <div
           class="image-item"
-          v-for="(image, index) in style_images"
+          v-for="(image, index) in memberImages"
           :key="index"
         >
-          <img
-            :src="require(`@/assets/img/${image.url}`)"
-            :alt="image.alt"
-            class="image"
-          />
+          <img :src="image" :alt="image.alt" class="image" />
         </div>
       </div>
     </div>
@@ -71,11 +67,11 @@
         </button>
       </div>
     </div>
-    <div class="image-list">
+    <!-- <div class="image-list">
       <div class="image-item" v-for="(image, index) in fileList" :key="index">
-        <img :src="require(`${image.url}`)" :alt="image.alt" class="image" />
+        <img :src="`${image.preview}`" :alt="image.alt" class="image" />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <style scoped>
@@ -195,18 +191,6 @@ export default {
           data.consultantReservationDetails[0].personalColor;
         this.memberGender = data.consultantReservationDetails[0].gender;
         this.memberWeight = data.consultantReservationDetails[0].weight;
-        console.log(data.consultantReservationDetails[0].memberNickname);
-        console.log(
-          this.memberAge +
-            " " +
-            this.memberGender +
-            " " +
-            this.memberHeight +
-            " " +
-            this.memberWeight +
-            " " +
-            this.memberPersonalColor
-        );
       })
       .catch((error) => {
         console.log(error);
@@ -224,7 +208,7 @@ export default {
       memberGender: "",
       memberWeight: "",
       fileList: [],
-      style_images: [],
+      memberImages: [],
     };
   },
   methods: {
@@ -237,20 +221,20 @@ export default {
       });
     },
     async submitPost() {
-      const imgData = {
+      const saveData = {
         images: this.fileList,
         reservationSeq: this.reservationSeq,
       };
-      await this.callImageSaveAPI(imgData);
+      await this.callImageSaveAPI(saveData);
       this.navigateToDetail();
     },
-    async callImageSaveAPI(imgData) {
-      console.log("API 들어왔나용");
+    async callImageSaveAPI(saveData) {
       let formData = new FormData();
-      for (let i = 0; i < imgData.images.length; i++) {
-        formData.append("images", imgData.images[i]);
+      for (let i = 0; i < saveData.images.length; i++) {
+        formData.append("images", saveData.images[i]);
       }
-      formData.append("reservationSeq", imgData.reservationSeq);
+      formData.append("reservationSeq", saveData.reservationSeq);
+      console.log(formData.get("reservationSeq") + formData.get("images"));
       var token = sessionStorage.getItem("token");
       await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation`,
