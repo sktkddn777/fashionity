@@ -202,12 +202,13 @@ public class ConsultantController {
     @PatchMapping("reservation")
     public ResponseEntity<ConsultantReservationSaveDTO.Response> saveConsultantImagesInReservation(
             @AuthenticationPrincipal JwtAuthentication auth,
-            ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto){
+            ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto) {
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
         ConsultantReservationSaveDTO.Response response = consultantService.saveConsultantImages(dto);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/reservation/myschedule")
     public ResponseEntity<ScheduleDTO.Response> getConsultantScheduleByDate(
