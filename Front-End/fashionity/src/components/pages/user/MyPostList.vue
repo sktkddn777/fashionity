@@ -3,6 +3,7 @@
     <div v-if="dataLoaded">
       <div
         class="row justify-content-start"
+        style="margin-bottom: 20px"
         v-for="(row, index) in postRow"
         :key="index"
       >

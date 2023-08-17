@@ -69,7 +69,7 @@
               clearable
               v-model="personalColorInput"
               :items="['UNKNOWN', 'SPRING', 'SUMMER', 'FALL', 'WINTER']"
-              style="width: 15vw; padding-left: 150px"
+              style="width: 25vw; padding-left: 100px"
             ></v-select>
           </div>
           <div class="col">
@@ -125,7 +125,7 @@ export default {
       heightInput: Number,
       weightInput: Number,
       detailInput: "",
-      personalColorInput: String,
+      personalColorInput: "UNKNOWN",
     };
   },
   components: {
