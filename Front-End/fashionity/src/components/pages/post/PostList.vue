@@ -1,7 +1,5 @@
 <template lang="">
-  <div class="container-fluid">
-    <the-nav-bar-post></the-nav-bar-post>
-
+  <div class="container-fluid" style="min-height: 100vh">
     <div class="row justify-content-space-around tools" ref="toolsContainer">
       <div class="col-3 search">
         <input
@@ -105,6 +103,7 @@ export default {
         this.page++;
       })
       .catch((exception) => {
+        console.log("mounted catch");
         let data = exception.response;
         if (data.status === 401) {
           //유효기간이 다 된 토큰이면 일단 보여주셈
@@ -114,6 +113,7 @@ export default {
           }).then((data) => {
             this.posts = data.data.posts;
             this.dataLoaded = true;
+            this.page++;
           });
         }
       });
@@ -147,9 +147,11 @@ export default {
       })
         .then((response) => {
           const newPosts = response.data.posts;
-          this.posts = [...this.posts, ...newPosts];
-          this.loadingNextPage = false;
-          this.page++;
+          if (response.data.posts.length > 0) {
+            this.page++;
+            this.posts = [...this.posts, ...newPosts];
+            this.loadingNextPage = false;
+          }
         })
         .catch((exception) => {
           let data = exception.response;
@@ -177,7 +179,9 @@ export default {
 
       // 뷰포트 하단에 도달했을 때 (여기서 200은 여유값을 의미합니다.)
       if (scrollY + viewportHeight >= fullHeight - 200) {
-        this.loadNextPage();
+        if (!this.loadingNextPage) {
+          this.loadNextPage();
+        }
       }
     },
   },
