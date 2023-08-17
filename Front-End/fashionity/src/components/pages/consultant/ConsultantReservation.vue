@@ -11,7 +11,13 @@
               class="profile"
               style="width: 50%"
             />
-            <img src="../../../assets/img/unknown.png" alt="" class="profile" style="width: 50%" />
+            <img
+              v-else
+              src="../../../assets/img/unknown.png"
+              alt=""
+              class="profile"
+              style="width: 50%"
+            />
           </div>
         </div>
         <div class="row" style="height: 30px"></div>
