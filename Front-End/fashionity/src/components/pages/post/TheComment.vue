@@ -78,7 +78,7 @@
 <script>
 import axios from "axios";
 import { mapState } from "vuex";
-import ReportModalComment from "./ReportModalComment .vue";
+import ReportModalComment from "./ReportModalComment.vue";
 const memberStore = "memberStore";
 export default {
   props: ["comment"],
