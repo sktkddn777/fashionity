@@ -8,7 +8,7 @@
           name="search"
           placeholder="검색어를 입력하세요"
           v-model="hashtagInput"
-          @input="updateInput()"
+          @keyup="updateInput()"
         />
       </div>
       <div class="col"></div>
@@ -103,7 +103,6 @@ export default {
         this.page++;
       })
       .catch((exception) => {
-        console.log("mounted catch");
         let data = exception.response;
         if (data.status === 401) {
           //유효기간이 다 된 토큰이면 일단 보여주셈
@@ -112,9 +111,9 @@ export default {
             method: "GET",
           }).then((data) => {
             this.posts = data.data.posts;
-            this.dataLoaded = true;
             this.page++;
           });
+          this.dataLoaded = true;
         }
       });
   },
@@ -147,11 +146,11 @@ export default {
       })
         .then((response) => {
           const newPosts = response.data.posts;
-          if (response.data.posts.length > 0) {
+          if (newPosts.length > 0) {
             this.page++;
             this.posts = [...this.posts, ...newPosts];
-            this.loadingNextPage = false;
           }
+          this.loadingNextPage = false;
         })
         .catch((exception) => {
           let data = exception.response;
@@ -167,6 +166,7 @@ export default {
               this.page++;
             });
           }
+          this.loadingNextPage = false;
         });
     },
     handleScroll() {
