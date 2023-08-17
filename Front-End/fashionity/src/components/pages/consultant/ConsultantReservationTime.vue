@@ -24,7 +24,11 @@
           v-for="(time, index) in am2"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block">
+          <div
+            v-if="timeList.includes(time)"
+            class="time-block"
+            @click="timeClick(time)"
+          >
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -71,17 +75,17 @@
         </div>
       </div>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="col"></div>
         <div class="col-3">
           <router-link class="link" to="/consultant/reservation/detail"
             ><button>NEXT</button></router-link
           >
         </div>
-      </div>
+      </div> -->
 
       <!-- <div v-for="(time, index) in pm" :key="index">{{ time }}</div> -->
-      <div>{{ this.scheduleList }}</div>
+      <!-- <div>{{ this.scheduleList }}</div> -->
       <!-- <div>{{ this.currDate }}</div> -->
     </div>
   </div>
@@ -99,6 +103,7 @@ export default {
       currDate: Date,
       availTimeList: [],
       timeList: [],
+      seq: Number,
     };
   },
   created() {
@@ -107,7 +112,7 @@ export default {
     this.pm1 = [13, 14, 15, 16];
     this.pm2 = [17, 18, 19, 20];
     this.pm3 = [21, 22, 23, 24];
-    this.currDate = this.$route.query.date;
+    this.currDate = this.$route.params.date;
 
     this.availTimeList = [];
     this.timeList = [];
@@ -168,6 +173,21 @@ export default {
         date1.getMonth() === date2.getMonth() &&
         date1.getDate() === date2.getDate()
       );
+    },
+
+    timeClick(time) {
+      // alert(time);
+      for (let i = 0; i < this.availTimeList.length; i++) {
+        if (time == this.availTimeList[i][1]) {
+          // console.log("test");
+          this.seq = this.availTimeList[i][0];
+        }
+      }
+      // console.log("time : ", this.seq);
+      this.$router.push({
+        name: "consultantDetail",
+        params: { seq: this.seq },
+      });
     },
   },
 };

@@ -137,6 +137,7 @@ export default {
   },
   created() {
     this.isVaild = false;
+    console.log(this.$route.params.seq);
   },
   // watch: {
   //   imgList() {

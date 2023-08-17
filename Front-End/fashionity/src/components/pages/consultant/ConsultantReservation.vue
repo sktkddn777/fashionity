@@ -37,7 +37,10 @@
         </div>
       </div>
       <div class="col-8" style="height: 75vh">
-        <router-view :scheduleList="scheduleList"></router-view>
+        <router-view
+          :scheduleList="scheduleList"
+          :nickname="nickname"
+        ></router-view>
         <div class="row">
           <div class="col"></div>
         </div>
