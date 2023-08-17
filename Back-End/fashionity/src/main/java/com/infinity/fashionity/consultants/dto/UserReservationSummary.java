@@ -17,4 +17,5 @@ public class UserReservationSummary {
     private LocalDateTime reservationDateTime;
     private String consultantProfileUrl;
     private String consultantNickname;
+    private Long reviewSeq;
 }
