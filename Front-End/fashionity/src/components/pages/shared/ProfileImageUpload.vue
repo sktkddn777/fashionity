@@ -1,56 +1,33 @@
 <template lang="">
   <div class="container-fluid">
-    <div style="height: 2rem"></div>
-    <div class="row justify-content-center">
-      <div class="row">
-        <div v-if="!files.length" class="row">
-          <div class="row">
+    <div class="row justify-content-start">
+      <div class="row justify-content-start">
+        <div v-if="!files.length" class="row justify-content-start">
+          <div class="row justify-content-start">
             <div class="col">
               <div class="image-box">
-                <button class="active-button" style="margin-right: 0.3rem">
-                  <label for="file">사진 선택</label>
-                  <input
-                    type="file"
-                    id="file"
-                    ref="files"
-                    @change="imageUpload"
-                  />
-                </button>
-                <button
-                  class="inactive-button"
-                  style="margin-right: 0.3rem"
-                  @click="cancelImageUpload"
-                >
-                  취소
-                </button>
+                <!-- <div class="image-profile">
+              <img :src="profileImage" />
+              </div>-->
+                <label for="file">사진 등록</label>
+                <input type="file" id="file" ref="files" @change="imageUpload" />
               </div>
             </div>
           </div>
         </div>
         <div v-else class="file-preview-content-container">
           <div class="file-preview-container">
-            <div
-              v-for="(file, index) in files"
-              :key="index"
-              class="file-preview-wrapper"
-            >
-              <div
-                class="file-close-button"
-                @click="fileDeleteButton"
-                :name="file.number"
-              >
-                x
-              </div>
+            <div v-for="(file, index) in files" :key="index" class="file-preview-wrapper">
+              <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div>
               <img :src="file.preview" />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="crop" v-if="cropImgURL">
-      <div class="col" style="justify-content: center">
+    <div v-if="cropImgURL" class="row justify-content-start">
+      <div class="col">
         <cropper
-          style="justify-content: center"
           class="cropper"
           ref="cropper"
           :auto-zoom="true"
@@ -65,10 +42,7 @@
           :src="cropImgURL"
         />
       </div>
-      <br />
-      <div class="button" style="display: flex; justify-content: flex-end">
-        <button class="active-button" @click="uploadImage">저장</button>
-      </div>
+      <div class="col" @click="uploadImage">upload</div>
     </div>
   </div>
 </template>
@@ -88,6 +62,9 @@ export default {
       currFileList: [],
     };
   },
+  // props: {
+  //   imgList: [],
+  // },
   components: {
     Cropper,
   },
@@ -145,9 +122,7 @@ export default {
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
       this.files = this.files.filter((data) => data.number !== Number(name));
-      this.filesPreview = this.filesPreview.filter(
-        (data) => data.number !== Number(name)
-      );
+      this.filesPreview = this.filesPreview.filter((data) => data.number !== Number(name));
       // console.log(this.files);
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);
@@ -187,9 +162,6 @@ export default {
 
         // this.makePreview(blobData);
       }
-    },
-    cancelImageUpload() {
-      this.$emit("cancel-upload");
     },
   },
   change({ coordinates, canvas }) {
@@ -400,7 +372,7 @@ width: 100%; */
   border: 0;
 }
 
-/* .image-box label {
+.image-box label {
   display: inline-block;
   padding: 10px 20px;
   background-color: black;
@@ -409,7 +381,7 @@ width: 100%; */
   font-size: 15px;
   cursor: pointer;
   border-radius: 5px;
-} */
+}
 
 .file-preview-wrapper {
   padding: 10px;
@@ -487,29 +459,5 @@ width: 100%; */
   max-height: 250px;
   max-width: 250px;
   background: #ddd;
-}
-.active-button {
-  width: 100px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: #2191ff;
-  color: #ffffff;
-}
-.inactive-button {
-  width: 100px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: #cecece;
-  color: #ffffff;
-}
-.crop {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-top: auto;
-  margin-bottom: auto;
 }
 </style>

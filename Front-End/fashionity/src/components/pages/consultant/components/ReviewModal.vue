@@ -30,9 +30,12 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   props: {
     showModal: Boolean,
+    reservationSeq: null,
   },
   data() {
     return {
@@ -41,6 +44,7 @@ export default {
       stars: [1, 2, 3, 4, 5],
     };
   },
+
   methods: {
     closeModal() {
       this.$emit("close");
@@ -51,13 +55,44 @@ export default {
     starClass(star) {
       return star <= this.selectedStar ? "fa-star" : "fa-star-o";
     },
-    submitReview() {
-      //이거는 선택한 별 만큰 점수 주는거!! => this.selectedStar
+    async submitReview() {
+      console.log("리뷰 시퀀스 : " + this.reservationSeq);
       console.log("줄 점수 : " + this.selectedStar);
-      //이거는 작성한 내용!! => this.reviewText
       console.log(this.reviewText);
-      // 여기에 리뷰 작성 api 넣어줘!!!
+      if (this.reviewText.trim() === "") {
+        alert("내용을 입력해주세요.");
+      } else {
+        const reviewData = {
+          reviewGrade: this.selectedStar,
+          reviewContent: this.reviewText,
+        };
+        await this.callReviewSaveAPI(reviewData);
+      }
       this.closeModal();
+    },
+    async callReviewSaveAPI(reviewData) {
+      let formData = new FormData();
+      formData.append("reviewGrade", reviewData.reviewGrade);
+      formData.append("reviewContent", reviewData.reviewContent);
+      var token = sessionStorage.getItem("token");
+      await axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/${this.reservationSeq}/review`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+              },
+        method: "POST",
+        data: formData,
+      })
+        .then((data) => {
+          console.log("callReviewSaveAPI " + data.data.reservationSeq);
+        })
+        .catch(() => {
+          alert("리뷰가 등록되지 않았습니다.");
+        });
     },
   },
 };

@@ -88,16 +88,16 @@ public class ConsultantController {
 
 
     // [컨설턴트] 평점 통계, 수익 조회
-    @GetMapping(value = "/{consultantNickname}/statistics")
-    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
-            @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname,
-            ConsultantStatisticsDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
-        dto.setConsultantNickname(consultantNickname);
-        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
-        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/{consultantNickname}/statistics")
+//    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
+//            @AuthenticationPrincipal JwtAuthentication auth,
+//            @PathVariable("consultantNickname") String consultantNickname,
+//            ConsultantStatisticsDTO.Request dto) {
+//        dto.setMemberSeq(auth.getSeq());
+//        dto.setConsultantNickname(consultantNickname);
+//        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
+//        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
+//    }
 
     // [공통] 리뷰 작성
     @PostMapping(value = "{reservationSeq}/review")
@@ -174,6 +174,40 @@ public class ConsultantController {
 
         return new ResponseEntity<>(scheduleDeleteResponse, HttpStatus.OK);
 
+    }
+
+    /**
+     * 유저가 예약을 하는데, 입력한 정보를 바탕으로 유저 정보 추가 업데이트 및 사진 등록
+     */
+    @PostMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantReservationSaveDTO.Request dto){
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveReservation(dto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("reservation/enter")
+    public ResponseEntity<UserReservationInfoDTO.ReservationEnterResponse> getReservationEnterInfo(
+          @AuthenticationPrincipal JwtAuthentication auth,
+          @RequestParam Long reservationSeq
+    ) {
+        UserReservationInfoDTO.ReservationEnterResponse response = consultantService.getReservationEnterInfo(auth.getSeq(), reservationSeq);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveConsultantImagesInReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto) {
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveConsultantImages(dto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/reservation/myschedule")

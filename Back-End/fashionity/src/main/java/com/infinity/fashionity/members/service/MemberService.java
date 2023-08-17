@@ -11,11 +11,11 @@ public interface MemberService {
     ProfileDTO.Response getMemberProfile(Long seq, String nickname);
     ProfilePostDTO.Response getMemberProfilePost(Long seq, String nickname, ProfilePostDTO.Request dto);
     ProfilePostDTO.Response getMemberProfileLikedPost(Long seq, ProfilePostDTO.Request dto);
+    ProfileDTO.MyProfileBodyInfoResponse getMyBodyInfo(Long seq);
     ProfileDTO.Response editMyProfile(Long seq, ProfileDTO.Request profile);
     ProfileDTO.PwResponse editMyPassword(Long seq, ProfileDTO.PwRequest data);
     MemberFollowDTO.FollowingResponse getFollowings(Long seq, String nickname);
     MemberFollowDTO.FollowerResponse getFollowers(Long seq, String nickname);
-
     MemberDeleteDTO.Response deleteMember(Long seq);
 
 }

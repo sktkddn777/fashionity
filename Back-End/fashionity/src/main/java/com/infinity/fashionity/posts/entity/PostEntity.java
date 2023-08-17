@@ -1,5 +1,6 @@
 package com.infinity.fashionity.posts.entity;
 
+import com.infinity.fashionity.alarm.entity.AlarmEntity;
 import com.infinity.fashionity.comments.entity.CommentEntity;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.global.exception.ErrorCode;
@@ -41,17 +42,21 @@ public class PostEntity extends CUDEntity {
     @JoinColumn(name = "member_seq", nullable = false)
     private MemberEntity member;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PostImageEntity> postImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PostHashtagEntity> postHashtags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CommentEntity> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AlarmEntity> alarms = new ArrayList<>();
 
     //댓글 개수
     @Formula("(SELECT count(*) FROM comments c WHERE c.post_seq = post_seq AND c.deleted_at IS NULL)")

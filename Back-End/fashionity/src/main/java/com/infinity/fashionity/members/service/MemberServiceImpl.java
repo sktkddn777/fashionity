@@ -160,6 +160,19 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
+    @Override
+    public ProfileDTO.MyProfileBodyInfoResponse getMyBodyInfo(Long seq) {
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+
+        return ProfileDTO.MyProfileBodyInfoResponse.builder()
+                .age(member.getAge())
+                .height(member.getHeight())
+                .weight(member.getWeight())
+                .gender(member.getGender())
+                .personalColor(member.getPersonalcolor())
+                .build();
+    }
+
     private String getThumbnail(PostEntity postEntity) {
         List<PostImageEntity> postImages = postEntity.getPostImages();
         if (postImages.size() == 0)

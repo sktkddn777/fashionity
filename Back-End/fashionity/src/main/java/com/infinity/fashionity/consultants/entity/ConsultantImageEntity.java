@@ -5,15 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+
 import javax.persistence.*;
 
 @Entity
-@Table(name="reservation_images")
+@Table(name="consultant_reservation_images")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImageEntity extends CEntity {
+public class ConsultantImageEntity  extends CEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_seq")
@@ -25,5 +27,4 @@ public class ImageEntity extends CEntity {
     @JoinColumn(name = "reservation_seq", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private ReservationEntity reservation;
-
 }

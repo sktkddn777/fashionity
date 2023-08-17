@@ -171,6 +171,7 @@
 import axios from "axios";
 import router from "@/router";
 import MultiImageUpload from "../../shared/MultiImageUpload.vue";
+
 export default {
   name: "RConsultantCheckDetail",
   props: ["value"],
@@ -201,21 +202,26 @@ export default {
   },
   data() {
     return {
-      reservationSeq: "1",
-      memberNickname: "hyeonwook",
-      reservationTime: "",
-      consultantNickname: "",
-      memberAge: "24",
-      memberHeight: "170",
-      memberPersonalColor: "여름 쿨톤",
-      memberGender: "남",
-      memberWeight: "60",
+      reservationSeq: null,
+      memberNickname: null,
+      reservationTime: null,
+      consultantNickname: null,
+      memberAge: null,
+      memberHeight: null,
+      memberPersonalColor: null,
+      memberGender: null,
+      memberWeight: null,
       fileList: [],
     };
   },
   methods: {
     startMeeting() {
-      router.push({ name: "Consulting-WebCam-View" });
+      const sessionId = this.reservationSeq + 73576;
+      console.log("비밀 번호 : " + sessionId);
+      this.$router.push({
+        name: "Consulting-WebCam-View",
+        query: { sessionId },
+      });
     },
     async submitPost() {
       const imgData = {

@@ -7,7 +7,7 @@
     <list default="true" id="38dec0ab-df9b-402a-8c5a-d609c3416d8d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Back-End/fashionity/src/main/java/com/infinity/fashionity/consultants/entity/ConsultantEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Back-End/fashionity/src/main/java/com/infinity/fashionity/consultants/entity/ConsultantEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front-End/fashionity/src/components/pages/consultant/ConsultantReservationForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Front-End/fashionity/src/components/pages/consultant/ConsultantReservationForm.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +30,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/SSAFY/Desktop/S09P12A108/Back-End/fashionity",
+    "last_opened_file_path": "C:/Users/82107/Desktop/S09P12A108/Back-End/fashionity",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -50,6 +50,7 @@
       <updated>1689923092179</updated>
       <workItem from="1689923093196" duration="26000" />
       <workItem from="1690185785916" duration="415000" />
+      <workItem from="1691819951279" duration="1141000" />
     </task>
     <servers />
   </component>

@@ -122,10 +122,6 @@ export default {
         this.isValid = false;
       }
     },
-    updateImg(file) {
-      this.fileList = file;
-      console.log("파일임당", file);
-    },
   },
   created() {
     this.isVaild = false;

@@ -28,8 +28,8 @@ public interface ConsultantService {
     @Transactional(readOnly = true)
     ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
 
-    @Transactional(readOnly = true)
-    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto);
+//    @Transactional(readOnly = true)
+//    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto);
 
     @Transactional
     ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto);
@@ -48,6 +48,14 @@ public interface ConsultantService {
 
     @Transactional
     ScheduleDeleteDTO.Response deleteSchedule(ScheduleDeleteDTO.Request dto, Long scheduleSeq);
+
+    @Transactional
+    ConsultantReservationSaveDTO.Response saveReservation(ConsultantReservationSaveDTO.Request dto);
+
+    @Transactional(readOnly = true)
+    UserReservationInfoDTO.ReservationEnterResponse getReservationEnterInfo(Long memberSeq, Long reservationSeq);
+
+    ConsultantReservationSaveDTO.Response saveConsultantImages(ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto);
 
     @Transactional(readOnly = true)
     ScheduleDTO.Response getSchedule(String dateTime, Long memberSeq);

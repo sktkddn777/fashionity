@@ -30,5 +30,4 @@ public class Reservation {
     @JsonAlias(value = "schedule_seq")
     private Long scheduleSeq;
 
-
 }
