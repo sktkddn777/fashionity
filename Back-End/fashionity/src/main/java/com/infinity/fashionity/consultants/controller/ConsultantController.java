@@ -209,6 +209,7 @@ public class ConsultantController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @GetMapping("/reservation/myschedule")
     public ResponseEntity<ScheduleDTO.Response> getConsultantScheduleByDate(
             @AuthenticationPrincipal JwtAuthentication auth,
