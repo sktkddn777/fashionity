@@ -266,6 +266,7 @@ export default {
         { url: "winter_bright.png", alt: "winter_bright" },
         { url: "winter_cool.png", alt: "winter_cool" },
         { url: "winter_deep.png", alt: "winter_deep" },
+        { url: "zzz.png", alt: "blue" },
       ],
     };
   },
