@@ -50,19 +50,18 @@
         <div class="post-write-button">
           <button
             type="button"
-            class="btn btn-outline-dark"
+            class="inactive-button"
             style="min-width: 70px"
             @click="navigateToMain"
-          >
-            <span style="font-size: smaller">&nbsp;취소&nbsp;</span>
+          >취소
           </button>
           <button
             type="button"
-            class="btn btn-dark"
+            class="active-button"
             style="min-width: 70px"
             @click="submitPost"
           >
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+          등록
           </button>
         </div>
       </div>
@@ -207,5 +206,21 @@ export default {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
+}
+.active-button {
+  width: 80px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 80px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>

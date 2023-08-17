@@ -66,7 +66,7 @@
                 </button>
                 <button
                   v-if="nickname === myNickname"
-                  class="active-button"
+                  class="inactive-button"
                   style="margin-left: 0.5rem"
                   @click="routeToEdit"
                 >

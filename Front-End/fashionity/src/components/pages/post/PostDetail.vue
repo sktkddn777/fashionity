@@ -35,7 +35,8 @@
                   style="min-width: 70px"
                   v-if="this.post.following === false"
                 >
-                  <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
+                  팔로우
+                  <!-- <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span> -->
                 </button>
                 <button
                   type="button"
@@ -43,7 +44,8 @@
                   style="min-width: 70px"
                   v-else
                 >
-                  <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
+                  팔로잉
+                  <!-- <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span> -->
                 </button>
               </div>
               <div v-else></div>
@@ -190,13 +192,14 @@
               placeholder="댓글을 입력해주세요."
               @keydown.enter="submitComment"
             />
+            <div style = "width:1rem"></div>
             <button
               type="button"
-              class="active-button"
-              style="min-width: 70px"
+              class="inactive-button"
+              style="width: 80px"
               @click="submitComment"
             >
-              <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+            등록
             </button>
           </div>
         </div>
