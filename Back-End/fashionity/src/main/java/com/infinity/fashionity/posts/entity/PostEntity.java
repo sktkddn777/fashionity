@@ -22,7 +22,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "posts")
-@SQLDelete(sql = "UPDATE Posts SET deleted_at = now() WHERE post_seq = ?")
+@SQLDelete(sql = "UPDATE posts SET deleted_at = now() WHERE post_seq = ?")
 @Where(clause = "deleted_at is null")
 @Getter
 @Builder
