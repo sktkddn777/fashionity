@@ -4,12 +4,10 @@
     <div class="row">
       <div class="col"></div>
       <div class="col-3">
-        <router-link
-          class="link"
-          to="/consultant/reservation/time"
-          @propChange="propChange"
-          ><button>NEXT</button></router-link
-        >
+        <button @click="buttonClick">NEXT</button>
+
+        <!-- <div>{{ this.scheduleList }}</div> -->
+        <!-- <div>{{ this.date }}</div> -->
       </div>
     </div>
   </div>
@@ -20,11 +18,24 @@
 export default {
   data() {
     return {
-      data: "",
+      date: "",
     };
+  },
+  props: {
+    scheduleList: [],
+    nickname: String,
   },
   components: {
     // ConsultantCalenerTempVue,
+  },
+  methods: {
+    buttonClick() {
+      // console.log("눌러짐");
+      this.$router.push({
+        name: "consultantTime",
+        params: { date: this.date, nickname: this.nickname },
+      });
+    },
   },
 };
 </script>

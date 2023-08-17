@@ -208,19 +208,11 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = reservationRepository.findById(reservationSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
 
-        MemberEntity member = memberRepository.findByseq(memberSeq);
-
-        PersonalColor personalColor = member.getPersonalcolor();
-        Gender gender = member.getGender();
-        Float height = member.getHeight();
-        Float weight = member.getWeight();
-        Integer age = member.getAge();
-
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
         List<ConsultantReservationDetail> details = result.stream().map(entity -> {
-            List<MemberImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
-            List<Image> memeberImages = imageEntities.stream().map(e->{
+            List<MemberImageEntity> memberImageEntities = reservationRepository.findReservationMemberImages(entity.getReservationSeq());
+            List<Image> memeberImages = memberImageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
                 String imageUrl = e.getUrl();
                 return Image.builder()
@@ -228,6 +220,20 @@ public class ConsultantServiceImpl implements ConsultantService {
                         .imageUrl(imageUrl)
                         .build();
             }).collect(Collectors.toList());
+            List<ConsultantImageEntity> consultantImageEntities = reservationRepository.findReservationConsultantImages(entity.getReservationSeq());
+            List<Image> consultantImages = consultantImageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+            PersonalColor personalColor = entity.getPersonalColor();
+            Gender gender = entity.getGender();
+            Float height = entity.getHeight();
+            Float weight = entity.getWeight();
+            Integer age = entity.getAge();
             return ConsultantReservationDetail.builder()
                     .reservationSeq(entity.getReservationSeq())
                     .consultantNickname(dto.getConsultantNickname())
@@ -240,7 +246,7 @@ public class ConsultantServiceImpl implements ConsultantService {
                     .reservationDateTime(entity.getReservationDateTime())
                     .reservationDetail(entity.getReservationDetail())
                     .memberImages(memeberImages)
-                    .consultantImages(null)
+                    .consultantImages(consultantImages)
                     .build();
         }).collect(Collectors.toList());
 
@@ -393,13 +399,29 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = reservationRepository.findById(reservationSeq)
                 .orElseThrow(() -> new ValidationException(ErrorCode.RESERVATION_NOT_FOUND));
 
+        MemberEntity member = memberRepository.findByseq(memberSeq);
+
+        PersonalColor personalColor = member.getPersonalcolor();
+        Gender gender = member.getGender();
+        Float height = member.getHeight();
+        Float weight = member.getWeight();
+        Integer age = member.getAge();
+
 
         List<UserReservationDetail> result = reservationRepository.findUserReservation(memberSeq, reservationSeq);
 
         List<UserReservationDetail> details = result.stream().map(entity -> {
-            List<MemberImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
-
-            List<Image> images = imageEntities.stream().map(e->{
+            List<MemberImageEntity> memberImageEntities = reservationRepository.findReservationMemberImages(entity.getReservationSeq());
+            List<Image> memeberImages = memberImageEntities.stream().map(e->{
+                Long imageSeq = e.getSeq();
+                String imageUrl = e.getUrl();
+                return Image.builder()
+                        .imageSeq(imageSeq)
+                        .imageUrl(imageUrl)
+                        .build();
+            }).collect(Collectors.toList());
+            List<ConsultantImageEntity> consultantImageEntities = reservationRepository.findReservationConsultantImages(entity.getReservationSeq());
+            List<Image> consultantImages = consultantImageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
                 String imageUrl = e.getUrl();
                 return Image.builder()
@@ -411,9 +433,16 @@ public class ConsultantServiceImpl implements ConsultantService {
             return UserReservationDetail.builder()
                     .reservationSeq(entity.getReservationSeq())
                     .consultantNickname(entity.getConsultantNickname())
+                    .memberNickname(entity.getMemberNickname())
+                    .personalColor(personalColor)
+                    .gender(gender)
+                    .height(height)
+                    .weight(weight)
+                    .age(age)
                     .reservationDateTime(entity.getReservationDateTime())
                     .reservationDetail(entity.getReservationDetail())
-                    .images(images)
+                    .memberImages(memeberImages)
+                    .consultantImages(consultantImages)
                     .build();
         }).collect(Collectors.toList());
 

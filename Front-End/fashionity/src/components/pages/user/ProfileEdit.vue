@@ -104,7 +104,7 @@
   <div class=" " style="height: 2rem"></div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { useCookies } from "vue3-cookies";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
@@ -146,6 +146,7 @@ export default {
     // }
   },
   methods: {
+    ...mapActions("memberStore", ["updateUserInfoAction"]),
     getProfile() {
       let token = sessionStorage.getItem("token");
       axios({
@@ -217,6 +218,7 @@ export default {
         profileIntro: this.profileIntro,
       };
       await this.callProfileEditAPI(updatedProfile);
+
       this.navigateToProfile();
     },
     async callProfileEditAPI(updatedProfile) {
@@ -258,6 +260,7 @@ export default {
           console.log("=======성공성공========");
           console.log(data);
           console.log("Profile updated successfully!");
+          this.updateUserInfoAction(data.data);
         })
         .catch((error) => {
           // console.log(formData)
