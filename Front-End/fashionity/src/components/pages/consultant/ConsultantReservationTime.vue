@@ -12,7 +12,7 @@
           v-for="(time, index) in am1"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block">
+          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -24,11 +24,7 @@
           v-for="(time, index) in am2"
           :key="index"
         >
-          <div
-            v-if="timeList.includes(time)"
-            class="time-block"
-            @click="timeClick(time)"
-          >
+          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -42,7 +38,7 @@
           v-for="(time, index) in pm1"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block">
+          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -55,7 +51,7 @@
           v-for="(time, index) in pm2"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block">
+          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -68,7 +64,7 @@
           v-for="(time, index) in pm3"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block">
+          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -121,18 +117,13 @@ export default {
     for (let i = 0; i < this.scheduleList.length; i++) {
       // this.scheduleList[i].availableDateTime.toLocaleDateString();
       if (
-        this.isSameDate(
-          new Date(this.currDate),
-          new Date(this.scheduleList[i].availableDateTime)
-        )
+        this.isSameDate(new Date(this.currDate), new Date(this.scheduleList[i].availableDateTime))
       ) {
         this.availTimeList.push([
           this.scheduleList[i].scheduleSeq,
           new Date(this.scheduleList[i].availableDateTime).getHours(),
         ]);
-        this.timeList.push(
-          new Date(this.scheduleList[i].availableDateTime).getHours()
-        );
+        this.timeList.push(new Date(this.scheduleList[i].availableDateTime).getHours());
         console.log("yes");
       }
     }
