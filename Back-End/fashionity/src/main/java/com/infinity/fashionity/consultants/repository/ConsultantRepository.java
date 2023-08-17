@@ -102,12 +102,12 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
     Integer totalDeletedReviewCnt(@Param("consultantNickname") String consultantNickname);
 
     // 컨설턴트 현재까지 전체 수익 조회
-    @Query("select coalesce(sum(res.price),0) " +
-            "from ConsultantEntity c " +
-            "left join c.schedules s " +
-            "left join s.reservations res " +
-            "where c.nickname = :consultantNickname and res.deletedAt is null and res.date >= current_timestamp ")
-    Integer totalSalary(@Param("consultantNickname") String consultantNickname);
+//    @Query("select coalesce(sum(res.price),0) " +
+//            "from ConsultantEntity c " +
+//            "left join c.schedules s " +
+//            "left join s.reservations res " +
+//            "where c.nickname = :consultantNickname and res.deletedAt is null and res.date >= current_timestamp ")
+//    Integer totalSalary(String consultantNickname);
 
     @Query("select m.seq " +
             "from ConsultantEntity  c " +

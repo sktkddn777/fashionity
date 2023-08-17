@@ -1,6 +1,5 @@
 package com.infinity.fashionity.consultants.entity;
 
-import com.infinity.fashionity.consultants.dto.Image;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import lombok.*;
@@ -8,8 +7,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class ReservationEntity extends CUDEntity {
 
     @Id
@@ -46,17 +42,32 @@ public class ReservationEntity extends CUDEntity {
     @Column(name = "reservation_detail", unique = false, nullable = true, length = 200)
     private String detail;
 
-    // 컨설팅 가격
-    @Min(value = 0)
-    @Column(name = "reservation_price", unique = false, nullable = false)
-    private Integer price;
+    //컨설팅 방 번호
+//    @Column(name="reservation_room_number", unique = true, nullable = false)
+//    private String roomNumber;
 
-    // 예약 사진
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation")
+    // 컨설팅 가격
+//    @Min(value = 0)
+//    @Column(name = "reservation_price", unique = false, nullable = true)
+//    private Integer price;
+
+    // 컨설턴트 예약 사진
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<ImageEntity> images = new ArrayList<>();
+    private List<ConsultantImageEntity> consultantImages = new ArrayList<>();
+
+    // 유저 예약 사진
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<MemberImageEntity> memberImages = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "reservation")
     private ReviewEntity review;
 
+    public void setMemberImages(List<MemberImageEntity> memberImages) {
+        this.memberImages = memberImages;
+    }
+    public void setConsultantImages(List<ConsultantImageEntity> consultantImages) {
+        this.consultantImages = consultantImages;
+    }
 }
