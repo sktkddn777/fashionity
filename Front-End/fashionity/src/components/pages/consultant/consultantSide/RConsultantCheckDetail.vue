@@ -235,7 +235,6 @@ export default {
         this.reservationDateTime = `${dateTime[0]}년 ${dateTime[1]}월 ${dateTime[2]}일 ${dateTime[3]}시`;
         this.memberImages = details.memberImages;
         this.consultantImages = details.consultantImages;
-        console.log("멤버 이미지들 : ", this.memberImages);
         console.log("컨설턴트 이미지들 : ", this.consultantImages);
       })
       .catch((error) => {
@@ -263,10 +262,13 @@ export default {
   methods: {
     startMeeting() {
       const sessionId = this.reservationSeq + 73576;
-      const imageList = [...this.memberImages, ...this.consultantImages];
+      const array = [...this.memberImages, ...this.consultantImages];
       console.log("비밀 번호 : " + sessionId);
+      const imageList = [];
+      for (let i = 0; i < array.length; i++) {
+        imageList.push(array[i].imageUrl);
+      }
       console.log(imageList);
-      console.log(this.memberImages[0].object);
       this.$router.push({
         name: "Consulting-WebCam-View",
         query: { sessionId, imageList },

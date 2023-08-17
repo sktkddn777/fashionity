@@ -22,9 +22,10 @@ export default {
     SecondComponent,
   },
   data() {
-    return {};
+    return {
+      reservationSeq: null,
+    };
   },
-  created() {},
 };
 </script>
 

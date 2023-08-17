@@ -116,14 +116,14 @@
         <div class="image-list" v-if="showStyleDiv">
           <div
             class="image-item"
-            v-for="(image, index) in style_images"
+            v-for="(image, index) in imageList"
             :key="index"
           >
             <img
-              :src="require(`@/assets/img/${image.url}`)"
-              :alt="image.alt"
-              :class="['image', { highlighted: selectedIndex_image === index }]"
-              @click="showImage_image(index)"
+              :src="image"
+              alt=""
+              :class="['image', { highlighted: selectedImage_image === image }]"
+              @click="showImage_image(image)"
             />
           </div>
         </div>
@@ -133,8 +133,9 @@
       </div>
       <!-- 일반유저가 보는 이미지 화면 -->
       <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
+        여기야 여기!!
         <img
-          :src="require(`@/assets/img/${selectedImage_image}`)"
+          :src="selectedImage_image"
           alt="Selected Image"
           v-if="selectedImageVisible_image"
           class="image_for_user"
@@ -268,16 +269,6 @@ export default {
         { url: "winter_cool.png", alt: "winter_cool" },
         { url: "winter_deep.png", alt: "winter_deep" },
       ],
-      style_images: [
-        { url: "hyeonwook.jpg", alt: "현욱1" },
-        { url: "hyeonwook2.jpg", alt: "현욱2" },
-        { url: "hyeonwook3.jpg", alt: "현욱3" },
-        { url: "postImg.jpg", alt: "지원" },
-        { url: "hyeonwook.jpg", alt: "현욱1" },
-        { url: "hyeonwook2.jpg", alt: "현욱2" },
-        { url: "hyeonwook3.jpg", alt: "현욱3" },
-        { url: "postImg.jpg", alt: "지원" },
-      ],
     };
   },
   computed: {
@@ -287,12 +278,6 @@ export default {
     this.myUserName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
     this.mySessionId = this.reservationSeq;
-    console.log("세션 : " + this.reservationSeq);
-    console.log("유저 닉네임 : " + this.userData.nickname);
-    console.log("유저 권한 : " + this.userData.memberRole);
-    console.log("유저 권한 : " + this.userData.memberRole[1]);
-    console.log("이미지 리스트");
-    console.log(this.imageList);
     this.joinSession();
     this.connect();
   },
@@ -497,12 +482,12 @@ export default {
     },
 
     // 컨설턴트가 등록된 이미지 클릭 시 보이게
-    showImage_image(index) {
-      if (index !== null) {
-        this.selectedIndex_image = index;
-        this.selectedImage_image = this.style_images[index].url;
+    showImage_image(image) {
+      if (image !== null) {
+        console.log(image);
+        this.selectedImage_image = image;
         this.selectedImageVisible_image = true;
-        this.send(this.selectedIndex_image, "image");
+        this.send(this.selectedImage_image, "image");
       } else {
         this.selectedImageVisible_image = false;
         this.send(null, "image");
@@ -536,7 +521,7 @@ export default {
                 console.log(
                   "받아온 이미지 인덱스 이미지 : " + receiveData.content
                 );
-                this.selectedIndex_image = receiveData.content;
+                this.selectedImage_image = receiveData.content;
               }
             }
           );
@@ -550,11 +535,11 @@ export default {
     },
 
     // 소켓으로 메세지 보내기
-    send(index, type) {
+    send(image, type) {
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
           userName: this.myUserName,
-          content: index,
+          content: image,
           // roomId: "djEjsdladmldmltptus",
           roomId: this.mySessionId,
           type: type,
@@ -575,7 +560,7 @@ export default {
       console.log("퍼스널 새로운 값 : " + newVal);
       this.showImage_personal(newVal);
     },
-    selectedIndex_image(newVal) {
+    selectedImage_image(newVal) {
       console.log("이미지 새로운 값 : " + newVal);
       this.showImage_image(newVal);
     },
