@@ -22,6 +22,8 @@ public class ConsultantReservationSaveDTO {
         @JsonIgnore
         private Long memberSeq;
 
+        private Long scheduleSeq;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime availableDateTime;
 

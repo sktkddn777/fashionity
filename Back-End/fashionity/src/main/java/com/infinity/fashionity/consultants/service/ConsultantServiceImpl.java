@@ -15,6 +15,7 @@ import com.infinity.fashionity.global.exception.ValidationException;
 import com.infinity.fashionity.global.utils.HashUtil;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
@@ -28,12 +29,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
@@ -477,56 +480,52 @@ public class ConsultantServiceImpl implements ConsultantService {
     @Transactional
     public ConsultantReservationSaveDTO.Response saveReservation(ConsultantReservationSaveDTO.Request dto) {
 
-        /**
-         * 1. 유저가 비어있는 컨설턴트 스케줄에 맞춰 예약을 한다
-         * 2. 예약을 함과 동시에 사진을 넣는다.
-         * 3. 컨설턴트는 예약이 잡히면 본인이 컨설팅 해줄 사진을 넣는다
-         *
-         * 이 순서 맞을까..? (맞다면 isConsultant 빼고해도 될듯?)
-         * 추가로 컨설턴트 이미지, 유저 이미지를 분리해야할거 같아 ReservationEntity에서 이미지를 2개로 나누었다.
-         */
-
-        Long memberSeq = dto.getMemberSeq();
-
-        // 입력값 검증
-        // 퍼스널 컬러는 없을 수도 있으니까 제외!
-        if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
-        dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
-            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        // [1] 예외 처리
+        // 1-1 컨설턴트 스케쥴이 비어있지 않으면 예약이 불가능하다
+        Long scheduleSeq = dto.getScheduleSeq();
+        ScheduleEntity schedule = scheduleRepository.findBySeq(scheduleSeq);
+        if (!schedule.getIsAvailable()){
+            throw new ValidationException(ErrorCode.SCHEDULE_UNAVAILABLE);
         }
 
-        // 멤버 존재하는지 확인
+        // 1-2 멤버 존재하는지 확인
+        Long memberSeq = dto.getMemberSeq();
         MemberEntity member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
-        // 컨설턴트 존재하는지 확인
+        // 1-3 컨설턴트 존재하는지 확인
         ConsultantEntity consultant = consultantRepository.findByNickname(dto.getConsultantNickname())
                 .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
 
-        // 유저가 입력한 정보 기반으로 업데이트 진행
+        // 1-4 멤버 신체 정보 입력값 검증 : 퍼스널 컬러는 없을 수도 있으니까 제외!
+        if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
+                dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
+            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+        }
+
+        // 1-5 유저가 입력한 정보 기반으로 업데이트 진행
         member.updateReservationInfo(dto);
 
-        boolean isConsultant = false;
-        for (MemberRoleEntity role : member.getMemberRoles()) {
-            if (role.getMemberRole().equals(MemberRole.CONSULTANT))
-                isConsultant = true;
-        }
+        // [2] 유저 사진 등록
+        // 2-1 사진 등록
 
-        // 사진이랑 세부정보는 예약에 저장
-        // 예약 save 하는 로직
-        ReservationEntity.ReservationEntityBuilder reservationEntityBuilder = ReservationEntity.builder()
-                .schedule(null) // TODO: 컨설턴트의 어느 스케줄을 썼는지 어떻게 보내줄까
+        // 2-2 사진이랑 세부정보 예약에 저장
+        ReservationEntity reservation = ReservationEntity.builder()
+                .schedule(schedule)
                 .member(member)
+                .memberImages(null)
                 .date(dto.getAvailableDateTime())
                 .detail(dto.getDetail())
-                .roomNumber(HashUtil.makeRoomNumber());
+                .build();
 
-        if (isConsultant) {
-            // TODO: consultantImages에 사진을 넣어라
-        } else {
-            // TODO: memberImages에 사진을 넣어라
-        }
-        return null;
+        // 2-3 예약 저장
+        ReservationEntity reservationEntity = reservationRepository.save(reservation);
+
+        // [3] build
+        return ConsultantReservationSaveDTO.Response.builder()
+                .success(true)
+                .reservationSeq(reservationEntity.getSeq())
+                .build();
     }
 
     @Override
@@ -539,7 +538,6 @@ public class ConsultantServiceImpl implements ConsultantService {
         List<String> memberImages = reservation.getMemberImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
 
         return UserReservationInfoDTO.ReservationEnterResponse.builder()
-                .roomNumber(reservation.getRoomNumber())
                 .consultantNickname(reservation.getSchedule().getConsultant().getNickname()) // 와... 망해따..
                 .memberNickname(reservation.getMember().getNickname())
                 .consultantImages(consultantImages)

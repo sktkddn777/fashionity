@@ -47,8 +47,8 @@ public class ReservationEntity extends CUDEntity {
     private String detail;
 
     //컨설팅 방 번호
-    @Column(name="reservation_room_number", unique = true, nullable = false)
-    private String roomNumber;
+//    @Column(name="reservation_room_number", unique = true, nullable = false)
+//    private String roomNumber;
 
     // 컨설팅 가격
     @Min(value = 0)
