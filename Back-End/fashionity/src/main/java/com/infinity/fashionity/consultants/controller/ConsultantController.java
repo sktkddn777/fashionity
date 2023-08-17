@@ -198,5 +198,17 @@ public class ConsultantController {
         UserReservationInfoDTO.ReservationEnterResponse response = consultantService.getReservationEnterInfo(auth.getSeq(), reservationSeq);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PatchMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveConsultantImagesInReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestBody ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto){
+
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveConsultantImages(dto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
 

@@ -68,4 +68,8 @@ public class ReservationEntity extends CUDEntity {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "reservation")
     private ReviewEntity review;
 
+    public void setConsultantImages(List<ImageEntity> consultantImages) {
+        this.consultantImages = consultantImages;
+    }
+
 }

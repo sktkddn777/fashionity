@@ -49,9 +49,25 @@ public class ConsultantReservationSaveDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class ConsultantImageSaveRequest{
+
+        @JsonIgnore
+        private Long memberSeq;
+
+        private Long reservationSeq;
+
+        @Builder.Default
+        private List<MultipartFile> images = new ArrayList<>();
+
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Response{
         private Boolean success;
         private Long reservationSeq;
-
     }
 }

@@ -54,5 +54,7 @@ public interface ConsultantService {
 
     @Transactional(readOnly = true)
     UserReservationInfoDTO.ReservationEnterResponse getReservationEnterInfo(Long memberSeq, Long reservationSeq);
+
+    ConsultantReservationSaveDTO.Response saveConsultantImages(ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto);
 }
 

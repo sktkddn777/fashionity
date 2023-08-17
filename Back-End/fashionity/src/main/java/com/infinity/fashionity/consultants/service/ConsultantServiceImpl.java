@@ -14,6 +14,9 @@ import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
 import com.infinity.fashionity.global.utils.HashUtil;
 import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.image.dto.ImageDTO;
+import com.infinity.fashionity.image.dto.ImageSaveDTO;
+import com.infinity.fashionity.image.service.ImageService;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.entity.MemberRoleEntity;
@@ -28,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLOutput;
 import java.time.LocalDateTime;
@@ -50,6 +54,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ImageService imageService;
 
     // [공통] 컨설턴트 목록 조회
     @Override
@@ -480,7 +485,6 @@ public class ConsultantServiceImpl implements ConsultantService {
         /**
          * 1. 유저가 비어있는 컨설턴트 스케줄에 맞춰 예약을 한다
          * 2. 예약을 함과 동시에 사진을 넣는다.
-         * 3. 컨설턴트는 예약이 잡히면 본인이 컨설팅 해줄 사진을 넣는다
          *
          * 이 순서 맞을까..? (맞다면 isConsultant 빼고해도 될듯?)
          * 추가로 컨설턴트 이미지, 유저 이미지를 분리해야할거 같아 ReservationEntity에서 이미지를 2개로 나누었다.
@@ -547,6 +551,34 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public ConsultantReservationSaveDTO.Response saveConsultantImages(ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto) {
+
+        ReservationEntity reservationEntity = reservationRepository.findById(dto.getReservationSeq()).orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
+        ImageSaveDTO.Response savedImage = saveImage(dto.getImages());
+
+        List<ImageDTO> imageInfos = savedImage.getImageInfos();
+        List<ImageEntity> imageEntities  = new ArrayList<>();
+        for (ImageDTO image : imageInfos) {
+            imageEntities.add(ImageEntity.builder()
+                    .reservation(reservationEntity)
+                    .url(image.getFileUrl())
+                    .build());
+        }
+
+        reservationEntity.setConsultantImages(imageEntities);
+        return ConsultantReservationSaveDTO.Response.builder()
+                .reservationSeq(reservationEntity.getSeq())
+                .success(true)
+                .build();
+    }
+
+    private ImageSaveDTO.Response saveImage(List<MultipartFile> images) {
+        return imageService.save(ImageSaveDTO.Request.builder()
+                .images(images)
+                .build());
+    }
 }
 
 
