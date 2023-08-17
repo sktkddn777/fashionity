@@ -28,8 +28,8 @@ public interface ConsultantService {
     @Transactional(readOnly = true)
     ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
 
-    @Transactional(readOnly = true)
-    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto);
+//    @Transactional(readOnly = true)
+//    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto);
 
     @Transactional
     ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto);
@@ -54,5 +54,7 @@ public interface ConsultantService {
 
     @Transactional(readOnly = true)
     UserReservationInfoDTO.ReservationEnterResponse getReservationEnterInfo(Long memberSeq, Long reservationSeq);
+
+    ConsultantReservationSaveDTO.Response saveConsultantImages(ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto);
 }
 

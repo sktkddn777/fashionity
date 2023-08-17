@@ -44,7 +44,10 @@ public class UserReservationInfoDTO {
         private String memberNickname;
         private String roomNumber;
 
-        private List<String> consultantImages;
-        private List<String> memberImages;
+        @Builder.Default
+        private List<String> consultantImages = new ArrayList<>();
+
+        @Builder.Default
+        private List<String> memberImages = new ArrayList<>();
     }
 }

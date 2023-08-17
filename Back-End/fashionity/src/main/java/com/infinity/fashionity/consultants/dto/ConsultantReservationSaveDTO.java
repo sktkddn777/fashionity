@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.PersonalColor;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class ConsultantReservationSaveDTO {
 
         private Long scheduleSeq;
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
         private LocalDateTime availableDateTime;
 
         private String consultantNickname;
@@ -51,9 +52,25 @@ public class ConsultantReservationSaveDTO {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class ConsultantImageSaveRequest{
+
+        @JsonIgnore
+        private Long memberSeq;
+
+        private Long reservationSeq;
+
+        @Builder.Default
+        private List<MultipartFile> images = new ArrayList<>();
+
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Response{
         private Boolean success;
         private Long reservationSeq;
-
     }
 }

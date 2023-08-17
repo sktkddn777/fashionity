@@ -1,6 +1,5 @@
 package com.infinity.fashionity.consultants.dto;
 
-import com.infinity.fashionity.consultants.entity.ImageEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;

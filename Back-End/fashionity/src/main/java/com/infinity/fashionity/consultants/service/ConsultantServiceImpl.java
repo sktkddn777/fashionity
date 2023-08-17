@@ -1,7 +1,5 @@
 package com.infinity.fashionity.consultants.service;
 
-import com.infinity.fashionity.comments.dto.CommentDeleteDTO;
-import com.infinity.fashionity.comments.dto.CommentSaveDTO;
 import com.infinity.fashionity.consultants.dto.*;
 import com.infinity.fashionity.consultants.entity.*;
 import com.infinity.fashionity.consultants.repository.ConsultantRepository;
@@ -12,15 +10,13 @@ import com.infinity.fashionity.global.exception.AccessDeniedException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
-import com.infinity.fashionity.global.utils.HashUtil;
-import com.infinity.fashionity.global.utils.StringUtils;
+import com.infinity.fashionity.image.dto.ImageDTO;
+import com.infinity.fashionity.image.dto.ImageSaveDTO;
+import com.infinity.fashionity.image.service.ImageService;
 import com.infinity.fashionity.members.data.MemberRole;
-import com.infinity.fashionity.members.dto.ProfileDTO;
 import com.infinity.fashionity.members.entity.MemberEntity;
-import com.infinity.fashionity.members.entity.MemberRoleEntity;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
-import com.infinity.fashionity.members.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,12 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
@@ -53,6 +45,7 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ImageService imageService;
 
     // [공통] 컨설턴트 목록 조회
     @Override
@@ -209,7 +202,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
         List<ConsultantReservationDetail> details = result.stream().map(entity -> {
-            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
+            List<MemberImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
             List<Image> images = imageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
                 String imageUrl = e.getUrl();
@@ -247,27 +240,27 @@ public class ConsultantServiceImpl implements ConsultantService {
     };
 
      //[컨설턴트] 평점 통계, 수익 조회
-    @Override
-    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
-        memberSeq = dto.getMemberSeq();
-        consultantNickname = dto.getConsultantNickname();
-
-        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
-
-        if (!Objects.equals(checkSeq, memberSeq)){
-            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
-        }
-
-
-        return ConsultantStatisticsDTO.Response.builder()
-                .avgGrade(consultantRepository.avgGrade(consultantNickname))
-                .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
-                .totalUndeletedReviewCnt(consultantRepository.totalUndeletedReviewCnt(consultantNickname))
-                .totalDeletedReviewCnt(consultantRepository.totalDeletedReviewCnt(consultantNickname))
-                .totalSalary(consultantRepository.totalSalary(consultantNickname))
-                .build();
-
-    }
+//    @Override
+//    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
+//        memberSeq = dto.getMemberSeq();
+//        consultantNickname = dto.getConsultantNickname();
+//
+//        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
+//
+//        if (!Objects.equals(checkSeq, memberSeq)){
+//            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
+//        }
+//
+//
+//        return ConsultantStatisticsDTO.Response.builder()
+//                .avgGrade(consultantRepository.avgGrade(consultantNickname))
+//                .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
+//                .totalUndeletedReviewCnt(consultantRepository.totalUndeletedReviewCnt(consultantNickname))
+//                .totalDeletedReviewCnt(consultantRepository.totalDeletedReviewCnt(consultantNickname))
+//                .totalSalary(consultantRepository.totalSalary(consultantNickname))
+//                .build();
+//
+//    }
 
     // [공통] 리뷰 작성
     @Override
@@ -380,7 +373,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         List<UserReservationDetail> result = reservationRepository.findUserReservation(memberSeq, reservationSeq);
 
         List<UserReservationDetail> details = result.stream().map(entity -> {
-            List<ImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
+            List<MemberImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
 
             List<Image> images = imageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
@@ -484,9 +477,8 @@ public class ConsultantServiceImpl implements ConsultantService {
         // 1-1 컨설턴트 스케쥴이 비어있지 않으면 예약이 불가능하다
         Long scheduleSeq = dto.getScheduleSeq();
         ScheduleEntity schedule = scheduleRepository.findBySeq(scheduleSeq);
-        if (!schedule.getIsAvailable()){
+        if (!schedule.getIsAvailable())
             throw new ValidationException(ErrorCode.SCHEDULE_UNAVAILABLE);
-        }
 
         // 1-2 멤버 존재하는지 확인
         Long memberSeq = dto.getMemberSeq();
@@ -506,20 +498,30 @@ public class ConsultantServiceImpl implements ConsultantService {
         // 1-5 유저가 입력한 정보 기반으로 업데이트 진행
         member.updateReservationInfo(dto);
 
-        // [2] 유저 사진 등록
-        // 2-1 사진 등록
-
-        // 2-2 사진이랑 세부정보 예약에 저장
+        // 1-6 사진 제외 세부정보 예약에 저장
         ReservationEntity reservation = ReservationEntity.builder()
                 .schedule(schedule)
                 .member(member)
-                .memberImages(null)
                 .date(dto.getAvailableDateTime())
                 .detail(dto.getDetail())
                 .build();
 
-        // 2-3 예약 저장
+
+        // 1-7 예약 저장
         ReservationEntity reservationEntity = reservationRepository.save(reservation);
+        // [2] 유저 사진 등록
+        // 2-1 사진 등록
+        ImageSaveDTO.Response savedImage = saveImage(dto.getImages());
+        List<ImageDTO> imageInfos = savedImage.getImageInfos();
+        List<MemberImageEntity> images = new ArrayList<>();
+        for (ImageDTO image : imageInfos)
+            images.add(MemberImageEntity.builder()
+                    .reservation(reservationEntity)
+                    .url(image.getFileUrl())
+                    .build());
+
+        // 2-2 사진을 예약에 등록
+        reservationEntity.setMemberImages(images);
 
         // [3] build
         return ConsultantReservationSaveDTO.Response.builder()
@@ -537,6 +539,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         List<String> consultantImages = reservation.getConsultantImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
         List<String> memberImages = reservation.getMemberImages().stream().map(obj -> obj.getUrl()).collect(Collectors.toList());
 
+
         return UserReservationInfoDTO.ReservationEnterResponse.builder()
                 .consultantNickname(reservation.getSchedule().getConsultant().getNickname()) // 와... 망해따..
                 .memberNickname(reservation.getMember().getNickname())
@@ -545,6 +548,34 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public ConsultantReservationSaveDTO.Response saveConsultantImages(ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto) {
+
+        ReservationEntity reservationEntity = reservationRepository.findById(dto.getReservationSeq()).orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
+        ImageSaveDTO.Response savedImage = saveImage(dto.getImages());
+
+        List<ImageDTO> imageInfos = savedImage.getImageInfos();
+        List<ConsultantImageEntity> imageEntities  = new ArrayList<>();
+        for (ImageDTO image : imageInfos) {
+            imageEntities.add(ConsultantImageEntity.builder()
+                    .reservation(reservationEntity)
+                    .url(image.getFileUrl())
+                    .build());
+        }
+
+        reservationEntity.setConsultantImages(imageEntities);
+        return ConsultantReservationSaveDTO.Response.builder()
+                .reservationSeq(reservationEntity.getSeq())
+                .success(true)
+                .build();
+    }
+
+    private ImageSaveDTO.Response saveImage(List<MultipartFile> images) {
+        return imageService.save(ImageSaveDTO.Request.builder()
+                .images(images)
+                .build());
+    }
 }
 
 

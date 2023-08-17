@@ -88,16 +88,16 @@ public class ConsultantController {
 
 
     // [컨설턴트] 평점 통계, 수익 조회
-    @GetMapping(value = "/{consultantNickname}/statistics")
-    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
-            @AuthenticationPrincipal JwtAuthentication auth,
-            @PathVariable("consultantNickname") String consultantNickname,
-            ConsultantStatisticsDTO.Request dto) {
-        dto.setMemberSeq(auth.getSeq());
-        dto.setConsultantNickname(consultantNickname);
-        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
-        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/{consultantNickname}/statistics")
+//    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
+//            @AuthenticationPrincipal JwtAuthentication auth,
+//            @PathVariable("consultantNickname") String consultantNickname,
+//            ConsultantStatisticsDTO.Request dto) {
+//        dto.setMemberSeq(auth.getSeq());
+//        dto.setConsultantNickname(consultantNickname);
+//        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
+//        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
+//    }
 
     // [공통] 리뷰 작성
     @PostMapping(value = "{reservationSeq}/review")
@@ -181,8 +181,8 @@ public class ConsultantController {
     @PostMapping("reservation")
     public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
             @AuthenticationPrincipal JwtAuthentication auth,
-            @RequestBody ConsultantReservationSaveDTO.Request dto){
-
+            ConsultantReservationSaveDTO.Request dto){
+        log.info("=======================saveReservation start ======================");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
         ConsultantReservationSaveDTO.Response response = consultantService.saveReservation(dto);
@@ -195,7 +195,20 @@ public class ConsultantController {
           @AuthenticationPrincipal JwtAuthentication auth,
           @RequestParam Long reservationSeq
     ) {
+        log.info("=======================getReservationEnterInfo start ======================");
         UserReservationInfoDTO.ReservationEnterResponse response = consultantService.getReservationEnterInfo(auth.getSeq(), reservationSeq);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("reservation")
+    public ResponseEntity<ConsultantReservationSaveDTO.Response> saveConsultantImagesInReservation(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto){
+        log.info("=======================saveConsultantImagesInReservation start ======================");
+        dto.setMemberSeq(auth == null ? null : auth.getSeq());
+
+        ConsultantReservationSaveDTO.Response response = consultantService.saveConsultantImages(dto);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

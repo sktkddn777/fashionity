@@ -1,7 +1,7 @@
 package com.infinity.fashionity.consultants.repository;
 
 import com.infinity.fashionity.consultants.dto.*;
-import com.infinity.fashionity.consultants.entity.ImageEntity;
+import com.infinity.fashionity.consultants.entity.MemberImageEntity;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -44,9 +44,9 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     @Query("select i " +
             "from ReservationEntity res " +
-            "join ImageEntity i on i.reservation = res " +
+            "join MemberImageEntity i on i.reservation = res " +
             "where res.seq = :reservationSeq")
-    List<ImageEntity> findReservationImages(Long reservationSeq);
+    List<MemberImageEntity> findReservationImages(Long reservationSeq);
 
 
 
