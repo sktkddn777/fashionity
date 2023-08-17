@@ -63,7 +63,7 @@
     </div>
     <br />
     <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
-    <div v-if="fileList.length === 0" class="image-save">
+    <div class="image-save">
       <multi-image-upload @updateImg="updateImg"></multi-image-upload>
       <div style="text-align: end">
         <button type="button" class="active-button" @click="submitPost">
@@ -71,13 +71,9 @@
         </button>
       </div>
     </div>
-    <div v-else class="image-list">
+    <div class="image-list">
       <div class="image-item" v-for="(image, index) in fileList" :key="index">
-        <img
-          :src="require(`@/assets/img/${image.url}`)"
-          :alt="image.alt"
-          class="image"
-        />
+        <img :src="require(`${image.url}`)" :alt="image.alt" class="image" />
       </div>
     </div>
   </div>
@@ -169,7 +165,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 import MultiImageUpload from "../../shared/MultiImageUpload.vue";
 
 export default {
@@ -194,7 +189,24 @@ export default {
         const dateTime =
           data.consultantReservationDetails[0].reservationDateTime;
         this.reservationTime = `${dateTime[0]}년 ${dateTime[1]}월 ${dateTime[2]}일 ${dateTime[3]}시`;
-        console.log(this.reservationTime);
+        this.memberAge = data.consultantReservationDetails[0].age;
+        this.memberHeight = data.consultantReservationDetails[0].height;
+        this.memberPersonalColor =
+          data.consultantReservationDetails[0].personalColor;
+        this.memberGender = data.consultantReservationDetails[0].gender;
+        this.memberWeight = data.consultantReservationDetails[0].weight;
+        console.log(data.consultantReservationDetails[0].memberNickname);
+        console.log(
+          this.memberAge +
+            " " +
+            this.memberGender +
+            " " +
+            this.memberHeight +
+            " " +
+            this.memberWeight +
+            " " +
+            this.memberPersonalColor
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -202,16 +214,17 @@ export default {
   },
   data() {
     return {
-      reservationSeq: null,
-      memberNickname: null,
-      reservationTime: null,
-      consultantNickname: null,
-      memberAge: null,
-      memberHeight: null,
-      memberPersonalColor: null,
-      memberGender: null,
-      memberWeight: null,
+      reservationSeq: "",
+      memberNickname: "",
+      reservationTime: "",
+      consultantNickname: "",
+      memberAge: "",
+      memberHeight: "",
+      memberPersonalColor: "",
+      memberGender: "",
+      memberWeight: "",
       fileList: [],
+      style_images: [],
     };
   },
   methods: {
@@ -232,6 +245,7 @@ export default {
       this.navigateToDetail();
     },
     async callImageSaveAPI(imgData) {
+      console.log("API 들어왔나용");
       let formData = new FormData();
       for (let i = 0; i < imgData.images.length; i++) {
         formData.append("images", imgData.images[i]);
@@ -261,7 +275,7 @@ export default {
       this.fileList = file;
     },
     navigateToDetail() {
-      this.$router.push(`"/detail/${this.reservationSeq}"`);
+      this.$router.push(`/detail/${this.reservationSeq}`);
     },
   },
   components: {
