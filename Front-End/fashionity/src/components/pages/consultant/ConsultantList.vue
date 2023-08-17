@@ -20,16 +20,16 @@
     </div>
 
     <div class="row" style="height: 30px"></div>
-    <div class="container-fluid" ref="contentContainer">
+    <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div
-          class="row d-flex justify-content-start"
+          class="row justify-content-start"
           style="justify-content: start"
           v-for="(arr, index) in postRow"
           :key="index"
         >
           <div
-            class="col p-2 justify-content-start"
+            class="col justify-content-start"
             v-for="post in arr"
             :key="post.post_seq"
             style="margin-bottom: 20px"
