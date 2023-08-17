@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link :to="{path: `/post/${postSeq}`}">
+    <router-link :to="{ path: `/post/${postSeq}` }">
       <img :src="postThumbnailImage" alt="" class="fixed-image-size" />
     </router-link>
   </div>
@@ -18,11 +18,9 @@ export default {
 </script>
 <style scoped>
 .fixed-image-size {
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  aspect-ratio: 1/1;
+
   object-fit: cover;
 }
 </style>
-
-
-
