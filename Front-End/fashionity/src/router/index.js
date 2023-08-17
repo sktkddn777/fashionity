@@ -231,6 +231,7 @@ const router = createRouter({
               path: "time",
               name: "consultantTime",
               component: ConsultantReservationTime,
+              props: true,
             },
             {
               path: "detail",

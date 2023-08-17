@@ -37,11 +37,11 @@
       </div>
       <div class="row d-flex">
         <div
-          class="col-3 time-block d-flex align-items-center justify-content-center"
+          class="col-3 time-block d-flex align-items-center justify-content-start"
           v-for="(time, index) in pm2"
           :key="index"
         >
-          {{ time }}
+          <div class="">{{ time }}</div>
         </div>
       </div>
 
@@ -58,16 +58,15 @@
       <div class="row">
         <div class="col"></div>
         <div class="col-3">
-          <router-link
-            class="link"
-            to="/consultant/reservation/detail"
-            @propChange="propChange"
+          <router-link class="link" to="/consultant/reservation/detail"
             ><button>NEXT</button></router-link
           >
         </div>
       </div>
 
       <!-- <div v-for="(time, index) in pm" :key="index">{{ time }}</div> -->
+      <div>{{ this.scheduleList }}</div>
+      <!-- <div>{{ this.currDate }}</div> -->
     </div>
   </div>
 </template>
@@ -80,7 +79,9 @@ export default {
       pm1: [],
       pm2: [],
       pm3: [],
-      pagaInfo: "date",
+      // pagaInfo: "date",
+      currDate: Date,
+      availTimeList: [],
     };
   },
   created() {
@@ -89,6 +90,39 @@ export default {
     this.pm1 = ["13:00", "14:00", "15:00", "16:00"];
     this.pm2 = ["17:00", "18:00", "19:00", "20:00"];
     this.pm3 = ["21:00", "22:00", "23:00", "24:00"];
+    this.currDate = this.$route.query.date;
+  },
+  mounted() {
+    this.availTimeList = [];
+    for (let i = 0; i < this.scheduleList.length; i++) {
+      // this.scheduleList[i].availableDateTime.toLocaleDateString();
+      if (
+        this.isSameDate(
+          new Date(this.currDate),
+          new Date(this.scheduleList[i].availableDateTime)
+        )
+      ) {
+        this.availTimeList.push([
+          this.scheduleList[i].scheduleSeq,
+          new Date(this.scheduleList[i].availableDateTime).getHours(),
+        ]);
+        console.log("yes");
+      }
+    }
+    console.log(this.availTimeList);
+  },
+  props: {
+    scheduleList: [],
+    date: Date,
+  },
+  methods: {
+    isSameDate(date1, date2) {
+      return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+      );
+    },
   },
 };
 </script>

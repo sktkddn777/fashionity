@@ -6,10 +6,14 @@
       <div class="col-3">
         <router-link
           class="link"
-          to="/consultant/reservation/time"
-          @propChange="propChange"
+          :to="{
+            name: 'consultantTime',
+            query: { date: this.date },
+          }"
           ><button>NEXT</button></router-link
         >
+        <!-- <div>{{ this.scheduleList }}</div> -->
+        <div>{{ this.date }}</div>
       </div>
     </div>
   </div>
@@ -20,8 +24,11 @@
 export default {
   data() {
     return {
-      data: "",
+      date: "",
     };
+  },
+  props: {
+    scheduleList: [],
   },
   components: {
     // ConsultantCalenerTempVue,
