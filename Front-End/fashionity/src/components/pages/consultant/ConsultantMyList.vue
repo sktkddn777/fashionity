@@ -1,25 +1,31 @@
 <template lang="">
   <div class="container-fluid">
     <!-- 이용 예정 예약 -->
+    
     <div class="row justify-content-center block">
       <div class="col-4" style="font-weight: bold">이용 예정</div>
       <div class="col"></div>
     </div>
-    <div class="row align-items-center block">
-      <div class="col-4">
-        <div class="row justify-content-end">
-          <img class="profile" src="../../../assets/img/hyeonwook.jpg" alt="" />
+    <div class="before-list" v-for="(reservation, index) in reservationList_before" :key="index">
+      <div class="row align-items-center block">
+        <div class="col-4">
+          <div class="row justify-content-end">
+            <img class="profile" :src="reservation.consultantProfileUrl" alt="" />
+          </div>
         </div>
-      </div>
-      <div class="col">
-        <div class="row" style="font-size: 15px">
-          예약 일시 : 2023년 08월 17시 10시
+        <div class="col">
+          <div class="row" style="font-size: 15px">
+            예약 일시 : {{reservation.reservationDateTime[0]}}년
+                       {{reservation.reservationDateTime[1]}}월
+                      {{reservation.reservationDateTime[2]}}일
+                        {{reservation.reservationDateTime[3]}}시
+          </div>
+          <div class="row" style="font-size: 15px">담당 컨설턴트 : {{reservation.consultantNickname}}</div>
         </div>
-        <div class="row" style="font-size: 15px">담당 컨설턴트 : 김현욱</div>
-      </div>
-      <div class="col">
-        <button class="consultant-mylist-enter" @click="startMeeting">입장하기</button>
-        <button class="consultant-mylist-cancel">예약취소</button>
+        <div class="col">
+          <button class="consultant-mylist-enter" @click="startMeeting(index)">입장하기</button>
+          <button class="consultant-mylist-cancel">예약취소</button>
+        </div>
       </div>
     </div>
 
@@ -30,46 +36,34 @@
   <div class="col-4" style="font-weight: bold">지난 예약 목록</div>
   <div class="col"></div>
 </div>
-<div class="row align-items-center block">
-  <div class="col-4">
-    <div class="row justify-content-end">
-      <img class="profile" src="../../../assets/img/panda.png" alt="" />
+<div class="after-list" v-for="(reservation, index) in reservationList_after" :key="index">
+  <div class="row align-items-center block">
+    <div class="col-4">
+      <div class="row justify-content-end">
+        <img class="profile" :src="reservation.consultantProfileUrl" alt="" />
+      </div>
+    </div>
+    <div class="col">
+      <div class="row" style="font-size: 15px">
+            예약 일시 : {{reservation.reservationDateTime[0]}}년
+                        {{reservation.reservationDateTime[1]}}월
+                        {{reservation.reservationDateTime[2]}}일
+                        {{reservation.reservationDateTime[3]}}시
+          </div>
+      <div class="row" style="font-size: 15px">담당 컨설턴트 : {{reservation.consultantNickname}}</div>
+    </div>
+    <div class="col">
+      <button class="consultant-mylist-write-review" @click="openModal">후기 작성</button>
     </div>
   </div>
-  <div class="col">
-    <div class="row" style="font-size: 15px">
-      예약 일시 : 2023년 07월 17시 15시
-    </div>
-    <div class="row" style="font-size: 15px">담당 컨설턴트 : 푸바오</div>
-  </div>
-  <div class="col">
-    <button class="consultant-mylist-write-review" @click="openModal">후기 작성</button>
-  </div>
-</div>
-<div class="row align-items-center block">
-  <div class="col-4">
-    <div class="row justify-content-end">
-      <img class="profile" src="../../../assets/img/panda.png" alt="" />
-    </div>
-  </div>
-  <div class="col">
-    <div class="row" style="font-size: 15px">
-      예약 일시 : 2023년 07월 17시 15시
-    </div>
-    <div class="row" style="font-size: 15px">담당 컨설턴트 : 아이바오</div>
-  </div>
-  <div class="col">
-    <button class="consultant-mylist-modify-review" @click="openModal">후기 수정</button>
-  </div>
+  <review-modal-vue :show-modal="showModal" @close="closeModal" :reservation-seq="reservation.reservationSeq"></review-modal-vue>
 </div>
   </div>
-  <review-modal-vue :show-modal="showModal" @close="closeModal"></review-modal-vue>
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import router from "@/router";
 import ReviewModalVue from "./components/ReviewModal.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -78,23 +72,77 @@ export default {
   data() {
     return {
       showModal: false,
+      reservationList_before: [],
+      reservationList_after: [],
     };
   },
+  created() {
+    this.getReservationList();
+  },
   methods: {
-    ...mapActions(["updateMeetingInfo"]),
-    startMeeting() {
-      const meetingInfo = {
-        userName: this.userName,
-        roomId: this.roomId,
-      };
-      this.updateMeetingInfo(meetingInfo);
-      router.push({ name: "Consulting-WebCam-View" });
+    startMeeting(index) {
+      const sessionId =
+        this.reservationList_before[index].reservationSeq + 73576;
+      console.log("비밀 번호 : " + sessionId);
+      this.$router.push({
+        name: "Consulting-WebCam-View",
+        query: { sessionId },
+      });
     },
     openModal() {
       this.showModal = true;
     },
     closeModal() {
       this.showModal = false;
+    },
+    getReservationList() {
+      const currentDate = new Date();
+      let token = sessionStorage.getItem("token");
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservations`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+              },
+        method: "GET",
+      })
+        .then((response) => {
+          const reservations = response.data.userReservationSummaries;
+          for (let i = 0; i < reservations.length; i++) {
+            const givenDate = reservations[i].reservationDateTime;
+            const reservattionDate = new Date(
+              givenDate[0],
+              givenDate[1] - 1,
+              givenDate[2],
+              givenDate[3],
+              givenDate[4]
+            );
+            if (reservattionDate >= currentDate) {
+              this.reservationList_before.push(reservations[i]);
+            } else {
+              this.reservationList_after.push(reservations[i]);
+            }
+          }
+        })
+        .catch((exception) => {
+          let data = exception.response;
+          if (data.status === 401) {
+            //유효기간이 다 된 토큰이면 일단 보여주셈
+            axios({
+              url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservations`,
+              method: "GET",
+            }).then((response) => {
+              // const newPosts = response.data.posts;
+              // this.posts = [...this.posts, ...newPosts];
+              // this.loadingNextPage = false;
+              // this.page++;
+              console.log("실패");
+              console.log(response);
+            });
+          }
+        });
     },
   },
 };
