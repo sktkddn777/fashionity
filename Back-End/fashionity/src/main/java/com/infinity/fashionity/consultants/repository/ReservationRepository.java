@@ -1,6 +1,7 @@
 package com.infinity.fashionity.consultants.repository;
 
 import com.infinity.fashionity.consultants.dto.*;
+import com.infinity.fashionity.consultants.entity.ConsultantImageEntity;
 import com.infinity.fashionity.consultants.entity.MemberImageEntity;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,7 +37,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             "where c.nickname = :consultantNickname and res.seq = :reservationSeq")
     List<ConsultantReservationDetail> findConsultantReservation(@Param("consultantNickname") String consultantNickname, @Param("reservationSeq") Long reservationSeq);
 
-    @Query("select new com.infinity.fashionity.consultants.dto.UserReservationDetail(res.seq, c.nickname, res.date, res.detail) " +
+    @Query("select new com.infinity.fashionity.consultants.dto.UserReservationDetail(res.seq, c.nickname, m.nickname, m.personalcolor,m.gender, m.height, m.weight, m.age, res.date, res.detail) " +
             "from ReservationEntity res " +
             "left join res.schedule s " +
             "left join res.member m " +
@@ -48,6 +49,12 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             "from ReservationEntity res " +
             "join MemberImageEntity i on i.reservation = res " +
             "where res.seq = :reservationSeq")
-    List<MemberImageEntity> findReservationImages(@Param("reservationSeq") Long reservationSeq);
+    List<MemberImageEntity> findReservationMemberImages(@Param("reservationSeq") Long reservationSeq);
+
+    @Query("select i " +
+            "from ReservationEntity res " +
+            "join ConsultantImageEntity i on i.reservation = res " +
+            "where res.seq = :reservationSeq")
+    List<ConsultantImageEntity> findReservationConsultantImages(@Param("reservationSeq") Long reservationSeq);
 
 }
