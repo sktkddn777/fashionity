@@ -63,7 +63,10 @@
     </div>
 
     <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
-    <div class="image-list">
+    <div v-if="style_images.length !== 0" class="image-list">
+      <multi-image-upload></multi-image-upload>
+    </div>
+    <div v-else class="image-list">
       <div
         class="image-item"
         v-for="(image, index) in style_images"
@@ -154,6 +157,7 @@
 <script>
 import axios from "axios";
 import router from "@/router";
+import MultiImageUpload from "../../shared/MultiImageUpload.vue";
 export default {
   name: "RConsultantCheckDetail",
   props: ["value"],
@@ -210,7 +214,9 @@ export default {
       router.push({ name: "Consulting-WebCam-View" });
     },
   },
-  // components: {},
+  components: {
+    MultiImageUpload,
+  },
   // props: {},
   // data: () => ({}),
   // methods: {},
