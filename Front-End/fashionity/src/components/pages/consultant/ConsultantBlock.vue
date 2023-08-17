@@ -11,25 +11,16 @@
         class="img-link"
         style="text-decoration: none; color: #424242"
       >
-        <img
-          :src="this.post.profileUrl || '../img/unknown.e083a226.png'"
-          alt=""
-        />
+        <img :src="this.post.profileUrl || '../img/unknown.e083a226.png'" alt="" />
       </router-link>
       <!-- 게시글 정보 -->
       <div class="col align-self-center align-middle post-detail">
         <!-- 프로필 정보 및 좋아요 -->
         <!-- 프로필 정보 -->
-        <router-link
-          :to="{ path: `` }"
-          style="text-decoration: none; color: #424242"
-        >
+        <router-link :to="{ path: `` }" style="text-decoration: none; color: #424242">
           <div class="col align-self-center align-middle post-detail-writer">
             <!-- <img class="profile" src="@/assets/img/unknown.png" /> -->
-            <img
-              class="profile"
-              :src="this.post.profileUrl || '../img/unknown.e083a226.png'"
-            />
+            <img class="profile" :src="this.post.profileUrl || '../img/unknown.e083a226.png'" />
             <span class="post-detail-font">{{ post.nickname }}</span>
           </div>
         </router-link>
@@ -67,8 +58,7 @@ export default {
           while (textContainer.scrollWidth > textContainer.clientWidth) {
             textContainer.textContent = textContainer.textContent.slice(0, -1);
           }
-          textContainer.textContent =
-            textContainer.textContent.slice(0, -3) + "...";
+          textContainer.textContent = textContainer.textContent.slice(0, -3) + "...";
         }
       }
     },

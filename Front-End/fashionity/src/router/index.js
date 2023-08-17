@@ -229,12 +229,12 @@ const router = createRouter({
               component: ConsultantReservationDate,
             },
             {
-              path: "time",
+              path: "time/:nickname/:date",
               name: "consultantTime",
               component: ConsultantReservationTime,
             },
             {
-              path: "detail",
+              path: "detail/:seq",
               name: "consultantDetail",
               component: ConsultantReservationForm,
             },

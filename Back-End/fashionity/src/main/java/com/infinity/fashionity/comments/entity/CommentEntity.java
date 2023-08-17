@@ -25,7 +25,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "comments")
-@SQLDelete(sql = "UPDATE Comments SET deleted_at = now() WHERE comment_seq = ?")
+@SQLDelete(sql = "UPDATE comments SET deleted_at = now() WHERE comment_seq = ?")
 @Where(clause = "deleted_at is null")
 @DynamicUpdate
 @Getter
