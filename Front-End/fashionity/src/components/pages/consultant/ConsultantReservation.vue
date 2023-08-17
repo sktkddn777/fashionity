@@ -11,21 +11,12 @@
               class="profile"
               style="width: 50%"
             />
-            <img
-              src="../../../assets/img/unknown.png"
-              alt=""
-              class="profile"
-              style="width: 50%"
-            />
+            <img src="../../../assets/img/unknown.png" alt="" class="profile" style="width: 50%" />
           </div>
         </div>
         <div class="row" style="height: 30px"></div>
         <div class="row">
-          <div
-            v-for="(review, index) in this.reviewList"
-            :key="index"
-            class="col review scroll"
-          >
+          <div v-for="(review, index) in this.reviewList" :key="index" class="col review scroll">
             <consultant-review :review="review"></consultant-review>
             <!-- <consultant-review></consultant-review>
             <consultant-review></consultant-review>
@@ -37,10 +28,7 @@
         </div>
       </div>
       <div class="col-8" style="height: 75vh">
-        <router-view
-          :scheduleList="scheduleList"
-          :nickname="nickname"
-        ></router-view>
+        <router-view :scheduleList="scheduleList" :nickname="nickname"></router-view>
         <div class="row">
           <div class="col"></div>
         </div>
@@ -85,7 +73,7 @@ export default {
       // console.log(this.consultantInfo);
       this.reviewList = this.consultantInfo.reviews;
       this.scheduleList = this.consultantInfo.schedules;
-      // console.log("review : ", this.reviewList);
+      console.log("review : ", this.reviewList);
       // console.log("schedule : ", this.scheculeList);
     });
   },
