@@ -36,16 +36,21 @@
               <label>
                 <input
                   type="radio"
-                  v-modal="genderInput"
+                  v-model="genderInput"
                   name="gender"
-                  value="m"
+                  value="MALE"
                   checked
                 />
                 <span>남성</span>
               </label>
 
               <label>
-                <input type="radio" name="gender" value="f" />
+                <input
+                  type="radio"
+                  v-model="genderInput"
+                  name="gender"
+                  value="FEMALE"
+                />
                 <span>여성</span>
               </label>
             </fieldset>
@@ -92,13 +97,7 @@
             <v-select
               clearable
               v-model="personalColorInput"
-              :items="[
-                '모름',
-                '봄 : 웜톤',
-                '여름 : 쿨톤',
-                '가을 : 웜톤',
-                '겨울 : 쿨톤',
-              ]"
+              :items="['UNKNOWN', 'SPRING', 'SUMMER', 'FALL', 'WINTER']"
               style="width: 15vw; padding-left: 150px"
             ></v-select>
           </div>
@@ -129,12 +128,13 @@
       <div class="row">
         <div class="col"></div>
         <div class="col-3">
-          <router-link
+          <div @click="submit">submit</div>
+          <!-- <router-link
             class="link"
             to="/consultant/reservation/confirm"
             @propChange="propChange"
-            ><button>NEXT</button></router-link
-          >
+            ><button>submit</button></router-link
+          > -->
         </div>
       </div>
     </div>
@@ -150,10 +150,10 @@ export default {
       imgList: [],
       fileList: [],
       ageInput: Number,
-      genderInput: String,
+      genderInput: "MALE",
       heightInput: Number,
       weightInput: Number,
-      detailInput: String,
+      detailInput: "",
       personalColorInput: String,
     };
   },
@@ -171,27 +171,40 @@ export default {
     },
 
     async submit() {
-      const postData = {
+      const reservationData = {
         images: this.fileList,
-        content: this.contentInput,
-        hashtags: this.tagList,
+        scheduleSeq: this.$route.params.seq,
+        personalColor: this.personalColorInput,
+        gender: this.genderInput,
+        height: this.heightInput,
+        age: this.ageInput,
+        detail: this.detailInput,
+        consultantNickname: this.$route.params.nickname,
+        weight: this.weightInput,
       };
-      await this.callPostSaveAPI(postData);
+      console.log(reservationData);
+      await this.callPostSaveAPI(reservationData);
       // this.navigateToMain();
     },
-    async callPostSaveAPI(postData) {
+    async callPostSaveAPI(reservationData) {
       let formData = new FormData();
-      formData.append("content", postData.content);
+      formData.append("scheduleSeq", reservationData.scheduleSeq);
+      formData.append("personalColor", reservationData.personalColor);
+      formData.append("gender", reservationData.gender);
+      formData.append("height", reservationData.height);
+      formData.append("age", reservationData.age);
+      formData.append("detail", reservationData.detail);
+      formData.append("consultantNickname", reservationData.consultantNickname);
+      formData.append("weight", reservationData.weight);
+
       // 이미지 업로드 처리
-      for (let i = 0; i < postData.images.length; i++) {
-        formData.append("images", postData.images[i]);
+      for (let i = 0; i < reservationData.images.length; i++) {
+        formData.append("images", reservationData.images[i]);
       }
-      for (let i = 0; i < postData.hashtags.length; i++) {
-        formData.append("hashtags", postData.hashtags[i]);
-      }
+
       var token = sessionStorage.getItem("token");
       await axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation`,
         headers:
           token === null
             ? null
@@ -203,9 +216,11 @@ export default {
         data: formData,
       })
         .then((data) => {
+          console.log("data임", data);
           console.log("callPostSaveAPI " + data.data.postSeq);
         })
-        .catch(() => {
+        .catch((exeption) => {
+          console.log("data임", exeption);
           alert("게시글이 등록되지 않았습니다.");
         });
     },
