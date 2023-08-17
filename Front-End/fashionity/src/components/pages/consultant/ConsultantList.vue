@@ -2,7 +2,12 @@
   <div class="container-fluid">
     <div class="row justify-content-space-around tools" ref="toolsContainer">
       <div class="col-3 search">
-        <input type="text" id="search" name="search" placeholder="검색어를 입력하세요" />
+        <input
+          type="text"
+          id="search"
+          name="search"
+          placeholder="검색어를 입력하세요"
+        />
       </div>
       <div class="col"></div>
       <div class="col-3">
@@ -73,10 +78,14 @@
           v-for="(arr, index) in postRow"
           :key="index"
         >
-          <div class="col" v-for="post in arr" :key="post.post_seq" style="margin-bottom: 20px">
-            <router-link to="reservation"
-              ><consultant-block-vue :post="post"></consultant-block-vue
-            ></router-link>
+          <div
+            class="col"
+            v-for="post in arr"
+            :key="post.post_seq"
+            style="margin-bottom: 20px"
+            @click="onclick(post)"
+          >
+            <consultant-block-vue :post="post"></consultant-block-vue>
           </div>
         </div>
       </div>
@@ -196,6 +205,13 @@ export default {
       if (scrollY + viewportHeight >= fullHeight - 60) {
         this.loadNextPage();
       }
+    },
+    onclick(post) {
+      // console.log(post);
+      this.$router.push({
+        name: "consultantDate",
+        params: { nickname: post.nickname },
+      });
     },
   },
   beforeUnmount() {

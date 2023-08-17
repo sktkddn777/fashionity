@@ -24,12 +24,23 @@
         </div>
         <div class="row justify-content-center">
           <div class="col">
-            <input type="text" class="input-form" style="width: 10vw" />
+            <input
+              type="number"
+              v-model="ageInput"
+              class="input-form"
+              style="width: 10vw"
+            />
           </div>
           <div class="col">
             <fieldset style="padding-top: 10px">
               <label>
-                <input type="radio" name="gender" value="m" checked />
+                <input
+                  type="radio"
+                  v-modal="genderInput"
+                  name="gender"
+                  value="m"
+                  checked
+                />
                 <span>남성</span>
               </label>
 
@@ -50,10 +61,20 @@
         </div>
         <div class="row justify-content-center">
           <div class="col">
-            <input type="text" class="input-form" style="width: 10vw" />
+            <input
+              type="number"
+              v-model="heightInput"
+              class="input-form"
+              style="width: 10vw"
+            />
           </div>
           <div class="col">
-            <input type="text" class="input-form" style="width: 10vw" />
+            <input
+              type="number"
+              v-model="weightInput"
+              class="input-form"
+              style="width: 10vw"
+            />
           </div>
         </div>
 
@@ -67,11 +88,10 @@
         </div>
 
         <div class="row justify-content-center">
-          <div class="col"></div>
-          <div class="col-9 justify-content-center">
+          <div class="col justify-content-center">
             <v-select
-              class="row"
               clearable
+              v-model="personalColorInput"
               :items="[
                 '모름',
                 '봄 : 웜톤',
@@ -79,10 +99,19 @@
                 '가을 : 웜톤',
                 '겨울 : 쿨톤',
               ]"
-              style="width: 15vw"
+              style="width: 15vw; padding-left: 150px"
             ></v-select>
           </div>
-          <div class="col"></div>
+          <div class="col">
+            <textarea
+              v-model="detailInput"
+              name="reservationInfo"
+              id="reservationInfo"
+              cols="30"
+              rows="3"
+              style="border: 1px solid black"
+            ></textarea>
+          </div>
         </div>
 
         <!-- 평소 나의 스타일 등록 -->
@@ -113,13 +142,19 @@
 </template>
 <script>
 import MultiImageUpload from "../shared/MultiImageUpload.vue";
-
+import axios from "axios";
 export default {
   data() {
     return {
       isValid: false,
       imgList: [],
       fileList: [],
+      ageInput: Number,
+      genderInput: String,
+      heightInput: Number,
+      weightInput: Number,
+      detailInput: String,
+      personalColorInput: String,
     };
   },
   components: {
@@ -133,6 +168,49 @@ export default {
       } else {
         this.isValid = false;
       }
+    },
+
+    async submit() {
+      const postData = {
+        images: this.fileList,
+        content: this.contentInput,
+        hashtags: this.tagList,
+      };
+      await this.callPostSaveAPI(postData);
+      // this.navigateToMain();
+    },
+    async callPostSaveAPI(postData) {
+      let formData = new FormData();
+      formData.append("content", postData.content);
+      // 이미지 업로드 처리
+      for (let i = 0; i < postData.images.length; i++) {
+        formData.append("images", postData.images[i]);
+      }
+      for (let i = 0; i < postData.hashtags.length; i++) {
+        formData.append("hashtags", postData.hashtags[i]);
+      }
+      var token = sessionStorage.getItem("token");
+      await axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+              },
+        method: "POST",
+        data: formData,
+      })
+        .then((data) => {
+          console.log("callPostSaveAPI " + data.data.postSeq);
+        })
+        .catch(() => {
+          alert("게시글이 등록되지 않았습니다.");
+        });
+    },
+    updateImg(file) {
+      this.fileList = file;
     },
   },
   created() {
