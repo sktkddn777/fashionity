@@ -104,6 +104,7 @@ export default {
       availTimeList: [],
       timeList: [],
       seq: Number,
+      nickname: String,
     };
   },
   created() {
@@ -113,6 +114,7 @@ export default {
     this.pm2 = [17, 18, 19, 20];
     this.pm3 = [21, 22, 23, 24];
     this.currDate = this.$route.params.date;
+    this.nickname = this.$route.params.nickname;
 
     this.availTimeList = [];
     this.timeList = [];
@@ -186,7 +188,7 @@ export default {
       // console.log("time : ", this.seq);
       this.$router.push({
         name: "consultantDetail",
-        params: { seq: this.seq },
+        params: { seq: this.seq, nickname: this.nickname },
       });
     },
   },

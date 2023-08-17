@@ -241,7 +241,7 @@ const router = createRouter({
               component: ConsultantReservationTime,
             },
             {
-              path: "detail/:seq",
+              path: "detail/:seq/:nickname",
               name: "consultantDetail",
               component: ConsultantReservationForm,
             },
