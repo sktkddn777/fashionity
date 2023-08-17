@@ -151,13 +151,14 @@ public class ConsultantController {
 
     // 스케쥴 등록
     @PostMapping("reservation/schedule")
-    public ResponseEntity<ScheduleSaveDTO.Response> saveSchedule(
+    public ResponseEntity<ScheduleDTO.Response> saveSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody  ScheduleSaveDTO.Request dto){
 
+        log.info("start");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
-        ScheduleSaveDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
-
+        ScheduleDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
+        log.info(" = {}",scheduleSaveResponse);
         return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
     }
 
@@ -175,5 +176,22 @@ public class ConsultantController {
 
     }
 
+    @GetMapping("/reservation/myschedule")
+    public ResponseEntity<ScheduleDTO.Response> getConsultantScheduleByDate(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestParam String dateTime
+    ) {
+        ScheduleDTO.Response response = consultantService.getSchedule(dateTime, auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/reservation/myschedule")
+    public ResponseEntity<Boolean> deleteConsultantSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestParam Long scheduleSeq
+            ) {
+        consultantService.deleteSchedule(scheduleSeq);
+        return ResponseEntity.ok(true);
+    }
 }
 

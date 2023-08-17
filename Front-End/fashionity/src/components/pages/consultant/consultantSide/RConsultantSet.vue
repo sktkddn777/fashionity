@@ -1,47 +1,62 @@
 <template>
-  <div>
-    <h2>예약 가능일자 등록</h2>
-    <h2>수정 못하니까 똑띠 생각하세요</h2>
-  </div>
-
-  <VCalendar
-    :attributes="attributes"
-    @dayclick="handleDateClick"
-    style="width: 1000px"
-  />
-
-  <div>
-    <label for="time-picker">시작시간:</label>
-    <input
-      type="time"
-      id="time-picker"
-      v-model="startTime"
-      @input="handleStartTimeChange"
+  <div class="container">
+    <VCalendar
+      :attributes="attributes"
+      @dayclick="handleDateClick"
+      style="width: 100vh"
+      class="calendar"
     />
+
+    <schedule-list-vue class="rlist" :reservations="reservationData" />
   </div>
-  <div>
-    <label for="time-picker">종료시간:</label>
-    <input
-      type="time"
-      id="time-picker"
-      v-model="endTime"
-      @input="handleEndTimeChange"
-    />
-  </div>
-  <div>
-    <v-btn @click="saveConsultantSchedule">등록하기</v-btn>
+  <div class="time-input-wrapper">
+    <div>
+      <label for="time-picker">시작시간:</label>
+      <input
+        type="time"
+        id="time-picker"
+        v-model="startTime"
+        @input="handleStartTimeChange"
+      />
+    </div>
+    <div>
+      <label for="time-picker">종료시간:</label>
+      <input
+        type="time"
+        id="time-picker"
+        v-model="endTime"
+        @input="handleEndTimeChange"
+      />
+    </div>
+    <div>
+      <v-btn @click="saveConsultantSchedule">등록하기</v-btn>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.container {
+  display: flex;
+}
+
+.calendar {
+  flex: 2;
+}
+
+.rlist {
+  flex: 1;
+}
+</style>
 
 <script>
 import axios from "axios";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
+import ScheduleListVue from "./layout/ScheduleList.vue";
 
 const toast = useToast();
 
 export default {
-  components: {},
   setup() {
     const startTime = ref("");
     const endTime = ref("");
@@ -66,18 +81,54 @@ export default {
     };
   },
   name: "RConsultantSet",
+  components: {
+    ScheduleListVue,
+  },
   created() {},
   data() {
     return {
       selectedDate: null,
+      reservationData: [],
     };
   },
   methods: {
     handleDateClick({ date }) {
+      this.reservationData = [];
       // Do something with the clicked date, like displaying details or performing an action
 
       // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
       this.selectedDate = date;
+      let token = sessionStorage.getItem("token");
+
+      let month = date.getMonth() + 1;
+      if (month < 10) month = "0" + month.toString();
+      let day = date.getDate();
+      if (day < 10) day = "0" + day.toString();
+
+      const dateTime = `${date.getFullYear()}-${month}-${day}`;
+
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation/myschedule`,
+        headers: { Authorization: `Bearer ${token}` },
+        method: "GET",
+        params: {
+          dateTime: dateTime,
+        },
+      })
+        .then(({ data }) => {
+          for (let i = 0; i < data.unAvailableDateTimes.length; i++) {
+            let time = data.unAvailableDateTimes[i].unAvailableDateTime;
+
+            this.reservationData.push({
+              id: data.unAvailableDateTimes[i].scheduleSeq,
+              time: `${time[0]}-${time[1]}-${time[2]} ${time[3]}:00:00`,
+              profileImage: "@/assets/img/hyeonwook.jpg",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     saveConsultantSchedule() {
@@ -95,15 +146,20 @@ export default {
       }
 
       let timeArr = [];
-      let startHour = this.startTime.split(":")[0];
-      let endHour = this.endTime.split(":")[0];
-      for (startHour; startHour <= endHour; startHour++) {
+      let startHour = parseInt(this.startTime.split(":")[0]);
+      let endHour = parseInt(this.endTime.split(":")[0]);
+      while (startHour <= endHour) {
         const year = this.selectedDate.getFullYear();
         let month = parseInt(this.selectedDate.getMonth()) + 1;
-        const date = this.selectedDate.getDate();
-
+        let day = this.selectedDate.getDate();
+        let hour = 0;
+        if (day < 10) day = "0" + day;
         if (month < 10) month = "0" + month;
-        timeArr.push(`${year}-${month}-${date} ${startHour}:00:00`);
+        if (startHour < 10) hour = "0" + startHour;
+        else hour = startHour;
+
+        timeArr.push(`${year}-${month}-${day} ${hour}:00:00`);
+        startHour++;
       }
 
       const data = {
@@ -118,8 +174,21 @@ export default {
         method: "POST",
         data: data,
       })
-        .then((response) => {
-          console.log("success: " + response);
+        .then(({ data }) => {
+          for (let i = 0; i < data.unAvailableDateTimes.length; i++) {
+            console.log("success: " + data.unAvailableDateTimes[i]);
+            let time = data.unAvailableDateTimes[i].unAvailableDateTime;
+
+            this.reservationData.push({
+              id: data.unAvailableDateTimes[i].scheduleSeq,
+              time: `${time[0]}-${time[1]}-${time[2]} ${time[3]}:00:00`,
+              profileImage: "@/assets/img/hyeonwook.jpg",
+            });
+          }
+
+          this.startTime = "";
+          this.endTime = "";
+          this.selectedDate = null;
         })
         .catch((error) => {
           console.log("fail: " + error);
@@ -128,4 +197,3 @@ export default {
   },
 };
 </script>
-<style scoped></style>

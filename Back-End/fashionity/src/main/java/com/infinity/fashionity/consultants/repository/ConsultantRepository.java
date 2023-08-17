@@ -3,6 +3,7 @@ package com.infinity.fashionity.consultants.repository;
 
 
 import com.infinity.fashionity.consultants.dto.ConsultantReviewSummary;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
@@ -25,6 +26,10 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
     // 전체 컨설턴트 조회
     Page<ConsultantEntity> findAll(Pageable pageable);
 
+    @Query("select c from ConsultantEntity c " +
+            "where c.nickname like %:nickname%")
+    Page<ConsultantEntity> findAllWithNickname(@Param("nickname") String nickname,Pageable pageable);
+
     // 평균 별점
     @Query("select coalesce(avg(r.grade),0) " +
             "from ReviewEntity r " +
@@ -32,7 +37,7 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join res.schedule s " +
             "left join s.consultant c " +
             "where c.nickname = :consultantNickname")
-    Float avgGrade(String consultantNickname);
+    Float avgGrade(@Param("consultantNickname") String consultantNickname);
 
     // 전체 컨설팅 횟수
     @Query("select count(res.seq) " +
@@ -40,7 +45,7 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join res.schedule s " +
             "left join s.consultant c " +
             "where c.nickname = :consultantNickname")
-    Integer totalCnt(String consultantNickname);
+    Integer totalCnt(@Param("consultantNickname") String consultantNickname);
 
 
     // 컨설턴트 정보 조회
@@ -48,7 +53,7 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "from ConsultantEntity c " +
             "left join c.member m " +
             "where m.nickname = :consultantNickname")
-    List<ConsultantEntity> findConsultantDetail(String consultantNickname);
+    List<ConsultantEntity> findConsultantDetail(@Param("consultantNickname") String consultantNickname);
 
     // 컨설턴트 별 리뷰 모음
     @Query("select r " +
@@ -57,13 +62,13 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join res.schedule s " +
             "left join s.consultant c " +
             "where c.seq = :consultantSeq")
-    List<ReviewEntity> findConsultantReviewsById(Long consultantSeq);
+    List<ReviewEntity> findConsultantReviewsById(@Param("consultantSeq") Long consultantSeq);
 
     @Query("select s " +
             "from ScheduleEntity s " +
             "left join s.consultant c " +
             "where c.seq = :consultantSeq")
-    List<ScheduleEntity> findConsultantSchedules(Long consultantSeq);
+    List<ScheduleEntity> findConsultantSchedules(@Param("consultantSeq")Long consultantSeq);
 
     // 컨설턴트 전체 후기, 평점 조회
     @Query("select new com.infinity.fashionity.consultants.dto.ConsultantReviewSummary(res.seq, r.seq, r.createdAt, r.updatedAt, r.grade, r.content, m.nickname) " +
@@ -75,7 +80,7 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join res2.member m " +
             "where c.nickname = :consultantNickname and r.seq is not null and r.deletedAt is null " +
             "order by r.createdAt desc " )
-    List<ConsultantReviewSummary> findConsultantReviewsByNickname(String consultantNickname);
+    List<ConsultantReviewSummary> findConsultantReviewsByNickname(@Param("consultantNickname") String consultantNickname);
 
 
     // 컨설턴트 삭제되지 않은 전체 후기 개수 조회
@@ -85,7 +90,7 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join s.reservations res " +
             "left join res.review r " +
             "where c.nickname = :consultantNickname and r.deletedAt is null")
-    Integer totalUndeletedReviewCnt(String consultantNickname);
+    Integer totalUndeletedReviewCnt(@Param("consultantNickname")String consultantNickname);
 
     // 컨설턴트 삭제된 전체 후기 개수 조회
     @Query("select coalesce(count(r.seq),0) " +
@@ -94,7 +99,7 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join s.reservations res " +
             "left join res.review r " +
             "where c.nickname = :consultantNickname and r.deletedAt is not null")
-    Integer totalDeletedReviewCnt(String consultantNickname);
+    Integer totalDeletedReviewCnt(@Param("consultantNickname") String consultantNickname);
 
     // 컨설턴트 현재까지 전체 수익 조회
     @Query("select coalesce(sum(res.price),0) " +
@@ -102,16 +107,18 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "left join c.schedules s " +
             "left join s.reservations res " +
             "where c.nickname = :consultantNickname and res.deletedAt is null and res.date >= current_timestamp ")
-    Integer totalSalary(String consultantNickname);
+    Integer totalSalary(@Param("consultantNickname") String consultantNickname);
 
     @Query("select m.seq " +
             "from ConsultantEntity  c " +
             "left join c.member m " +
             "where c.nickname = :consultantNickname ")
-    Long findConsultantMemberSeq(String consultantNickname);
+    Long findConsultantMemberSeq(@Param("consultantNickname") String consultantNickname);
 
     @Query("select c " +
             "from ConsultantEntity c " +
             "where c.nickname = :consultantNickname")
-    Optional<ConsultantEntity> findByNickname(String consultantNickname) ;
+    Optional<ConsultantEntity> findByNickname(@Param("consultantNickname")String consultantNickname) ;
+
+    Optional<ConsultantEntity> findByMemberSeq(Long MemberSeq);
 }

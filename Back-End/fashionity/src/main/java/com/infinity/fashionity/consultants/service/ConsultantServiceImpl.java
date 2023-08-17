@@ -15,6 +15,7 @@ import com.infinity.fashionity.global.exception.ValidationException;
 import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.members.data.MemberRole;
 import com.infinity.fashionity.members.entity.MemberEntity;
+import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -57,7 +59,14 @@ public class ConsultantServiceImpl implements ConsultantService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         // 최신순으로 컨설턴트 가져오기
-        Page<ConsultantEntity> result = consultantRepository.findAll(pageable);
+        // 닉네임이 blank면 일반 조회
+        Page<ConsultantEntity> result = null;
+        if(StringUtils.isBlank(dto.getNickname())) {
+            result = consultantRepository.findAll(pageable);
+        }
+        else{
+            result = consultantRepository.findAllWithNickname(dto.getNickname(),pageable);
+        }
 
 
         result.stream().forEach(entity -> {
@@ -399,7 +408,7 @@ public class ConsultantServiceImpl implements ConsultantService {
 
     @Override
     @Transactional
-    public ScheduleSaveDTO.Response saveSchedule(ScheduleSaveDTO.Request dto) {
+    public ScheduleDTO.Response saveSchedule(ScheduleSaveDTO.Request dto) {
         Long memberSeq = dto.getMemberSeq();
 
         //입력값 검증
@@ -426,10 +435,18 @@ public class ConsultantServiceImpl implements ConsultantService {
 
             scheduleEntities.add(entity);
         }
-        scheduleRepository.saveAll(scheduleEntities);
+        List<ScheduleEntity> schedules = scheduleRepository.saveAll(scheduleEntities);
 
-        return ScheduleSaveDTO.Response.builder()
-                .success(true)
+        List<ScheduleSummary> scheduleSummaries = schedules.stream().map(obj -> {
+            return ScheduleSummary.builder()
+                    .scheduleSeq(obj.getSeq())
+                    .unAvailableDateTime(obj.getAvailableDateTime())
+                    .build();
+        })
+                .collect(Collectors.toList());
+
+        return ScheduleDTO.Response.builder()
+                .unAvailableDateTimes(scheduleSummaries)
                 .build();
 
     }
@@ -457,7 +474,6 @@ public class ConsultantServiceImpl implements ConsultantService {
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
         }
 
-
         //삭제
         scheduleRepository.delete(scheduleEntity);
 
@@ -466,6 +482,34 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     }
 
+    @Override
+    public ScheduleDTO.Response getSchedule(String dateTime, Long memberSeq) {
+        log.info("get Schedule service start");
+        ConsultantEntity consultantEntity = consultantRepository.findByMemberSeq(memberSeq).orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        log.info("1");
+        Optional<List<ScheduleEntity>> byDate = scheduleRepository.findByDate(dateTime, consultantEntity.getSeq());
+        log.info("2");
+        List<ScheduleSummary> unAvailableDateTimes = new ArrayList<>();
+        if (byDate.isPresent())
+            unAvailableDateTimes = byDate.get().stream().map(obj -> {
+                return ScheduleSummary.builder()
+                        .unAvailableDateTime(obj.getAvailableDateTime())
+                        .scheduleSeq(obj.getSeq())
+                        .build();
+            }).collect(Collectors.toList());
+        return ScheduleDTO.Response.builder()
+                .unAvailableDateTimes(unAvailableDateTimes).build();
+    }
+
+
+    @Override
+    @Transactional
+    public Boolean deleteSchedule(Long scheduleSeq) {
+        ScheduleEntity scheduleEntity = scheduleRepository.findById(scheduleSeq).orElseThrow(() -> new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        scheduleRepository.delete(scheduleEntity);
+        return true;
+    }
 }
 
 

@@ -7,6 +7,8 @@
           id="search"
           name="search"
           placeholder="검색어를 입력하세요"
+          v-model="nicknameInput"
+          @input="updateInput()"
         />
       </div>
       <div class="col"></div>
@@ -18,58 +20,6 @@
     </div>
 
     <div class="row" style="height: 30px"></div>
-
-    <!-- <div class="container-fluid">
-      <div class="row" style="justify-content: center">
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-      </div>
-
-      <div class="row" style="height: 30px"></div>
-
-      <div class="row">
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-        <div class="col">
-          <router-link class="link" to="/consultant/reservation/"
-            ><consultant-block-vue></consultant-block-vue
-          ></router-link>
-        </div>
-      </div>
-
-      <div class="row" style="height: 40px"></div>
-    </div> -->
     <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div
@@ -103,6 +53,7 @@ export default {
       dataLoaded: false,
       loadingNextPage: false,
       itemPerRow: 4,
+      nicknameInput: "",
       posts: [],
     };
   },
@@ -125,7 +76,7 @@ export default {
     let token = sessionStorage.getItem("token");
     // this.loadNextPage();
     axios({
-      url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}`,
+      url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}&nickname=${this.nicknameInput}`,
       headers:
         token === null
           ? null
@@ -144,7 +95,7 @@ export default {
         if (data.status === 401) {
           //유효기간이 다 된 토큰이면 일단 보여주셈
           axios({
-            url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}`,
+            url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}&nickname=${this.nicknameInput}`,
             method: "GET",
           }).then((data) => {
             this.posts = data.data.consultants;
@@ -154,6 +105,11 @@ export default {
       });
   },
   methods: {
+    updateInput() {
+      this.page = 0;
+      this.posts = [];
+      this.loadNextPage();
+    },
     async loadNextPage() {
       if (this.loadingNextPage) return;
 
@@ -162,7 +118,7 @@ export default {
       let token = sessionStorage.getItem("token");
 
       axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}&nickname=${this.nicknameInput}`,
         headers:
           token === null
             ? null
@@ -182,7 +138,7 @@ export default {
           if (data.status === 401) {
             //유효기간이 다 된 토큰이면 일단 보여주셈
             axios({
-              url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}`,
+              url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}&nickname=${this.nicknameInput}`,
               method: "GET",
             }).then((response) => {
               const newPosts = response.data.posts;
