@@ -8,50 +8,66 @@
       <div class="row">오전</div>
       <div class="row d-flex">
         <div
-          class="col-3 time-block d-flex align-items-center justify-content-center"
+          class="col-2 d-flex align-items-center justify-content-center"
           v-for="(time, index) in am1"
           :key="index"
         >
-          {{ time }}
+          <div v-if="timeList.includes(time)" class="time-block">
+            {{ time }}:00
+          </div>
+          <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
       <div class="row d-flex">
         <div
-          class="col-3 time-block d-flex align-items-center justify-content-center"
+          class="col-2 d-flex align-items-center justify-content-center"
           v-for="(time, index) in am2"
           :key="index"
         >
-          {{ time }}
+          <div v-if="timeList.includes(time)" class="time-block">
+            {{ time }}:00
+          </div>
+          <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
       <!-- 오후 -->
       <div class="row">오후</div>
       <div class="row d-flex">
         <div
-          class="col-3 time-block d-flex align-items-center justify-content-center"
+          class="col-2 d-flex align-items-center justify-content-center"
           v-for="(time, index) in pm1"
           :key="index"
         >
-          {{ time }}
-        </div>
-      </div>
-      <div class="row d-flex">
-        <div
-          class="col-3 time-block d-flex align-items-center justify-content-start"
-          v-for="(time, index) in pm2"
-          :key="index"
-        >
-          <div class="">{{ time }}</div>
+          <div v-if="timeList.includes(time)" class="time-block">
+            {{ time }}:00
+          </div>
+          <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
 
       <div class="row d-flex">
         <div
-          class="col-3 time-block d-flex align-items-center justify-content-center"
+          class="col-2 d-flex align-items-center justify-content-center"
           v-for="(time, index) in pm2"
           :key="index"
         >
-          {{ time }}
+          <div v-if="timeList.includes(time)" class="time-block">
+            {{ time }}:00
+          </div>
+          <div v-else class="time-non-block">{{ time }}:00</div>
+        </div>
+      </div>
+
+      <div class="row d-flex">
+        <div
+          class="col-2 d-flex align-items-center justify-content-center"
+          v-for="(time, index) in pm3"
+          :key="index"
+        >
+          <div v-if="timeList.includes(time)" class="time-block">
+            {{ time }}:00
+          </div>
+          <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
 
@@ -82,18 +98,19 @@ export default {
       // pagaInfo: "date",
       currDate: Date,
       availTimeList: [],
+      timeList: [],
     };
   },
   created() {
-    this.am1 = ["6:00", "7:00", "8:00"];
-    this.am2 = ["9:00", "10:00", "11:00", "12:00"];
-    this.pm1 = ["13:00", "14:00", "15:00", "16:00"];
-    this.pm2 = ["17:00", "18:00", "19:00", "20:00"];
-    this.pm3 = ["21:00", "22:00", "23:00", "24:00"];
+    this.am1 = [6, 7, 8];
+    this.am2 = [9, 10, 11, 12];
+    this.pm1 = [13, 14, 15, 16];
+    this.pm2 = [17, 18, 19, 20];
+    this.pm3 = [21, 22, 23, 24];
     this.currDate = this.$route.query.date;
-  },
-  mounted() {
+
     this.availTimeList = [];
+    this.timeList = [];
     for (let i = 0; i < this.scheduleList.length; i++) {
       // this.scheduleList[i].availableDateTime.toLocaleDateString();
       if (
@@ -106,10 +123,39 @@ export default {
           this.scheduleList[i].scheduleSeq,
           new Date(this.scheduleList[i].availableDateTime).getHours(),
         ]);
+        this.timeList.push(
+          new Date(this.scheduleList[i].availableDateTime).getHours()
+        );
         console.log("yes");
       }
     }
     console.log(this.availTimeList);
+    console.log(this.timeList);
+  },
+
+  mounted() {
+    //   this.availTimeList = [];
+    //   this.timeList = [];
+    //   for (let i = 0; i < this.scheduleList.length; i++) {
+    //     // this.scheduleList[i].availableDateTime.toLocaleDateString();
+    //     if (
+    //       this.isSameDate(
+    //         new Date(this.currDate),
+    //         new Date(this.scheduleList[i].availableDateTime)
+    //       )
+    //     ) {
+    //       this.availTimeList.push([
+    //         this.scheduleList[i].scheduleSeq,
+    //         new Date(this.scheduleList[i].availableDateTime).getHours(),
+    //       ]);
+    //       this.timeList.push(
+    //         new Date(this.scheduleList[i].availableDateTime).getHours()
+    //       );
+    //       console.log("yes");
+    //     }
+    //   }
+    //   console.log(this.availTimeList);
+    //   console.log(this.timeList);
   },
   props: {
     scheduleList: [],
@@ -129,6 +175,15 @@ export default {
 <style scoped>
 .time-block {
   background-color: #3399ff;
+  height: 5vh;
+  text-align: center;
+  margin-right: 10px;
+  width: 6vw;
+  /* padding-top: 10px; */
+}
+
+.time-non-block {
+  background-color: gray;
   height: 5vh;
   text-align: center;
   margin-right: 10px;
