@@ -538,6 +538,8 @@ public class ConsultantServiceImpl implements ConsultantService {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleSeq)
                 .orElseThrow(()->new NotFoundException(SCHEDULE_NOT_FOUND));
 
+        dto.setAvailableDateTime(schedule.getAvailableDateTime());
+
         if (!schedule.getIsAvailable())
             throw new ValidationException(ErrorCode.SCHEDULE_UNAVAILABLE);
 
@@ -551,10 +553,10 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .orElseThrow(() -> new ValidationException(ErrorCode.CONSULTANT_NOT_FOUND));
 
         // 1-4 멤버 신체 정보 입력값 검증 : 퍼스널 컬러는 없을 수도 있으니까 제외!
-        if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
-                dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
-            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
-        }
+//        if (memberSeq == null || dto.getConsultantNickname() == null || dto.getAge() == null ||
+//                dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
+//            throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
+//        }
         // 1-5 유저가 입력한 정보 기반으로 업데이트 진행
         member.updateReservationInfo(dto);
 
@@ -562,7 +564,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = ReservationEntity.builder()
                 .schedule(schedule)
                 .member(member)
-//                .date(dto.getAvailableDateTime())
+                .date(dto.getAvailableDateTime())
                 .detail(dto.getDetail())
                 .build();
 

@@ -1,9 +1,6 @@
 <template lang="">
   <div id="reservation-form" class="container-fluid scroll">
-    <div
-      class="row justify-content-center detail-title"
-      style="margin-top: 5px"
-    >
+    <div class="row justify-content-center detail-title" style="margin-top: 5px">
       상세 예약 정보 등록
     </div>
     <!-- 불러오기 버튼 -->
@@ -24,33 +21,17 @@
         </div>
         <div class="row justify-content-center">
           <div class="col">
-            <input
-              type="number"
-              v-model="ageInput"
-              class="input-form"
-              style="width: 10vw"
-            />
+            <input type="number" v-model="ageInput" class="input-form" style="width: 10vw" />
           </div>
           <div class="col">
             <fieldset style="padding-top: 10px">
               <label>
-                <input
-                  type="radio"
-                  v-model="genderInput"
-                  name="gender"
-                  value="MALE"
-                  checked
-                />
+                <input type="radio" v-model="genderInput" name="gender" value="MALE" checked />
                 <span>남성</span>
               </label>
 
               <label>
-                <input
-                  type="radio"
-                  v-model="genderInput"
-                  name="gender"
-                  value="FEMALE"
-                />
+                <input type="radio" v-model="genderInput" name="gender" value="FEMALE" />
                 <span>여성</span>
               </label>
             </fieldset>
@@ -66,20 +47,10 @@
         </div>
         <div class="row justify-content-center">
           <div class="col">
-            <input
-              type="number"
-              v-model="heightInput"
-              class="input-form"
-              style="width: 10vw"
-            />
+            <input type="number" v-model="heightInput" class="input-form" style="width: 10vw" />
           </div>
           <div class="col">
-            <input
-              type="number"
-              v-model="weightInput"
-              class="input-form"
-              style="width: 10vw"
-            />
+            <input type="number" v-model="weightInput" class="input-form" style="width: 10vw" />
           </div>
         </div>
 
@@ -128,7 +99,7 @@
       <div class="row">
         <div class="col"></div>
         <div class="col-3">
-          <div @click="submit">submit</div>
+          <div @click="submit" style="background-color: blue">submit</div>
           <!-- <router-link
             class="link"
             to="/consultant/reservation/confirm"
@@ -218,6 +189,9 @@ export default {
         .then((data) => {
           console.log("data임", data);
           console.log("callPostSaveAPI " + data.data.postSeq);
+          this.$router.push({
+            name: "consultant-myreservation",
+          });
         })
         .catch((exeption) => {
           console.log("data임", exeption);
