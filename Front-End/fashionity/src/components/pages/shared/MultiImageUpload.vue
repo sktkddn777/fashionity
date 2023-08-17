@@ -1,9 +1,9 @@
 <template lang="">
   <div class="container-fluid">
     <div class="row justify-content-start">
-      <div class="row justify-content-start" style="margin-top: 10px">
+      <!-- <div class="row justify-content-start" style="margin-top: 10px">
         사진 등록
-      </div>
+      </div> -->
       <div
         class="row justify-content-start"
         style="font-size: 10px; margin-top: 10px"
