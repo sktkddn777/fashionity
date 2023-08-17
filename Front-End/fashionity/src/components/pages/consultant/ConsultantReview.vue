@@ -29,7 +29,7 @@
     <!-- 작성자 -->
     <div class="row">
       <div class="col" style="text-align: left">
-        <span>익명</span>
+        <span>익명의 댓글</span>
       </div>
 
       <div v-if="this.review.updatedAt" class="col" style="text-align: right; color: #bdbdbd">
