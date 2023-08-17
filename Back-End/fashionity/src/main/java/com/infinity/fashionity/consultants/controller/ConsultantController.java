@@ -151,13 +151,14 @@ public class ConsultantController {
 
     // 스케쥴 등록
     @PostMapping("reservation/schedule")
-    public ResponseEntity<ScheduleSaveDTO.Response> saveSchedule(
+    public ResponseEntity<ScheduleDTO.Response> saveSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody  ScheduleSaveDTO.Request dto){
 
+        log.info("start");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
-        ScheduleSaveDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
-
+        ScheduleDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
+        log.info(" = {}",scheduleSaveResponse);
         return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
     }
 
@@ -182,7 +183,6 @@ public class ConsultantController {
     public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
             @AuthenticationPrincipal JwtAuthentication auth,
             ConsultantReservationSaveDTO.Request dto){
-        log.info("=======================saveReservation start ======================");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
         ConsultantReservationSaveDTO.Response response = consultantService.saveReservation(dto);
@@ -195,7 +195,6 @@ public class ConsultantController {
           @AuthenticationPrincipal JwtAuthentication auth,
           @RequestParam Long reservationSeq
     ) {
-        log.info("=======================getReservationEnterInfo start ======================");
         UserReservationInfoDTO.ReservationEnterResponse response = consultantService.getReservationEnterInfo(auth.getSeq(), reservationSeq);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -204,12 +203,28 @@ public class ConsultantController {
     public ResponseEntity<ConsultantReservationSaveDTO.Response> saveConsultantImagesInReservation(
             @AuthenticationPrincipal JwtAuthentication auth,
             ConsultantReservationSaveDTO.ConsultantImageSaveRequest dto){
-        log.info("=======================saveConsultantImagesInReservation start ======================");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
 
         ConsultantReservationSaveDTO.Response response = consultantService.saveConsultantImages(dto);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+
+    @GetMapping("/reservation/myschedule")
+    public ResponseEntity<ScheduleDTO.Response> getConsultantScheduleByDate(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestParam String dateTime
+    ) {
+        ScheduleDTO.Response response = consultantService.getSchedule(dateTime, auth.getSeq());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/reservation/myschedule")
+    public ResponseEntity<Boolean> deleteConsultantSchedule(
+            @AuthenticationPrincipal JwtAuthentication auth,
+            @RequestParam Long scheduleSeq
+            ) {
+        consultantService.deleteSchedule(scheduleSeq);
+        return ResponseEntity.ok(true);
     }
 }
 

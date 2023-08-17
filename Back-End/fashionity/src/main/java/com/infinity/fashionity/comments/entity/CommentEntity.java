@@ -1,5 +1,6 @@
 package com.infinity.fashionity.comments.entity;
 
+import com.infinity.fashionity.alarm.entity.AlarmEntity;
 import com.infinity.fashionity.comments.dto.Comment;
 import com.infinity.fashionity.comments.dto.CommentUpdateDTO;
 import com.infinity.fashionity.global.entity.CUDEntity;
@@ -49,9 +50,14 @@ public class CommentEntity extends CUDEntity {
     @JoinColumn(name = "post_seq", nullable = false, updatable = false)
     private PostEntity post;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CommentLikeEntity> likes = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AlarmEntity> alarms = new ArrayList<>();
+
 
     //custom method
     public void updateContent(String content){

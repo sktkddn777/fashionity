@@ -69,7 +69,6 @@
                 >
                   {{ nickname }}
                 </div>
-
                 <button
                   v-if="nickname !== myNickname"
                   id="followbtn"
@@ -89,6 +88,9 @@
                 </button>
               </div>
               <br />
+              <div v-if="memberRole==='CONSULTANT'" align="left">
+                컨설턴트
+              </div>
               <div class="m-top-d" style="width: 30rem" align="left">
                 {{ profileIntro }}
               </div>
@@ -163,6 +165,7 @@ import FollowersList from "@/components/pages/user/FollowersList.vue";
 import FollowingsList from "@/components/pages/user/FollowingsList.vue";
 import MyPostList from "@/components/pages/user/MyPostList.vue";
 import NotFound from "./NotFound.vue";
+import { mapGetters } from "vuex";
 
 export default {
   name: "ProfilePage",
@@ -183,6 +186,7 @@ export default {
       myProfile: "",
       profileIntro: "",
       profileUrl: "",
+      memberRole : "",
       followersPop: false,
       followingsPop: false,
       myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
@@ -191,6 +195,10 @@ export default {
   },
   created() {
     this.getProfile();
+    this.memberRole = this.checkLoginUser.memberRole[1];
+  },
+  computed:{
+    ...mapGetters("memberStore",["checkLoginUser"]),
   },
   methods: {
     routeToEdit() {
@@ -221,7 +229,7 @@ export default {
           console.log(e);
           console.log(e.response);
           console.log(e.response.status);
-          if (e.response.status === 404) {
+          if (e.response.status !== 200) {
             this.notFound = true;
           }
         });

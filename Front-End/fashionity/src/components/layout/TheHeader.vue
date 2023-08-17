@@ -58,13 +58,6 @@
                     </router-link>
                   </div>
                 </div>
-                <div class="col">
-                  <font-awesome-icon
-                    :icon="['fas', 'video']"
-                    @click="meeting"
-                    style="color: #bdbdbd"
-                  />
-                </div>
                 <!-- 여기부터 알람 -->
                 <the-alarm></the-alarm>
 
@@ -75,7 +68,7 @@
                     /></router-link>
                   </div>
                   <div v-else class="row">
-                    <router-link to="/profile" class="link">
+                    <router-link :to="profileLink">
                       <img class="profile" :src="getProfileUrl()"
                     /></router-link>
                   </div>
@@ -99,6 +92,15 @@ export default {
   computed: {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
+    profileLink() {
+      return `/profile/${this.myNickname}`;
+    },
+  },
+  created() {
+    if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+      this.myNickname =
+        this.$store.getters["memberStore/checkLoginUser"].nickname;
+    }
   },
   data() {
     return {

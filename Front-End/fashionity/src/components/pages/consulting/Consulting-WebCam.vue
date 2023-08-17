@@ -231,6 +231,10 @@ export default {
     UserVideo,
   },
 
+  props: {
+    reservationSeq: null,
+  },
+
   data() {
     return {
       OV: undefined,
@@ -238,7 +242,7 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
-      mySessionId: "djEjsdladmldmltptus",
+      mySessionId: null,
       myUserName: null,
       showColorDiv: false,
       showStyleDiv: false,
@@ -281,6 +285,8 @@ export default {
   created() {
     this.myUserName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
+    this.mySessionId = this.reservationSeq;
+    console.log("세션 : " + this.reservationSeq);
     console.log("유저 닉네임 : " + this.userData.nickname);
     console.log("유저 권한 : " + this.userData.memberRole);
     console.log("유저 권한 : " + this.userData.memberRole[1]);
@@ -372,7 +378,11 @@ export default {
       this.OV = undefined;
 
       window.removeEventListener("beforeunload", this.leaveSession);
-      router.push({ name: "consultant-myreservation" });
+      if (this.userData.memberRole[1] === "CONSULTANT") {
+        router.push({ name: "RConsultantCheck" });
+      } else {
+        router.push({ name: "consultant-myreservation" });
+      }
     },
 
     updateMainVideoStreamManager(stream) {

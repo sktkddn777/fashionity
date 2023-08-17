@@ -1,95 +1,110 @@
 <template>
   <div class="container">
     <div class="reservation-top">
-      <img src="@/assets/img/imgtemp.jpg" alt="" class="profile" />
+      <img src="@/assets/img/imgtemp.jpg" alt="" class="profile-img" />
       <div class="reservation-info">
         <div class="info">예약번호 : {{ reservationSeq }}</div>
         <div class="info">예약시간 : {{ reservationTime }}</div>
-        <div class="col">
-          <button class="consultant-mylist-enter" @click="startMeeting">
-            입장하기
-          </button>
-          <button class="consultant-mylist-cancel">예약취소</button>
+      </div>
+      <div class="button-wrapper">
+        <button class="consultant-mylist-enter" @click="startMeeting">
+          입장하기
+        </button>
+        <button class="consultant-mylist-cancel">예약취소</button>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px">
+      <h2>예약자 정보</h2>
+    </div>
+    <div class="reservation-bottom">
+      <div class="info-detail" style="margin-top: 10px">
+        <h3>나이</h3>
+        <p>만 {{ memberAge }}세</p>
+      </div>
+      <div class="info-detail" style="margin-top: 10px">
+        <h3>성별</h3>
+        <p>{{ memberGender }}</p>
+      </div>
+    </div>
+    <div class="reservation-bottom">
+      <div class="info-detail" style="margin-top: 10px">
+        <h3>신장</h3>
+        <p>{{ memberHeight }}</p>
+      </div>
+      <div class="info-detail" style="margin-top: 10px">
+        <h3>몸무게</h3>
+        <p>{{ memberWeight }}</p>
+      </div>
+    </div>
+    <div class="reservation-bottom">
+      <div class="info-detail" style="margin-top: 10px">
+        <h3>퍼스널컬러</h3>
+        <p>{{ memberPersonalColor }}</p>
+      </div>
+      <div class="info-detail" style="margin-top: 10px"></div>
+    </div>
+
+    <h3 style="margin-top: 10px">예약자 등록 이미지</h3>
+    <div class="reservation-bottom">
+      <div class="image-list">
+        <div
+          class="image-item"
+          v-for="(image, index) in style_images"
+          :key="index"
+        >
+          <img
+            :src="require(`@/assets/img/${image.url}`)"
+            :alt="image.alt"
+            class="image"
+          />
         </div>
       </div>
     </div>
 
-    <div align="left" class="reservation-bottom">
-      <div style="margin-top: 10px">
-        <h2>예약자 정보</h2>
-      </div>
-      <div style="margin-top: 10px">
-        <h3>나이</h3>
-        <p>만 {{ memberAge }}세</p>
-      </div>
-      <div style="margin-top: 10px">
-        <h3>성별</h3>
-        <p>{{ memberGender }}</p>
-      </div>
-      <div style="margin-top: 10px">
-        <h3>신장</h3>
-        <p>{{ memberHeight }}</p>
-      </div>
-      <div style="margin-top: 10px">
-        <h3>퍼스널컬러</h3>
-        <p>{{ memberPersonalColor }}</p>
-      </div>
-
-      <h3 style="margin-top: 10px">예약자 등록 이미지</h3>
-      <div class="image-list">
-        <div
-          class="image-item"
-          v-for="(image, index) in style_images"
-          :key="index"
-        >
-          <img
-            :src="require(`@/assets/img/${image.url}`)"
-            :alt="image.alt"
-            class="image"
-          />
-        </div>
-      </div>
-
-      <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
-      <div class="image-list">
-        <div
-          class="image-item"
-          v-for="(image, index) in style_images"
-          :key="index"
-        >
-          <img
-            :src="require(`@/assets/img/${image.url}`)"
-            :alt="image.alt"
-            class="image"
-          />
-        </div>
+    <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
+    <div class="image-list">
+      <div
+        class="image-item"
+        v-for="(image, index) in style_images"
+        :key="index"
+      >
+        <img
+          :src="require(`@/assets/img/${image.url}`)"
+          :alt="image.alt"
+          class="image"
+        />
       </div>
     </div>
   </div>
 </template>
 <style scoped>
-.container {
-  display: flex;
-  justify-content: flex-start;
-}
 .reservation-top {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .reservation-bottom {
-  align-items: flex-start;
+  display: flex;
 }
 
-.profile {
+.profile-img {
   flex: 1;
-  width: 30vh;
-  height: 30vh;
+  max-width: 20vh;
+  max-height: 20vh;
   border-radius: 20px;
   margin: 10px;
 }
 
 .reservation-info {
-  flex: 3;
+  flex: 2;
+}
+
+.button-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .info {
@@ -97,7 +112,12 @@
   font-size: 3vh;
 }
 
+.info-detail {
+  flex: 1;
+}
+
 .image-list {
+  margin: auto;
   display: flex;
   max-width: 60vw;
   overflow-x: auto;
@@ -115,22 +135,24 @@
 
 .consultant-mylist-enter {
   background-color: red;
+  margin: 5px;
   color: white;
   border-radius: 10px;
   padding: 10px;
+  max-width: 20vh;
 }
 .consultant-mylist-cancel {
   background-color: gray;
   color: white;
   border-radius: 10px;
   padding: 10px;
-  margin-left: 10px;
+  margin: 5px;
+  max-width: 20vh;
 }
 </style>
 
 <script>
 import axios from "axios";
-import router from "@/router";
 export default {
   name: "RConsultantCheckDetail",
   props: ["value"],
@@ -161,14 +183,15 @@ export default {
   },
   data() {
     return {
-      reservationSeq: "1",
-      memberNickname: "hyeonwook",
-      reservationTime: "",
-      consultantNickname: "",
-      memberAge: "24",
-      memberHeight: "170",
-      memberPersonalColor: "여름 쿨톤",
-      memberGender: "남",
+      reservationSeq: null,
+      memberNickname: null,
+      reservationTime: null,
+      consultantNickname: null,
+      memberAge: null,
+      memberHeight: null,
+      memberPersonalColor: null,
+      memberGender: null,
+      memberWeight: null,
       style_images: [
         { url: "hyeonwook.jpg", alt: "현욱1" },
         { url: "hyeonwook2.jpg", alt: "현욱2" },
@@ -183,7 +206,12 @@ export default {
   },
   methods: {
     startMeeting() {
-      router.push({ name: "Consulting-WebCam-View" });
+      const sessionId = this.reservationSeq + 73576;
+      console.log("비밀 번호 : " + sessionId);
+      this.$router.push({
+        name: "Consulting-WebCam-View",
+        query: { sessionId },
+      });
     },
   },
   // components: {},

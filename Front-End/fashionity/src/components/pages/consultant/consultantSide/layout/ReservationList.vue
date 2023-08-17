@@ -5,25 +5,29 @@
       v-for="reservation in reservations"
       :key="reservation.id"
     >
-      <img :src="reservation.profileImage" alt="Profile" />
+      <img src="@/assets/img/hyeonwook.jpg" alt="Profile" />
       <div class="reservation-info">
         <p>{{ reservation.time }}</p>
-        <button @click="cancelReservation(reservation.id)">취소</button>
+        <button @click="cancelReservation(reservation.id)">확인</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import router from "@/router";
+
 export default {
   name: "ReservationList",
   props: {
     reservations: Array,
   },
   methods: {
-    cancelReservation(reservationId) {
-      console.log(reservationId);
-      // 예약 취소 로직
+    cancelReservation(reservationSeq) {
+      router.push({
+        name: "RConsultantCheckDetail",
+        params: { value: reservationSeq },
+      });
     },
   },
 };

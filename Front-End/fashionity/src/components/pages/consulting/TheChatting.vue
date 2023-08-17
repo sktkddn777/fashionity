@@ -72,12 +72,15 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "TheChatting",
+  props: {
+    reservationSeq: null,
+  },
   data() {
     return {
       userName: null,
       message: "",
       recvList: [],
-      roomId: "djEjsdladmldmltptus",
+      roomId: null,
       userData: null,
     };
   },
@@ -85,9 +88,11 @@ export default {
     ...mapGetters("memberStore", ["checkLoginUser"]),
   },
   created() {
+    this.roomId = this.reservationSeq;
     this.userName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
+    console.log("채팅 세션 : " + this.roomId);
     this.connect();
     console.log("채팅 연결됨");
   },

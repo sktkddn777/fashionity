@@ -4,9 +4,10 @@
       :attributes="attributes"
       @dayclick="handleDateClick"
       style="width: 100vh"
+      class="calendar"
     />
 
-    <reservation-list-vue class="rlist" :reservations="reservationData" />
+    <schedule-list-vue class="rlist" :reservations="reservationData" />
   </div>
   <div class="time-input-wrapper">
     <div>
@@ -34,13 +35,24 @@
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+}
+
+.calendar {
+  flex: 2;
+}
+
+.rlist {
+  flex: 1;
+}
 </style>
 
 <script>
 import axios from "axios";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
-import ReservationListVue from "./layout/ReservationList.vue";
+import ScheduleListVue from "./layout/ScheduleList.vue";
 
 const toast = useToast();
 
@@ -70,52 +82,53 @@ export default {
   },
   name: "RConsultantSet",
   components: {
-    ReservationListVue,
+    ScheduleListVue,
   },
   created() {},
   data() {
     return {
       selectedDate: null,
-      reservationData: [
-        {
-          id: 1,
-          profileImage: "profile1.jpg",
-          time: "10:00 AM",
-        },
-        {
-          id: 2,
-          profileImage: "profile2.jpg",
-          time: "2:00 PM",
-        },
-        {
-          id: 1,
-          profileImage: "profile1.jpg",
-          time: "10:00 AM",
-        },
-        {
-          id: 2,
-          profileImage: "profile2.jpg",
-          time: "2:00 PM",
-        },
-        {
-          id: 1,
-          profileImage: "profile1.jpg",
-          time: "10:00 AM",
-        },
-        {
-          id: 2,
-          profileImage: "profile2.jpg",
-          time: "2:00 PM",
-        },
-      ],
+      reservationData: [],
     };
   },
   methods: {
     handleDateClick({ date }) {
+      this.reservationData = [];
       // Do something with the clicked date, like displaying details or performing an action
 
       // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
       this.selectedDate = date;
+      let token = sessionStorage.getItem("token");
+
+      let month = date.getMonth() + 1;
+      if (month < 10) month = "0" + month.toString();
+      let day = date.getDate();
+      if (day < 10) day = "0" + day.toString();
+
+      const dateTime = `${date.getFullYear()}-${month}-${day}`;
+
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation/myschedule`,
+        headers: { Authorization: `Bearer ${token}` },
+        method: "GET",
+        params: {
+          dateTime: dateTime,
+        },
+      })
+        .then(({ data }) => {
+          for (let i = 0; i < data.unAvailableDateTimes.length; i++) {
+            let time = data.unAvailableDateTimes[i].unAvailableDateTime;
+
+            this.reservationData.push({
+              id: data.unAvailableDateTimes[i].scheduleSeq,
+              time: `${time[0]}-${time[1]}-${time[2]} ${time[3]}:00:00`,
+              profileImage: "@/assets/img/hyeonwook.jpg",
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     saveConsultantSchedule() {
@@ -133,15 +146,20 @@ export default {
       }
 
       let timeArr = [];
-      let startHour = this.startTime.split(":")[0];
-      let endHour = this.endTime.split(":")[0];
-      for (startHour; startHour <= endHour; startHour++) {
+      let startHour = parseInt(this.startTime.split(":")[0]);
+      let endHour = parseInt(this.endTime.split(":")[0]);
+      while (startHour <= endHour) {
         const year = this.selectedDate.getFullYear();
         let month = parseInt(this.selectedDate.getMonth()) + 1;
-        const date = this.selectedDate.getDate();
-
+        let day = this.selectedDate.getDate();
+        let hour = 0;
+        if (day < 10) day = "0" + day;
         if (month < 10) month = "0" + month;
-        timeArr.push(`${year}-${month}-${date} ${startHour}:00:00`);
+        if (startHour < 10) hour = "0" + startHour;
+        else hour = startHour;
+
+        timeArr.push(`${year}-${month}-${day} ${hour}:00:00`);
+        startHour++;
       }
 
       const data = {
@@ -156,8 +174,21 @@ export default {
         method: "POST",
         data: data,
       })
-        .then((response) => {
-          console.log("success: " + response);
+        .then(({ data }) => {
+          for (let i = 0; i < data.unAvailableDateTimes.length; i++) {
+            console.log("success: " + data.unAvailableDateTimes[i]);
+            let time = data.unAvailableDateTimes[i].unAvailableDateTime;
+
+            this.reservationData.push({
+              id: data.unAvailableDateTimes[i].scheduleSeq,
+              time: `${time[0]}-${time[1]}-${time[2]} ${time[3]}:00:00`,
+              profileImage: "@/assets/img/hyeonwook.jpg",
+            });
+          }
+
+          this.startTime = "";
+          this.endTime = "";
+          this.selectedDate = null;
         })
         .catch((error) => {
           console.log("fail: " + error);
@@ -166,4 +197,3 @@ export default {
   },
 };
 </script>
-
