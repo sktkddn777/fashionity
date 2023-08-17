@@ -1,101 +1,124 @@
 <template>
-  <div class="container">
-    <div class="reservation-top">
-      <img src="@/assets/img/imgtemp.jpg" alt="" class="profile-img" />
-      <div class="reservation-info">
-        <div class="info">예약번호 : {{ reservationSeq }}</div>
-        <div class="info">예약시간 : {{ reservationTime }}</div>
-      </div>
-      <div class="button-wrapper">
-        <button class="consultant-mylist-enter" @click="startMeeting">
-          입장하기
-        </button>
-        <button class="consultant-mylist-cancel">예약취소</button>
-      </div>
-    </div>
-
-    <div style="margin-top: 10px">
-      <h2>예약자 정보</h2>
-    </div>
-    <div class="reservation-bottom">
-      <div class="info-detail" style="margin-top: 10px">
-        <h3>나이</h3>
-        <p>만 {{ memberAge }}세</p>
-      </div>
-      <div class="info-detail" style="margin-top: 10px">
-        <h3>성별</h3>
-        <p>{{ memberGender }}</p>
-      </div>
-    </div>
-    <div class="reservation-bottom">
-      <div class="info-detail" style="margin-top: 10px">
-        <h3>신장</h3>
-        <p>{{ memberHeight }}</p>
-      </div>
-      <div class="info-detail" style="margin-top: 10px">
-        <h3>몸무게</h3>
-        <p>{{ memberWeight }}</p>
-      </div>
-    </div>
-    <div class="reservation-bottom">
-      <div class="info-detail" style="margin-top: 10px">
-        <h3>퍼스널컬러</h3>
-        <p>{{ memberPersonalColor }}</p>
-      </div>
-      <div class="info-detail" style="margin-top: 10px"></div>
-    </div>
-
-    <h3 style="margin-top: 10px">예약자 등록 이미지</h3>
-    <div class="reservation-bottom">
-      <div class="image-list">
-        <div
-          class="image-item"
-          v-for="(image, index) in memberImages"
-          :key="index"
-        >
-          <img :src="image" :alt="image.alt" class="image" />
+  <div>
+    <div style="height: 1rem"></div>
+    <div class="container">
+      <div class="reservation-top">
+        <img src="@/assets/img/imgtemp.jpg" alt="" class="profile-img" />
+        <div class="reservation-info">
+          <div
+            class="info"
+            style="font-size: 1.3rem; display: flex; height: 2.3rem"
+          >
+            <b>예약 번호 : </b>
+            <div style="width: 1rem"></div>
+            <p>{{ reservationSeq }}</p>
+          </div>
+          <div
+            class="info"
+            style="font-size: 1.3rem; display: flex; height: 2.3rem"
+          >
+            <b>예약 시각 : </b>
+            <div style="width: 1rem"></div>
+            <p>{{ reservationDateTime }}</p>
+          </div>
+        </div>
+        <div class="button-wrapper">
+          <button class="consultant-mylist-enter" @click="startMeeting">
+            입장하기
+          </button>
+          <button class="consultant-mylist-cancel">예약취소</button>
         </div>
       </div>
-    </div>
-    <br />
-    <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
-    <div class="image-save">
-      <multi-image-upload
-        @updateImg="updateImg"
-        v-if="imgList.length === 0"
-      ></multi-image-upload>
-      <div style="text-align: end">
-        <button type="button" class="active-button" @click="submitPost">
-          <span>등록</span>
-        </button>
+      <div style="height: 3rem"></div>
+      <div style="margin-top: 1rem; margin-bottom: 3rem">
+        <h4><b>예약자 정보</b></h4>
+        <hr />
+      </div>
+      <div class="reservation-bottom" align="left" style="">
+        <div class="info-detail" style="margin-top: 1rem; margin-bottom: 3rem">
+          <h5><b>나이</b></h5>
+          <p>만 {{ memberAge }}세</p>
+          <h5><b>성별</b></h5>
+          <p>{{ memberGender }}</p>
+          <h5><b>신장</b></h5>
+          <p>{{ memberHeight }} cm</p>
+          <h5><b>몸무게</b></h5>
+          <p>{{ memberWeight }} kg</p>
+          <h5><b>퍼스널컬러</b></h5>
+          <p>{{ memberPersonalColor }}</p>
+        </div>
+      </div>
+      <hr />
+
+      <div style="height: 3rem"></div>
+      <div>
+        <h4 style="margin-top: 10px"><b>예약자가 등록한 이미지</b></h4>
+        <div class="reservation-bottom">
+          <div class="image-list" v-if="memberImages.length > 1">
+            <div
+              class="image-item"
+              v-for="(image, index) in memberImages"
+              :key="index"
+            >
+              <img :src="image.imageUrl" :alt="image.alt" class="image" />
+            </div>
+          </div>
+          <div v-else>
+            <div style="height: 2rem"></div>
+            이미지를 등록해주세요!
+            <div style="height: 2rem"></div>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <div style="height: 3rem"></div>
+      <div>
+        <h4 style="margin-top: 10px"><b>컨설턴트가 등록한 이미지</b></h4>
+        <div class="image-save" v-if="consultantImages.length === 0">
+          <multi-image-upload @updateImg="updateImg"></multi-image-upload>
+          <div style="text-align: end">
+            <button type="button" class="active-button" @click="submitPost">
+              <span>등록</span>
+            </button>
+          </div>
+        </div>
+        <div v-if="consultantImages.length >= 1" class="image-list">
+          <div
+            class="image-item"
+            v-for="(image, index) in consultantImages"
+            :key="index"
+          >
+            <img :src="image.imageUrl" :alt="image.alt" class="image" />
+          </div>
+        </div>
+        <hr />
       </div>
     </div>
-    <div v-if="imgList.length" class="image-list">
-      <div class="image-item" v-for="(image, index) in imgList" :key="index">
-        <img :src="`${image.imageUrl}`" :alt="image.alt" class="image" />
-      </div>
-    </div>
+    <div style="height: 5rem"></div>
   </div>
 </template>
 <style scoped>
+.container {
+  width: 80%;
+}
 .reservation-top {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.reservation-bottom {
+/* .reservation-bottom {
   display: flex;
-}
+} */
 
 .profile-img {
   flex: 1;
   max-width: 20vh;
   max-height: 20vh;
-  border-radius: 20px;
   margin: 10px;
+  border-radius: 50%;
+  margin-right: 3rem;
 }
-
 .reservation-info {
   flex: 2;
 }
@@ -108,22 +131,17 @@
 
 .info {
   text-align: left;
-  font-size: 3vh;
 }
 
-.info-detail {
+/* .info-detail {
   flex: 1;
-}
+} */
 
 .image-list {
   margin: auto;
   display: flex;
   max-width: 60vw;
   overflow-x: auto;
-}
-.image-save {
-  margin: auto;
-  max-width: 60vw;
 }
 
 .image-item {
@@ -137,28 +155,27 @@
 }
 
 .consultant-mylist-enter {
-  background-color: red;
-  margin: 5px;
+  background-color: #ed4141;
   color: white;
   border-radius: 10px;
   padding: 10px;
-  max-width: 20vh;
-}
-.consultant-mylist-cancel {
-  background-color: gray;
-  color: white;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 5px;
-  max-width: 20vh;
-}
-.active-button {
   width: 100px;
   height: 40px;
-  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.consultant-mylist-cancel {
+  background-color: #bdbdbd;
+  color: white;
   border-radius: 10px;
-  background: #2191ff;
-  color: #ffffff;
+  padding: 10px;
+  width: 100px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
 
@@ -181,21 +198,44 @@ export default {
       method: "GET",
     })
       .then(({ data }) => {
-        console.log(data);
+        console.log("뎅;ㅣ터어어어어엉", data);
+        let details = data.consultantReservationDetails[0];
         this.reservationSeq = data.reservationSeq;
-        this.consultantNickname = data.consultantNickname;
-        this.memberNickname =
-          data.consultantReservationDetails[0].memberNickname;
-        const dateTime =
-          data.consultantReservationDetails[0].reservationDateTime;
-        this.reservationTime = `${dateTime[0]}년 ${dateTime[1]}월 ${dateTime[2]}일 ${dateTime[3]}시`;
-        this.memberAge = data.consultantReservationDetails[0].age;
-        this.memberHeight = data.consultantReservationDetails[0].height;
-        this.memberPersonalColor =
-          data.consultantReservationDetails[0].personalColor;
-        this.memberGender = data.consultantReservationDetails[0].gender;
-        this.memberWeight = data.consultantReservationDetails[0].weight;
-        this.imgList = data.consultantReservationDetails[0].consultantImages;
+        this.consultantNickname = details.consultantNickname;
+        this.memberNickname = details.memberNickname;
+        if (details.personalColor === null) {
+          this.personalColor = "퍼스널컬러를 등록해주세요!";
+        } else {
+          this.personalColor = details.personalColor;
+        }
+        this.memberPersonalColor = details.personalColor;
+        if (details.gender === "MALE") {
+          this.memberGender = "남성";
+        } else if (details.gender === "FEMALE") {
+          this.memberGender = "여성";
+        } else {
+          this.memberGender = "성별을 등록해주세요!";
+        }
+        if (details.height === null) {
+          this.memberHeight = "신장을 등록해주세요!";
+        } else {
+          this.memberHeight = details.height;
+        }
+        if (details.weight === null) {
+          this.memberWeight = "신장을 등록해주세요!";
+        } else {
+          this.memberWeight = details.weight;
+        }
+        if (details.age === null) {
+          this.memberAge = "신장을 등록해주세요!";
+        } else {
+          this.memberAge = details.age;
+        }
+        const dateTime = details.reservationDateTime;
+        this.reservationDateTime = `${dateTime[0]}년 ${dateTime[1]}월 ${dateTime[2]}일 ${dateTime[3]}시`;
+        this.memberImages = details.memberImages;
+        this.consultantImages = details.consultantImages;
+        console.log("컨설턴트 이미지들 : ", this.consultantImages);
       })
       .catch((error) => {
         console.log(error);
@@ -203,17 +243,19 @@ export default {
   },
   data() {
     return {
-      reservationSeq: "",
-      memberNickname: "",
-      reservationTime: "",
-      consultantNickname: "",
-      memberAge: "",
-      memberHeight: "",
-      memberPersonalColor: "",
-      memberGender: "",
-      memberWeight: "",
-      fileList: [],
+      reservationSeq: null,
+      memberNickname: null,
+      consultantNickname: null,
+      memberPersonalColor: null,
+      memberGender: null,
+      memberHeight: null,
+      memberWeight: null,
+      memberAge: null,
+      reservationDateTime: null,
+      reservationDetail: null,
       memberImages: [],
+      consultantImages: [],
+      fileList: [],
       imgList: [],
     };
   },
@@ -255,6 +297,7 @@ export default {
         data: formData,
       })
         .then((data) => {
+          console.log("=====등록될걸?");
           console.log(data);
         })
         .catch(() => {
@@ -268,6 +311,7 @@ export default {
   components: {
     MultiImageUpload,
   },
+  // components: {},
   // props: {},
   // data: () => ({}),
   // methods: {},
