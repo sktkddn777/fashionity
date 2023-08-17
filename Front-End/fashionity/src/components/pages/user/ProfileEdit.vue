@@ -210,8 +210,7 @@ export default {
     //   }
     // },
     async editProfile() {
-
-      console.log("profile url 들어는 오니?" + this.profileUrl)
+      console.log("profile url 들어는 오니?" + this.profileUrl);
       const updatedProfile = {
         images: this.fileList,
         nickname: this.nickname,
@@ -234,8 +233,8 @@ export default {
           );
           formData.append("profileImage", updatedProfile.images[i]);
         }
-        console.log("이미지 바꿀 때")
-        console.log(updatedProfile.images[0])
+        console.log("이미지 바꿀 때");
+        console.log(updatedProfile.images[0]);
       }
       // else {
       //   console.log('=====으앙=====', this.urlToFile(this.profileUrl))
