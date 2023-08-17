@@ -194,9 +194,9 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
 
         //닉네임 중복 검사, 다른사람이면서 닉네임이 같으면 throw
-        if (member.getSeq() != seq && memberRepository.findByNickname(profile.getNickname()).isPresent())
+        Optional<MemberEntity> exist = memberRepository.findByNickname(profile.getNickname());
+        if (exist.isPresent() && member.getSeq() != exist.get().getSeq())
             throw new CustomValidationException(EXIST_MEMBER_NICKNAME);
-
         //이미지를 업데이트 할 때 null이 아니면 이미 저장된 이미지 삭제 및 새로 들어온 이미지 저장
         if (profile.getProfileImage() != null) {
             if(member.getProfileName()!=null) {
