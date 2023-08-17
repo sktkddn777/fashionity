@@ -63,15 +63,16 @@
     </div>
     <br />
     <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
-    <div v-if="style_images.length !== 0" class="image-list">
-      <multi-image-upload></multi-image-upload>
+    <div v-if="fileList.length === 0" class="image-save">
+      <multi-image-upload @updateImg="updateImg"></multi-image-upload>
+      <div style="text-align: end">
+        <button type="button" class="active-button" @click="submitPost">
+          <span>등록</span>
+        </button>
+      </div>
     </div>
     <div v-else class="image-list">
-      <div
-        class="image-item"
-        v-for="(image, index) in style_images"
-        :key="index"
-      >
+      <div class="image-item" v-for="(image, index) in fileList" :key="index">
         <img
           :src="require(`@/assets/img/${image.url}`)"
           :alt="image.alt"
@@ -125,6 +126,10 @@
   max-width: 60vw;
   overflow-x: auto;
 }
+.image-save {
+  margin: auto;
+  max-width: 60vw;
+}
 
 .image-item {
   border: 1px solid #ccc;
@@ -151,6 +156,14 @@
   padding: 10px;
   margin: 5px;
   max-width: 20vh;
+}
+.active-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
 }
 </style>
 
@@ -197,21 +210,52 @@ export default {
       memberPersonalColor: "여름 쿨톤",
       memberGender: "남",
       memberWeight: "60",
-      style_images: [
-        { url: "hyeonwook.jpg", alt: "현욱1" },
-        { url: "hyeonwook2.jpg", alt: "현욱2" },
-        { url: "hyeonwook3.jpg", alt: "현욱3" },
-        { url: "postImg.jpg", alt: "지원" },
-        { url: "hyeonwook.jpg", alt: "현욱1" },
-        { url: "hyeonwook2.jpg", alt: "현욱2" },
-        { url: "hyeonwook3.jpg", alt: "현욱3" },
-        { url: "postImg.jpg", alt: "지원" },
-      ],
+      fileList: [],
     };
   },
   methods: {
     startMeeting() {
       router.push({ name: "Consulting-WebCam-View" });
+    },
+    async submitPost() {
+      const imgData = {
+        images: this.fileList,
+        reservationSeq: this.reservationSeq,
+      };
+      await this.callImageSaveAPI(imgData);
+      this.navigateToDetail();
+    },
+    async callImageSaveAPI(imgData) {
+      let formData = new FormData();
+      for (let i = 0; i < imgData.images.length; i++) {
+        formData.append("images", imgData.images[i]);
+      }
+      formData.append("reservationSeq", imgData.reservationSeq);
+      var token = sessionStorage.getItem("token");
+      await axios({
+        url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation`,
+        headers:
+          token === null
+            ? null
+            : {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+              },
+        method: "PATCH",
+        data: formData,
+      })
+        .then((data) => {
+          console.log(data);
+        })
+        .catch(() => {
+          alert("사진이 등록되지 않았습니다.");
+        });
+    },
+    updateImg(file) {
+      this.fileList = file;
+    },
+    navigateToDetail() {
+      this.$router.push(`"/detail/${this.reservationSeq}"`);
     },
   },
   components: {
