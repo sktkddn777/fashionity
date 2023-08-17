@@ -2,6 +2,7 @@ package com.infinity.fashionity.members.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.infinity.fashionity.consultants.dto.ConsultantReservationSaveDTO;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
 
 import com.infinity.fashionity.follows.entity.FollowEntity;
@@ -30,7 +31,7 @@ import static javax.persistence.GenerationType.*;
 
 @Entity
 @Table(name = "members")
-@SQLDelete(sql = "UPDATE Members SET deleted_at = now() WHERE member_seq = ?")
+@SQLDelete(sql = "UPDATE members SET deleted_at = now() WHERE member_seq = ?")
 @Where(clause = "deleted_at is null")
 @Getter
 @Builder
@@ -130,5 +131,13 @@ public class MemberEntity extends CUDEntity {
     public void updateProfile(ProfileDTO.Request profile) {
         this.profileIntro = profile.getProfileIntro();
         this.nickname = profile.getNickname();
+    }
+
+    public void updateReservationInfo(ConsultantReservationSaveDTO.Request reservation){
+        this.weight = reservation.getWeight();
+        this.height = reservation.getHeight();
+        if (reservation.getPersonalColor() != null)
+            this.personalcolor = reservation.getPersonalColor();
+        this.gender = reservation.getGender();
     }
 }

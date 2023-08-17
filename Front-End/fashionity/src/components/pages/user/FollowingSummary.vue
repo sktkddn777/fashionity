@@ -13,17 +13,22 @@
       style="display: flex; flex-direction: row; align-items: center"
     >
       <div class="profile-photo" style="margin-right: 1.2rem">
-        <img :src = "profileUrl" class="image-box" width="60" height="60" />
+        <img
+          :src="profileUrl || require('@/assets/img/unknown.png')"
+          class="image-box"
+          width="60"
+          height="60"
+        />
       </div>
       <div>{{ following.nickname }}</div>
     </div>
     <button
-      v-if = "nickname !== myNickname"
+      v-if="nickname !== myNickname"
       id="followbtn"
       :class="isFollowed ? 'inactive-button' : 'active-button'"
       @click="toggleFollow()"
     >
-      {{ isFollowed ? '팔로잉' : '팔로우' }}
+      {{ isFollowed ? "팔로잉" : "팔로우" }}
     </button>
   </div>
 </template>
@@ -33,8 +38,6 @@
 // import { useStore } from 'vuex'
 import axios from "axios";
 
-let token = sessionStorage.getItem("token");
-
 export default {
   props: ["following"],
   data() {
@@ -42,8 +45,8 @@ export default {
       profileUrl: this.following.profileUrl,
       nickname: this.following.nickname,
       isFollowing: this.following.isFollowing,
-      isFollowed : this.following.isFollowed,
-      myNickname : this.$store.getters["memberStore/checkLoginUser"].nickname,
+      isFollowed: this.following.isFollowed,
+      myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
     };
   },
   methods: {
@@ -55,6 +58,7 @@ export default {
       }
     },
     async followAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "post",
@@ -62,11 +66,14 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
         data: body,
       })
-      .then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed;})
-      .catch((error) => console.log(error))
-
+        .then((res) => {
+          this.success = res.data.success;
+          this.isFollowed = !this.isFollowed;
+        })
+        .catch((error) => console.log(error));
     },
     async unfollowAPI(nickname) {
+      let token = sessionStorage.getItem("token");
       let body = { nickname: nickname };
       axios({
         method: "delete",
@@ -74,8 +81,11 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
         data: body,
       })
-      .then((res) => {this.success = res.data.success; this.isFollowed = !this.isFollowed})
-      .catch((error) => console.log(error))
+        .then((res) => {
+          this.success = res.data.success;
+          this.isFollowed = !this.isFollowed;
+        })
+        .catch((error) => console.log(error));
     },
   },
 };

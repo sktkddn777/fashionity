@@ -16,7 +16,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "alarms")
-@SQLDelete(sql = "UPDATE Comments SET deleted_at = now() WHERE comment_seq = ?")
+@SQLDelete(sql = "UPDATE alarms SET deleted_at = now() WHERE alarm_seq = ?")
 @Where(clause = "deleted_at is null")
 @DynamicUpdate
 @Getter

@@ -22,4 +22,5 @@ public class ConsultantReviewSummary {
 
     // 리뷰 작성자
     private String memberNickname;
+
 }

@@ -29,4 +29,10 @@ public class HashUtil {
         uuid.concat(Character.toString(special[specialIdx]));
         return uuid;
     }
+
+    public static String makeRoomNumber() {
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        uuid = uuid.substring(0, 10);
+        return uuid;
+    }
 }

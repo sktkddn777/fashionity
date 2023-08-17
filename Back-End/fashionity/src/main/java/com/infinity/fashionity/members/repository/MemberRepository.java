@@ -27,6 +27,8 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     Long findSeqByNickname(@Param("nickname") String nickname);
 
     MemberEntity findBySeq(Long seq);
+
+    MemberEntity findByseq(Long memberSeq);
 }
 
 

@@ -62,6 +62,7 @@ public enum ErrorCode {
 
     //Schedule
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCH001", "존재하지 않는 스케쥴입니다."),
+    SCHEDULE_UNAVAILABLE(HttpStatus.BAD_REQUEST, "SCH002", "예약이 불가합니다."),
 
     // Review
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다."),

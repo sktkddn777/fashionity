@@ -196,6 +196,7 @@ const router = createRouter({
               path: "",
               name: "RConsultantCheck",
               component: RConsultantCheck,
+              beforeEnter: optionalAuthUser,
             },
             {
               path: "set",
