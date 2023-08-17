@@ -34,8 +34,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.infinity.fashionity.global.exception.ErrorCode.RESERVATION_NOT_FOUND;
+import static com.infinity.fashionity.global.exception.ErrorCode.*;
 
 
 @Slf4j
@@ -536,7 +535,9 @@ public class ConsultantServiceImpl implements ConsultantService {
         // [1] 예외 처리
         // 1-1 컨설턴트 스케쥴이 비어있지 않으면 예약이 불가능하다
         Long scheduleSeq = dto.getScheduleSeq();
-        ScheduleEntity schedule = scheduleRepository.findBySeq(scheduleSeq);
+        ScheduleEntity schedule = scheduleRepository.findById(scheduleSeq)
+                .orElseThrow(()->new NotFoundException(SCHEDULE_NOT_FOUND));
+
         if (!schedule.getIsAvailable())
             throw new ValidationException(ErrorCode.SCHEDULE_UNAVAILABLE);
 
@@ -554,7 +555,6 @@ public class ConsultantServiceImpl implements ConsultantService {
                 dto.getGender() == null || dto.getHeight() == null || dto.getWeight() == null) {
             throw new ValidationException(ErrorCode.MISSING_INPUT_VALUE);
         }
-
         // 1-5 유저가 입력한 정보 기반으로 업데이트 진행
         member.updateReservationInfo(dto);
 
@@ -562,7 +562,7 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = ReservationEntity.builder()
                 .schedule(schedule)
                 .member(member)
-                .date(dto.getAvailableDateTime())
+//                .date(dto.getAvailableDateTime())
                 .detail(dto.getDetail())
                 .build();
 

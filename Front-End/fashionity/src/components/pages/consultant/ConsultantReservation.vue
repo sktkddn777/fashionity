@@ -54,7 +54,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      nickname: "sangu", // 임시로 사용할 예정 나중에 list 부분 수정되면 수정하자
+      nickname: "", // 임시로 사용할 예정 나중에 list 부분 수정되면 수정하자
       consultantInfo: {},
       reviewList: [],
       scheduleList: [],
@@ -62,6 +62,10 @@ export default {
   },
   components: {
     ConsultantReview,
+  },
+  created() {
+    this.nickname = this.$route.params.nickname;
+    console.log(this.nickname);
   },
   props: {},
   async mounted() {

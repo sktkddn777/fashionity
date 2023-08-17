@@ -231,7 +231,7 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "",
+              path: ":nickname",
               name: "consultantDate",
               component: ConsultantReservationDate,
             },

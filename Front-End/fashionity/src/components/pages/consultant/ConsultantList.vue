@@ -33,10 +33,9 @@
             v-for="post in arr"
             :key="post.post_seq"
             style="margin-bottom: 20px"
+            @click="onclick(post)"
           >
-            <router-link to="reservation"
-              ><consultant-block-vue :post="post"></consultant-block-vue
-            ></router-link>
+            <consultant-block-vue :post="post"></consultant-block-vue>
           </div>
         </div>
       </div>
@@ -167,6 +166,13 @@ export default {
           this.loadNextPage();
         }
       }
+    },
+    onclick(post) {
+      // console.log(post);
+      this.$router.push({
+        name: "consultantDate",
+        params: { nickname: post.nickname },
+      });
     },
   },
   beforeUnmount() {

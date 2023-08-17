@@ -25,8 +25,8 @@ public class ConsultantReservationSaveDTO {
 
         private Long scheduleSeq;
 
-        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-        private LocalDateTime availableDateTime;
+//        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
+//        private LocalDateTime availableDateTime;
 
         private String consultantNickname;
 

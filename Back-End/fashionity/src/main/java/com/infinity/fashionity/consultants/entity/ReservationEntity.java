@@ -35,7 +35,7 @@ public class ReservationEntity extends CUDEntity {
     private MemberEntity member;
 
     // 예약 일시
-    @Column(name = "reservation_date", unique = false, nullable = false)
+    @Column(name = "reservation_date", unique = false, nullable = true)
     private LocalDateTime date;
 
     // 예약 상세
