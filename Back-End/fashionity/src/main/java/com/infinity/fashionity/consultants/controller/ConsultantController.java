@@ -150,7 +150,7 @@ public class ConsultantController {
 
 
     // 스케쥴 등록
-    @PostMapping("reservation/schedule")
+    @PostMapping("/reservation/schedule")
     public ResponseEntity<ScheduleDTO.Response> saveSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody  ScheduleSaveDTO.Request dto){
@@ -162,7 +162,7 @@ public class ConsultantController {
         return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("reservation/schedule/{schedule_seq}")
+    @DeleteMapping("/reservation/schedule/{schedule_seq}")
     public ResponseEntity<ScheduleDeleteDTO.Response> deleteSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody ScheduleDeleteDTO.Request dto,
@@ -179,7 +179,7 @@ public class ConsultantController {
     /**
      * 유저가 예약을 하는데, 입력한 정보를 바탕으로 유저 정보 추가 업데이트 및 사진 등록
      */
-    @PostMapping("reservation")
+    @PostMapping("/reservation")
     public ResponseEntity<ConsultantReservationSaveDTO.Response> saveReservation(
             @AuthenticationPrincipal JwtAuthentication auth,
             ConsultantReservationSaveDTO.Request dto){
