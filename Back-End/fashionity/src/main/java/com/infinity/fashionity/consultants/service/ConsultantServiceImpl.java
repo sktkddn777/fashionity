@@ -14,7 +14,9 @@ import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
 import com.infinity.fashionity.image.service.ImageService;
+import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.MemberRole;
+import com.infinity.fashionity.members.data.PersonalColor;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.members.exception.MemberNotFoundException;
 import com.infinity.fashionity.members.repository.MemberRepository;
@@ -206,12 +208,19 @@ public class ConsultantServiceImpl implements ConsultantService {
         ReservationEntity reservation = reservationRepository.findById(reservationSeq)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RESERVATION_NOT_FOUND));
 
+        MemberEntity member = memberRepository.findByseq(memberSeq);
+
+        PersonalColor personalColor = member.getPersonalcolor();
+        Gender gender = member.getGender();
+        Float height = member.getHeight();
+        Float weight = member.getWeight();
+        Integer age = member.getAge();
 
         List<ConsultantReservationDetail> result = reservationRepository.findConsultantReservation(consultantNickname, reservationSeq);
 
         List<ConsultantReservationDetail> details = result.stream().map(entity -> {
             List<MemberImageEntity> imageEntities = reservationRepository.findReservationImages(entity.getReservationSeq());
-            List<Image> images = imageEntities.stream().map(e->{
+            List<Image> memeberImages = imageEntities.stream().map(e->{
                 Long imageSeq = e.getSeq();
                 String imageUrl = e.getUrl();
                 return Image.builder()
@@ -221,10 +230,17 @@ public class ConsultantServiceImpl implements ConsultantService {
             }).collect(Collectors.toList());
             return ConsultantReservationDetail.builder()
                     .reservationSeq(entity.getReservationSeq())
+                    .consultantNickname(dto.getConsultantNickname())
                     .memberNickname(entity.getMemberNickname())
+                    .personalColor(personalColor)
+                    .gender(gender)
+                    .height(height)
+                    .weight(weight)
+                    .age(age)
                     .reservationDateTime(entity.getReservationDateTime())
                     .reservationDetail(entity.getReservationDetail())
-                    .images(images)
+                    .memberImages(memeberImages)
+                    .consultantImages(null)
                     .build();
         }).collect(Collectors.toList());
 
