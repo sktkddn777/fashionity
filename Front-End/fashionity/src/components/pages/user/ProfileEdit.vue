@@ -104,7 +104,7 @@
   <div class=" " style="height: 2rem"></div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { useCookies } from "vue3-cookies";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
@@ -146,6 +146,7 @@ export default {
     // }
   },
   methods: {
+    ...mapActions("memberStore", ["updateUserInfoAction"]),
     getProfile() {
       let token = sessionStorage.getItem("token");
       axios({
@@ -210,14 +211,14 @@ export default {
     //   }
     // },
     async editProfile() {
-
-      console.log("profile url 들어는 오니?" + this.profileUrl)
+      console.log("profile url 들어는 오니?" + this.profileUrl);
       const updatedProfile = {
         images: this.fileList,
         nickname: this.nickname,
         profileIntro: this.profileIntro,
       };
       await this.callProfileEditAPI(updatedProfile);
+
       this.navigateToProfile();
     },
     async callProfileEditAPI(updatedProfile) {
@@ -234,8 +235,8 @@ export default {
           );
           formData.append("profileImage", updatedProfile.images[i]);
         }
-        console.log("이미지 바꿀 때")
-        console.log(updatedProfile.images[0])
+        console.log("이미지 바꿀 때");
+        console.log(updatedProfile.images[0]);
       }
       // else {
       //   console.log('=====으앙=====', this.urlToFile(this.profileUrl))
@@ -259,6 +260,7 @@ export default {
           console.log("=======성공성공========");
           console.log(data);
           console.log("Profile updated successfully!");
+          this.updateUserInfoAction(data.data);
         })
         .catch((error) => {
           // console.log(formData)
