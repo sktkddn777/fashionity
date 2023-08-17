@@ -10,6 +10,7 @@ import com.infinity.fashionity.global.exception.AccessDeniedException;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import com.infinity.fashionity.global.exception.NotFoundException;
 import com.infinity.fashionity.global.exception.ValidationException;
+import com.infinity.fashionity.global.utils.StringUtils;
 import com.infinity.fashionity.image.dto.ImageDTO;
 import com.infinity.fashionity.image.dto.ImageSaveDTO;
 import com.infinity.fashionity.image.service.ImageService;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.infinity.fashionity.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.infinity.fashionity.global.exception.ErrorCode.RESERVATION_NOT_FOUND;
