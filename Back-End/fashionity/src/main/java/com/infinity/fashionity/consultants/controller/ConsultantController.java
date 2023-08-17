@@ -63,7 +63,7 @@ public class ConsultantController {
         return new ResponseEntity<>(consultantReservationsListResponse, HttpStatus.OK);
     }
 
-    // [컨설턴트] 상세 예약 정보 조회
+    // [컨설턴트] 상세 예약 정보 조회 -> 로직이 유저 상세 예약 정보와 거의 동일하게 변경되어 나중에 리팩토링 시 두 api 를 통합해도 될듯
     @GetMapping(value = "/{consultantNickname}/reservations/{reservationSeq}")
     public ResponseEntity<ConsultantReservationInfoDTO.Response> getConsultantReservationDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
