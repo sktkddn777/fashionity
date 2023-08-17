@@ -5,7 +5,7 @@
   >
     <div class="row d-flex d-flex align-items-center justify-content-center">
       <v-sheet width="300" class="mx-auto">
-        <v-form ref="form">
+        <v-form ref="form" @keyup.enter="login">
           <v-text-field
             v-model="id"
             :counter="20"

@@ -160,6 +160,19 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
+    @Override
+    public ProfileDTO.MyProfileBodyInfoResponse getMyBodyInfo(Long seq) {
+        MemberEntity member = memberRepository.findById(seq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
+
+        return ProfileDTO.MyProfileBodyInfoResponse.builder()
+                .age(member.getAge())
+                .height(member.getHeight())
+                .weight(member.getWeight())
+                .gender(member.getGender())
+                .personalColor(member.getPersonalcolor())
+                .build();
+    }
+
     private String getThumbnail(PostEntity postEntity) {
         List<PostImageEntity> postImages = postEntity.getPostImages();
         if (postImages.size() == 0)
@@ -181,9 +194,9 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomValidationException(INVALID_MEMBER_NICKNAME);
 
         //닉네임 중복 검사, 다른사람이면서 닉네임이 같으면 throw
-        if (member.getSeq() != seq && memberRepository.findByNickname(profile.getNickname()).isPresent())
+        Optional<MemberEntity> exist = memberRepository.findByNickname(profile.getNickname());
+        if (exist.isPresent() && member.getSeq() != exist.get().getSeq())
             throw new CustomValidationException(EXIST_MEMBER_NICKNAME);
-
         //이미지를 업데이트 할 때 null이 아니면 이미 저장된 이미지 삭제 및 새로 들어온 이미지 저장
         if (profile.getProfileImage() != null) {
             if(member.getProfileName()!=null) {
@@ -206,9 +219,6 @@ public class MemberServiceImpl implements MemberService {
             //저장된 썸네일에 대한 정보를 업데이트
             ImageDTO savedImageInfo = imageInfos.get(0);
             member.updateProfileImage(savedImageInfo);
-        }
-        else{
-            member.updateProfileImage(null);
         }
         member.updateProfile(profile);
 

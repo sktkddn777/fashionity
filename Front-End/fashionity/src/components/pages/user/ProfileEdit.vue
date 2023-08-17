@@ -72,7 +72,15 @@
               <h5>
                 <label for="nickname"><b>닉네임</b></label>
               </h5>
-              <input id="nickname" type="text" v-model="nickname" />
+              <input
+                id="nickname"
+                type="text"
+                v-model="nickname"
+                @input="checkNicknameLength"
+              />
+              <p v-if="isNicknameTooLong" class="warning" style="color: red">
+                닉네임이 너무 깁니다. 최대 13자까지 입력 가능합니다.
+              </p>
               <hr />
             </div>
             <div>
@@ -104,7 +112,7 @@
   <div class=" " style="height: 2rem"></div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { useCookies } from "vue3-cookies";
 import TheNavBarMypage from "@/components/layout/TheNavBarMypage.vue";
 import axios from "axios";
@@ -130,6 +138,8 @@ export default {
       displayProfileImageUpload: false,
       profileImage: "",
       fileList: [],
+      isNicknameTooLong: false,
+      isValid: true,
     };
   },
   created() {
@@ -146,6 +156,16 @@ export default {
     // }
   },
   methods: {
+    ...mapActions("memberStore", ["updateUserInfoAction"]),
+    checkNicknameLength() {
+      if (this.nickname.length >= 13) {
+        this.isNicknameTooLong = true;
+        this.isValid = false;
+      } else {
+        this.isNicknameTooLong = false;
+        this.isValid = true;
+      }
+    },
     getProfile() {
       let token = sessionStorage.getItem("token");
       axios({
@@ -158,7 +178,6 @@ export default {
         this.id = data.id;
         this.email = data.email;
         this.profileIntro = data.profileIntro;
-        console.log(data);
       });
     },
     async deleteProfile() {
@@ -168,7 +187,13 @@ export default {
         method: "put",
         url: `${process.env.VUE_APP_API_URL}/api/v1/members/delete`,
         headers: { Authorization: `Bearer ${token}` },
-      }).then((data) => console.log(data.data.success));
+      })
+        .then(() => {})
+        .catch((error) => {
+          if (error.resopnse.status === 401) {
+            alert(error.response.data.message);
+          }
+        });
     },
     async delteProfileAndLogout() {
       await this.deleteProfile();
@@ -178,9 +203,7 @@ export default {
       this.$router.push("/");
     },
     showImageUpload() {
-      console.log("before: " + this.displayProfileImageUpload);
       this.displayProfileImageUpload = !this.displayProfileImageUpload;
-      console.log("after: " + this.displayProfileImageUpload);
     },
     deleteProfileImage() {
       this.profileImage = "@/assets/img/unknown.png";
@@ -188,54 +211,33 @@ export default {
     },
     updateImg(file) {
       this.fileList = file;
-      console.log("파일임당", file);
     },
     navigateToProfile() {
-      console.log(this.nickname);
       this.$router.push(`/profile/${this.nickname}`);
     },
-    async urlToFile(profileUrl) {
-      if (profileUrl !== null) {
-        const response = await fetch(profileUrl);
-        const data = await response.blob();
-        const ext = profileUrl.split(".").pop();
-        const filename = profileUrl.split("/").pop();
-        const metadata = { type: `image/${ext}` };
-        return new File([data], filename, metadata);
+    editProfile() {
+      if (!this.isValid) {
+        alert("값을 다시 확인해주세요");
+        return;
       }
-    },
-    async editProfile() {
-      console.log("fileList = ", this.fileList);
       const updatedProfile = {
         images: this.fileList,
         nickname: this.nickname,
         profileIntro: this.profileIntro,
       };
-      await this.callProfileEditAPI(updatedProfile);
-      this.navigateToProfile();
+      this.callProfileEditAPI(updatedProfile);
     },
     async callProfileEditAPI(updatedProfile) {
       let formData = new FormData();
       formData.append("nickname", updatedProfile.nickname);
       formData.append("profileIntro", updatedProfile.profileIntro);
+
       // 이미지 업로드 처리
       if (updatedProfile.images.length >= 1) {
         for (let i = 0; i < updatedProfile.images.length; i++) {
-          console.log(
-            "포문 안에 있는 postData images 입니다 : " +
-              updatedProfile.images[i]
-          );
           formData.append("profileImage", updatedProfile.images[i]);
         }
       }
-      // else {
-      //   formData.append("profileImage", this.urlToFile(this.profileUrl));
-      // }
-
-      for (let { key, value } of (formData.keys(), formData.values())) {
-        console.log({ key, value });
-      }
-
       let token = sessionStorage.getItem("token");
       await axios({
         method: "patch",
@@ -247,14 +249,15 @@ export default {
         },
       })
         .then((data) => {
-          console.log("=======성공성공========");
-          console.log(data);
-          console.log("Profile updated successfully!");
+          this.updateUserInfoAction(data.data);
+          this.navigateToProfile();
         })
         .catch((error) => {
-          // console.log(formData)
-          console.log("=======에러에러========");
-          console.log(error);
+          if (error.response.status === 400) {
+            alert(error.response.data.message);
+          } else {
+            alert("서버 에러");
+          }
         });
     },
   },

@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.POST_NOT_FOUND));
 
         //댓글을 최신순으로 paging처리하기 위함
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
 
         //size와 page에 맞게, 최신순으로 댓글을 가져옴
         Page<Object[]> result = commentRepository.findAllByPostWithCommentsAndLikeCount(post,member, pageable);
@@ -76,6 +76,10 @@ public class CommentServiceImpl implements CommentService {
                     CommentEntity entity = (CommentEntity) obj[0];
                     int likesCount = ((Long)obj[1]).intValue();
                     boolean liked = ((Boolean)obj[2]).booleanValue();
+                    boolean isMyComment = false;
+                    if(entity.getMember().getSeq() == memberSeq){
+                        isMyComment = true;
+                    }
                     return Comment.builder()
                             .commentSeq(entity.getSeq())
                             .nickname(entity.getMember().getNickname())
@@ -86,6 +90,7 @@ public class CommentServiceImpl implements CommentService {
                             .updatedAt(entity.getUpdatedAt())
                             .likeCnt(likesCount)
                             .liked(liked)
+                            .isMyComment(isMyComment)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -279,7 +284,7 @@ public class CommentServiceImpl implements CommentService {
                     .build());
             like = true;
             alarmService.sendAlarm(AlarmSendDTO.Request.builder()
-                    .ownerSeq(post.getMember().getSeq())
+                    .ownerSeq(comment.getMember().getSeq())
                     .publisherSeq(member.getSeq())
                     .type(AlarmType.COMMENT_LIKE)
                     .postSeq(post.getSeq())

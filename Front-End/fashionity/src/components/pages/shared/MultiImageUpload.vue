@@ -1,9 +1,9 @@
 <template lang="">
   <div class="container-fluid">
     <div class="row justify-content-start">
-      <div class="row justify-content-start" style="margin-top: 10px">
+      <!-- <div class="row justify-content-start" style="margin-top: 10px">
         사진 등록
-      </div>
+      </div> -->
       <div
         class="row justify-content-start"
         style="font-size: 10px; margin-top: 10px"
@@ -16,16 +16,15 @@
           <div class="row justify-content-start">
             <div class="col">
               <div class="image-box">
-                <!-- <div class="image-profile">
-              <img :src="profileImage" />
-              </div>-->
-                <label for="file">사진 등록</label>
+                <button class = "active-button">
+                  <label for="file">사진 등록</label>
                 <input
                   type="file"
                   id="file"
                   ref="files"
                   @change="imageUpload"
                 />
+                </button>
               </div>
             </div>
           </div>
@@ -48,13 +47,15 @@
             </div>
             <div v-if="files.length < 4">
               <div class="image-box">
-                <label for="file">추가 사진 등록</label>
+                <button class = "inactive-button">
+                  <label for="file">추가 사진 등록</label>
                 <input
                   type="file"
                   id="file"
                   ref="files"
                   @change="imageUpload"
                 />
+                </button>
               </div>
               <!-- <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div> -->
             </div>
@@ -79,7 +80,9 @@
           :src="cropImgURL"
         />
       </div>
-      <div class="col" @click="uploadImage">upload</div>
+      <div class="button" style="display: flex; justify-content: flex-end">
+        <button class="active-button" @click="uploadImage">저장</button>
+      </div>
     </div>
   </div>
 </template>
@@ -107,6 +110,7 @@ export default {
   },
   methods: {
     makePreview(blobData) {
+      console.log("프리뷰");
       for (let i = 0; i < this.$refs.files.files.length; i++) {
         console.log("안녕 난 for문이야");
         this.files = [
@@ -467,7 +471,7 @@ width: 100%; */
   border: 0;
 }
 
-.image-box label {
+/* .image-box label {
   display: inline-block;
   padding: 10px 20px;
   background-color: black;
@@ -476,7 +480,7 @@ width: 100%; */
   font-size: 15px;
   cursor: pointer;
   border-radius: 5px;
-}
+} */
 
 .file-preview-wrapper {
   padding: 10px;
@@ -554,5 +558,21 @@ width: 100%; */
   max-height: 250px;
   max-width: 250px;
   background: #ddd;
+}
+.active-button {
+  width: 100px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 120px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>

@@ -32,6 +32,7 @@ import ConsultantVue from "../components/pages/consultant/Consultant";
 import RConsultantCheck from "../components/pages/consultant/consultantSide/RConsultantCheck";
 import RConsultantCheckDetail from "../components/pages/consultant/consultantSide/RConsultantCheckDetail";
 import RConsultantSet from "../components/pages/consultant/consultantSide/RConsultantSet";
+import RUserCheckDetail from "../components/pages/consultant/consultantSide/RUserCheckDetail";
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
@@ -196,17 +197,25 @@ const router = createRouter({
               path: "",
               name: "RConsultantCheck",
               component: RConsultantCheck,
+              beforeEnter: optionalAuthUser,
             },
             {
               path: "set",
               name: "RConsultantSet",
               component: RConsultantSet,
+              beforeEnter: optionalAuthUser,
             },
             {
               path: "/detail/:value",
               name: "RConsultantCheckDetail",
               component: RConsultantCheckDetail,
               beforeEnter: optionalAuthUser,
+              props: true,
+            },
+            {
+              path: "/udetail/:value",
+              name: "RUserCheckDetail",
+              component: RUserCheckDetail,
               props: true,
             },
           ],
@@ -222,17 +231,17 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "",
+              path: ":nickname",
               name: "consultantDate",
               component: ConsultantReservationDate,
             },
             {
-              path: "time",
+              path: "time/:nickname/:date",
               name: "consultantTime",
               component: ConsultantReservationTime,
             },
             {
-              path: "detail",
+              path: "detail/:seq/:nickname",
               name: "consultantDetail",
               component: ConsultantReservationForm,
             },

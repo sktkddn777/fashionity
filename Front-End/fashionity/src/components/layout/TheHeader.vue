@@ -58,13 +58,6 @@
                     </router-link>
                   </div>
                 </div>
-                <div class="col">
-                  <font-awesome-icon
-                    :icon="['fas', 'video']"
-                    @click="meeting"
-                    style="color: #bdbdbd"
-                  />
-                </div>
                 <!-- 여기부터 알람 -->
                 <the-alarm></the-alarm>
 
@@ -100,7 +93,11 @@ export default {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
     profileLink() {
-      return `/profile/${this.myNickname}`;
+      let myNickname = "";
+      if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+        myNickname = this.$store.getters["memberStore/checkLoginUser"].nickname;
+      }
+      return `/profile/${myNickname}`;
     },
   },
   created() {

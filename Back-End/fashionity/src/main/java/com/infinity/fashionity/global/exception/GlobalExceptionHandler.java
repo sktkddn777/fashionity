@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
+        e.printStackTrace();
         return ResponseEntity.status(errorCode.getStatus())
                 .body(ErrorResponse.of(errorCode));
     }
@@ -35,6 +36,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(BindException e) {
         log.error("[EXCEPTION] {}", e.getClass().getSimpleName());
+        e.printStackTrace();
         return ResponseEntity.status(BAD_REQUEST)
                 .body(new ErrorResponse(INVALID_INPUT_VALUE.getCode(), e.getFieldError().getDefaultMessage()));
     }
@@ -52,6 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
         log.error("[EXCEPTION] {}", e.getClass().getSimpleName());
+        e.printStackTrace();
         return ResponseEntity.status(BAD_REQUEST)
                 .body(ErrorResponse.of(INVALID_PATH_VALUE));
     }
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.error("[EXCEPTION] {}", e.getClass().getSimpleName());
+        e.printStackTrace();
         return ResponseEntity.status(BAD_REQUEST)
                 .body(ErrorResponse.of(METHOD_NOT_ALLOWED));
     }
@@ -68,6 +72,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException e) {
         log.error("[EXCEPTION] {}", e.getClass().getSimpleName());
+        e.printStackTrace();
         return ResponseEntity.status(BAD_REQUEST)
                 .body(ErrorResponse.of(NOT_EXIST_API));
     }

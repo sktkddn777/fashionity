@@ -27,10 +27,6 @@ public class PostUpdateDTO {
         @Size(max = 500, message = "500자까지만 입력 가능합니다.")
         private String content;
 
-        @NotBlank
-        @Builder.Default
-        private List<MultipartFile> images = new ArrayList<>();
-
         @Builder.Default
         private List<String> hashtag = new ArrayList<>();
     }

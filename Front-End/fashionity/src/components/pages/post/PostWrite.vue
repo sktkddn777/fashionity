@@ -7,7 +7,7 @@
         <div class="post-detail-header">
           <div class="post-detail-header-img">
             <img
-              :src="myProfileImg || '../img/unknown.e083a226.png'"
+              :src="getProfileUrl() || '../img/unknown.e083a226.png'"
               alt="profileImg"
               class="profile"
             />
@@ -44,23 +44,24 @@
           rows="3"
           placeholder="내용을 입력해주세요."
           v-model="contentInput"
+          required
         ></textarea>
 
         <div class="post-write-button">
           <button
             type="button"
-            class="btn btn-outline-dark"
+            class="inactive-button"
             style="min-width: 70px"
-          >
-            <span style="font-size: smaller">&nbsp;취소&nbsp;</span>
+            @click="navigateToMain"
+          >취소
           </button>
           <button
             type="button"
-            class="btn btn-dark"
+            class="active-button"
             style="min-width: 70px"
             @click="submitPost"
           >
-            <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+          등록
           </button>
         </div>
       </div>
@@ -71,12 +72,12 @@
 <script>
 import axios from "axios";
 import MultiImageUpload from "../shared/MultiImageUpload.vue";
+import { mapState } from "vuex";
+const memberStore = "memberStore";
 export default {
   data() {
     return {
       myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
-      myProfileImg:
-        this.$store.getters["memberStore/checkLoginUser"].profileImage,
       tagInput: "",
       tagList: [],
       contentInput: "",
@@ -87,7 +88,13 @@ export default {
   components: {
     MultiImageUpload,
   },
+  computed: {
+    ...mapState(memberStore, ["loginUser"]),
+  },
   methods: {
+    getProfileUrl() {
+      return this.loginUser.profileUri;
+    },
     addTag() {
       if (this.tagInput) {
         this.tagList.push(this.tagInput.substr(0, this.tagInput.length - 1));
@@ -95,32 +102,27 @@ export default {
       }
     },
     async submitPost() {
-      console.log("taglist = " + this.tagList);
-      console.log("fileList = " + this.fileList);
-      const postData = {
-        images: this.fileList,
-        content: this.contentInput,
-        hashtags: this.tagList,
-      };
-      await this.callPostSaveAPI(postData);
-      this.navigateToMain();
+      if (this.fileList.length == 0) {
+        alert("이미지를 등록해주세요.");
+      } else if (!this.contentInput || this.contentInput.trim() === "") {
+        alert("내용을 입력해주세요.");
+      } else {
+        const postData = {
+          images: this.fileList,
+          content: this.contentInput,
+          hashtags: this.tagList,
+        };
+        await this.callPostSaveAPI(postData);
+        this.navigateToMain();
+      }
     },
     async callPostSaveAPI(postData) {
       let formData = new FormData();
       formData.append("content", postData.content);
-      // formData.append("hashtags", JSON.stringify(postData.hashtags));
-      console.log(
-        "API postData = " + postData.images + " " + postData.images.length
-      );
-
       // 이미지 업로드 처리
       for (let i = 0; i < postData.images.length; i++) {
-        console.log(
-          "포문 안에 있는 postData images 입니다 : " + postData.images[i]
-        );
         formData.append("images", postData.images[i]);
       }
-      console.log("포문 밖에 있는 formData images 입니다 : " + formData.images);
       for (let i = 0; i < postData.hashtags.length; i++) {
         formData.append("hashtags", postData.hashtags[i]);
       }
@@ -141,12 +143,11 @@ export default {
           console.log("callPostSaveAPI " + data.data.postSeq);
         })
         .catch(() => {
-          alert("실패!");
+          alert("게시글이 등록되지 않았습니다.");
         });
     },
     updateImg(file) {
       this.fileList = file;
-      console.log("파일임당", file);
     },
     navigateToMain() {
       this.$router.push("/post");
@@ -205,5 +206,21 @@ export default {
   justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
+}
+.active-button {
+  width: 80px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 80px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
+  color: #ffffff;
 }
 </style>

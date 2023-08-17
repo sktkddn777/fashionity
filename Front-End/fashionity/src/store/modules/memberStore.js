@@ -23,6 +23,12 @@ const memberStore = {
     },
   },
   mutations: {
+    UPDATE_USER_INFO(state, updatedInfo) {
+      // state.loginUser = { ...state.loginUser, ...updatedInfo };
+      state.loginUser.nickname = updatedInfo.nickname;
+      state.loginUser.profileUri = updatedInfo.profileUrl;
+      sessionStorage.setItem("loginNickname", updatedInfo.nickname);
+    },
     LOGIN(state, data) {
       state.loginUser = data;
       state.isLogin = true;
@@ -44,6 +50,11 @@ const memberStore = {
     },
   },
   actions: {
+    async updateUserInfoAction({ commit }, updatedInfo) {
+      console.log("update user info action!");
+      console.log(updatedInfo);
+      commit("UPDATE_USER_INFO", updatedInfo);
+    },
     async getUserNickname() {
       console.log("실행됨");
       return this.state.loginUser.nickname;

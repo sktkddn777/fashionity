@@ -34,7 +34,7 @@
                 name="category"
                 id="slander"
                 value="slander"
-                v-model="category"
+                v-model="reportCategory"
                 checked
               />
               <label class="form-check-label" for="slander">
@@ -48,7 +48,7 @@
                 name="category"
                 id="spam"
                 value="spam"
-                v-model="category"
+                v-model="reportCategory"
               />
               <label class="form-check-label" for="spam">
                 성희롱 / 음란물
@@ -61,7 +61,7 @@
                 name="category"
                 id="ad"
                 value="ad"
-                v-model="category"
+                v-model="reportCategory"
               />
               <label class="form-check-label" for="ad"> 상업 목적 광고 </label>
             </div>
@@ -72,7 +72,7 @@
                 name="category"
                 id="pirate"
                 value="pirate"
-                v-model="category"
+                v-model="reportCategory"
               />
               <label class="form-check-label" for="pirate"> 사진 도용 </label>
             </div>
@@ -83,14 +83,14 @@
                 name="category"
                 id="etc"
                 value="etc"
-                v-model="category"
+                v-model="reportCategory"
               />
               <label class="form-check-label" for="etc"> 기타 </label>
             </div>
             <div>
               <div class="post-detail-comment-submit">
                 <input
-                  v-model="content"
+                  v-model="reportContent"
                   class="form-control"
                   type="text"
                   placeholder="신고 사유를 입력해주세요."
@@ -123,28 +123,29 @@
 <script>
 import axios from "axios";
 export default {
+  props: ["commentSeq", "seq"],
   data() {
     return {
-      seq: "",
-      category: "slander",
-      content: "",
+      reportCategory: "slander",
+      reportContent: "",
       showModal: true,
     };
   },
   methods: {
     async submitReport() {
-      const reportData = {
-        category: this.category,
-        content: this.content,
-      };
-      await this.callPostReportAPI(reportData);
+      await this.callCommentReportAPI();
       alert("신고가 접수되었습니다.");
     },
-    async callPostReportAPI(reportData) {
+    async callCommentReportAPI() {
       let token = sessionStorage.getItem("token");
       let seq = this.$route.params.seq;
+      let commentSeq = this.commentSeq;
+      let body = {
+        reportCategory: this.reportCategory,
+        reportContent: this.reportContent,
+      };
       await axios({
-        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${seq}/report`,
+        url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${seq}/comments/${commentSeq}/report`,
         headers:
           token === null
             ? null
@@ -152,7 +153,7 @@ export default {
                 Authorization: `Bearer ${token}`,
               },
         method: "POST",
-        data: reportData,
+        data: body,
       })
         .then((data) => {
           console.log(data.data.success);

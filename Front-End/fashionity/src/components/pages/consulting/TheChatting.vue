@@ -72,12 +72,15 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "TheChatting",
+  props: {
+    reservationSeq: null,
+  },
   data() {
     return {
       userName: null,
       message: "",
       recvList: [],
-      roomId: "djEjsdladmldmltptus",
+      roomId: null,
       userData: null,
     };
   },
@@ -85,11 +88,20 @@ export default {
     ...mapGetters("memberStore", ["checkLoginUser"]),
   },
   created() {
+    this.roomId = this.reservationSeq;
     this.userName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
+    console.log("채팅 세션 : " + this.roomId);
     this.connect();
     console.log("채팅 연결됨");
+  },
+
+  mounted() {
+    this.scrollToBottom();
+  },
+  updated() {
+    this.scrollToBottom();
   },
   methods: {
     // 소켓으로 메세지 전송
@@ -105,7 +117,12 @@ export default {
 
     // 메세지가 많이 와서 스크롤이 생성될 때 항상 최신 메세지를 보여주도록
     scrollToBottom() {
-      this.$refs.messageList.scrollTop = this.$refs.messageList.scrollHeight;
+      this.$nextTick(() => {
+        const messageList = this.$refs.messageList;
+        if (messageList) {
+          messageList.scrollTop = messageList.scrollHeight;
+        }
+      });
     },
 
     // 메세지 전송
@@ -143,9 +160,6 @@ export default {
             const receiveData = JSON.parse(res.body);
             if (receiveData.type == "message") {
               this.recvList.push(receiveData);
-              this.$nextTick(() => {
-                this.scrollToBottom();
-              });
             }
           });
         },

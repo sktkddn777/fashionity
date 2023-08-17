@@ -5,7 +5,15 @@
         <div class="row d-flex justify-content-center">
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
-              src="../../../assets/img/imgtemp.jpg"
+              v-if="this.consultantInfo.profileUrl"
+              src="this.consultantInfo.profileUrl"
+              alt=""
+              class="profile"
+              style="width: 50%"
+            />
+            <img
+              v-else
+              src="../../../assets/img/unknown.png"
               alt=""
               class="profile"
               style="width: 50%"
@@ -14,19 +22,19 @@
         </div>
         <div class="row" style="height: 30px"></div>
         <div class="row">
-          <div class="col review scroll">
+          <div v-for="(review, index) in this.reviewList" :key="index" class="col review scroll">
+            <consultant-review :review="review"></consultant-review>
+            <!-- <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
             <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
+            <consultant-review></consultant-review> -->
           </div>
         </div>
       </div>
       <div class="col-8" style="height: 75vh">
-        <router-view></router-view>
+        <router-view :scheduleList="scheduleList" :nickname="nickname"></router-view>
         <div class="row">
           <div class="col"></div>
         </div>
@@ -36,33 +44,45 @@
 </template>
 <script>
 import ConsultantReview from "@/components/pages/consultant/ConsultantReview.vue";
+import axios from "axios";
 export default {
   data() {
     return {
-      // propInfo: "",
+      nickname: "", // 임시로 사용할 예정 나중에 list 부분 수정되면 수정하자
+      consultantInfo: {},
+      reviewList: [],
+      scheduleList: [],
     };
   },
   components: {
     ConsultantReview,
   },
+  created() {
+    this.nickname = this.$route.params.nickname;
+    console.log(this.nickname);
+  },
   props: {},
-  // methods: {
-  //   propChange(prop) {
-  //     console.log("AAAAAAAAAAAAAAAAAA");
-  //     this.propInfo = prop;
-  //     console.log("mount 후", this.propInfo);
-  //   },
-  // },
-  // mounted() {
-  //   this.propInfo = "date";
-  //   console.log(this.propInfo);
-  // },
-  // watch: {
-  //   propInfo(newVal) {
-  //     this.propInfo = newVal;
-  //     console.log("watch", this.propInfo);
-  //   },
-  // },
+  async mounted() {
+    let token = sessionStorage.getItem("token");
+
+    axios({
+      url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/${this.nickname}`,
+      headers:
+        token === null
+          ? null
+          : {
+              Authorization: `Bearer ${token}`,
+            },
+      method: "GET",
+    }).then((data) => {
+      this.consultantInfo = data.data.consultant[0];
+      // console.log(this.consultantInfo);
+      this.reviewList = this.consultantInfo.reviews;
+      this.scheduleList = this.consultantInfo.schedules;
+      console.log("review : ", this.reviewList);
+      // console.log("schedule : ", this.scheculeList);
+    });
+  },
 };
 </script>
 <style scoped>

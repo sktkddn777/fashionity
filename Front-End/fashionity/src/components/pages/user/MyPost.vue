@@ -1,6 +1,8 @@
 <template>
   <div>
-    <img :src="postThumbnailImage" alt="" class="fixed-image-size" />
+    <router-link :to="{path: `/post/${postSeq}`}">
+      <img :src="postThumbnailImage" alt="" class="fixed-image-size" />
+    </router-link>
   </div>
 </template>
 <script>
