@@ -60,18 +60,21 @@
     <br />
     <h3 style="margin-top: 10px">내가 등록한 이미지</h3>
     <div class="image-save">
-      <multi-image-upload @updateImg="updateImg"></multi-image-upload>
+      <multi-image-upload
+        @updateImg="updateImg"
+        v-if="imgList.length === 0"
+      ></multi-image-upload>
       <div style="text-align: end">
         <button type="button" class="active-button" @click="submitPost">
           <span>등록</span>
         </button>
       </div>
     </div>
-    <!-- <div class="image-list">
-      <div class="image-item" v-for="(image, index) in fileList" :key="index">
-        <img :src="`${image.preview}`" :alt="image.alt" class="image" />
+    <div v-if="imgList.length" class="image-list">
+      <div class="image-item" v-for="(image, index) in imgList" :key="index">
+        <img :src="`${image.imageUrl}`" :alt="image.alt" class="image" />
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 <style scoped>
@@ -162,6 +165,7 @@
 <script>
 import axios from "axios";
 import MultiImageUpload from "../../shared/MultiImageUpload.vue";
+import router from "@/router";
 
 export default {
   name: "RConsultantCheckDetail",
@@ -191,6 +195,7 @@ export default {
           data.consultantReservationDetails[0].personalColor;
         this.memberGender = data.consultantReservationDetails[0].gender;
         this.memberWeight = data.consultantReservationDetails[0].weight;
+        this.imgList = data.consultantReservationDetails[0].consultantImages;
       })
       .catch((error) => {
         console.log(error);
@@ -209,6 +214,7 @@ export default {
       memberWeight: "",
       fileList: [],
       memberImages: [],
+      imgList: [],
     };
   },
   methods: {
@@ -226,7 +232,7 @@ export default {
         reservationSeq: this.reservationSeq,
       };
       await this.callImageSaveAPI(saveData);
-      this.navigateToDetail();
+      router.go();
     },
     async callImageSaveAPI(saveData) {
       let formData = new FormData();
@@ -257,9 +263,6 @@ export default {
     },
     updateImg(file) {
       this.fileList = file;
-    },
-    navigateToDetail() {
-      this.$router.push(`/detail/${this.reservationSeq}`);
     },
   },
   components: {
