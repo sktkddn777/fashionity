@@ -1,6 +1,5 @@
 package com.infinity.fashionity.consultants.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.infinity.fashionity.global.entity.CEntity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -8,8 +7,6 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "consultant_schedule")

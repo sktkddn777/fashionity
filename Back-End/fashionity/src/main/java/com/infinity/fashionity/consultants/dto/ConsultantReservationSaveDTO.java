@@ -1,6 +1,5 @@
 package com.infinity.fashionity.consultants.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.infinity.fashionity.members.data.Gender;
 import com.infinity.fashionity.members.data.PersonalColor;

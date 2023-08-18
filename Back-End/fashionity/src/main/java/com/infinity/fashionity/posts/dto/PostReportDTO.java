@@ -1,11 +1,9 @@
 package com.infinity.fashionity.posts.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 public class PostReportDTO {
 

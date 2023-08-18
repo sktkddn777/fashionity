@@ -1,11 +1,8 @@
 package com.infinity.fashionity.posts.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;

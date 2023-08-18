@@ -268,29 +268,6 @@ public class ConsultantServiceImpl implements ConsultantService {
                 .build();
     };
 
-     //[컨설턴트] 평점 통계, 수익 조회
-//    @Override
-//    public ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto){
-//        memberSeq = dto.getMemberSeq();
-//        consultantNickname = dto.getConsultantNickname();
-//
-//        Long checkSeq = consultantRepository.findConsultantMemberSeq(consultantNickname);
-//
-//        if (!Objects.equals(checkSeq, memberSeq)){
-//            throw new ValidationException(ErrorCode.HANDLE_ACCESS_DENIED);
-//        }
-//
-//
-//        return ConsultantStatisticsDTO.Response.builder()
-//                .avgGrade(consultantRepository.avgGrade(consultantNickname))
-//                .totalConsultingCnt(consultantRepository.totalCnt(consultantNickname))
-//                .totalUndeletedReviewCnt(consultantRepository.totalUndeletedReviewCnt(consultantNickname))
-//                .totalDeletedReviewCnt(consultantRepository.totalDeletedReviewCnt(consultantNickname))
-//                .totalSalary(consultantRepository.totalSalary(consultantNickname))
-//                .build();
-//
-//    }
-
     // [공통] 리뷰 작성
     @Override
     @Transactional
@@ -640,11 +617,10 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     public ScheduleDTO.Response getSchedule(String dateTime, Long memberSeq) {
-        log.info("get Schedule service start");
         ConsultantEntity consultantEntity = consultantRepository.findByMemberSeq(memberSeq).orElseThrow(() -> new MemberNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        log.info("1");
+
         Optional<List<ScheduleEntity>> byDate = scheduleRepository.findByDate(dateTime, consultantEntity.getSeq());
-        log.info("2");
+
         List<ScheduleSummary> unAvailableDateTimes = new ArrayList<>();
         if (byDate.isPresent())
             unAvailableDateTimes = byDate.get().stream().map(obj -> {

@@ -26,10 +26,6 @@
 <script>
 export default {
   name: "TheNavCheckReservationVue",
-  // components: {},
-  // props: {},
-  // data: () => ({}),
-  // methods: {},
 };
 </script>
 

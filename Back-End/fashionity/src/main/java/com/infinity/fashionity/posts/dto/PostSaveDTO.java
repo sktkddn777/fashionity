@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 

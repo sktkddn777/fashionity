@@ -71,17 +71,13 @@ export default {
         url: `${process.env.VUE_APP_API_URL}/api/v1/auth/find/id`,
         method: "POST",
         data: data,
-      })
-        .then(({ response }) => {
-          console.log("[FindID] : " + response.data);
-        })
-        .catch(({ response }) => {
-          if (response.data.code === "M001")
-            console.log("[FindID error] : " + response.data.message);
+      }).catch(({ response }) => {
+        if (response.data.code === "M001")
+          console.log("[FindID error] : " + response.data.message);
 
-          if (response.data.code === "C007")
-            console.log("[FindID error] : " + response.data.message);
-        });
+        if (response.data.code === "C007")
+          console.log("[FindID error] : " + response.data.message);
+      });
       toast.success("아이디를 메일로 보냈습니다.");
       router.push({ name: "UserLogin" });
     },

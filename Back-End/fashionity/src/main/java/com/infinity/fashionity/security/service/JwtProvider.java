@@ -39,7 +39,6 @@ public class JwtProvider {
     }
 
     public String createAccessToken(Long userId, List<MemberRoleEntity> memberRoles) {
-        log.info("createAccessToken start");
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + accessTokenExpire * MILLI_SECOND);
         Map<String, Object> claims = new HashMap<>();
@@ -50,7 +49,6 @@ public class JwtProvider {
         ).collect(Collectors.toList());
 
         claims.put("roles", roles);
-        log.info("AT expiredDate : " + expiredDate);
         return Jwts.builder()
                 .setIssuer(issuer)
                 .setClaims(claims)
@@ -69,10 +67,8 @@ public class JwtProvider {
     }
 
     public String createRefreshToken() {
-        log.info("createRefreshToken start");
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + refreshTokenExpire * MILLI_SECOND);
-        log.info("RT expiredDate : " + expiredDate);
 
         return Jwts.builder()
                 .setIssuer(issuer)

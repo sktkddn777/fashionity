@@ -46,10 +46,7 @@
           value="컨설팅 종료"
         />
       </div>
-      <div id="main-video" class="col-md-6">
-        <!-- mainStreamManager : 포커싱을 맞춰주는 화면 -->
-        <!-- <user-video :stream-manager="mainStreamManager" /> -->
-      </div>
+      <div id="main-video" class="col-md-6"></div>
       <!-- 비디오 -->
       <div id="video-container" class="video-container" style="display: flex">
         <div class="user-video-publisher">
@@ -266,6 +263,7 @@ export default {
         { url: "winter_bright.png", alt: "winter_bright" },
         { url: "winter_cool.png", alt: "winter_cool" },
         { url: "winter_deep.png", alt: "winter_deep" },
+        { url: "zzz.png", alt: "blue" },
       ],
     };
   },
@@ -287,10 +285,6 @@ export default {
 
       // --- Init a session ---
       this.session = this.OV.initSession();
-      console.log("---------------------접속한 세션 : " + this.session);
-      // const testJson = JSON.stringify(this.session);
-      // console.log(testJson);
-      console.log(Object.entries(this.session));
 
       // --- Specify the actions when events take place in the session ---
 
@@ -389,7 +383,6 @@ export default {
      */
 
     getToken(mySessionId) {
-      console.log("---------------------getToken : " + mySessionId);
       return this.createSession(mySessionId).then((sessionId) =>
         this.createToken(sessionId)
       );
@@ -399,7 +392,6 @@ export default {
     createSession(sessionId) {
       return new Promise((resolve, reject) => {
         axios.defaults.withCredentials = false;
-        console.log("---------------------createSession : " + sessionId);
         axios
           .post(
             `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
@@ -436,7 +428,6 @@ export default {
     },
 
     createToken(sessionId) {
-      console.log("---------------------createToken : " + sessionId);
       return new Promise((resolve, reject) => {
         axios
           .post(
@@ -482,7 +473,6 @@ export default {
     // 컨설턴트가 등록된 이미지 클릭 시 보이게
     showImage_image(image) {
       if (image !== null) {
-        console.log(image);
         this.selectedImage_image = image;
         this.selectedImageVisible_image = true;
         this.send(this.selectedImage_image, "image");
@@ -494,31 +484,22 @@ export default {
 
     // 소켓 연결
     connect() {
-      console.log("방 정보 : " + this.roomId);
       const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
       this.stompClient.connect(
         {},
-        (frame) => {
+        () => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log("이미지 소켓 연결 성공", frame);
           this.stompClient.subscribe(
             `/chatting/send/${this.mySessionId}`,
             (res) => {
               const receiveData = JSON.parse(res.body);
               if (receiveData.type == "personal") {
-                console.log(
-                  "받아온 이미지 인덱스 퍼스널 : " + receiveData.content
-                );
                 this.selectedIndex_personal = receiveData.content;
               } else if (receiveData.type == "image") {
-                console.log(
-                  "받아온 이미지 인덱스 이미지 : " + receiveData.content
-                );
                 this.selectedImage_image = receiveData.content;
               }
             }
@@ -542,8 +523,6 @@ export default {
           roomId: this.mySessionId,
           type: type,
         };
-        console.log("소켓으로 보낼 데이터 : ");
-        console.log(msg);
         this.stompClient.send(
           `/chatting/send/${this.mySessionId}`,
           JSON.stringify(msg)
@@ -555,11 +534,9 @@ export default {
   // 소켓에서 content가 올 때 변경이 될 수 있도록
   watch: {
     selectedIndex_personal(newVal) {
-      console.log("퍼스널 새로운 값 : " + newVal);
       this.showImage_personal(newVal);
     },
     selectedImage_image(newVal) {
-      console.log("이미지 새로운 값 : " + newVal);
       this.showImage_image(newVal);
     },
   },

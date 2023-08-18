@@ -53,7 +53,6 @@ export default {
       method: "GET",
     })
       .then(({ data }) => {
-        console.log(data);
         this.posts = data.profilePosts;
         this.dataLoaded = true;
         this.page++;
@@ -134,14 +133,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-/* .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.row {
-  display: flex;
-  margin-bottom: 1.2rem;
-} */
-</style>
+<style scoped></style>

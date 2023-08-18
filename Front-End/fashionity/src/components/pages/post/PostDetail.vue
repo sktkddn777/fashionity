@@ -35,7 +35,7 @@
                   style="min-width: 70px"
                   v-if="this.post.following === false"
                 >
-                  <span style="font-size: smaller">&nbsp;팔로우&nbsp;</span>
+                  팔로우
                 </button>
                 <button
                   type="button"
@@ -43,7 +43,7 @@
                   style="min-width: 70px"
                   v-else
                 >
-                  <span style="font-size: smaller">&nbsp;팔로잉&nbsp;</span>
+                  팔로잉
                 </button>
               </div>
               <div v-else></div>
@@ -190,13 +190,14 @@
               placeholder="댓글을 입력해주세요."
               @keydown.enter="submitComment"
             />
+            <div style="width: 1rem"></div>
             <button
               type="button"
-              class="active-button"
-              style="min-width: 70px"
+              class="inactive-button"
+              style="width: 80px"
               @click="submitComment"
             >
-              <span style="font-size: smaller">&nbsp;등록&nbsp;</span>
+              등록
             </button>
           </div>
         </div>
@@ -271,7 +272,6 @@ export default {
         method: "GET",
       }).then((data) => {
         this.post = data.data.post;
-        console.log(this.post);
         this.like = this.post.liked;
         this.likeCount = this.post.likeCount;
         this.commentCount = this.post.commentCount;
@@ -298,7 +298,6 @@ export default {
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${this.seq}/comments`,
         method: "GET",
       }).then((data) => {
-        console.log(data.data.comments);
         this.comments = [...data.data.comments];
       });
     },
@@ -421,8 +420,6 @@ export default {
                 Authorization: `Bearer ${token}`,
               },
         method: "DELETE",
-      }).then((data) => {
-        console.log(data);
       });
     },
     async submitComment() {
@@ -458,8 +455,7 @@ export default {
               },
         method: "POST",
         data: body,
-      }).then((data) => {
-        console.log(data);
+      }).then(() => {
         this.callCommentListApi();
         this.commentCount++;
       });

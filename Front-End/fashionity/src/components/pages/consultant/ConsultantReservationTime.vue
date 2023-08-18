@@ -5,14 +5,20 @@
   >
     <div class="row" style="height: 55vh; width: 80%">
       <!-- 오전 -->
-      <div class="row" align = "left"><h5><b>오전</b></h5></div>
+      <div class="row" align="left">
+        <h5><b>오전</b></h5>
+      </div>
       <div class="row d-flex">
         <div
           class="col-2 d-flex align-items-center justify-content-center"
           v-for="(time, index) in am1"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
+          <div
+            v-if="timeList.includes(time)"
+            class="time-block"
+            @click="timeClick(time)"
+          >
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -24,22 +30,32 @@
           v-for="(time, index) in am2"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
+          <div
+            v-if="timeList.includes(time)"
+            class="time-block"
+            @click="timeClick(time)"
+          >
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
-      <div style = "height:2rem"></div>
+      <div style="height: 2rem"></div>
       <!-- 오후 -->
-      <div class="row" align = "left"><h5><b>오후</b></h5></div>
+      <div class="row" align="left">
+        <h5><b>오후</b></h5>
+      </div>
       <div class="row d-flex">
         <div
           class="col-2 d-flex align-items-center justify-content-center"
           v-for="(time, index) in pm1"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
+          <div
+            v-if="timeList.includes(time)"
+            class="time-block"
+            @click="timeClick(time)"
+          >
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -52,7 +68,11 @@
           v-for="(time, index) in pm2"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
+          <div
+            v-if="timeList.includes(time)"
+            class="time-block"
+            @click="timeClick(time)"
+          >
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
@@ -65,25 +85,16 @@
           v-for="(time, index) in pm3"
           :key="index"
         >
-          <div v-if="timeList.includes(time)" class="time-block" @click="timeClick(time)">
+          <div
+            v-if="timeList.includes(time)"
+            class="time-block"
+            @click="timeClick(time)"
+          >
             {{ time }}:00
           </div>
           <div v-else class="time-non-block">{{ time }}:00</div>
         </div>
       </div>
-
-      <!-- <div class="row">
-        <div class="col"></div>
-        <div class="col-3">
-          <router-link class="link" to="/consultant/reservation/detail"
-            ><button>NEXT</button></router-link
-          >
-        </div>
-      </div> -->
-
-      <!-- <div v-for="(time, index) in pm" :key="index">{{ time }}</div> -->
-      <!-- <div>{{ this.scheduleList }}</div> -->
-      <!-- <div>{{ this.currDate }}</div> -->
     </div>
   </div>
 </template>
@@ -96,7 +107,6 @@ export default {
       pm1: [],
       pm2: [],
       pm3: [],
-      // pagaInfo: "date",
       currDate: Date,
       availTimeList: [],
       timeList: [],
@@ -116,45 +126,21 @@ export default {
     this.availTimeList = [];
     this.timeList = [];
     for (let i = 0; i < this.scheduleList.length; i++) {
-      // this.scheduleList[i].availableDateTime.toLocaleDateString();
       if (
-        this.isSameDate(new Date(this.currDate), new Date(this.scheduleList[i].availableDateTime))
+        this.isSameDate(
+          new Date(this.currDate),
+          new Date(this.scheduleList[i].availableDateTime)
+        )
       ) {
         this.availTimeList.push([
           this.scheduleList[i].scheduleSeq,
           new Date(this.scheduleList[i].availableDateTime).getHours(),
         ]);
-        this.timeList.push(new Date(this.scheduleList[i].availableDateTime).getHours());
-        console.log("yes");
+        this.timeList.push(
+          new Date(this.scheduleList[i].availableDateTime).getHours()
+        );
       }
     }
-    console.log(this.availTimeList);
-    console.log(this.timeList);
-  },
-
-  mounted() {
-    //   this.availTimeList = [];
-    //   this.timeList = [];
-    //   for (let i = 0; i < this.scheduleList.length; i++) {
-    //     // this.scheduleList[i].availableDateTime.toLocaleDateString();
-    //     if (
-    //       this.isSameDate(
-    //         new Date(this.currDate),
-    //         new Date(this.scheduleList[i].availableDateTime)
-    //       )
-    //     ) {
-    //       this.availTimeList.push([
-    //         this.scheduleList[i].scheduleSeq,
-    //         new Date(this.scheduleList[i].availableDateTime).getHours(),
-    //       ]);
-    //       this.timeList.push(
-    //         new Date(this.scheduleList[i].availableDateTime).getHours()
-    //       );
-    //       console.log("yes");
-    //     }
-    //   }
-    //   console.log(this.availTimeList);
-    //   console.log(this.timeList);
   },
   props: {
     scheduleList: [],
@@ -170,14 +156,11 @@ export default {
     },
 
     timeClick(time) {
-      // alert(time);
       for (let i = 0; i < this.availTimeList.length; i++) {
         if (time == this.availTimeList[i][1]) {
-          // console.log("test");
           this.seq = this.availTimeList[i][0];
         }
       }
-      // console.log("time : ", this.seq);
       this.$router.push({
         name: "consultantDetail",
         params: { seq: this.seq, nickname: this.nickname },
@@ -197,13 +180,13 @@ export default {
   text-align: center;
   margin-right: 10px;
   width: 6vw;
-  color:white;
-  /* padding-top: 10px; */
+  color: white;
 }
 
 .time-non-block {
   border-radius: 4px;
   background-color: #cecece;
+  color: white;
   height: 5vh;
   text-align: center;
   display: flex;
@@ -211,7 +194,6 @@ export default {
   justify-content: center;
   margin-right: 10px;
   width: 6vw;
-  /* padding-top: 10px; */
 }
 
 button {

@@ -19,14 +19,14 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     private static final int cookieExpireSeconds = 180;
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-        log.info("loadAuthorizationRequest");
+
         return CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
                 .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class))
                 .orElse(null);
     }
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
-        log.info("saveAuthorizationRequest");
+
         if (authorizationRequest == null) {
             removeAuthorizationRequestCookies(request,response);
             return;
@@ -39,7 +39,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     }
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request) {
-        log.info("removeAuthorizationRequest");
+
         return this.loadAuthorizationRequest(request);
     }
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {

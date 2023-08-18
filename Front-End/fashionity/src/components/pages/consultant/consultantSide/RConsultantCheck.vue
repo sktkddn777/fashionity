@@ -31,7 +31,6 @@ export default {
       method: "GET",
     })
       .then(({ data }) => {
-        console.log(data);
         let reservationInfo = {
           color: "blue",
           dates: "",
@@ -94,8 +93,6 @@ export default {
           profileImage: "@/assets/img/hyeonwook.jpg",
         });
       }
-
-      console.log(this.reservationData);
     },
   },
 };

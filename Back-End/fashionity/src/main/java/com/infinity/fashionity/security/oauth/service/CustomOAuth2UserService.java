@@ -1,7 +1,6 @@
 package com.infinity.fashionity.security.oauth.service;
 
 import com.infinity.fashionity.auth.service.AuthService;
-import com.infinity.fashionity.members.service.MemberService;
 import com.infinity.fashionity.security.oauth.dto.AuthUserInfo;
 import com.infinity.fashionity.security.oauth.dto.CustomOAuth2User;
 import com.infinity.fashionity.security.oauth.dto.OAuthUserInfo;
@@ -24,8 +23,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         String providerName = oAuth2UserRequest.getClientRegistration().getRegistrationId();
-        log.info("CustomOAuth2UserService = oAuth2User: " + oAuth2User.toString());
-        log.info("CustomOAuth2UserService = providerName: " + providerName);
 
         OAuthUserInfo oAuthUserInfo = OAuthProvider.getOAuthProviderByName(providerName).toUserInfo(oAuth2User);
         AuthUserInfo user = authService.getOrRegisterUser(oAuthUserInfo);

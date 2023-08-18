@@ -6,7 +6,6 @@
 </template>
 <script>
 import TheNavBarPost from "@/components/layout/TheNavBarPost.vue";
-// import PostList from "@/components/pages/post/PostList.vue";
 
 export default {
   data() {
@@ -14,7 +13,6 @@ export default {
   },
   components: {
     TheNavBarPost,
-    // PostList,
   },
 };
 </script>

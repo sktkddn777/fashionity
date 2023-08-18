@@ -2,24 +2,14 @@ package com.infinity.fashionity.comments.controller;
 
 import com.infinity.fashionity.comments.dto.*;
 import com.infinity.fashionity.comments.service.CommentService;
-import com.infinity.fashionity.global.exception.ErrorCode;
-import com.infinity.fashionity.global.exception.ValidationException;
-import com.infinity.fashionity.posts.dto.PostDetailDTO;
 import com.infinity.fashionity.security.dto.JwtAuthentication;
-import com.infinity.fashionity.security.dto.JwtAuthenticationToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -46,8 +36,6 @@ public class CommentController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable Long postSeq,
             @Validated @RequestBody CommentSaveDTO.Request dto) {
-        System.out.println("댓글 작성 컨트롤ㄹ러ㅓ어러러ㅓ러러ㅓ러ㅓ러러ㅓ러러ㅓ");
-        System.out.println(dto.getContent());
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
         dto.setPostSeq(postSeq);
         return new ResponseEntity<>(commentService.save(dto), HttpStatus.CREATED);

@@ -98,7 +98,6 @@ export default {
       })
         .then((data) => {
           this.alarms = data.data;
-          console.log(this.alarms);
         })
         .catch(() => {
           this.alarms = [];
@@ -108,9 +107,6 @@ export default {
       // 오프캔버스 닫기
       const closeBtn = document.querySelector(".btn-close-custom");
       closeBtn.click();
-      // if (this.offcanvasInstance) {
-      // this.offcanvasInstance.hide();
-      // }
     },
     handleDetailClick() {
       // Detail 컴포넌트 클릭 시 동작

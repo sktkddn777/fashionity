@@ -34,9 +34,8 @@ export default {
           scheduleSeq: scheduleSeq,
         },
       })
-        .then((data) => {
+        .then(() => {
           // TODO: emit 으로 취소된 부모 데이터 변경!!
-          console.log(data);
         })
         .catch(({ response }) => {
           if (response.data.code === "SCH001")

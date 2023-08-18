@@ -4,7 +4,6 @@
     <div class="black-bg" v-if="followersPop === true" style="z-index: 1050">
       <div class="fmodal">
         <div style="display: flex; flex-direction: row; justify-content: left">
-          <!-- <div style="display: flex; align-items: center"> -->
           <div class="modalTitle" style="font-size: 2rem; margin-left: 1rem">
             <b>Followers</b>
           </div>
@@ -81,7 +80,7 @@
                 </button>
                 <button
                   v-if="nickname === myNickname"
-                  class="active-button"
+                  class="inactive-button"
                   style="margin-left: 0.5rem"
                   @click="routeToEdit"
                 >
@@ -89,7 +88,12 @@
                 </button>
               </div>
               <br />
-              <div class="m-top-d" style="width: 30rem" align="left">
+              <div
+                v-if="profileIntro != 'null' && profileIntro"
+                class="m-top-d"
+                style="width: 30rem"
+                align="left"
+              >
                 {{ profileIntro }}
               </div>
               <br />
@@ -173,27 +177,6 @@ export default {
     LikedPostList,
     NotFound,
   },
-  // setup() {
-  //   // const router = useRouter();
-  //   const state = reactive({
-  //     model: null,
-  //     nickname: "",
-  //     profileIntro: "",
-  //   });
-  //   // const store = useStore(); -> vuex
-
-  //   // 초기화면 세팅
-  //   onMounted(() => {
-  //     const previews = document.querySelectorAll(".image-box");
-  //     state.nickname = "uzu_munzi";
-  //     state.profileIntro = "우주먼지의 데일리룩 기록들";
-  //     previews[0].src = require(`@/assets/img/panda.png`);
-  //   });
-
-  //   return {
-  //     state,
-  //   };
-  // },
   data() {
     return {
       nickname: "",
@@ -236,7 +219,6 @@ export default {
           this.myProfile = data.myProfile;
           this.profileIntro = data.profileIntro;
           this.profileUrl = data.profileUrl;
-          console.log(data);
         })
         .catch((e) => {
           console.log(e);
