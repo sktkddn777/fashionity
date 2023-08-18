@@ -80,7 +80,7 @@ VUE_APP_SOCKET_URL=${SOCKET서버의 URL}
 
 ### Back-End/fashionity/src/main/resources 폴더에 아래와 같은 정보를 추가한다.
 
-************\*\*\*\*************application.properties************\*\*\*\*************
+****\*\*\*\*****\*\*\*\*****\*\*\*\*****application.properties****\*\*\*\*****\*\*\*\*****\*\*\*\*****
 
 ```
 server.port= ${겹치지않는 원하는 포트}
@@ -92,7 +92,7 @@ spring.servlet.multipart.max-file-size= ${입력받는 파일의 최대 크기}
 spring.servlet.multipart.maxRequestSize= ${요청받을 수 있는 최대 크기}
 ```
 
-**********\*\*\*\***********application-db.properties**********\*\*\*\***********
+****\*\*****\*\*\*\*****\*\*****application-db.properties****\*\*****\*\*\*\*****\*\*****
 
 ```
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
@@ -107,7 +107,7 @@ spring.jpa.properties.hibernate.format_sql=false
 spring.jpa.show-sql=false
 ```
 
-************************\*\*\*\*************************application-jwt.properties************************\*\*\*\*************************
+**********\*\*\*\***********\*\*\*\***********\*\*\*\***********application-jwt.properties**********\*\*\*\***********\*\*\*\***********\*\*\*\***********
 
 ```
 secret-key: ${jwt secret-key}
@@ -117,7 +117,7 @@ access-token-expire: ${accessToken 만료 시간}
 refresh-token-expire: ${refreshToken 만료 시간}
 ```
 
-**********\*\*\*\***********application-mail.properties**********\*\*\*\***********
+****\*\*****\*\*\*\*****\*\*****application-mail.properties****\*\*****\*\*\*\*****\*\*****
 
 ```
 spring.mail.host=smtp.gmail.com
@@ -129,7 +129,7 @@ spring.mail.properties.mail.smtp.timeout=${time out 시간 설정}
 spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
-**************************\*\*\*\***************************application-oauth.properties**************************\*\*\*\***************************
+************\*\*************\*\*\*\*************\*\*************application-oauth.properties************\*\*************\*\*\*\*************\*\*************
 
 ```
 spring.security.oauth2.client.registration.google.client-name=google
@@ -165,7 +165,7 @@ spring.security.oauth2.client.provider.kakao.user-info-uri=https://kapi.kakao.co
 spring.security.oauth2.client.provider.kakao.user-name-attribute=id
 ```
 
-**********\*\***********application-s3.properties**********\*\***********
+****\*\*****\*\*****\*\*****application-s3.properties****\*\*****\*\*****\*\*****
 
 ```
 cloud.aws.stack.auto=false
@@ -177,7 +177,7 @@ cloud.aws.s3.bucket=${사용할 버킷 이름}
 
 ### Back-End/socketserver/src/main/resources 아래에 아래와 같은 파일을 추가한다.
 
-********************\*\*\*\*********************application.properties********************\*\*\*\*********************
+********\*\*\*\*********\*\*\*\*********\*\*\*\*********application.properties********\*\*\*\*********\*\*\*\*********\*\*\*\*********
 
 ```docker
 server.port=${소켓서버로 사용할 포트 지정}
@@ -192,7 +192,7 @@ spring.jackson.serialization.fail-on-empty-beans=false
 
 ### Back-End/fashionity 폴더에 아래와 같은 파일 작성
 
-********\*\*\*\*********Dockerfile********\*\*\*\*********
+**\*\*\*\***\*\*\*\***\*\*\*\***Dockerfile**\*\*\*\***\*\*\*\***\*\*\*\***
 
 ```docker
 FROM openjdk:11
@@ -245,7 +245,7 @@ CMD ["npm","run","serve"]
 
 ### 최상위 폴더에 다음과 같은 파일 작성
 
-****************\*\*\*\*****************docker-compose.yml****************\*\*\*\*****************
+******\*\*\*\*******\*\*\*\*******\*\*\*\*******docker-compose.yml******\*\*\*\*******\*\*\*\*******\*\*\*\*******
 
 ```yaml
 version: "3"
@@ -346,7 +346,7 @@ $ sudo service nginx restart
 
 ## 프로젝트 최상위 폴더에 아래와같은 스크립트 작성
 
-****\*\*****up.sh****\*\*****
+\***\*\*\*\*\***up.sh\***\*\*\*\*\***
 
 ```bash
 sudo docker-compose down
@@ -389,7 +389,7 @@ $ sudo docker ps -a
 $ sudo docker exec -it ${db container의 이름 or id} /bin/bash
 ```
 
-****************************\*\*\*\*****************************컨테이너 속에서 db접속****************************\*\*\*\*****************************
+************\*\*\*\*************\*\*\*\*************\*\*\*\*************컨테이너 속에서 db접속************\*\*\*\*************\*\*\*\*************\*\*\*\*************
 
 ```bash
 $ mysql -u root -p
@@ -409,3 +409,8 @@ grant select,insert,update,delete on fashionity.* to '${docker-compose.yml에서
 ```
 
 ### 서비스 재배포
+
+```sql
+$ sudo su
+$ ./up.sh
+```

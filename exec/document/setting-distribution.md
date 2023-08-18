@@ -20,4 +20,4 @@
 [도커 설치](./setting/docker.md)  
 [HTTPS 적용](./setting/https.md)  
 [Git 설치 및 프로젝트 셋팅](./setting/git.md)  
-[프로젝트 구조 및 셋팅]()
+[프로젝트 구조 및 셋팅](./setting/project.md)

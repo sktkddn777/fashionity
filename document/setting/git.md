@@ -26,3 +26,7 @@ $ sudo git config --global user.email ${유저 이메일}
 ````
 
 ## Git을 이용하여 프로젝트 Clone
+
+```bash
+$ sudo git clone ${클론 받을 깃 레포지토리 url} ${다운받아올 폴더명}
+```
