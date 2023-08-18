@@ -45,7 +45,7 @@
       <div class="info-detail" style="margin-top: 1rem; margin-bottom: 3rem">
         <h5><b>나이</b></h5>
         <p v-if="memberAge && memberAge != '성별을 등록해주세요!'">
-          만 {{ memberAge }}세
+          {{ memberAge }}
         </p>
         <p v-else>{{ memberAge }}</p>
         <h5><b>성별</b></h5>
