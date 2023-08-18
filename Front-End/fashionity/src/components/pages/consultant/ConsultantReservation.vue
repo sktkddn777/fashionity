@@ -6,12 +6,13 @@
           <div class="col" style="margin-top: 10%; height: 50%">
             <img
               v-if="this.consultantInfo.profileUrl"
-              src="this.consultantInfo.profileUrl"
+              :src="this.consultantInfo.profileUrl"
               alt=""
               class="profile"
               style="width: 50%"
             />
             <img
+              v-else
               src="../../../assets/img/unknown.png"
               alt=""
               class="profile"
@@ -27,12 +28,6 @@
             class="col review scroll"
           >
             <consultant-review :review="review"></consultant-review>
-            <!-- <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review>
-            <consultant-review></consultant-review> -->
           </div>
         </div>
       </div>
@@ -54,7 +49,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      nickname: "sangu", // 임시로 사용할 예정 나중에 list 부분 수정되면 수정하자
+      nickname: "",
       consultantInfo: {},
       reviewList: [],
       scheduleList: [],
@@ -62,6 +57,9 @@ export default {
   },
   components: {
     ConsultantReview,
+  },
+  created() {
+    this.nickname = this.$route.params.nickname;
   },
   props: {},
   async mounted() {
@@ -78,11 +76,8 @@ export default {
       method: "GET",
     }).then((data) => {
       this.consultantInfo = data.data.consultant[0];
-      // console.log(this.consultantInfo);
       this.reviewList = this.consultantInfo.reviews;
       this.scheduleList = this.consultantInfo.schedules;
-      // console.log("review : ", this.reviewList);
-      // console.log("schedule : ", this.scheculeList);
     });
   },
 };

@@ -11,16 +11,24 @@
         class="img-link"
         style="text-decoration: none; color: #424242"
       >
-        <img :src="this.post.profileUrl || '../img/unknown.e083a226.png'" alt="" />
+        <img
+          :src="this.post.profileUrl || '../img/unknown.e083a226.png'"
+          alt=""
+        />
       </router-link>
       <!-- 게시글 정보 -->
       <div class="col align-self-center align-middle post-detail">
         <!-- 프로필 정보 및 좋아요 -->
         <!-- 프로필 정보 -->
-        <router-link :to="{ path: `` }" style="text-decoration: none; color: #424242">
+        <router-link
+          :to="{ path: `` }"
+          style="text-decoration: none; color: #424242"
+        >
           <div class="col align-self-center align-middle post-detail-writer">
-            <!-- <img class="profile" src="@/assets/img/unknown.png" /> -->
-            <img class="profile" :src="this.post.profileUrl || '../img/unknown.e083a226.png'" />
+            <img
+              class="profile"
+              :src="this.post.profileUrl || '../img/unknown.e083a226.png'"
+            />
             <span class="post-detail-font">{{ post.nickname }}</span>
           </div>
         </router-link>
@@ -58,7 +66,8 @@ export default {
           while (textContainer.scrollWidth > textContainer.clientWidth) {
             textContainer.textContent = textContainer.textContent.slice(0, -1);
           }
-          textContainer.textContent = textContainer.textContent.slice(0, -3) + "...";
+          textContainer.textContent =
+            textContainer.textContent.slice(0, -3) + "...";
         }
       }
     },
@@ -66,23 +75,6 @@ export default {
 };
 </script>
 <style scoped>
-/* .profile {
-  height: 20px;
-  width: 20px;
-  border-radius: 70%;
-  object-fit: contain;
-  margin-right: 10px;
-}
-
-.outer {
-  display: flex;
-  justify-content: center;
-}
-
-.post-font {
-  font-size: 12px;
-} */
-
 #post_outer {
   border: 1px solid rgba(189, 189, 189, 0.3);
   max-width: 250px;
@@ -93,8 +85,6 @@ export default {
   text-decoration: none;
   top: 0;
   left: 0;
-  /* height: 50%; */
-  /* max-width: 250px; */
   border-radius: 20px;
 }
 
@@ -127,8 +117,6 @@ export default {
   text-overflow: ellipsis;
 }
 
-.profile {
-}
 .post-detail-font {
   font-size: 12px;
   font-weight: 800;
@@ -152,8 +140,6 @@ export default {
   justify-content: right;
   padding-right: 10px;
   align-items: center;
-}
-.post-detail-like-icon {
 }
 .post-detail-like > span {
   font-size: 12px;

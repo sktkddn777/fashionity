@@ -1,12 +1,18 @@
 <template lang="">
   <div class="header">
     <div class="container-fluid" style="background-color: white">
-      <div class="row" style="margin-top: 5px">
+      <div class="row" style="margin-top: 20px">
         <div class="col-3" id="logo">
           <router-link
             to="/"
             class="link"
-            style="font-style: normal; font-size: 50px; padding-top: 30px; background-color: white"
+            style="
+              font-style: normal;
+              font-size: 50px;
+              padding-top: 30px;
+              background-color: white;
+              margin-top: 20px;
+            "
             >Fashionity</router-link
           >
         </div>
@@ -19,18 +25,36 @@
                 <div class="col-2"></div>
 
                 <div class="col">
-                  <div v-if="!isLogin" class="row" @click="login" style="cursor: pointer">
+                  <div
+                    v-if="!isLogin"
+                    class="row"
+                    @click="login"
+                    style="cursor: pointer"
+                  >
                     로그인
                   </div>
-                  <div v-else class="row" @click="logout" style="cursor: pointer">로그아웃</div>
+                  <div
+                    v-else
+                    class="row"
+                    @click="logout"
+                    style="cursor: pointer"
+                  >
+                    로그아웃
+                  </div>
                 </div>
                 <div class="col">
                   <div v-if="!isLogin" @click="loginAlert">
-                    <font-awesome-icon :icon="['fas', 'circle-plus']" style="color: #bdbdbd" />
+                    <font-awesome-icon
+                      :icon="['fas', 'circle-plus']"
+                      style="color: #bdbdbd"
+                    />
                   </div>
                   <div v-else>
                     <router-link to="/post/write" class="link">
-                      <font-awesome-icon :icon="['fas', 'circle-plus']" style="color: #bdbdbd" />
+                      <font-awesome-icon
+                        :icon="['fas', 'circle-plus']"
+                        style="color: #bdbdbd"
+                      />
                     </router-link>
                   </div>
                 </div>
@@ -60,7 +84,6 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
 import router from "@/router";
-// import axios from "axios";
 import TheAlarm from "../pages/alarm/TheAlarm.vue";
 const memberStore = "memberStore";
 export default {
@@ -69,12 +92,17 @@ export default {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
     profileLink() {
-      return `/profile/${this.myNickname}`;
+      let myNickname = "";
+      if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
+        myNickname = this.$store.getters["memberStore/checkLoginUser"].nickname;
+      }
+      return `/profile/${myNickname}`;
     },
   },
   created() {
     if (this.$store.getters["memberStore/checkLoginUser"] !== null) {
-      this.myNickname = this.$store.getters["memberStore/checkLoginUser"].nickname;
+      this.myNickname =
+        this.$store.getters["memberStore/checkLoginUser"].nickname;
     }
   },
   data() {
@@ -109,7 +137,7 @@ export default {
 </script>
 <style scoped>
 .header {
-  margin-bottom: 15px;
+  margin-bottom: 50px;
 }
 .header-tab {
   font-style: normal;

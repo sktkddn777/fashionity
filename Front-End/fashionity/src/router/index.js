@@ -32,20 +32,18 @@ import ConsultantVue from "../components/pages/consultant/Consultant";
 import RConsultantCheck from "../components/pages/consultant/consultantSide/RConsultantCheck";
 import RConsultantCheckDetail from "../components/pages/consultant/consultantSide/RConsultantCheckDetail";
 import RConsultantSet from "../components/pages/consultant/consultantSide/RConsultantSet";
+import RUserCheckDetail from "../components/pages/consultant/consultantSide/RUserCheckDetail";
 
 const onlyAuthUser = async () => {
   const checkLoginUser = store.getters["memberStore/checkLoginUser"];
   const checkToken = store.getters["memberStore/checkToken"];
 
   if (checkLoginUser != null) {
-    console.log("토큰 유효성 체크하러 가자!!!!");
     await store.dispatch("memberStore/getUserInfoAction");
   }
   if (!checkToken || checkLoginUser === null) {
     alert("로그인이 필요한 페이지입니다..");
     router.push({ name: "UserLogin" });
-  } else {
-    console.log("로그인 한 유저네용");
   }
 };
 
@@ -54,7 +52,6 @@ const optionalAuthUser = async () => {
   const checkToken = store.getters["memberStore/checkToken"];
 
   if (checkLoginUser != null) {
-    console.log("토큰 유효성 체크하러 가자!!!!");
     await store.dispatch("memberStore/getUserInfoAction");
   }
 
@@ -211,6 +208,12 @@ const router = createRouter({
               beforeEnter: optionalAuthUser,
               props: true,
             },
+            {
+              path: "/udetail/:value",
+              name: "RUserCheckDetail",
+              component: RUserCheckDetail,
+              props: true,
+            },
           ],
         },
         {
@@ -224,7 +227,8 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
-              path: "",
+              beforeEnter: onlyAuthUser,
+              path: ":nickname",
               name: "consultantDate",
               component: ConsultantReservationDate,
             },
@@ -234,7 +238,7 @@ const router = createRouter({
               component: ConsultantReservationTime,
             },
             {
-              path: "detail/:seq",
+              path: "detail/:seq/:nickname",
               name: "consultantDetail",
               component: ConsultantReservationForm,
             },

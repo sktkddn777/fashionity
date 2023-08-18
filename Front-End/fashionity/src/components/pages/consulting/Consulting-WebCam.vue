@@ -38,7 +38,6 @@
     <!-- 세션 종료 버튼 -->
     <div id="session" v-if="session">
       <div id="session-header">
-        <h1 id="session-title">{{ mySessionId }}</h1>
         <input
           class="btn btn-large btn-danger"
           type="button"
@@ -47,10 +46,7 @@
           value="컨설팅 종료"
         />
       </div>
-      <div id="main-video" class="col-md-6">
-        <!-- mainStreamManager : 포커싱을 맞춰주는 화면 -->
-        <!-- <user-video :stream-manager="mainStreamManager" /> -->
-      </div>
+      <div id="main-video" class="col-md-6"></div>
       <!-- 비디오 -->
       <div id="video-container" class="video-container" style="display: flex">
         <div class="user-video-publisher">
@@ -116,14 +112,14 @@
         <div class="image-list" v-if="showStyleDiv">
           <div
             class="image-item"
-            v-for="(image, index) in style_images"
+            v-for="(image, index) in imageList"
             :key="index"
           >
             <img
-              :src="require(`@/assets/img/${image.url}`)"
-              :alt="image.alt"
-              :class="['image', { highlighted: selectedIndex_image === index }]"
-              @click="showImage_image(index)"
+              :src="image"
+              alt=""
+              :class="['image', { highlighted: selectedImage_image === image }]"
+              @click="showImage_image(image)"
             />
           </div>
         </div>
@@ -134,7 +130,7 @@
       <!-- 일반유저가 보는 이미지 화면 -->
       <div v-if="userData.memberRole[1] !== 'CONSULTANT'">
         <img
-          :src="require(`@/assets/img/${selectedImage_image}`)"
+          :src="selectedImage_image"
           alt="Selected Image"
           v-if="selectedImageVisible_image"
           class="image_for_user"
@@ -233,6 +229,7 @@ export default {
 
   props: {
     reservationSeq: null,
+    imageList: null,
   },
 
   data() {
@@ -266,16 +263,7 @@ export default {
         { url: "winter_bright.png", alt: "winter_bright" },
         { url: "winter_cool.png", alt: "winter_cool" },
         { url: "winter_deep.png", alt: "winter_deep" },
-      ],
-      style_images: [
-        { url: "hyeonwook.jpg", alt: "현욱1" },
-        { url: "hyeonwook2.jpg", alt: "현욱2" },
-        { url: "hyeonwook3.jpg", alt: "현욱3" },
-        { url: "postImg.jpg", alt: "지원" },
-        { url: "hyeonwook.jpg", alt: "현욱1" },
-        { url: "hyeonwook2.jpg", alt: "현욱2" },
-        { url: "hyeonwook3.jpg", alt: "현욱3" },
-        { url: "postImg.jpg", alt: "지원" },
+        { url: "zzz.png", alt: "blue" },
       ],
     };
   },
@@ -286,10 +274,6 @@ export default {
     this.myUserName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
     this.mySessionId = this.reservationSeq;
-    console.log("세션 : " + this.reservationSeq);
-    console.log("유저 닉네임 : " + this.userData.nickname);
-    console.log("유저 권한 : " + this.userData.memberRole);
-    console.log("유저 권한 : " + this.userData.memberRole[1]);
     this.joinSession();
     this.connect();
   },
@@ -301,10 +285,6 @@ export default {
 
       // --- Init a session ---
       this.session = this.OV.initSession();
-      console.log("---------------------접속한 세션 : " + this.session);
-      // const testJson = JSON.stringify(this.session);
-      // console.log(testJson);
-      console.log(Object.entries(this.session));
 
       // --- Specify the actions when events take place in the session ---
 
@@ -403,7 +383,6 @@ export default {
      */
 
     getToken(mySessionId) {
-      console.log("---------------------getToken : " + mySessionId);
       return this.createSession(mySessionId).then((sessionId) =>
         this.createToken(sessionId)
       );
@@ -413,7 +392,6 @@ export default {
     createSession(sessionId) {
       return new Promise((resolve, reject) => {
         axios.defaults.withCredentials = false;
-        console.log("---------------------createSession : " + sessionId);
         axios
           .post(
             `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
@@ -450,7 +428,6 @@ export default {
     },
 
     createToken(sessionId) {
-      console.log("---------------------createToken : " + sessionId);
       return new Promise((resolve, reject) => {
         axios
           .post(
@@ -494,12 +471,11 @@ export default {
     },
 
     // 컨설턴트가 등록된 이미지 클릭 시 보이게
-    showImage_image(index) {
-      if (index !== null) {
-        this.selectedIndex_image = index;
-        this.selectedImage_image = this.style_images[index].url;
+    showImage_image(image) {
+      if (image !== null) {
+        this.selectedImage_image = image;
         this.selectedImageVisible_image = true;
-        this.send(this.selectedIndex_image, "image");
+        this.send(this.selectedImage_image, "image");
       } else {
         this.selectedImageVisible_image = false;
         this.send(null, "image");
@@ -508,32 +484,23 @@ export default {
 
     // 소켓 연결
     connect() {
-      console.log("방 정보 : " + this.roomId);
       const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
       //  + "/chatting/djEjsdladmldmltptus"
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
       this.stompClient.connect(
         {},
-        (frame) => {
+        () => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log("이미지 소켓 연결 성공", frame);
           this.stompClient.subscribe(
             `/chatting/send/${this.mySessionId}`,
             (res) => {
               const receiveData = JSON.parse(res.body);
               if (receiveData.type == "personal") {
-                console.log(
-                  "받아온 이미지 인덱스 퍼스널 : " + receiveData.content
-                );
                 this.selectedIndex_personal = receiveData.content;
               } else if (receiveData.type == "image") {
-                console.log(
-                  "받아온 이미지 인덱스 이미지 : " + receiveData.content
-                );
-                this.selectedIndex_image = receiveData.content;
+                this.selectedImage_image = receiveData.content;
               }
             }
           );
@@ -547,17 +514,15 @@ export default {
     },
 
     // 소켓으로 메세지 보내기
-    send(index, type) {
+    send(image, type) {
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
           userName: this.myUserName,
-          content: index,
+          content: image,
           // roomId: "djEjsdladmldmltptus",
           roomId: this.mySessionId,
           type: type,
         };
-        console.log("소켓으로 보낼 데이터 : ");
-        console.log(msg);
         this.stompClient.send(
           `/chatting/send/${this.mySessionId}`,
           JSON.stringify(msg)
@@ -569,11 +534,9 @@ export default {
   // 소켓에서 content가 올 때 변경이 될 수 있도록
   watch: {
     selectedIndex_personal(newVal) {
-      console.log("퍼스널 새로운 값 : " + newVal);
       this.showImage_personal(newVal);
     },
-    selectedIndex_image(newVal) {
-      console.log("이미지 새로운 값 : " + newVal);
+    selectedImage_image(newVal) {
       this.showImage_image(newVal);
     },
   },

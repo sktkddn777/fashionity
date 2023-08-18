@@ -1,7 +1,5 @@
 <template lang="">
-  <div class="container-fluid">
-    <the-nav-bar-post></the-nav-bar-post>
-
+  <div class="container-fluid" style="min-height: 100vh">
     <div class="row justify-content-space-around tools" ref="toolsContainer">
       <div class="col-3 search">
         <input
@@ -10,7 +8,7 @@
           name="search"
           placeholder="검색어를 입력하세요"
           v-model="hashtagInput"
-          @input="updateInput()"
+          @keyup="updateInput()"
         />
       </div>
       <div class="col"></div>
@@ -34,13 +32,13 @@
     <div class="container" ref="contentContainer">
       <div v-if="dataLoaded">
         <div
-          class="row"
-          style="justify-content: center"
+          class="row d-flex justify-content-start align-items-start"
+          style="justify-content: start"
           v-for="(arr, index) in postRow"
           :key="index"
         >
           <div
-            class="col"
+            class="col p-2 d-flex justify-content-start align-items-start"
             v-for="post in arr"
             :key="post.post_seq"
             style="margin-bottom: 20px"
@@ -88,7 +86,6 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
 
     let token = sessionStorage.getItem("token");
-    // this.loadNextPage();
     axios({
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}&h=${this.hashtagInput}`,
       headers:
@@ -113,8 +110,9 @@ export default {
             method: "GET",
           }).then((data) => {
             this.posts = data.data.posts;
-            this.dataLoaded = true;
+            this.page++;
           });
+          this.dataLoaded = true;
         }
       });
   },
@@ -147,9 +145,11 @@ export default {
       })
         .then((response) => {
           const newPosts = response.data.posts;
-          this.posts = [...this.posts, ...newPosts];
+          if (newPosts.length > 0) {
+            this.page++;
+            this.posts = [...this.posts, ...newPosts];
+          }
           this.loadingNextPage = false;
-          this.page++;
         })
         .catch((exception) => {
           let data = exception.response;
@@ -165,6 +165,7 @@ export default {
               this.page++;
             });
           }
+          this.loadingNextPage = false;
         });
     },
     handleScroll() {
@@ -177,7 +178,9 @@ export default {
 
       // 뷰포트 하단에 도달했을 때 (여기서 200은 여유값을 의미합니다.)
       if (scrollY + viewportHeight >= fullHeight - 200) {
-        this.loadNextPage();
+        if (!this.loadingNextPage) {
+          this.loadNextPage();
+        }
       }
     },
   },

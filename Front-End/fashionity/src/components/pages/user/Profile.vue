@@ -4,7 +4,6 @@
     <div class="black-bg" v-if="followersPop === true" style="z-index: 1050">
       <div class="fmodal">
         <div style="display: flex; flex-direction: row; justify-content: left">
-          <!-- <div style="display: flex; align-items: center"> -->
           <div class="modalTitle" style="font-size: 2rem; margin-left: 1rem">
             <b>Followers</b>
           </div>
@@ -80,7 +79,7 @@
                 </button>
                 <button
                   v-if="nickname === myNickname"
-                  class="active-button"
+                  class="inactive-button"
                   style="margin-left: 0.5rem"
                   @click="routeToEdit"
                 >
@@ -88,12 +87,23 @@
                 </button>
               </div>
               <br />
-              <div v-if="memberRole==='CONSULTANT'" align="left">
+              <div v-if="memberRole === 'CONSULTANT'" align="left">
                 컨설턴트
               </div>
-              <div class="m-top-d" style="width: 30rem" align="left">
+              <div
+                v-if="profileIntro != 'null' && profileIntro"
+                class="m-top-d"
+                style="width: 30rem"
+                align="left"
+              >
                 {{ profileIntro }}
               </div>
+              <div
+                v-else
+                class="m-top-d"
+                style="width: 30rem"
+                align="left"
+              ></div>
               <br />
               <!-- 게시글 수, 팔로워 수, 팔로잉 수 정보 -->
               <div class="posts-followers-followings-cnt" style="display: flex">
@@ -186,7 +196,7 @@ export default {
       myProfile: "",
       profileIntro: "",
       profileUrl: "",
-      memberRole : "",
+      memberRole: "",
       followersPop: false,
       followingsPop: false,
       myNickname: this.$store.getters["memberStore/checkLoginUser"].nickname,
@@ -197,8 +207,8 @@ export default {
     this.getProfile();
     this.memberRole = this.checkLoginUser.memberRole[1];
   },
-  computed:{
-    ...mapGetters("memberStore",["checkLoginUser"]),
+  computed: {
+    ...mapGetters("memberStore", ["checkLoginUser"]),
   },
   methods: {
     routeToEdit() {
@@ -223,7 +233,6 @@ export default {
           this.myProfile = data.myProfile;
           this.profileIntro = data.profileIntro;
           this.profileUrl = data.profileUrl;
-          console.log(data);
         })
         .catch((e) => {
           console.log(e);

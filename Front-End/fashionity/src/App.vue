@@ -1,14 +1,9 @@
 <template>
   <v-app class="first">
     <div class="total-body">
-      <!-- <img alt="Test Image" src="./assets/img/testImage.jpeg"> -->
-      <the-header></the-header>
-
-      <!-- <section id="wrapper">
-      <div id="content">content</div>
-    </section> -->
-      <router-view></router-view>
-      <the-footer></the-footer>
+      <the-header id="total-header"></the-header>
+      <router-view id="total-view"></router-view>
+      <the-footer id="total-footer"></the-footer>
     </div>
   </v-app>
 </template>
@@ -32,6 +27,18 @@ export default {
 * {
   margin: 0px;
   padding: 0px;
+}
+.total-body {
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+#total-header {
+}
+#total-view {
+}
+#total-footer {
 }
 
 #wrapper {

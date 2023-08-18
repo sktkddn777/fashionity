@@ -49,6 +49,7 @@
             type="button"
             class="btn btn-outline-dark"
             style="min-width: 70px"
+            @click="navigateToDetail"
           >
             <span style="font-size: smaller">&nbsp;취소&nbsp;</span>
           </button>
@@ -103,8 +104,6 @@ export default {
           content: this.contentInput,
           hashtag: this.tagList,
         };
-        console.log(postData.content);
-        console.log(postData.hashtag);
         await this.callPostUpdateAPI(postData);
         this.navigateToDetail();
       }
@@ -127,9 +126,7 @@ export default {
         method: "PUT",
         data: body,
       })
-        .then((data) => {
-          console.log(data);
-          console.log("callPostUpdateAPI " + data.data.success);
+        .then(() => {
           alert("수정되었습니다.");
         })
         .catch(() => {

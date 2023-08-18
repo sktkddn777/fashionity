@@ -3,6 +3,7 @@
     <first-component
       class="compo"
       :reservation-seq="$route.query.sessionId"
+      :image-list="$route.query.imageList"
     ></first-component>
     <second-component
       class="compo"
