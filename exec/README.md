@@ -31,14 +31,14 @@
 
 ## 📝 document
 
-[환경 설정 및 배포](/document/setting-distribution.md)  
-[mail sender](/document/mail-sender.md)  
-[security](/document/security.md)  
-[객체지향적 코드](/document/object-oriented.md)  
-[소셜로그인](/document/social-login.md)  
-[JWT](/document/jwt.md)  
-[OpenVidu](/document/openvidu.md)  
-[WEBRTC](/document/webrtc.md)
+[환경 설정 및 배포](./document/setting-distribution.md)  
+[mail sender](./document/mail-sender.md)  
+[security](./document/security.md)  
+[객체지향적 코드](./document/object-oriented.md)  
+[소셜로그인](./document/social-login.md)  
+[JWT](./document/jwt.md)  
+[OpenVidu](./document/openvidu.md)  
+[WEBRTC](./document/webrtc.md)
 
 <br/>
 
