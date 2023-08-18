@@ -4,24 +4,35 @@
     <div class="reservation-top">
       <img src="@/assets/img/imgtemp.jpg" alt="" class="profile-img" />
       <div class="reservation-info">
-        <div class="info" style="font-size: 1.3rem; display: flex; height: 2.3rem">
+        <div
+          class="info"
+          style="font-size: 1.3rem; display: flex; height: 2.3rem"
+        >
           <b>예약 번호 : </b>
           <div style="width: 1rem"></div>
           <p>{{ reservationSeq }}</p>
         </div>
-        <div class="info" style="font-size: 1.3rem; display: flex; height: 2.3rem">
+        <div
+          class="info"
+          style="font-size: 1.3rem; display: flex; height: 2.3rem"
+        >
           <b>예약 시각 : </b>
           <div style="width: 1rem"></div>
           <p>{{ reservationDateTime }}</p>
         </div>
-        <div class="info" style="font-size: 1.3rem; display: flex; height: 2.3rem">
+        <div
+          class="info"
+          style="font-size: 1.3rem; display: flex; height: 2.3rem"
+        >
           <b>담당 컨설턴트 : </b>
           <div style="width: 1rem"></div>
           <p>{{ consultantNickname }}</p>
         </div>
       </div>
       <div class="button-wrapper">
-        <button class="consultant-mylist-enter" @click="startMeeting">입장하기</button>
+        <button class="consultant-mylist-enter" @click="startMeeting">
+          입장하기
+        </button>
         <button class="consultant-mylist-cancel">예약취소</button>
       </div>
     </div>
@@ -33,7 +44,9 @@
     <div class="reservation-bottom" align="left" style="">
       <div class="info-detail" style="margin-top: 1rem; margin-bottom: 3rem">
         <h5><b>나이</b></h5>
-        <p v-if="memberAge && memberAge != '성별을 등록해주세요!'">만 {{ memberAge }}세</p>
+        <p v-if="memberAge && memberAge != '성별을 등록해주세요!'">
+          만 {{ memberAge }}세
+        </p>
         <p v-else>{{ memberAge }}</p>
         <h5><b>성별</b></h5>
         <p>{{ memberGender }}</p>
@@ -52,7 +65,11 @@
       <h4 style="margin-top: 10px"><b>예약자가 등록한 이미지</b></h4>
       <div class="reservation-bottom">
         <div class="image-list" v-if="memberImages.length > 1">
-          <div class="image-item" v-for="(image, index) in memberImages" :key="index">
+          <div
+            class="image-item"
+            v-for="(image, index) in memberImages"
+            :key="index"
+          >
             <img :src="image.imageUrl" :alt="image.alt" class="image" />
           </div>
         </div>
@@ -69,7 +86,11 @@
       <h4 style="margin-top: 10px"><b>컨설턴트가 등록한 이미지</b></h4>
       <div class="reservation-bottom">
         <div class="image-list" v-if="consultantImages.length > 1">
-          <div class="image-item" v-for="(image, index) in consultantImages" :key="index">
+          <div
+            class="image-item"
+            v-for="(image, index) in consultantImages"
+            :key="index"
+          >
             <img :src="image.imageUrl" :alt="image.alt" class="image" />
           </div>
         </div>
@@ -93,11 +114,6 @@
   justify-content: center;
   align-items: center;
 }
-
-/* .reservation-bottom {
-  display: flex;
-} */
-
 .profile-img {
   flex: 1;
   max-width: 20vh;
@@ -119,11 +135,6 @@
 .info {
   text-align: left;
 }
-
-/* .info-detail {
-  flex: 1;
-} */
-
 .image-list {
   margin: auto;
   display: flex;
@@ -173,7 +184,6 @@ export default {
   props: ["value"],
   created() {
     const reservationSeq = this.value;
-    // const nickname = this.$store.getters["memberStore/checkLoginUser"].nickname;
     const token = sessionStorage.getItem("token");
 
     axios({
@@ -242,17 +252,12 @@ export default {
   methods: {
     startMeeting() {
       const sessionId = this.reservationSeq + 73576;
-      console.log("비밀 번호 : " + sessionId);
       this.$router.push({
         name: "Consulting-WebCam-View",
         query: { sessionId },
       });
     },
   },
-  // components: {},
-  // props: {},
-  // data: () => ({}),
-  // methods: {},
 };
 </script>
 

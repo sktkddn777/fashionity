@@ -14,9 +14,7 @@
       <div class="col"></div>
       <button class="inactive-button">
         <router-link to="/consultant/myreservation/list" class="link">
-          <div style ="color:white">
-          내 예약
-          </div>
+          <div style="color: white">내 예약</div>
         </router-link>
       </button>
     </div>
@@ -77,7 +75,6 @@ export default {
     // 스크롤 이벤트 리스너 추가
     window.addEventListener("scroll", this.handleScroll);
     let token = sessionStorage.getItem("token");
-    // this.loadNextPage();
     axios({
       url: `${process.env.VUE_APP_API_URL}/api/v1/consultants?page=${this.page}&nickname=${this.nicknameInput}`,
       headers:
@@ -170,7 +167,6 @@ export default {
       }
     },
     onclick(post) {
-      // console.log(post);
       this.$router.push({
         name: "consultantDate",
         params: { nickname: post.nickname },
@@ -213,7 +209,7 @@ export default {
 }
 .highlighted {
   color: #424242;
-  font-weight: bold; /* 원하는 스타일로 변경 */
+  font-weight: bold;
 }
 .inactive-button {
   width: 100px;

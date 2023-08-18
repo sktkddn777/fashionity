@@ -86,7 +86,6 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
 
     let token = sessionStorage.getItem("token");
-    // this.loadNextPage();
     axios({
       url: `${process.env.VUE_APP_API_URL}/api/v1/posts?page=${this.page}&s=${this.sorting}&h=${this.hashtagInput}`,
       headers:

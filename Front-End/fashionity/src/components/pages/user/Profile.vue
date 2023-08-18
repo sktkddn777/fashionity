@@ -4,11 +4,12 @@
     <div class="black-bg" v-if="followersPop === true" style="z-index: 1050">
       <div class="fmodal">
         <div style="display: flex; flex-direction: row; justify-content: left">
-          <!-- <div style="display: flex; align-items: center"> -->
           <div class="modalTitle" style="font-size: 2rem; margin-left: 1rem">
             <b>Followers</b>
           </div>
-          <button id="followersbtn" class="close" @click="showFollowers()">×</button>
+          <button id="followersbtn" class="close" @click="showFollowers()">
+            ×
+          </button>
         </div>
         <div class="follwerList">
           <followers-list />
@@ -22,7 +23,9 @@
           <div class="modalTitle" style="font-size: 2rem; margin-left: 1rem">
             <b>Followings</b>
           </div>
-          <button id="followingsbtn" class="close" @click="showFollowings()">×</button>
+          <button id="followingsbtn" class="close" @click="showFollowings()">
+            ×
+          </button>
         </div>
         <div class="follwingList">
           <followings-list />
@@ -35,7 +38,9 @@
       <!-- 프로필 영역 -->
       <div class="profile-container">
         <div class="profile-main">
-          <div style="display: flex; flex-direction: row; justify-content: center">
+          <div
+            style="display: flex; flex-direction: row; justify-content: center"
+          >
             <!-- 사용자 프로필 사진 -->
             <div class="profile-main-photo">
               <img
@@ -48,10 +53,18 @@
             <!-- 사용자 정보 -->
             <div class="infos" style="display: flex; flex-direction: column">
               <!-- 이름, 팔로우, 수정 버튼 -->
-              <div class="username-follow-edit" style="display: flex; flex-direction: row">
+              <div
+                class="username-follow-edit"
+                style="display: flex; flex-direction: row"
+              >
                 <div
                   class="profile-main-form-text-nickname"
-                  style="display: flex; justify-self: start; font-size: 2rem; margin-right: 3rem"
+                  style="
+                    display: flex;
+                    justify-self: start;
+                    font-size: 2rem;
+                    margin-right: 3rem;
+                  "
                 >
                   {{ nickname }}
                 </div>
@@ -74,7 +87,9 @@
                 </button>
               </div>
               <br />
-              <div v-if="memberRole === 'CONSULTANT'" align="left">컨설턴트</div>
+              <div v-if="memberRole === 'CONSULTANT'" align="left">
+                컨설턴트
+              </div>
               <div
                 v-if="profileIntro != 'null' && profileIntro"
                 class="m-top-d"
@@ -83,7 +98,12 @@
               >
                 {{ profileIntro }}
               </div>
-              <div v-else class="m-top-d" style="width: 30rem" align="left"></div>
+              <div
+                v-else
+                class="m-top-d"
+                style="width: 30rem"
+                align="left"
+              ></div>
               <br />
               <!-- 게시글 수, 팔로워 수, 팔로잉 수 정보 -->
               <div class="posts-followers-followings-cnt" style="display: flex">
@@ -213,7 +233,6 @@ export default {
           this.myProfile = data.myProfile;
           this.profileIntro = data.profileIntro;
           this.profileUrl = data.profileUrl;
-          console.log(data);
         })
         .catch((e) => {
           console.log(e);

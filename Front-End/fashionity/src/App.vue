@@ -1,12 +1,7 @@
 <template>
   <v-app class="first">
     <div class="total-body">
-      <!-- <img alt="Test Image" src="./assets/img/testImage.jpeg"> -->
       <the-header id="total-header"></the-header>
-
-      <!-- <section id="wrapper">
-      <div id="content">content</div>
-    </section> -->
       <router-view id="total-view"></router-view>
       <the-footer id="total-footer"></the-footer>
     </div>

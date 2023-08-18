@@ -15,12 +15,6 @@
       >
     </div>
     <div class="col col-lg-2 header-tab point">
-      <!-- <router-link
-        to="/consultant"
-        style="text-decoration: none; color: #424242"
-        >Consultant</router-link
-      > -->
-
       <router-link
         v-if="isConsultant"
         to="/consultant/rc"

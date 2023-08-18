@@ -12,12 +12,7 @@ export default {
   components: {
     TheNavCheckReservation,
   },
-  // props: {},
-
-  // data: () => ({}),
-  // methods: {},
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

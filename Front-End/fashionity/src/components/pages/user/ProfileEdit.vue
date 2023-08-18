@@ -10,7 +10,11 @@
               <div
                 v-if="!displayProfileImageUpload"
                 class="profileImg-buttons"
-                style="display: flex; justify-content: center; flex-direction: row"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  flex-direction: row;
+                "
               >
                 <div class="profile-main-photo">
                   <img
@@ -22,7 +26,10 @@
                     ref="profileImage"
                   />
                 </div>
-                <div class="buttons" style="display: flex; align-items: flex-end">
+                <div
+                  class="buttons"
+                  style="display: flex; align-items: flex-end"
+                >
                   <div class="filebox">
                     <button
                       class="active-button"
@@ -30,8 +37,6 @@
                       @click="showImageUpload"
                     >
                       사진 변경
-                      <!-- <label for="upload">사진 변경</label>
-                      <input type="file" id = "upload" ref = "uploadInput" @change="handleImageChange"> -->
                     </button>
                   </div>
                   <button
@@ -41,15 +46,14 @@
                   >
                     사진 삭제
                   </button>
-                  <!-- <button class="change-password-button" style="margin-right: 0.3rem">
-                    비밀번호 변경
-                  </button> -->
                 </div>
               </div>
             </div>
             <div v-if="displayProfileImageUpload">
-              <!-- <profile-image-updated-vue /> -->
-              <profile-image-updated-vue @updateImg="updateImg" @cancel-upload="showImageUpload" />
+              <profile-image-updated-vue
+                @updateImg="updateImg"
+                @cancel-upload="showImageUpload"
+              />
             </div>
             <div style="height: 5rem"></div>
             <h5><b>아이디</b></h5>
@@ -62,7 +66,12 @@
               <h5>
                 <label for="nickname"><b>닉네임</b></label>
               </h5>
-              <input id="nickname" type="text" v-model="nickname" @input="checkNicknameLength" />
+              <input
+                id="nickname"
+                type="text"
+                v-model="nickname"
+                @input="checkNicknameLength"
+              />
               <p v-if="isNicknameTooLong" class="warning" style="color: red">
                 닉네임이 너무 깁니다. 최대 13자까지 입력 가능합니다.
               </p>
@@ -72,7 +81,12 @@
               <h5>
                 <label for="profileIntro"><b>한줄 소개</b></label>
               </h5>
-              <input id="profileIntro" type="text" v-model="profileIntro" style="width: 500px" />
+              <input
+                id="profileIntro"
+                type="text"
+                v-model="profileIntro"
+                style="width: 500px"
+              />
               <hr />
             </div>
             <br />
@@ -80,7 +94,9 @@
               <button class="active-button" style="margin-right: 0.3rem">
                 <input type="submit" value="수정하기" @click="editProfile" />
               </button>
-              <button class="delete-button" @click="delteProfileAndLogout">탈퇴하기</button>
+              <button class="delete-button" @click="delteProfileAndLogout">
+                탈퇴하기
+              </button>
             </div>
           </form>
         </div>
@@ -126,12 +142,6 @@ export default {
   computed: {
     ...mapState(memberStore, ["isLogin", "loginUser"]),
     ...mapGetters(["checkUserInfo"]),
-    // selectedImagePreview(){
-    //   if (this.selectedImage){
-    //     return URL.createObjectURL(this.selectedImage)
-    //   }
-    //   return "";
-    // }
   },
   methods: {
     ...mapActions("memberStore", ["updateUserInfoAction"]),
@@ -156,7 +166,6 @@ export default {
         this.id = data.id;
         this.email = data.email;
         if (data.profileIntro != null) {
-          // null이 아닐 떄
           this.profileIntro = data.profileIntro;
         }
       });
