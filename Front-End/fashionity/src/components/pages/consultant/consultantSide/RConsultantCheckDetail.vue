@@ -200,8 +200,6 @@ export default {
           this.memberGender = "남성";
         } else if (details.gender === "FEMALE") {
           this.memberGender = "여성";
-        } else {
-          this.memberGender = "성별을 등록해주세요!";
         }
         if (details.height === null) {
           this.memberHeight = "신장을 등록해주세요!";
