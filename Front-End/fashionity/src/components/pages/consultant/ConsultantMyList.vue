@@ -30,6 +30,9 @@
           </div>
           <div class="col">
             <div class="row" style="font-size: 15px">
+              예약 번호 : {{ reservation.reservationSeq }}
+            </div>
+            <div class="row" style="font-size: 15px">
               예약 일시 : {{ reservation.reservationDateTime[0] }}년
               {{ reservation.reservationDateTime[1] }}월
               {{ reservation.reservationDateTime[2] }}일
