@@ -37,7 +37,7 @@
       <div class="reservation-bottom" align="left" style="">
         <div class="info-detail" style="margin-top: 1rem; margin-bottom: 3rem">
           <h5><b>나이</b></h5>
-          <p>만 {{ memberAge }}세</p>
+          <p>{{ memberAge }}</p>
           <h5><b>성별</b></h5>
           <p>{{ memberGender }}</p>
           <h5><b>신장</b></h5>
@@ -106,11 +106,6 @@
   justify-content: center;
   align-items: center;
 }
-
-/* .reservation-bottom {
-  display: flex;
-} */
-
 .profile-img {
   flex: 1;
   max-width: 20vh;
@@ -132,18 +127,12 @@
 .info {
   text-align: left;
 }
-
-/* .info-detail {
-  flex: 1;
-} */
-
 .image-list {
   margin: auto;
   display: flex;
   max-width: 60vw;
   overflow-x: auto;
 }
-
 .image-item {
   border: 1px solid #ccc;
   flex: 0 0 auto;
@@ -153,7 +142,6 @@
   max-width: 25vh;
   max-height: 25vh;
 }
-
 .consultant-mylist-enter {
   background-color: #ed4141;
   color: white;
@@ -198,7 +186,6 @@ export default {
       method: "GET",
     })
       .then(({ data }) => {
-        console.log("뎅;ㅣ터어어어어엉", data);
         let details = data.consultantReservationDetails[0];
         this.reservationSeq = data.reservationSeq;
         this.consultantNickname = details.consultantNickname;
@@ -213,8 +200,6 @@ export default {
           this.memberGender = "남성";
         } else if (details.gender === "FEMALE") {
           this.memberGender = "여성";
-        } else {
-          this.memberGender = "성별을 등록해주세요!";
         }
         if (details.height === null) {
           this.memberHeight = "신장을 등록해주세요!";
@@ -222,12 +207,12 @@ export default {
           this.memberHeight = details.height;
         }
         if (details.weight === null) {
-          this.memberWeight = "신장을 등록해주세요!";
+          this.memberWeight = "몸무게를 등록해주세요!";
         } else {
           this.memberWeight = details.weight;
         }
         if (details.age === null) {
-          this.memberAge = "신장을 등록해주세요!";
+          this.memberAge = "나이를 등록해주세요!";
         } else {
           this.memberAge = details.age;
         }
@@ -235,7 +220,6 @@ export default {
         this.reservationDateTime = `${dateTime[0]}년 ${dateTime[1]}월 ${dateTime[2]}일 ${dateTime[3]}시`;
         this.memberImages = details.memberImages;
         this.consultantImages = details.consultantImages;
-        console.log("컨설턴트 이미지들 : ", this.consultantImages);
       })
       .catch((error) => {
         console.log(error);
@@ -263,12 +247,10 @@ export default {
     startMeeting() {
       const sessionId = this.reservationSeq + 73576;
       const array = [...this.memberImages, ...this.consultantImages];
-      console.log("비밀 번호 : " + sessionId);
       const imageList = [];
       for (let i = 0; i < array.length; i++) {
         imageList.push(array[i].imageUrl);
       }
-      console.log(imageList);
       this.$router.push({
         name: "Consulting-WebCam-View",
         query: { sessionId, imageList },
@@ -288,7 +270,6 @@ export default {
         formData.append("images", saveData.images[i]);
       }
       formData.append("reservationSeq", saveData.reservationSeq);
-      console.log(formData.get("reservationSeq") + formData.get("images"));
       var token = sessionStorage.getItem("token");
       await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/consultants/reservation`,
@@ -302,10 +283,7 @@ export default {
         method: "PATCH",
         data: formData,
       })
-        .then((data) => {
-          console.log("=====등록될걸?");
-          console.log(data);
-        })
+        .then(() => {})
         .catch(() => {
           alert("사진이 등록되지 않았습니다.");
         });
@@ -317,10 +295,6 @@ export default {
   components: {
     MultiImageUpload,
   },
-  // components: {},
-  // props: {},
-  // data: () => ({}),
-  // methods: {},
 };
 </script>
 

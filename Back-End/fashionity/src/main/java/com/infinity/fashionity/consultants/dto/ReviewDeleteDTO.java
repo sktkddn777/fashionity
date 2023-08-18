@@ -15,7 +15,6 @@ public class ReviewDeleteDTO {
         @JsonIgnore
         private Long memberSeq;
 
-        // Param 으로 가져올 것
         @JsonIgnore
         private Long reviewSeq;
 

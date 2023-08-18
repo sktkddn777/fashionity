@@ -16,7 +16,6 @@ public class ReviewSaveDTO {
         @JsonIgnore
         private Long memberSeq;
 
-        //pathParam
         @JsonIgnore
         private Long reservationSeq;
 

@@ -1,7 +1,6 @@
 package com.infinity.fashionity.posts.service;
 
 import com.infinity.fashionity.posts.dto.*;
-import org.springframework.stereotype.Service;
 
 public interface PostService {
 

@@ -31,7 +31,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        log.info("success oauth");
         CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
 
         Tokens tokens = tokenService.createTokens(oAuth2User.getUserInfo());

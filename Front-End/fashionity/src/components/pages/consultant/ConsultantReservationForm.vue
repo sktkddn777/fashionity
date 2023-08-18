@@ -1,82 +1,97 @@
 <template lang="">
   <div id="reservation-form" class="container-fluid scroll">
-    <div class="row justify-content-center detail-title" style="margin-top: 1rem; margin-bottom:3rem">
+    <div
+      class="row justify-content-center detail-title"
+      style="margin-top: 1rem; margin-bottom: 3rem"
+    >
       <h4><b>상세 예약 정보 등록</b></h4>
     </div>
-    <!-- 불러오기 버튼
-    <div class="row justify-content-end" style="margin-bottom: 20px">
-      <div class="col"></div>
-      <div class="col-1">
-        <div class="inactive-button">불러오기</div>
-      </div>
-    </div> -->
 
     <!-- 예약 정보 form  -->
     <div class="row margin" align="left">
       <form action="">
         <h5><b>나이</b></h5>
-        <input type="number" v-model="ageInput" class="input-form" style="width: 10vw; margin-bottom:1.3rem" />
+        <input
+          type="number"
+          v-model="ageInput"
+          class="input-form"
+          style="width: 10vw; margin-bottom: 1.3rem"
+        />
         <h5><b>성별</b></h5>
-        <div class = "radioElement" style = "text-align:left">
+        <div class="radioElement" style="text-align: left">
           <fieldset style="padding-top: 10px">
-          <label>
-            <input type="radio" v-model="genderInput" name="gender" value="MALE" checked />
-            <span> 남성</span>
-          </label>
+            <label>
+              <input
+                type="radio"
+                v-model="genderInput"
+                name="gender"
+                value="MALE"
+                checked
+              />
+              <span> 남성</span>
+            </label>
 
-          <label>
-            <input type="radio" v-model="genderInput" name="gender" value="FEMALE" />
-            <span> 여성</span>
-          </label>
-        </fieldset>
+            <label>
+              <input
+                type="radio"
+                v-model="genderInput"
+                name="gender"
+                value="FEMALE"
+              />
+              <span> 여성</span>
+            </label>
+          </fieldset>
         </div>
 
         <h5><b>신장</b></h5>
-        <input type="number" v-model="heightInput" class="input-form" style="width: 10vw; margin-bottom:1.3rem" />
+        <input
+          type="number"
+          v-model="heightInput"
+          class="input-form"
+          style="width: 10vw; margin-bottom: 1.3rem"
+        />
         <h5><b>몸무게</b></h5>
-        <input type="number" v-model="weightInput" class="input-form" style="width: 10vw; margin-bottom:1.3rem" />
+        <input
+          type="number"
+          v-model="weightInput"
+          class="input-form"
+          style="width: 10vw; margin-bottom: 1.3rem"
+        />
 
         <h5><b>퍼스널컬러</b></h5>
-            <v-select
-              clearable
-              v-model="personalColorInput"
-              :items="['UNKNOWN', 'SPRING', 'SUMMER', 'FALL', 'WINTER']"
-              style="width: 25vw;"
-            ></v-select>
+        <v-select
+          clearable
+          v-model="personalColorInput"
+          :items="['UNKNOWN', 'SPRING', 'SUMMER', 'FALL', 'WINTER']"
+          style="width: 25vw"
+        ></v-select>
 
         <h5><b>추가 정보</b></h5>
         <textarea
-              v-model="detailInput"
-              name="reservationInfo"
-              id="reservationInfo"
-              cols="80"
-              rows="3"
-              style="background-color:#f0efef; border-radius:4px; margin-bottom:1.3rem"
-
-            ></textarea>
+          v-model="detailInput"
+          name="reservationInfo"
+          id="reservationInfo"
+          cols="80"
+          rows="3"
+          style="
+            background-color: #f0efef;
+            border-radius: 4px;
+            margin-bottom: 1.3rem;
+          "
+        ></textarea>
 
         <!-- 평소 나의 스타일 등록 -->
         <h5><b>사진 첨부</b></h5>
         <div class="row justify-content-center">
-            <multi-image-upload @updateImg="updateImg"></multi-image-upload>
+          <multi-image-upload @updateImg="updateImg"></multi-image-upload>
         </div>
 
         <!-- 평소 나의  등록 -->
-        <!-- <div class="row">
-          <multi-image-upload></multi-image-upload>
-        </div> -->
       </form>
       <div class="row">
         <div class="col"></div>
         <div class="col-3">
-          
-          <button @click="submit" class = "inactive-button">등록</button>
-          <!-- <router-link
-            class="link"
-            to="/consultant/reservation/confirm"
-            @propChange="propChange"
-            ><button>submit</button></router-link
-          > -->
+          <button @click="submit" class="inactive-button">등록</button>
         </div>
       </div>
     </div>
@@ -124,9 +139,7 @@ export default {
         consultantNickname: this.$route.params.nickname,
         weight: this.weightInput,
       };
-      console.log(reservationData);
       await this.callPostSaveAPI(reservationData);
-      // this.navigateToMain();
     },
     async callPostSaveAPI(reservationData) {
       let formData = new FormData();
@@ -157,9 +170,7 @@ export default {
         method: "POST",
         data: formData,
       })
-        .then((data) => {
-          console.log("data임", data);
-          console.log("callPostSaveAPI " + data.data.postSeq);
+        .then(() => {
           this.$router.push({
             name: "consultant-myreservation",
           });
@@ -175,13 +186,7 @@ export default {
   },
   created() {
     this.isVaild = false;
-    console.log(this.$route.params.seq);
   },
-  // watch: {
-  //   imgList() {
-  //     console.log("이미지 바뀜", this.imgList);
-  //   },
-  // },
 };
 </script>
 <style scoped>
@@ -328,8 +333,8 @@ button:hover:after {
   border-radius: 10px;
   background: #2191ff;
   color: #ffffff;
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 .inactive-button {
@@ -339,8 +344,8 @@ button:hover:after {
   border-radius: 10px;
   background: #cecece;
   color: #ffffff;
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 </style>

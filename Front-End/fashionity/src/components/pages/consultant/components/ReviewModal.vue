@@ -56,9 +56,6 @@ export default {
       return star <= this.selectedStar ? "fa-star" : "fa-star-o";
     },
     async submitReview() {
-      console.log("리뷰 시퀀스 : " + this.reservationSeq);
-      console.log("줄 점수 : " + this.selectedStar);
-      console.log(this.reviewText);
       if (this.reviewText.trim() === "") {
         alert("내용을 입력해주세요.");
       } else {
@@ -87,9 +84,7 @@ export default {
         method: "POST",
         data: formData,
       })
-        .then((data) => {
-          console.log("callReviewSaveAPI " + data.data.reservationSeq);
-        })
+        .then(() => {})
         .catch(() => {
           alert("리뷰가 등록되지 않았습니다.");
         });

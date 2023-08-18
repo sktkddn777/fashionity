@@ -1,11 +1,7 @@
 package com.infinity.fashionity.consultants.entity;
 
 import com.infinity.fashionity.global.entity.CUDEntity;
-import com.infinity.fashionity.global.exception.ErrorCode;
-import com.infinity.fashionity.global.exception.ValidationException;
-import com.infinity.fashionity.global.utils.StringUtils;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -41,7 +37,6 @@ public class ReviewEntity extends CUDEntity {
     private ReservationEntity reservation;
 
     public void updateContent(String content){
-//        if(StringUtils.isBlank(content)) throw new ValidationException(ErrorCode.INVALID_INPUT_VALUE);
         this.content= content;
     }
 

@@ -4,10 +4,8 @@ package com.infinity.fashionity.consultants.repository;
 
 import com.infinity.fashionity.consultants.dto.ConsultantReviewSummary;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 
-import com.infinity.fashionity.consultants.dto.Review;
 import com.infinity.fashionity.consultants.entity.ConsultantEntity;
 import com.infinity.fashionity.consultants.entity.ReviewEntity;
 import com.infinity.fashionity.consultants.entity.ScheduleEntity;
@@ -17,7 +15,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.Id;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,13 +98,6 @@ public interface ConsultantRepository extends JpaRepository<ConsultantEntity, Lo
             "where c.nickname = :consultantNickname and r.deletedAt is not null")
     Integer totalDeletedReviewCnt(@Param("consultantNickname") String consultantNickname);
 
-    // 컨설턴트 현재까지 전체 수익 조회
-//    @Query("select coalesce(sum(res.price),0) " +
-//            "from ConsultantEntity c " +
-//            "left join c.schedules s " +
-//            "left join s.reservations res " +
-//            "where c.nickname = :consultantNickname and res.deletedAt is null and res.date >= current_timestamp ")
-//    Integer totalSalary(String consultantNickname);
 
     @Query("select m.seq " +
             "from ConsultantEntity  c " +

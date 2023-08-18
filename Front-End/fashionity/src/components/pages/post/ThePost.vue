@@ -22,7 +22,6 @@
           style="text-decoration: none; color: #424242"
         >
           <div class="col align-self-center align-middle post-detail-writer">
-            <!-- <img class="profile" src="@/assets/img/unknown.png" /> -->
             <img
               class="profile"
               :src="this.post.profile_img || '../img/unknown.e083a226.png'"
@@ -103,7 +102,6 @@ export default {
           this.like ? this.like_count++ : this.like_count--;
         })
         .catch((data) => {
-          console.log(data);
           if (data.response.status === 401) {
             alert("로그인을 진행해주세요");
           } else {

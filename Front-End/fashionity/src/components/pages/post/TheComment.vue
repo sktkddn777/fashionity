@@ -19,8 +19,9 @@
         </div>
         <div v-else class="post-detail-comment-submit">
           <input v-model="content" class="form-control" type="text" />
-          <button type="button" class="active-button" @click="modifyComment">
-            <span style="font-size: smaller">&nbsp;수정&nbsp;</span>
+          <div style="width: 1rem"></div>
+          <button type="button" class="inactive-button" @click="modifyComment">
+            수정
           </button>
         </div>
       </div>
@@ -100,7 +101,6 @@ export default {
   mounted() {
     this.currComment = this.comment;
     this.content = this.comment.content;
-    console.log(this.comment);
   },
   methods: {
     toggleInput() {
@@ -130,8 +130,7 @@ export default {
               },
         method: "PUT",
         data: body,
-      }).then((data) => {
-        console.log(data);
+      }).then(() => {
         this.currComment.content = content;
         this.toggleInput();
       });
@@ -205,7 +204,6 @@ export default {
       let body = {
         commentSeq: this.comment.commentSeq,
       };
-      console.log(body.commentSeq);
       await axios({
         url: `${process.env.VUE_APP_API_URL}/api/v1/posts/${postSeq}/comments/${body.commentSeq}`,
         headers:
@@ -216,8 +214,7 @@ export default {
               },
         method: "DELETE",
         data: body,
-      }).then((data) => {
-        console.log(data);
+      }).then(() => {
         this.callCommentListApi();
       });
     },
@@ -292,6 +289,14 @@ export default {
   flex-shrink: 0;
   border-radius: 10px;
   background: #2191ff;
+  color: #ffffff;
+}
+.inactive-button {
+  width: 80px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #cecece;
   color: #ffffff;
 }
 </style>

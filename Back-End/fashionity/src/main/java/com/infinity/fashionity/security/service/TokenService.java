@@ -41,11 +41,9 @@ public class TokenService {
     }
 
     public Tokens createTokens(AuthUserInfo authUserInfo) {
-        log.info("createTokens start");
 
         String accessToken = jwtProvider.createAccessToken(authUserInfo.getId(), authUserInfo.getRoles());
 
-        // TODO: refreshToken 발급 + redis를 통해 관리
         String refreshToken = jwtProvider.createRefreshToken();
 
         return Tokens.builder()

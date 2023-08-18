@@ -31,10 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * TODO :
- * 게시글 전체 조회, 게시글 단일 조회, like, report 리팩토링
- * */
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -261,7 +257,7 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
-    // 게시글 수정 (이미지, 해시태그 수정!!!!!)
+    // 게시글 수정 (이미지, 해시태그 수정)
     @Override
     @Transactional
     public PostUpdateDTO.Response updatePost(PostUpdateDTO.Request dto) {
@@ -288,42 +284,8 @@ public class PostServiceImpl implements PostService {
             throw new AccessDeniedException(ErrorCode.HANDLE_ACCESS_DENIED);
         }
 
-        //기존 image, hashtags를 삭제
-
-        // 이미지들을 물리 저장소에서 삭제
-//        List<ImageDTO> imageInfos = post.getPostImages().stream()
-//                .map(image -> ImageDTO.builder()
-//                        .fileName(image.getName())
-//                        .fileUrl(image.getUrl())
-//                        .build())
-//                .collect(Collectors.toList());
-//        ImageDeleteDTO.Response delete = imageService.delete(ImageDeleteDTO.Request.builder()
-//                .images(imageInfos)
-//                .build());
-//
-//        //이미지 정보들을 삭제
-//        postImageRepository.deleteByPostSeq(postSeq);
-//
-//        //물리저장소에서 삭제가 성공했으면 db에서도 지움
-//        postImageRepository.deleteByPostSeq(postSeq);
-
         //해시태그들 삭제
         postHashtagRepository.deleteByPostSeq(postSeq);
-
-        //이미지를 물리저장소에 저장
-//        ImageSaveDTO.Response savedImages = imageService.save(ImageSaveDTO.Request.builder()
-//                .images(images)
-//                .build());
-
-        //저장된 정보를 db에 저장
-//        List<PostImageEntity> collect = savedImages.getImageInfos().stream()
-//                .map(imageInfo -> PostImageEntity.builder()
-//                        .name(imageInfo.getFileName())
-//                        .url(imageInfo.getFileUrl())
-//                        .post(post)
-//                        .build())
-//                .collect(Collectors.toList());
-//        postImageRepository.saveAll(collect);
 
         //해시태그 저장
         List<PostHashtagEntity> hashtagEntities = new ArrayList<>();

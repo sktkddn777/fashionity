@@ -1,7 +1,6 @@
 package com.infinity.fashionity.follows.service;
 
 
-import com.infinity.fashionity.alarm.dto.AlarmDeleteDTO;
 import com.infinity.fashionity.alarm.dto.AlarmSendDTO;
 import com.infinity.fashionity.alarm.entity.AlarmType;
 import com.infinity.fashionity.alarm.service.AlarmService;
@@ -95,10 +94,6 @@ public class FollowServiceImpl implements FollowService{
     @Override
     public CheckDTO.Response checkFollow(Long seq, String nickname){
         Long checkMemberSeq = memberRepository.findSeqByNickname(nickname);
-        log.info("======으앙0======");
-        log.info("checkMemberSeq {}", checkMemberSeq);
-        log.info("=======으앙1=======");
-        log.info(followRepository.getIsFollowing(seq, checkMemberSeq).toString());
         return CheckDTO.Response.builder()
                 .isFollowing(followRepository.getIsFollowing(seq, checkMemberSeq))
                 .build();

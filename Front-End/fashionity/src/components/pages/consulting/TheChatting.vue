@@ -92,9 +92,7 @@ export default {
     this.userName = this.checkLoginUser.nickname;
     this.userData = this.checkLoginUser;
     // Chatting.vue가 생성되면 소켓 연결을 시도합니다.
-    console.log("채팅 세션 : " + this.roomId);
     this.connect();
-    console.log("채팅 연결됨");
   },
 
   mounted() {
@@ -127,7 +125,6 @@ export default {
 
     // 메세지 전송
     send() {
-      console.log("Send message:" + this.message);
       if (this.stompClient && this.stompClient.connected) {
         const msg = {
           userName: this.userName,
@@ -145,17 +142,14 @@ export default {
 
     // 소켓 연결
     connect() {
-      console.log("방 정보 : " + this.roomId);
       const serverURL = `${process.env.VUE_APP_SOCKET_URL}`;
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
       this.stompClient.connect(
         {},
-        (frame) => {
+        () => {
           // 소켓 연결 성공
           this.connected = true;
-          console.log("채팅 소켓 연결 성공", frame);
           this.stompClient.subscribe(`/chatting/send/${this.roomId}`, (res) => {
             const receiveData = JSON.parse(res.body);
             if (receiveData.type == "message") {

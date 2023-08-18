@@ -1,6 +1,5 @@
 package com.infinity.fashionity.consultants.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.infinity.fashionity.consultants.data.Level;
 import com.infinity.fashionity.global.entity.CUDEntity;
 import com.infinity.fashionity.members.entity.MemberEntity;

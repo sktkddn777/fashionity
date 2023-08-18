@@ -21,7 +21,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class JwtUtil {
 
     private final String secretKey;
-    // TODO: REDIS 추가
 
     public JwtUtil(@Value("${secret-key}") String secretKey) {
         this.secretKey = secretKey;

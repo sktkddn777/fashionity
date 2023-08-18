@@ -28,10 +28,6 @@
 <script>
 export default {
   name: "TheNavSetReservationVue",
-  // components: {},
-  // props: {},
-  // data: () => ({}),
-  // methods: {},
 };
 </script>
 

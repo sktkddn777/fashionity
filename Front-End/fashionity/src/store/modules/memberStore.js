@@ -24,7 +24,6 @@ const memberStore = {
   },
   mutations: {
     UPDATE_USER_INFO(state, updatedInfo) {
-      // state.loginUser = { ...state.loginUser, ...updatedInfo };
       state.loginUser.nickname = updatedInfo.nickname;
       state.loginUser.profileUri = updatedInfo.profileUrl;
       sessionStorage.setItem("loginNickname", updatedInfo.nickname);
@@ -51,12 +50,9 @@ const memberStore = {
   },
   actions: {
     async updateUserInfoAction({ commit }, updatedInfo) {
-      console.log("update user info action!");
-      console.log(updatedInfo);
       commit("UPDATE_USER_INFO", updatedInfo);
     },
     async getUserNickname() {
-      console.log("실행됨");
       return this.state.loginUser.nickname;
     },
     async loginAction({ commit }, user) {
@@ -131,18 +127,11 @@ const memberStore = {
       );
     },
     async logoutAction({ commit }) {
-      console.log("logoutAction start");
-      await logout(
-        ({ data }) => {
-          console.log("data: " + data);
-          commit("LOGOUT");
-          commit("SET_IS_VALID_TOKEN", false);
-          cookies.remove("refreshToken");
-        },
-        ({ response }) => {
-          console.log(response);
-        }
-      );
+      await logout(() => {
+        commit("LOGOUT");
+        commit("SET_IS_VALID_TOKEN", false);
+        cookies.remove("refreshToken");
+      });
     },
     async getUserInfoAction({ commit, dispatch }) {
       axios({
@@ -151,15 +140,11 @@ const memberStore = {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
         method: "GET",
-      })
-        .then(({ data }) => {
-          console.log("[getUserInfoAction] success " + data);
-        })
-        .catch(async ({ response }) => {
-          console.log("[getUserInfoAction] fail " + response);
-          commit("SET_IS_VALID_TOKEN", false);
-          await dispatch("tokenRegeneration");
-        });
+      }).catch(async ({ response }) => {
+        console.log("[getUserInfoAction] fail " + response);
+        commit("SET_IS_VALID_TOKEN", false);
+        await dispatch("tokenRegeneration");
+      });
     },
     async tokenRegeneration({ commit }) {
       const reissueRequest = {
@@ -170,15 +155,12 @@ const memberStore = {
         reissueRequest,
         ({ data }) => {
           let accessToken = data.accessToken;
-          console.log("[tokenRegeneration] success : {}", accessToken);
           sessionStorage.setItem("token", accessToken);
           commit("SET_IS_VALID_TOKEN", true);
         },
-        async ({ response }) => {
-          console.log("[tokenRegeneration] fail : {}", response);
+        async () => {
           await logout(
-            ({ data }) => {
-              console.log("[logout] " + data);
+            () => {
               alert("RefreshToken 기간 만료!!! 다시 로그인해 주세요.");
               commit("LOGOUT");
               commit("SET_IS_VALID_TOKEN", false);

@@ -42,15 +42,6 @@ public class ReservationEntity extends CUDEntity {
     @Column(name = "reservation_detail", unique = false, nullable = true, length = 200)
     private String detail;
 
-    //컨설팅 방 번호
-//    @Column(name="reservation_room_number", unique = true, nullable = false)
-//    private String roomNumber;
-
-    // 컨설팅 가격
-//    @Min(value = 0)
-//    @Column(name = "reservation_price", unique = false, nullable = true)
-//    private Integer price;
-
     // 컨설턴트 예약 사진
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation", cascade = CascadeType.ALL)
     @Builder.Default

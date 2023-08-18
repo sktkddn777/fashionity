@@ -3,17 +3,10 @@
 </template>
 
 <script>
-// import router from "@/router";
-
 export default {
   name: "ConsultantVue",
-  created() {
-    // axios.getMemberRole
-  },
-  // components: {},
-  // props: {},
+  created() {},
   data: () => ({}),
-  // methods: {},
 };
 </script>
 

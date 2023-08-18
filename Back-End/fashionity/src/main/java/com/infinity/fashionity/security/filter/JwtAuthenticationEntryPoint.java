@@ -5,7 +5,6 @@ import com.infinity.fashionity.global.dto.ErrorResponse;
 import com.infinity.fashionity.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -25,7 +24,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.info("[ERROR] {} : {}", authException.getClass().getSimpleName(), authException.getMessage());
+        log.error("[ERROR] {} : {}", authException.getClass().getSimpleName(), authException.getMessage());
         response.setStatus(ErrorCode.UNAUTHENTICATED_MEMBER.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");

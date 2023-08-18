@@ -53,7 +53,8 @@
             class="inactive-button"
             style="min-width: 70px"
             @click="navigateToMain"
-          >취소
+          >
+            취소
           </button>
           <button
             type="button"
@@ -61,7 +62,7 @@
             style="min-width: 70px"
             @click="submitPost"
           >
-          등록
+            등록
           </button>
         </div>
       </div>
@@ -138,13 +139,9 @@ export default {
               },
         method: "POST",
         data: formData,
-      })
-        .then((data) => {
-          console.log("callPostSaveAPI " + data.data.postSeq);
-        })
-        .catch(() => {
-          alert("게시글이 등록되지 않았습니다.");
-        });
+      }).catch(() => {
+        alert("게시글이 등록되지 않았습니다.");
+      });
     },
     updateImg(file) {
       this.fileList = file;
