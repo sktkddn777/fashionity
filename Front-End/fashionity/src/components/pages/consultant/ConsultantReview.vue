@@ -52,7 +52,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 #consultant-reservation {
   margin: 20px 15px 0px 15px;
   padding-bottom: 10px;
