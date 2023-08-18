@@ -231,6 +231,7 @@ const router = createRouter({
           component: ConsultantReservation,
           children: [
             {
+              beforeEnter: onlyAuthUser,
               path: ":nickname",
               name: "consultantDate",
               component: ConsultantReservationDate,
