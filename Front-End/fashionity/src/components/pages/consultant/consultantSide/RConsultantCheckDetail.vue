@@ -37,7 +37,7 @@
       <div class="reservation-bottom" align="left" style="">
         <div class="info-detail" style="margin-top: 1rem; margin-bottom: 3rem">
           <h5><b>나이</b></h5>
-          <p>만 {{ memberAge }}세</p>
+          <p>{{ memberAge }}</p>
           <h5><b>성별</b></h5>
           <p>{{ memberGender }}</p>
           <h5><b>신장</b></h5>
@@ -200,8 +200,6 @@ export default {
           this.memberGender = "남성";
         } else if (details.gender === "FEMALE") {
           this.memberGender = "여성";
-        } else {
-          this.memberGender = "성별을 등록해주세요!";
         }
         if (details.height === null) {
           this.memberHeight = "신장을 등록해주세요!";
@@ -209,12 +207,12 @@ export default {
           this.memberHeight = details.height;
         }
         if (details.weight === null) {
-          this.memberWeight = "신장을 등록해주세요!";
+          this.memberWeight = "몸무게를 등록해주세요!";
         } else {
           this.memberWeight = details.weight;
         }
         if (details.age === null) {
-          this.memberAge = "신장을 등록해주세요!";
+          this.memberAge = "나이를 등록해주세요!";
         } else {
           this.memberAge = details.age;
         }
