@@ -25,7 +25,7 @@
 
 ## 🍊 API
 
-api 기능 정리한 노션 링크 추가
+[api 기능 정리한 노션 링크](https://www.notion.so/API-d41cb070f3e14dfd935a144ef888a65d?pvs=4)
 
 <br/>
 
