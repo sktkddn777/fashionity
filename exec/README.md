@@ -11,6 +11,10 @@
 
 <br/>
 
+## 💻View
+
+[시연 화면](./document/VIEW.md)
+
 ## 🏛 System Architecture
 
 <img src = "./img/system-architecture.png">
