@@ -89,7 +89,12 @@
                 </button>
               </div>
               <br />
-              <div class="m-top-d" style="width: 30rem" align="left">
+              <div
+                v-if="profileIntro != 'null' && profileIntro"
+                class="m-top-d"
+                style="width: 30rem"
+                align="left"
+              >
                 {{ profileIntro }}
               </div>
               <br />
