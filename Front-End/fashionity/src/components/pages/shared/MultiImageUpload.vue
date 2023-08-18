@@ -1,9 +1,6 @@
 <template lang="">
   <div class="container-fluid">
     <div class="row justify-content-start">
-      <!-- <div class="row justify-content-start" style="margin-top: 10px">
-        사진 등록
-      </div> -->
       <div
         class="row justify-content-start"
         style="font-size: 10px; margin-top: 10px"
@@ -16,14 +13,14 @@
           <div class="row justify-content-start">
             <div class="col">
               <div class="image-box">
-                <button class = "active-button">
+                <button class="active-button">
                   <label for="file">사진 등록</label>
-                <input
-                  type="file"
-                  id="file"
-                  ref="files"
-                  @change="imageUpload"
-                />
+                  <input
+                    type="file"
+                    id="file"
+                    ref="files"
+                    @change="imageUpload"
+                  />
                 </button>
               </div>
             </div>
@@ -47,17 +44,16 @@
             </div>
             <div v-if="files.length < 4">
               <div class="image-box">
-                <button class = "inactive-button">
+                <button class="inactive-button">
                   <label for="file">추가 사진 등록</label>
-                <input
-                  type="file"
-                  id="file"
-                  ref="files"
-                  @change="imageUpload"
-                />
+                  <input
+                    type="file"
+                    id="file"
+                    ref="files"
+                    @change="imageUpload"
+                  />
                 </button>
               </div>
-              <!-- <div class="file-close-button" @click="fileDeleteButton" :name="file.number">x</div> -->
             </div>
           </div>
         </div>
@@ -102,32 +98,25 @@ export default {
       currFileList: [],
     };
   },
-  // props: {
-  //   imgList: [],
-  // },
+
   components: {
     Cropper,
   },
   methods: {
     makePreview(blobData) {
-      console.log("프리뷰");
       for (let i = 0; i < this.$refs.files.files.length; i++) {
-        console.log("안녕 난 for문이야");
         this.files = [
           ...this.files,
           //이미지 업로드
           {
             //실제 파일
-            // file: this.$refs.files.files[i],
             file: this.cropImgURL,
             //이미지 프리뷰
-            // preview: URL.createObjectURL(this.$refs.files.files[i]),
             preview: this.cropImgURL,
             //삭제및 관리를 위한 number
             number: this.uploadImageIndex,
           },
         ];
-        // num = i;
         //이미지 업로드용 프리뷰
         this.filesPreview = [
           ...this.filesPreview,
@@ -139,64 +128,20 @@ export default {
         ];
       }
       this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
-
-      // this.uploadImageIndex += 1;
-      console.log(this.files);
-
-      console.log("프리뷰 입니당", this.filesPreview);
-      // console.log(this.filesPreview);
       this.cropImgURL = "";
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);
     },
     imageUpload() {
-      console.log("upload");
-      console.log(this.$refs.files.files);
-
-      console.log(this.$refs.files.files[this.$refs.files.files.length - 1]);
       this.cropImgURL = URL.createObjectURL(
         this.$refs.files.files[this.$refs.files.files.length - 1]
       );
-      console.log("url입니당", this.cropImgURL);
-      // this.uploadImage();
-
-      // this.files = [...this.files, this.$refs.files.files];
-      //하나의 배열로 넣기
-      // let num = -1;
-      // for (let i = 0; i < this.$refs.files.files.length; i++) {
-      //   this.files = [
-      //     ...this.files,
-      //     //이미지 업로드
-      //     {
-      //       //실제 파일
-      //       file: this.$refs.files.files[i],
-      //       //이미지 프리뷰
-      //       // preview: URL.createObjectURL(this.$refs.files.files[i]),
-      //       preview: this.cropImgURL,
-      //       //삭제및 관리를 위한 number
-      //       number: i,
-      //     },
-      //   ];
-      //   num = i;
-      //   //이미지 업로드용 프리뷰
-      //   // this.filesPreview = [
-      //   //   ...this.filesPreview,
-      //   //   { file: URL.createObjectURL(this.$refs.files.files[i]), number: i }
-      //   // ];
-      // }
-      // this.uploadImageIndex = num + 1; //이미지 index의 마지막 값 + 1 저장
-      // console.log(this.files);
-      // // console.log(this.filesPreview);
     },
 
     imageAddUpload() {
-      console.log(this.$refs.files.files);
-
-      // this.files = [...this.files, this.$refs.files.files];
-      //하나의 배열로 넣기c
+      //하나의 배열로 넣기
       let num = -1;
       for (let i = 0; i < this.$refs.files.files.length; i++) {
-        console.log(this.uploadImageIndex);
         this.files = [
           ...this.files,
           //이미지 업로드
@@ -212,9 +157,6 @@ export default {
         num = i;
       }
       this.uploadImageIndex = this.uploadImageIndex + num + 1;
-
-      console.log("happy", this.files);
-      // console.log(this.filesPreview);
     },
     fileDeleteButton(e) {
       const name = e.target.getAttribute("name");
@@ -222,25 +164,12 @@ export default {
       this.filesPreview = this.filesPreview.filter(
         (data) => data.number !== Number(name)
       );
-      // console.log(this.files);
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);
     },
     uploadImage() {
       const { canvas } = this.$refs.cropper.getResult();
-      console.log(canvas);
       if (canvas) {
-        // const form = new FormData();
-        // canvas.toBlob((blob) => {
-        //   form.append("file", blob);
-        //   // You can use axios, superagent and other libraries instead here
-        //   // fetch("http://example.com/upload/", {
-        //   //   method: "POST",
-        //   //   body: form,
-        //   // });
-        //   // Perhaps you should add the setting appropriate file format here
-        // }, "image/jpeg");
-        // const url = window.URL.createObjectURL(form);
         var blobData = "";
         canvas.toBlob((blob) => {
           console.log("blob", blob);
@@ -250,16 +179,7 @@ export default {
           blobData = blob;
         });
 
-        console.log("blob 후", canvas.toDataURL());
         console.log(blobData);
-        // let blob = new Blob([new ArrayBuffer(canvas.toDataURL())], {
-        //   type: "image/png",
-        // });
-        // const url = window.URL.createObjectURL(blob); // blob:http://localhost:1234/28ff8746-94eb-4dbe-9d6c-2443b581dd30
-
-        // this.cropImgURL = canvas.toDataURL();
-
-        // this.makePreview(blobData);
       }
     },
   },
@@ -269,11 +189,9 @@ export default {
   watch: {
     cropImgURL(newVal) {
       this.cropImgURL = newVal;
-      console.log("watch", this.cropImgURL);
     },
     currFileList(newVal) {
       this.currFileList = newVal;
-      console.log("newval", newVal);
       this.$emit("updateImg", this.currFileList);
     },
   },
@@ -448,8 +366,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* height: 100%;
-width: 100%; */
 }
 
 .room-file-image-example-wrapper {
@@ -471,17 +387,6 @@ width: 100%; */
   border: 0;
 }
 
-/* .image-box label {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: black;
-  color: #fff;
-  vertical-align: middle;
-  font-size: 15px;
-  cursor: pointer;
-  border-radius: 5px;
-} */
-
 .file-preview-wrapper {
   padding: 10px;
   position: relative;
@@ -496,7 +401,6 @@ width: 100%; */
 
 .file-close-button {
   position: absolute;
-  /* align-items: center; */
   line-height: 18px;
   z-index: 98;
   font-size: 18px;

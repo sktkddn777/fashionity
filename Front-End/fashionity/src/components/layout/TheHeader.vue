@@ -84,7 +84,6 @@
 <script>
 import { mapState, mapGetters, mapActions } from "vuex";
 import router from "@/router";
-// import axios from "axios";
 import TheAlarm from "../pages/alarm/TheAlarm.vue";
 const memberStore = "memberStore";
 export default {

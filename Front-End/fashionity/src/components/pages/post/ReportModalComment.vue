@@ -154,11 +154,7 @@ export default {
               },
         method: "POST",
         data: body,
-      })
-        .then((data) => {
-          console.log(data.data.success);
-        })
-        .catch((error) => console.log(error));
+      }).catch((error) => console.log(error));
     },
   },
 };

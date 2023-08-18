@@ -94,7 +94,6 @@ export default {
   methods: {
     handleDateClick({ date }) {
       this.reservationData = [];
-      // Do something with the clicked date, like displaying details or performing an action
 
       // 예약이 같은 날 여러개인 경우는 일단 생각 안함ㅎ
       this.selectedDate = date;
@@ -176,7 +175,6 @@ export default {
       })
         .then(({ data }) => {
           for (let i = 0; i < data.unAvailableDateTimes.length; i++) {
-            console.log("success: " + data.unAvailableDateTimes[i]);
             let time = data.unAvailableDateTimes[i].unAvailableDateTime;
 
             this.reservationData.push({

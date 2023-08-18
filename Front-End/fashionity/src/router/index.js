@@ -39,14 +39,11 @@ const onlyAuthUser = async () => {
   const checkToken = store.getters["memberStore/checkToken"];
 
   if (checkLoginUser != null) {
-    console.log("토큰 유효성 체크하러 가자!!!!");
     await store.dispatch("memberStore/getUserInfoAction");
   }
   if (!checkToken || checkLoginUser === null) {
     alert("로그인이 필요한 페이지입니다..");
     router.push({ name: "UserLogin" });
-  } else {
-    console.log("로그인 한 유저네용");
   }
 };
 
@@ -55,7 +52,6 @@ const optionalAuthUser = async () => {
   const checkToken = store.getters["memberStore/checkToken"];
 
   if (checkLoginUser != null) {
-    console.log("토큰 유효성 체크하러 가자!!!!");
     await store.dispatch("memberStore/getUserInfoAction");
   }
 

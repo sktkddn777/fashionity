@@ -153,11 +153,7 @@ export default {
               },
         method: "POST",
         data: reportData,
-      })
-        .then((data) => {
-          console.log(data.data.success);
-        })
-        .catch((error) => console.log(error));
+      }).catch((error) => console.log(error));
     },
   },
 };

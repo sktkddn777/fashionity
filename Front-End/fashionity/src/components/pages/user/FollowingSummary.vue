@@ -34,8 +34,6 @@
 </template>
 
 <script>
-// import { computed } from 'vue'
-// import { useStore } from 'vuex'
 import axios from "axios";
 
 export default {
