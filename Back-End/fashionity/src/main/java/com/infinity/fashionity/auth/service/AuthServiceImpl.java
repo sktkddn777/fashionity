@@ -63,7 +63,6 @@ public class AuthServiceImpl implements AuthService{
             throw new IdOrPasswordNotMatchedException(CREDENTIAL_NOT_MATCHED);
 
         String refreshToken = jwtProvider.createRefreshToken();
-        // TODO: redis 에 저장
 
         List<MemberRole> roles = new ArrayList<>();
         MemberEntity byEmailWithRole = memberRepository.findByEmailWithRole(member.getEmail());
@@ -95,7 +94,6 @@ public class AuthServiceImpl implements AuthService{
         MemberEntity member = memberRepository.findByEmailWithRole(oauthUserInfo.getEmail());
 
         if (member == null) {
-            // TODO: 회원가입 로직
             MemberEntity newMember = MemberEntity.builder()
                     .id(HashUtil.makeHashId())
                     .password(passwordEncoder.encode("password12345"))
@@ -179,7 +177,6 @@ public class AuthServiceImpl implements AuthService{
                 .build();
     }
 
-    // TODO: validate 여부 중복이 많아서 개선할 수 있을거 같음
     @Override
     public boolean isIdValidate(String id) {
         Optional<MemberEntity> byId = memberRepository.findById(id);
@@ -258,7 +255,6 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public LogoutDTO.Response logout() {
-        // TODO: redis 도입해 AT, RT에 대한 blackList 만들기
 
         // 컨텍스트에 있는 값 제거
         SecurityContextHolder.clearContext();
@@ -279,9 +275,6 @@ public class AuthServiceImpl implements AuthService{
             log.info("RT 만료 여부 확인");
             // RT 유효성 확인 (만료 여부, 변조 여부)
             jwtUtil.validateToken(refreshToken);
-
-            // TODO: redis BlackList 에 있는지 확인, redis 키 값이 RT, value 가 memberSeq
-            // TODO: redis 를 가지고 RT를 가지고 email을 찾아 넘겨줘야 함. 지금은 임의로 유저 id 받아서 진행.
 
             MemberEntity member = memberRepository.findById(memberSeq).orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
             newAccessToken = jwtProvider.createAccessToken(member.getSeq(), member.getMemberRoles());

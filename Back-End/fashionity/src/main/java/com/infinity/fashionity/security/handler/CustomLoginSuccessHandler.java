@@ -21,7 +21,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("⭐로그인에 성공했씁니땅!!⭐");
 
         response.sendRedirect("/");
     }

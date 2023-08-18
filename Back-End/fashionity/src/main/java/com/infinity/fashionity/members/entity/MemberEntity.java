@@ -1,7 +1,5 @@
 package com.infinity.fashionity.members.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.infinity.fashionity.consultants.dto.ConsultantReservationSaveDTO;
 import com.infinity.fashionity.consultants.entity.ReservationEntity;
 

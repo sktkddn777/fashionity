@@ -23,8 +23,6 @@ public class CustomOAuth2User implements OAuth2User {
         this.id = user.getId();
         this.attributes = attributes;
 
-        log.info("role: " + user.getRoles().toString());
-
         this.authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getMemberRole().getRole()))
                 .collect(Collectors.toList());

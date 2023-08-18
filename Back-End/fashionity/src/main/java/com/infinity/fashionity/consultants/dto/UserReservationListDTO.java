@@ -5,9 +5,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controller 에서 컨설턴트 목로 조회시 받고 줄거
- */
+
 public class UserReservationListDTO {
 
     @Builder

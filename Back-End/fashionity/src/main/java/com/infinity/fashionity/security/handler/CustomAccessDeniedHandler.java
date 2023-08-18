@@ -3,7 +3,6 @@ package com.infinity.fashionity.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infinity.fashionity.global.dto.ErrorResponse;
 import com.infinity.fashionity.global.exception.ErrorCode;
-import com.nimbusds.jose.util.StandardCharset;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

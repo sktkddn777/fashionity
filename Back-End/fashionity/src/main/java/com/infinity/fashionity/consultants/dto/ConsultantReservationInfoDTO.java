@@ -17,10 +17,10 @@ public class ConsultantReservationInfoDTO {
         @JsonIgnore
         private Long memberSeq;
 
-        @JsonIgnore // path variable
+        @JsonIgnore
         private String consultantNickname;
 
-        @JsonIgnore // path variable
+        @JsonIgnore
         private Long reservationSeq;
 
     }

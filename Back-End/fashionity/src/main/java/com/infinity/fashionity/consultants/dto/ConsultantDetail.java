@@ -2,8 +2,6 @@ package com.infinity.fashionity.consultants.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.infinity.fashionity.consultants.data.Level;
-import com.infinity.fashionity.consultants.entity.ReviewEntity;
-import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import lombok.*;
 
 import java.util.ArrayList;

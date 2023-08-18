@@ -59,7 +59,6 @@ public class CommentEntity extends CUDEntity {
     private List<AlarmEntity> alarms = new ArrayList<>();
 
 
-    //custom method
     public void updateContent(String content){
         if(StringUtils.isBlank(content)) throw new ValidationException(ErrorCode.INVALID_INPUT_VALUE);
         this.content = content;

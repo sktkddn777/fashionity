@@ -20,7 +20,6 @@ public class ConsultantController {
 
     private final ConsultantService consultantService;
 
-    // 유저는 이따가 유저쪽으로 넘기기
     // [공통] 전체 컨설턴트 목록 조회
     @GetMapping
     public ResponseEntity<ConsultantListDTO.Response> getAllConsultants(
@@ -53,17 +52,13 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("consultantNickname") String consultantNickname,
             ConsultantReservationListDTO.Request dto) {
-//                ConsultantReservationListDTO.Request dto = ConsultantReservationListDTO.Request.builder()
-//                        .consultantNickname(consultantNickname)
-//                        .build();
             dto.setMemberSeq(auth.getSeq());
             dto.setConsultantNickname(consultantNickname);
         ConsultantReservationListDTO.Response consultantReservationsListResponse = consultantService.getConsultantReservationsList(auth.getSeq(), consultantNickname, dto);
-//        UserReservationListDTO.Response userReservationListResponse = consultantService.getUserReservationsList(1l);
         return new ResponseEntity<>(consultantReservationsListResponse, HttpStatus.OK);
     }
 
-    // [컨설턴트] 상세 예약 정보 조회 -> 로직이 유저 상세 예약 정보와 거의 동일하게 변경되어 나중에 리팩토링 시 두 api 를 통합해도 될듯
+    // [컨설턴트] 상세 예약 정보 조회
     @GetMapping(value = "/{consultantNickname}/reservations/{reservationSeq}")
     public ResponseEntity<ConsultantReservationInfoDTO.Response> getConsultantReservationDetail(
             @AuthenticationPrincipal JwtAuthentication auth,
@@ -85,19 +80,6 @@ public class ConsultantController {
         ConsultantReviewListDTO.Response consultantReviewsListResponse = consultantService.getConsultantReviewsList(auth.getSeq(), consultantNickname);
         return new ResponseEntity<>(consultantReviewsListResponse, HttpStatus.OK);
     }
-
-
-    // [컨설턴트] 평점 통계, 수익 조회
-//    @GetMapping(value = "/{consultantNickname}/statistics")
-//    public ResponseEntity<ConsultantStatisticsDTO.Response> getConsultantStatistics(
-//            @AuthenticationPrincipal JwtAuthentication auth,
-//            @PathVariable("consultantNickname") String consultantNickname,
-//            ConsultantStatisticsDTO.Request dto) {
-//        dto.setMemberSeq(auth.getSeq());
-//        dto.setConsultantNickname(consultantNickname);
-//        ConsultantStatisticsDTO.Response consultantStatisticsResponse = consultantService.getConsultantStatistics(auth.getSeq(), consultantNickname, dto);
-//        return new ResponseEntity<>(consultantStatisticsResponse, HttpStatus.OK);
-//    }
 
     // [공통] 리뷰 작성
     @PostMapping(value = "{reservationSeq}/review")
@@ -140,9 +122,8 @@ public class ConsultantController {
             @AuthenticationPrincipal JwtAuthentication auth,
             @PathVariable("reservationSeq") Long reservationSeq,
             UserReservationInfoDTO.Request dto){
-//            dto.setMemberSeq(auth.getSeq());
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
-            dto.setReservationSeq(reservationSeq);
+        dto.setReservationSeq(reservationSeq);
         UserReservationInfoDTO.Response userReservatoinInfoResponse = consultantService.getUserReservationDetail(auth.getSeq(), reservationSeq, dto);
         return new ResponseEntity<>(userReservatoinInfoResponse, HttpStatus.OK);
 
@@ -154,11 +135,8 @@ public class ConsultantController {
     public ResponseEntity<ScheduleDTO.Response> saveSchedule(
             @AuthenticationPrincipal JwtAuthentication auth,
             @RequestBody  ScheduleSaveDTO.Request dto){
-
-        log.info("start");
         dto.setMemberSeq(auth == null ? null : auth.getSeq());
         ScheduleDTO.Response scheduleSaveResponse = consultantService.saveSchedule(dto);
-        log.info(" = {}",scheduleSaveResponse);
         return new ResponseEntity<>(scheduleSaveResponse, HttpStatus.OK);
     }
 

@@ -47,8 +47,6 @@ public class UserReservationDetail {
     private String reservationDetail;
 
     // 예약 등록 시 유저가 첨부한 이미지
-//    @Builder.Default
-//    private List<Image> images = new ArrayList<>();
     @Builder.Default
     private List<Image> memberImages = new ArrayList<>();
 

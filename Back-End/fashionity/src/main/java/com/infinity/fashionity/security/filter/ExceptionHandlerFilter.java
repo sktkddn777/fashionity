@@ -27,7 +27,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
-            log.info("[ExceptionHandler] {}", e.getErrorCode().getMessage());
 
             response.setStatus(e.getErrorCode().getStatus().value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

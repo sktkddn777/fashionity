@@ -1,6 +1,5 @@
 package com.infinity.fashionity.consultants.repository;
 
-import com.infinity.fashionity.consultants.dto.Schedule;
 import com.infinity.fashionity.consultants.entity.ScheduleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

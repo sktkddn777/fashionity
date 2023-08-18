@@ -1,9 +1,7 @@
 package com.infinity.fashionity.posts.repository;
 
-import com.infinity.fashionity.members.dto.ProfilePost;
 import com.infinity.fashionity.members.entity.MemberEntity;
 import com.infinity.fashionity.posts.entity.PostEntity;
-import com.infinity.fashionity.posts.entity.PostImageEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -4,7 +4,6 @@ package com.infinity.fashionity.consultants.service;
 import com.infinity.fashionity.consultants.dto.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 
 public interface ConsultantService {
 
@@ -27,9 +26,6 @@ public interface ConsultantService {
 
     @Transactional(readOnly = true)
     ConsultantReviewListDTO.Response getConsultantReviewsList(Long memberSeq, String consultantNickname);
-
-//    @Transactional(readOnly = true)
-//    ConsultantStatisticsDTO.Response getConsultantStatistics(Long memberSeq, String consultantNickname, ConsultantStatisticsDTO.Request dto);
 
     @Transactional
     ReviewSaveDTO.Response postReview(Long memberSeq, Long reservationSeq, ReviewSaveDTO.Request dto);

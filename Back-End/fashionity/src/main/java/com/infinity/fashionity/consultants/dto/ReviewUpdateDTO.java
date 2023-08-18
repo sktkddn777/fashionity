@@ -15,7 +15,6 @@ public class ReviewUpdateDTO {
         @JsonIgnore
         Long memberSeq;
 
-        // path Parameter
         @JsonIgnore
         Long reviewSeq;
 
