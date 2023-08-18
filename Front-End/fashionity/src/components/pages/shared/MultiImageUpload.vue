@@ -3,7 +3,7 @@
     <div class="row justify-content-start">
       <div
         class="row justify-content-start"
-        style="font-size: 10px; margin-top: 10px"
+        style="font-size: 10px; margin-top: 1rem; margin-bottom: 1rem"
       >
         * 최대 4장까지 사진 등록이 가능합니다.
       </div>
@@ -12,16 +12,27 @@
         <div v-if="!files.length" class="row justify-content-start">
           <div class="row justify-content-start">
             <div class="col">
-              <div class="image-box">
-                <button class="active-button">
-                  <label for="file">사진 등록</label>
-                  <input
-                    type="file"
-                    id="file"
-                    ref="files"
-                    @change="imageUpload"
-                  />
-                </button>
+              <div
+                class="image-box"
+                style="
+                  width: 100px;
+                  height: 40px;
+                  flex-shrink: 0;
+                  border-radius: 10px;
+                  background: #2191ff;
+                  color: #ffffff;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <label for="file">사진 등록</label>
+                <input
+                  type="file"
+                  id="file"
+                  ref="files"
+                  @change="imageUpload"
+                />
               </div>
             </div>
           </div>
@@ -43,16 +54,27 @@
               <img :src="file.preview" />
             </div>
             <div v-if="files.length < 4">
-              <div class="image-box">
-                <button class="inactive-button">
-                  <label for="file">추가 사진 등록</label>
-                  <input
-                    type="file"
-                    id="file"
-                    ref="files"
-                    @change="imageUpload"
-                  />
-                </button>
+              <div
+                class="image-box"
+                style="
+                  width: 120px;
+                  height: 40px;
+                  flex-shrink: 0;
+                  border-radius: 10px;
+                  background: #cecece;
+                  color: #ffffff;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <label for="file">추가 사진 등록</label>
+                <input
+                  type="file"
+                  id="file"
+                  ref="files"
+                  @change="imageUpload"
+                />
               </div>
             </div>
           </div>
@@ -76,8 +98,21 @@
           :src="cropImgURL"
         />
       </div>
-      <div class="button" style="display: flex; justify-content: flex-end">
-        <button class="active-button" @click="uploadImage">저장</button>
+      <div
+        style="
+          width: 80px;
+          height: 40px;
+          flex-shrink: 0;
+          border-radius: 10px;
+          background: #2191ff;
+          color: #ffffff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        @click="uploadImage"
+      >
+        저장
       </div>
     </div>
   </div>
@@ -128,6 +163,7 @@ export default {
         ];
       }
       this.uploadImageIndex++; //이미지 index의 마지막 값 + 1 저장
+
       this.cropImgURL = "";
       this.currImgList = this.filesPreview.map((row) => row.file);
       this.currFileList = this.filesPreview.map((row) => row.binaryFile);
@@ -139,7 +175,8 @@ export default {
     },
 
     imageAddUpload() {
-      //하나의 배열로 넣기
+      // this.files = [...this.files, this.$refs.files.files];
+      //하나의 배열로 넣기c
       let num = -1;
       for (let i = 0; i < this.$refs.files.files.length; i++) {
         this.files = [
@@ -172,7 +209,6 @@ export default {
       if (canvas) {
         var blobData = "";
         canvas.toBlob((blob) => {
-          console.log("blob", blob);
           this.cropImgURL = canvas.toDataURL();
 
           this.makePreview(blob);
@@ -372,12 +408,6 @@ export default {
   text-align: center;
 }
 
-.image-box {
-  margin-top: 10px;
-  padding-bottom: 20px;
-  text-align: start;
-}
-
 .image-box input[type="file"] {
   position: absolute;
   width: 0;
@@ -401,6 +431,7 @@ export default {
 
 .file-close-button {
   position: absolute;
+  /* align-items: center; */
   line-height: 18px;
   z-index: 98;
   font-size: 18px;
@@ -462,21 +493,5 @@ export default {
   max-height: 250px;
   max-width: 250px;
   background: #ddd;
-}
-.active-button {
-  width: 100px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: #2191ff;
-  color: #ffffff;
-}
-.inactive-button {
-  width: 120px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: #cecece;
-  color: #ffffff;
 }
 </style>

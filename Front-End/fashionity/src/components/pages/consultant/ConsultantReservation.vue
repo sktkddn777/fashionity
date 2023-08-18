@@ -21,13 +21,15 @@
           </div>
         </div>
         <div class="row" style="height: 30px"></div>
-        <div class="row">
-          <div
-            v-for="(review, index) in this.reviewList"
-            :key="index"
-            class="col review scroll"
-          >
-            <consultant-review :review="review"></consultant-review>
+        <div class="col">
+          <div class="review-container" style="height: calc(100vh - 400px)">
+            <div
+              v-for="(review, index) in this.reviewList"
+              :key="index"
+              class="col review"
+            >
+              <consultant-review :review="review"></consultant-review>
+            </div>
           </div>
         </div>
       </div>
@@ -60,6 +62,7 @@ export default {
   },
   created() {
     this.nickname = this.$route.params.nickname;
+    console.log(this.nickname);
   },
   props: {},
   async mounted() {
@@ -92,7 +95,6 @@ export default {
 
 .review {
   overflow: scroll;
-  height: 350px;
 }
 
 /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
@@ -103,5 +105,9 @@ export default {
 .scroll {
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none; /* 파이어폭스 */
+}
+.review-container {
+  overflow: auto;
+  height: 100%;
 }
 </style>
