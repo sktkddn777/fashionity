@@ -74,6 +74,10 @@ $ sudo docker version
 
 Docker version 24.0.5, build ced0996
 
-```
+````
 ## 도커 로그인
-```
+
+```bash
+$ sudo docker login -u ${도커 아이디}
+Password : ${도커 허브에서 가져온 Personal Access Token}
+````
