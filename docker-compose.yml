@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  back:
+    image: back
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    depends_on:
+      - db
+  front:
+    image: front
+    ports:
+      - "3333:3333"
+  db:
+    image: mysql
+    volumes:
+      - ~/docker/mysql/etc/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ~/docker/mysql/var/lib/mysql:/var/lib/mysql
+      - ~/docker/mysql/var/log/mysql:/var/log/mysql
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci",
+      ]
+    ports:
+      - "3306:3306"
+  socket:
+    image: socket
+    ports:
+      - "8081:8081"
